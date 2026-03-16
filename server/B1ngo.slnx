@@ -1,0 +1,20 @@
+<Solution>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
+  <Folder Name="/src/">
+    <Project Path="src/B1ngo.Domain.Core/B1ngo.Domain.Core.csproj" />
+    <Project Path="src/B1ngo.Domain.Game/B1ngo.Domain.Game.csproj" />
+    <Project Path="src/B1ngo.Application.Common/B1ngo.Application.Common.csproj" />
+    <Project Path="src/B1ngo.Application.Features/B1ngo.Application.Features.csproj" />
+    <Project Path="src/B1ngo.Infrastructure/B1ngo.Infrastructure.csproj" />
+    <Project Path="src/B1ngo.Web/B1ngo.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/B1ngo.Domain.Core.Tests/B1ngo.Domain.Core.Tests.csproj" />
+    <Project Path="tests/B1ngo.Domain.Game.Tests/B1ngo.Domain.Game.Tests.csproj" />
+    <Project Path="tests/B1ngo.Application.Tests/B1ngo.Application.Tests.csproj" />
+    <Project Path="tests/B1ngo.Infrastructure.Tests/B1ngo.Infrastructure.Tests.csproj" />
+    <Project Path="tests/B1ngo.Web.Tests/B1ngo.Web.Tests.csproj" />
+  </Folder>
+</Solution>

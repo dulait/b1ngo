@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: b1ngo
+      POSTGRES_USER: b1ngo
+      POSTGRES_PASSWORD: b1ngo
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U b1ngo -d b1ngo"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  b1ngo.web:
+    image: ${DOCKER_REGISTRY-}b1ngoweb
+    build:
+      context: .
+      dockerfile: src/B1ngo.Web/Dockerfile
+    ports:
+      - "5141:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Database: "Host=db;Port=5432;Database=b1ngo;Username=b1ngo;Password=b1ngo"
+
+volumes:
+  pgdata:

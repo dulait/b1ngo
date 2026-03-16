@@ -1,0 +1,35 @@
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{cs,vb}]
+# Require braces for all code blocks
+csharp_prefer_braces = true:error
+
+# New-line preferences
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+
+[*.{ts,js}]
+indent_size = 2
+quote_type = single
+
+[*.html]
+indent_size = 2
+
+[*.{css,scss}]
+indent_size = 2
+
+[*.{json,yml,yaml}]
+indent_size = 2
+
+[*.md]
+max_line_length = off
+trim_trailing_whitespace = false
