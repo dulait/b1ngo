@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>4390802d-de50-4c94-b9aa-4439d971bd80</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.1" />
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.13.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\B1ngo.Application.Common\B1ngo.Application.Common.csproj" />
+    <ProjectReference Include="..\B1ngo.Application.Features\B1ngo.Application.Features.csproj" />
+    <ProjectReference Include="..\B1ngo.Domain.Core\B1ngo.Domain.Core.csproj" />
+    <ProjectReference Include="..\B1ngo.Domain.Game\B1ngo.Domain.Game.csproj" />
+    <ProjectReference Include="..\B1ngo.Infrastructure\B1ngo.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
