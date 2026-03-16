@@ -14,9 +14,10 @@ internal static class WebApplicationExtensions
         {
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 
+            app.MapOpenApi();
+
             if (app.Environment.IsDevelopment())
             {
-                app.MapOpenApi();
                 app.MapScalarApiReference(options =>
                 {
                     options

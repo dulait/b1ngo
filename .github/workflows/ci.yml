@@ -33,3 +33,27 @@ jobs:
       - name: Test
         run: dotnet test B1ngo.slnx --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage"
         working-directory: server
+
+      - name: Generate OpenAPI spec
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: dotnet test tests/B1ngo.Web.Tests/B1ngo.Web.Tests.csproj --no-build --configuration Release --filter "FullyQualifiedName=B1ngo.Web.Tests.OpenApiSpecTests.Generate_OpenApi_Spec_File"
+        working-directory: server
+
+      - name: Sync to Postman
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        continue-on-error: true
+        run: |
+          curl --fail --silent \
+            -X POST \
+            "https://api.getpostman.com/import/openapi" \
+            -H "X-Api-Key: ${{ secrets.POSTMAN_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d @docs/openapi.v1.json
+
+      - name: Commit OpenAPI spec
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/openapi.v1.json
+          git diff --cached --quiet || (git commit -m "docs: update openapi spec" && git push)
