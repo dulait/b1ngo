@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# Pre-commit hook: ensures all C# files are formatted with CSharpier.
+# Setup: git config core.hooksPath .githooks
+
+set -euo pipefail
+
+if ! dotnet csharpier check . > /dev/null 2>&1; then
+    echo ""
+    echo "CSharpier check failed. Auto-formatting..."
+    dotnet csharpier format .
+    git add -u
+    echo ""
+    echo "CSharpier formatted your code. Changes have been staged. Please review and commit again."
+    exit 1
+fi
