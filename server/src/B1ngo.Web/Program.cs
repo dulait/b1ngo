@@ -9,3 +9,5 @@ var app = builder.Build();
 await app.ConfigurePipeline();
 
 app.Run();
+
+public partial class Program;
