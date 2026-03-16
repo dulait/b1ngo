@@ -5,18 +5,22 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace B1ngo.Web.EventHandlers;
 
-internal sealed class BingoAchievedEventHandler(
-    IHubContext<GameHub> hubContext) : IDomainEventHandler<BingoAchievedDomainEvent>
+internal sealed class BingoAchievedEventHandler(IHubContext<GameHub> hubContext)
+    : IDomainEventHandler<BingoAchievedDomainEvent>
 {
     public async Task HandleAsync(BingoAchievedDomainEvent domainEvent, CancellationToken cancellationToken = default)
     {
-        await hubContext.Clients
-            .Group($"room:{domainEvent.RoomId.Value}")
-            .SendAsync("BingoAchieved", new
-            {
-                playerId = domainEvent.PlayerId.Value,
-                pattern = domainEvent.Pattern.ToString(),
-                rank = domainEvent.Rank
-            }, cancellationToken);
+        await hubContext
+            .Clients.Group($"room:{domainEvent.RoomId.Value}")
+            .SendAsync(
+                "BingoAchieved",
+                new
+                {
+                    playerId = domainEvent.PlayerId.Value,
+                    pattern = domainEvent.Pattern.ToString(),
+                    rank = domainEvent.Rank,
+                },
+                cancellationToken
+            );
     }
 }

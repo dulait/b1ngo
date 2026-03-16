@@ -8,9 +8,8 @@ using Microsoft.Extensions.Logging;
 
 namespace B1ngo.Infrastructure.Outbox;
 
-public sealed class OutboxProcessor(
-    IServiceScopeFactory scopeFactory,
-    ILogger<OutboxProcessor> logger) : BackgroundService
+public sealed class OutboxProcessor(IServiceScopeFactory scopeFactory, ILogger<OutboxProcessor> logger)
+    : BackgroundService
 {
     private const int PollingIntervalSeconds = 5;
     private const int BatchSize = 20;
@@ -18,7 +17,7 @@ public sealed class OutboxProcessor(
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -44,8 +43,8 @@ public sealed class OutboxProcessor(
         var dbContext = scope.ServiceProvider.GetRequiredService<B1ngoDbContext>();
         var dispatcher = scope.ServiceProvider.GetRequiredService<IDomainEventDispatcher>();
 
-        var messages = await dbContext.OutboxMessages
-            .Where(m => m.ProcessedAt == null && m.RetryCount < MaxRetryCount)
+        var messages = await dbContext
+            .OutboxMessages.Where(m => m.ProcessedAt == null && m.RetryCount < MaxRetryCount)
             .OrderBy(m => m.OccurredAt)
             .Take(BatchSize)
             .ToListAsync(cancellationToken);
@@ -59,7 +58,9 @@ public sealed class OutboxProcessor(
                 {
                     logger.LogWarning(
                         "Cannot resolve type '{EventType}' for outbox message {MessageId}. Marking as poison.",
-                        message.EventType, message.Id);
+                        message.EventType,
+                        message.Id
+                    );
                     message.MarkFailed($"Cannot resolve type: {message.EventType}");
                     PoisonIfExhausted(message);
                     await dbContext.SaveChangesAsync(cancellationToken);
@@ -71,7 +72,8 @@ public sealed class OutboxProcessor(
                 {
                     logger.LogWarning(
                         "Deserialized outbox message {MessageId} is not an IDomainEvent. Marking as poison.",
-                        message.Id);
+                        message.Id
+                    );
                     message.MarkFailed("Deserialized object is not an IDomainEvent.");
                     PoisonIfExhausted(message);
                     await dbContext.SaveChangesAsync(cancellationToken);
@@ -87,9 +89,12 @@ public sealed class OutboxProcessor(
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                logger.LogWarning(ex,
+                logger.LogWarning(
+                    ex,
                     "Failed to process outbox message {MessageId} (attempt {RetryCount})",
-                    message.Id, message.RetryCount + 1);
+                    message.Id,
+                    message.RetryCount + 1
+                );
 
                 message.MarkFailed(ex.Message);
                 PoisonIfExhausted(message);
@@ -103,9 +108,12 @@ public sealed class OutboxProcessor(
         if (message.RetryCount >= MaxRetryCount)
         {
             logger.LogError(
-                "Outbox message {MessageId} has exceeded max retry count ({MaxRetryCount}). " +
-                "Message will not be retried. Last error: {Error}",
-                message.Id, MaxRetryCount, message.Error);
+                "Outbox message {MessageId} has exceeded max retry count ({MaxRetryCount}). "
+                    + "Message will not be retried. Last error: {Error}",
+                message.Id,
+                MaxRetryCount,
+                message.Error
+            );
         }
     }
 }

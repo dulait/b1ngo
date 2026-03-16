@@ -4,5 +4,5 @@ public enum RoomStatus
 {
     Lobby,
     Active,
-    Completed
+    Completed,
 }

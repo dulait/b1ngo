@@ -15,14 +15,12 @@ internal sealed class BingoCardGenerator : IBingoCardGenerator
         if (pool.Count < eventSlotsNeeded)
         {
             throw new InvalidOperationException(
-                $"Event pool for {sessionType} has {pool.Count} events, " +
-                $"but {eventSlotsNeeded} are needed for a {matrixSize}x{matrixSize} card.");
+                $"Event pool for {sessionType} has {pool.Count} events, "
+                    + $"but {eventSlotsNeeded} are needed for a {matrixSize}x{matrixSize} card."
+            );
         }
 
-        var shuffled = pool
-            .OrderBy(_ => Random.Shared.Next())
-            .Take(eventSlotsNeeded)
-            .ToList();
+        var shuffled = pool.OrderBy(_ => Random.Shared.Next()).Take(eventSlotsNeeded).ToList();
 
         var centerRow = matrixSize / 2;
         var centerCol = matrixSize / 2;

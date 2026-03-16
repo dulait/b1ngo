@@ -7,4 +7,5 @@ public sealed record SquareMarkedDomainEvent(
     PlayerId PlayerId,
     int Row,
     int Column,
-    SquareMarkedBy MarkedBy) : IDomainEvent;
+    SquareMarkedBy MarkedBy
+) : IDomainEvent;

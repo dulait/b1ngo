@@ -8,14 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace B1ngo.Infrastructure.Persistence;
 
-public sealed class B1ngoDbContext(
-    DbContextOptions<B1ngoDbContext> options,
-    ICurrentUserProvider currentUserProvider) : DbContext(options)
+public sealed class B1ngoDbContext(DbContextOptions<B1ngoDbContext> options, ICurrentUserProvider currentUserProvider)
+    : DbContext(options)
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        WriteIndented = false
+        WriteIndented = false,
     };
 
     public DbSet<Room> Rooms => Set<Room>();

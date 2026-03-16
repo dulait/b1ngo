@@ -7,8 +7,8 @@ internal sealed class CurrentUserProvider(IHttpContextAccessor httpContextAccess
 {
     public Guid GetCurrentUserId()
     {
-        var identity = httpContextAccessor.HttpContext?.Items[PlayerTokenAuthFilter.PlayerIdentityKey]
-            as PlayerIdentity;
+        var identity =
+            httpContextAccessor.HttpContext?.Items[PlayerTokenAuthFilter.PlayerIdentityKey] as PlayerIdentity;
 
         return identity?.PlayerId ?? Guid.Empty;
     }

@@ -6,4 +6,5 @@ public sealed record UnmarkSquareResponse(
     bool IsMarked,
     string? MarkedBy,
     DateTimeOffset? MarkedAt,
-    bool WinRevoked);
+    bool WinRevoked
+);

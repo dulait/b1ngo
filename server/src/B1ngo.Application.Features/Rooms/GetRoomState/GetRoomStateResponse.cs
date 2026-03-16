@@ -8,26 +8,16 @@ public sealed record GetRoomStateResponse(
     ConfigurationDto Configuration,
     Guid HostPlayerId,
     IReadOnlyList<PlayerDto> Players,
-    IReadOnlyList<LeaderboardEntryDto> Leaderboard);
+    IReadOnlyList<LeaderboardEntryDto> Leaderboard
+);
 
-public sealed record SessionDto(
-    int Season,
-    string GrandPrixName,
-    string SessionType);
+public sealed record SessionDto(int Season, string GrandPrixName, string SessionType);
 
-public sealed record ConfigurationDto(
-    int MatrixSize,
-    IReadOnlyList<string> WinningPatterns);
+public sealed record ConfigurationDto(int MatrixSize, IReadOnlyList<string> WinningPatterns);
 
-public sealed record PlayerDto(
-    Guid PlayerId,
-    string DisplayName,
-    bool HasWon,
-    CardDto? Card);
+public sealed record PlayerDto(Guid PlayerId, string DisplayName, bool HasWon, CardDto? Card);
 
-public sealed record CardDto(
-    int MatrixSize,
-    IReadOnlyList<SquareDto> Squares);
+public sealed record CardDto(int MatrixSize, IReadOnlyList<SquareDto> Squares);
 
 public sealed record SquareDto(
     int Row,
@@ -37,10 +27,7 @@ public sealed record SquareDto(
     bool IsFreeSpace,
     bool IsMarked,
     string? MarkedBy,
-    DateTimeOffset? MarkedAt);
+    DateTimeOffset? MarkedAt
+);
 
-public sealed record LeaderboardEntryDto(
-    Guid PlayerId,
-    int Rank,
-    string WinningPattern,
-    DateTimeOffset CompletedAt);
+public sealed record LeaderboardEntryDto(Guid PlayerId, int Rank, string WinningPattern, DateTimeOffset CompletedAt);

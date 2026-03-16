@@ -6,7 +6,10 @@ namespace B1ngo.Web.Middleware;
 
 internal sealed class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
 {
-    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    };
 
     public async Task InvokeAsync(HttpContext context)
     {
@@ -16,31 +19,55 @@ internal sealed class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<
         }
         catch (DomainConflictException ex)
         {
-            logger.LogWarning(ex, "Domain conflict for {Method} {Path}: {Code}",
-                context.Request.Method, context.Request.Path, ex.Code);
+            logger.LogWarning(
+                ex,
+                "Domain conflict for {Method} {Path}: {Code}",
+                context.Request.Method,
+                context.Request.Path,
+                ex.Code
+            );
 
             await WriteResponse(context, HttpStatusCode.Conflict, ex.Code, ex.Message);
         }
         catch (DomainNotFoundException ex)
         {
-            logger.LogWarning(ex, "Domain not found for {Method} {Path}: {Code}",
-                context.Request.Method, context.Request.Path, ex.Code);
+            logger.LogWarning(
+                ex,
+                "Domain not found for {Method} {Path}: {Code}",
+                context.Request.Method,
+                context.Request.Path,
+                ex.Code
+            );
 
             await WriteResponse(context, HttpStatusCode.NotFound, ex.Code, ex.Message);
         }
         catch (DomainException ex)
         {
-            logger.LogWarning(ex, "Domain error for {Method} {Path}: {Code}",
-                context.Request.Method, context.Request.Path, ex.Code);
+            logger.LogWarning(
+                ex,
+                "Domain error for {Method} {Path}: {Code}",
+                context.Request.Method,
+                context.Request.Path,
+                ex.Code
+            );
 
             await WriteResponse(context, HttpStatusCode.UnprocessableEntity, ex.Code, ex.Message);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Unhandled exception for {Method} {Path}",
-                context.Request.Method, context.Request.Path);
+            logger.LogError(
+                ex,
+                "Unhandled exception for {Method} {Path}",
+                context.Request.Method,
+                context.Request.Path
+            );
 
-            await WriteResponse(context, HttpStatusCode.InternalServerError, "unexpected", "An unexpected error occurred.");
+            await WriteResponse(
+                context,
+                HttpStatusCode.InternalServerError,
+                "unexpected",
+                "An unexpected error occurred."
+            );
         }
     }
 

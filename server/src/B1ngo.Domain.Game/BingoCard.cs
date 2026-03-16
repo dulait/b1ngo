@@ -23,17 +23,17 @@ public sealed class BingoCard
         {
             throw new ArgumentException(
                 $"Expected {expectedCount} squares for a {matrixSize}x{matrixSize} card, but got {squares.Count}.",
-                nameof(squares));
+                nameof(squares)
+            );
         }
 
         MatrixSize = matrixSize;
         _squares = squares;
     }
 
-    public BingoSquare GetSquare(int row, int column)
-        => _squares.Find(s => s.Row == row && s.Column == column)
-           ?? throw new DomainNotFoundException(
-               "square_not_found", $"No square at position ({row}, {column}).");
+    public BingoSquare GetSquare(int row, int column) =>
+        _squares.Find(s => s.Row == row && s.Column == column)
+        ?? throw new DomainNotFoundException("square_not_found", $"No square at position ({row}, {column}).");
 
     internal void MarkSquare(int row, int column, SquareMarkedBy markedBy, DateTimeOffset markedAt)
     {
@@ -66,14 +66,14 @@ public sealed class BingoCard
         return null;
     }
 
-    public bool HasWinningPattern(WinPatternType pattern)
-        => pattern switch
+    public bool HasWinningPattern(WinPatternType pattern) =>
+        pattern switch
         {
             WinPatternType.Row => HasCompletedRow(),
             WinPatternType.Column => HasCompletedColumn(),
             WinPatternType.Diagonal => HasCompletedDiagonal(),
             WinPatternType.Blackout => HasBlackout(),
-            _ => false
+            _ => false,
         };
 
     private bool HasCompletedRow()
@@ -89,8 +89,7 @@ public sealed class BingoCard
         return false;
     }
 
-    private bool IsRowComplete(int row)
-        => _squares.Where(s => s.Row == row).All(s => s.IsMarked);
+    private bool IsRowComplete(int row) => _squares.Where(s => s.Row == row).All(s => s.IsMarked);
 
     private bool HasCompletedColumn()
     {
@@ -105,18 +104,14 @@ public sealed class BingoCard
         return false;
     }
 
-    private bool IsColumnComplete(int col)
-        => _squares.Where(s => s.Column == col).All(s => s.IsMarked);
+    private bool IsColumnComplete(int col) => _squares.Where(s => s.Column == col).All(s => s.IsMarked);
 
-    private bool HasCompletedDiagonal()
-        => IsMainDiagonalComplete() || IsAntiDiagonalComplete();
+    private bool HasCompletedDiagonal() => IsMainDiagonalComplete() || IsAntiDiagonalComplete();
 
-    private bool IsMainDiagonalComplete()
-        => _squares.Where(s => s.Row == s.Column).All(s => s.IsMarked);
+    private bool IsMainDiagonalComplete() => _squares.Where(s => s.Row == s.Column).All(s => s.IsMarked);
 
-    private bool IsAntiDiagonalComplete()
-        => _squares.Where(s => s.Row + s.Column == MatrixSize - 1).All(s => s.IsMarked);
+    private bool IsAntiDiagonalComplete() =>
+        _squares.Where(s => s.Row + s.Column == MatrixSize - 1).All(s => s.IsMarked);
 
-    private bool HasBlackout()
-        => _squares.All(s => s.IsMarked);
+    private bool HasBlackout() => _squares.All(s => s.IsMarked);
 }

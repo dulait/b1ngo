@@ -8,11 +8,13 @@ public sealed class JoinRoomHandler(
     IRoomRepository roomRepository,
     IUnitOfWork unitOfWork,
     IBingoCardGenerator cardGenerator,
-    IPlayerTokenStore playerTokenStore) : ICommandHandler<JoinRoomCommand, JoinRoomResponse>
+    IPlayerTokenStore playerTokenStore
+) : ICommandHandler<JoinRoomCommand, JoinRoomResponse>
 {
     public async Task<Result<JoinRoomResponse>> HandleAsync(
         JoinRoomCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         var room = await roomRepository.GetByJoinCodeAsync(command.JoinCode, cancellationToken);
 
@@ -30,7 +32,6 @@ public sealed class JoinRoomHandler(
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Ok(new JoinRoomResponse(
-            room.Id.Value, player.Id.Value, playerToken, player.DisplayName));
+        return Result.Ok(new JoinRoomResponse(room.Id.Value, player.Id.Value, playerToken, player.DisplayName));
     }
 }

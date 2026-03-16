@@ -92,8 +92,7 @@ public class UnmarkSquareHandlerTests
 
         var command = new UnmarkSquareCommand(room.Id.Value, host.Id.Value, 0, 0);
 
-        var ex = await Assert.ThrowsAsync<DomainConflictException>(
-            () => _sut.HandleAsync(command));
+        var ex = await Assert.ThrowsAsync<DomainConflictException>(() => _sut.HandleAsync(command));
         Assert.Equal("room_not_active", ex.Code);
     }
 
@@ -108,8 +107,7 @@ public class UnmarkSquareHandlerTests
 
         var command = new UnmarkSquareCommand(room.Id.Value, host.Id.Value, 0, 0);
 
-        var ex = await Assert.ThrowsAsync<DomainConflictException>(
-            () => _sut.HandleAsync(command));
+        var ex = await Assert.ThrowsAsync<DomainConflictException>(() => _sut.HandleAsync(command));
         Assert.Equal("square_not_marked", ex.Code);
     }
 

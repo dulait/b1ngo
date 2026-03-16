@@ -10,7 +10,8 @@ public class Player : Entity<PlayerId>
 
     private Player() { }
 
-    private Player(PlayerId id, string displayName) : base(id)
+    private Player(PlayerId id, string displayName)
+        : base(id)
     {
         DisplayName = displayName;
     }
@@ -27,8 +28,7 @@ public class Player : Entity<PlayerId>
 
         if (Card is not null)
         {
-            throw new DomainConflictException(
-                "card_already_assigned", "Player already has a card assigned.");
+            throw new DomainConflictException("card_already_assigned", "Player already has a card assigned.");
         }
 
         Card = card;

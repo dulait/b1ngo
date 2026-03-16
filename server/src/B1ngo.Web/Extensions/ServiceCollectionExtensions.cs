@@ -16,9 +16,7 @@ internal static class ServiceCollectionExtensions
     {
         public IServiceCollection AddWebServices(IConfiguration configuration)
         {
-            services
-                .AddApplication()
-                .AddInfrastructure(configuration);
+            services.AddApplication().AddInfrastructure(configuration);
 
             services.AddHttpContextAccessor();
             services.AddScoped<ICurrentUserProvider, CurrentUserProvider>();

@@ -46,8 +46,7 @@ public class MarkSquareHandlerTests
     {
         var room = SeedActiveRoom();
         var host = room.GetHost();
-        var command = new MarkSquareCommand(
-            room.Id.Value, host.Id.Value, 0, 0, SquareMarkedBy.Player);
+        var command = new MarkSquareCommand(room.Id.Value, host.Id.Value, 0, 0, SquareMarkedBy.Player);
 
         var result = await _sut.HandleAsync(command);
 
@@ -59,8 +58,7 @@ public class MarkSquareHandlerTests
     {
         var room = SeedActiveRoom();
         var host = room.GetHost();
-        var command = new MarkSquareCommand(
-            room.Id.Value, host.Id.Value, 0, 0, SquareMarkedBy.Player);
+        var command = new MarkSquareCommand(room.Id.Value, host.Id.Value, 0, 0, SquareMarkedBy.Player);
 
         var result = await _sut.HandleAsync(command);
 
@@ -77,8 +75,7 @@ public class MarkSquareHandlerTests
     {
         var room = SeedActiveRoomWithPlayer();
         var player = room.Players[1];
-        var command = new MarkSquareCommand(
-            room.Id.Value, player.Id.Value, 0, 0, SquareMarkedBy.Host);
+        var command = new MarkSquareCommand(room.Id.Value, player.Id.Value, 0, 0, SquareMarkedBy.Host);
 
         var result = await _sut.HandleAsync(command);
 
@@ -90,8 +87,7 @@ public class MarkSquareHandlerTests
     {
         var room = SeedActiveRoom();
         var host = room.GetHost();
-        var command = new MarkSquareCommand(
-            room.Id.Value, host.Id.Value, 0, 0, SquareMarkedBy.Player);
+        var command = new MarkSquareCommand(room.Id.Value, host.Id.Value, 0, 0, SquareMarkedBy.Player);
 
         await _sut.HandleAsync(command);
 
@@ -101,8 +97,7 @@ public class MarkSquareHandlerTests
     [Fact]
     public async Task HandleAsync_WithNonExistentRoom_ReturnsNotFoundError()
     {
-        var command = new MarkSquareCommand(
-            Guid.NewGuid(), Guid.NewGuid(), 0, 0, SquareMarkedBy.Player);
+        var command = new MarkSquareCommand(Guid.NewGuid(), Guid.NewGuid(), 0, 0, SquareMarkedBy.Player);
 
         var result = await _sut.HandleAsync(command);
 
@@ -118,11 +113,9 @@ public class MarkSquareHandlerTests
         host.AssignCard(_cardGenerator.Generate(SessionType.Race, room.Configuration.MatrixSize));
         _roomRepository.Seed(room); // room is in Lobby, not Active
 
-        var command = new MarkSquareCommand(
-            room.Id.Value, host.Id.Value, 0, 0, SquareMarkedBy.Player);
+        var command = new MarkSquareCommand(room.Id.Value, host.Id.Value, 0, 0, SquareMarkedBy.Player);
 
-        var ex = await Assert.ThrowsAsync<DomainConflictException>(
-            () => _sut.HandleAsync(command));
+        var ex = await Assert.ThrowsAsync<DomainConflictException>(() => _sut.HandleAsync(command));
         Assert.Equal("room_not_active", ex.Code);
     }
 
@@ -133,11 +126,9 @@ public class MarkSquareHandlerTests
         var host = room.GetHost();
         room.MarkSquare(host.Id, 0, 0, SquareMarkedBy.Player, DateTimeOffset.UtcNow);
 
-        var command = new MarkSquareCommand(
-            room.Id.Value, host.Id.Value, 0, 0, SquareMarkedBy.Player);
+        var command = new MarkSquareCommand(room.Id.Value, host.Id.Value, 0, 0, SquareMarkedBy.Player);
 
-        var ex = await Assert.ThrowsAsync<DomainConflictException>(
-            () => _sut.HandleAsync(command));
+        var ex = await Assert.ThrowsAsync<DomainConflictException>(() => _sut.HandleAsync(command));
         Assert.Equal("square_already_marked", ex.Code);
     }
 
@@ -148,19 +139,16 @@ public class MarkSquareHandlerTests
         var host = room.GetHost();
         var center = room.Configuration.MatrixSize / 2;
 
-        var command = new MarkSquareCommand(
-            room.Id.Value, host.Id.Value, center, center, SquareMarkedBy.Player);
+        var command = new MarkSquareCommand(room.Id.Value, host.Id.Value, center, center, SquareMarkedBy.Player);
 
-        var ex = await Assert.ThrowsAsync<DomainConflictException>(
-            () => _sut.HandleAsync(command));
+        var ex = await Assert.ThrowsAsync<DomainConflictException>(() => _sut.HandleAsync(command));
         Assert.Equal("square_is_free_space", ex.Code);
     }
 
     [Fact]
     public async Task HandleAsync_WithNonExistentRoom_DoesNotSave()
     {
-        var command = new MarkSquareCommand(
-            Guid.NewGuid(), Guid.NewGuid(), 0, 0, SquareMarkedBy.Player);
+        var command = new MarkSquareCommand(Guid.NewGuid(), Guid.NewGuid(), 0, 0, SquareMarkedBy.Player);
 
         await _sut.HandleAsync(command);
 

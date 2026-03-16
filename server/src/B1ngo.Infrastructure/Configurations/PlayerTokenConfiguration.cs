@@ -13,23 +13,14 @@ internal sealed class PlayerTokenConfiguration : IEntityTypeConfiguration<Player
         builder.HasKey(x => x.Token);
         builder.Property(x => x.Token).HasColumnName("token");
 
-        builder.Property(x => x.PlayerId)
-            .HasColumnName("player_id")
-            .IsRequired();
+        builder.Property(x => x.PlayerId).HasColumnName("player_id").IsRequired();
 
-        builder.Property(x => x.RoomId)
-            .HasColumnName("room_id")
-            .IsRequired();
+        builder.Property(x => x.RoomId).HasColumnName("room_id").IsRequired();
 
-        builder.Property(x => x.IsHost)
-            .HasColumnName("is_host")
-            .IsRequired();
+        builder.Property(x => x.IsHost).HasColumnName("is_host").IsRequired();
 
-        builder.Property(x => x.CreatedAt)
-            .HasColumnName("created_at")
-            .IsRequired();
+        builder.Property(x => x.CreatedAt).HasColumnName("created_at").IsRequired();
 
-        builder.HasIndex(x => x.PlayerId)
-            .HasDatabaseName("ix_player_tokens_player_id");
+        builder.HasIndex(x => x.PlayerId).HasDatabaseName("ix_player_tokens_player_id");
     }
 }

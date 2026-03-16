@@ -4,16 +4,15 @@ using B1ngo.Domain.Game;
 
 namespace B1ngo.Application.Features.Rooms.UnmarkSquare;
 
-public sealed class UnmarkSquareHandler(
-    IRoomRepository roomRepository,
-    IUnitOfWork unitOfWork) : ICommandHandler<UnmarkSquareCommand, UnmarkSquareResponse>
+public sealed class UnmarkSquareHandler(IRoomRepository roomRepository, IUnitOfWork unitOfWork)
+    : ICommandHandler<UnmarkSquareCommand, UnmarkSquareResponse>
 {
     public async Task<Result<UnmarkSquareResponse>> HandleAsync(
         UnmarkSquareCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
-        var room = await roomRepository.GetByIdAsync(
-            RoomId.From(command.RoomId), cancellationToken);
+        var room = await roomRepository.GetByIdAsync(RoomId.From(command.RoomId), cancellationToken);
 
         if (room is null)
         {
@@ -30,12 +29,15 @@ public sealed class UnmarkSquareHandler(
         var player = room.Players.First(p => p.Id == playerId);
         var square = player.Card!.GetSquare(command.Row, command.Column);
 
-        return Result.Ok(new UnmarkSquareResponse(
-            square.Row,
-            square.Column,
-            square.IsMarked,
-            square.MarkedBy?.ToString(),
-            square.MarkedAt,
-            winRevoked));
+        return Result.Ok(
+            new UnmarkSquareResponse(
+                square.Row,
+                square.Column,
+                square.IsMarked,
+                square.MarkedBy?.ToString(),
+                square.MarkedAt,
+                winRevoked
+            )
+        );
     }
 }

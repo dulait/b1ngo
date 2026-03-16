@@ -29,16 +29,16 @@ internal sealed class ValidationFilter(IServiceProvider serviceProvider) : IAsyn
 
             if (failures.Count > 0)
             {
-                var details = failures
-                    .Select(f => $"{f.PropertyName}: {f.ErrorMessage}")
-                    .ToList();
+                var details = failures.Select(f => $"{f.PropertyName}: {f.ErrorMessage}").ToList();
 
-                context.Result = new BadRequestObjectResult(new
-                {
-                    code = "validation_error",
-                    message = "One or more validation errors occurred.",
-                    details
-                });
+                context.Result = new BadRequestObjectResult(
+                    new
+                    {
+                        code = "validation_error",
+                        message = "One or more validation errors occurred.",
+                        details,
+                    }
+                );
                 return;
             }
         }

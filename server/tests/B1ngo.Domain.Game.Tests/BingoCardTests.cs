@@ -20,7 +20,8 @@ public class BingoCardTests
     [Fact]
     public void Constructor_WithIncorrectSquareCount_ThrowsArgumentException()
     {
-        var squares = Enumerable.Range(0, 10)
+        var squares = Enumerable
+            .Range(0, 10)
             .Select(i => BingoSquare.CreatePredefined(i / 5, i % 5, $"E{i}", $"E{i}"))
             .ToList();
 

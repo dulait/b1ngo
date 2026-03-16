@@ -10,15 +10,16 @@ public sealed class FakeRoomRepository : IRoomRepository
 
     public void Seed(Room room) => _rooms.Add(room);
 
-    public Task<Room?> GetByIdAsync(RoomId id, CancellationToken cancellationToken = default)
-        => Task.FromResult(_rooms.FirstOrDefault(r => r.Id == id));
+    public Task<Room?> GetByIdAsync(RoomId id, CancellationToken cancellationToken = default) =>
+        Task.FromResult(_rooms.FirstOrDefault(r => r.Id == id));
 
-    public Task<IReadOnlyList<Room>> GetAllAsync(CancellationToken cancellationToken = default)
-        => Task.FromResult<IReadOnlyList<Room>>(_rooms.AsReadOnly());
+    public Task<IReadOnlyList<Room>> GetAllAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<Room>>(_rooms.AsReadOnly());
 
-    public Task<Room?> GetByJoinCodeAsync(string joinCode, CancellationToken cancellationToken = default)
-        => Task.FromResult(_rooms.FirstOrDefault(r =>
-            string.Equals(r.JoinCode, joinCode, StringComparison.OrdinalIgnoreCase)));
+    public Task<Room?> GetByJoinCodeAsync(string joinCode, CancellationToken cancellationToken = default) =>
+        Task.FromResult(
+            _rooms.FirstOrDefault(r => string.Equals(r.JoinCode, joinCode, StringComparison.OrdinalIgnoreCase))
+        );
 
     public Task AddAsync(Room aggregate, CancellationToken cancellationToken = default)
     {

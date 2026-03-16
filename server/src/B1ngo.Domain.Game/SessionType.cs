@@ -8,5 +8,5 @@ public enum SessionType
     Qualifying,
     SprintQualifying,
     Sprint,
-    Race
+    Race,
 }

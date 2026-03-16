@@ -15,7 +15,8 @@ internal sealed class PlayerTokenStore(B1ngoDbContext dbContext) : IPlayerTokenS
 
     public async Task<PlayerIdentity?> ResolveAsync(Guid token, CancellationToken cancellationToken = default)
     {
-        var playerToken = await dbContext.Set<PlayerToken>()
+        var playerToken = await dbContext
+            .Set<PlayerToken>()
             .AsNoTracking()
             .FirstOrDefaultAsync(t => t.Token == token, cancellationToken);
 

@@ -21,7 +21,8 @@ public class Room : Entity<RoomId>
 
     private Room() { }
 
-    private Room(RoomId id, string joinCode, RaceSession session, RoomConfiguration configuration) : base(id)
+    private Room(RoomId id, string joinCode, RaceSession session, RoomConfiguration configuration)
+        : base(id)
     {
         JoinCode = joinCode;
         Status = RoomStatus.Lobby;
@@ -58,7 +59,8 @@ public class Room : Entity<RoomId>
         {
             throw new DomainConflictException(
                 "display_name_taken",
-                $"A player with display name '{displayName}' already exists in this room.");
+                $"A player with display name '{displayName}' already exists in this room."
+            );
         }
 
         var player = Player.Create(displayName);
@@ -76,7 +78,8 @@ public class Room : Entity<RoomId>
         {
             throw new DomainConflictException(
                 "players_missing_cards",
-                $"Player '{player.DisplayName}' does not have a card assigned. All players must have cards before starting.");
+                $"Player '{player.DisplayName}' does not have a card assigned. All players must have cards before starting."
+            );
         }
 
         Status = RoomStatus.Active;
@@ -99,14 +102,12 @@ public class Room : Entity<RoomId>
 
         if (player.HasWon)
         {
-            throw new DomainConflictException(
-                "player_already_won", "Cannot mark squares — player has already won.");
+            throw new DomainConflictException("player_already_won", "Cannot mark squares — player has already won.");
         }
 
         if (player.Card is null)
         {
-            throw new DomainConflictException(
-                "card_not_assigned", "Player does not have a card assigned.");
+            throw new DomainConflictException("card_not_assigned", "Player does not have a card assigned.");
         }
 
         player.Card.MarkSquare(row, column, markedBy, utcNow);
@@ -144,8 +145,7 @@ public class Room : Entity<RoomId>
 
         if (player.Card is null)
         {
-            throw new DomainConflictException(
-                "card_not_assigned", "Player does not have a card assigned.");
+            throw new DomainConflictException("card_not_assigned", "Player does not have a card assigned.");
         }
 
         player.Card.UnmarkSquare(row, column);
@@ -180,25 +180,25 @@ public class Room : Entity<RoomId>
 
         if (player.Card is null)
         {
-            throw new DomainConflictException(
-                "card_not_assigned", "Player does not have a card assigned.");
+            throw new DomainConflictException("card_not_assigned", "Player does not have a card assigned.");
         }
 
         player.Card.EditSquare(row, column, newDisplayText);
     }
 
-    public Player GetHost()
-        => _players.Find(p => p.Id == HostPlayerId)
-           ?? throw new DomainNotFoundException("host_not_found", "Host player not found in room.");
+    public Player GetHost() =>
+        _players.Find(p => p.Id == HostPlayerId)
+        ?? throw new DomainNotFoundException("host_not_found", "Host player not found in room.");
 
-    public bool HasPlayerWithDisplayName(string displayName)
-        => _players.Exists(p =>
-            string.Equals(p.DisplayName, displayName, StringComparison.OrdinalIgnoreCase));
+    public bool HasPlayerWithDisplayName(string displayName) =>
+        _players.Exists(p => string.Equals(p.DisplayName, displayName, StringComparison.OrdinalIgnoreCase));
 
-    private Player GetPlayerOrThrow(PlayerId playerId)
-        => _players.Find(p => p.Id == playerId)
-           ?? throw new DomainNotFoundException(
-               "player_not_found", $"Player with ID '{playerId.Value}' not found in this room.");
+    private Player GetPlayerOrThrow(PlayerId playerId) =>
+        _players.Find(p => p.Id == playerId)
+        ?? throw new DomainNotFoundException(
+            "player_not_found",
+            $"Player with ID '{playerId.Value}' not found in this room."
+        );
 
     private void EnsureStatus(RoomStatus required, string action)
     {
@@ -211,10 +211,12 @@ public class Room : Entity<RoomId>
         {
             RoomStatus.Lobby => "room_not_in_lobby",
             RoomStatus.Active => "room_not_active",
-            _ => "room_wrong_status"
+            _ => "room_wrong_status",
         };
         throw new DomainConflictException(
-            code, $"Cannot {action} — room is in '{Status}' state, expected '{required}'.");
+            code,
+            $"Cannot {action} — room is in '{Status}' state, expected '{required}'."
+        );
     }
 
     private void RemoveFromLeaderboard(PlayerId playerId)
@@ -234,13 +236,17 @@ public class Room : Entity<RoomId>
     private static string DeriveJoinCode(RoomId id)
     {
         var bytes = id.Value.ToByteArray();
-        return string.Create(JoinCodeLength, bytes, static (span, bytes) =>
-        {
-            for (var i = 0; i < span.Length; i++)
+        return string.Create(
+            JoinCodeLength,
+            bytes,
+            static (span, bytes) =>
             {
-                span[i] = JoinCodeAlphabet[bytes[i] % JoinCodeAlphabet.Length];
+                for (var i = 0; i < span.Length; i++)
+                {
+                    span[i] = JoinCodeAlphabet[bytes[i] % JoinCodeAlphabet.Length];
+                }
             }
-        });
+        );
     }
 }
 

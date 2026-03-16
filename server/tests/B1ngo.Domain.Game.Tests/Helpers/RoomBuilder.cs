@@ -30,6 +30,5 @@ internal sealed class RoomBuilder
         return this;
     }
 
-    public Room Build()
-        => Room.Create(_hostDisplayName, _session, _configuration);
+    public Room Build() => Room.Create(_hostDisplayName, _session, _configuration);
 }

@@ -36,27 +36,27 @@ public sealed class BingoSquare
         return new BingoSquare(row, column, displayText, eventKey, isFreeSpace: false);
     }
 
-    public static BingoSquare CreateFreeSpace(int row, int column)
-        => new(row, column, "FREE", eventKey: null, isFreeSpace: true);
+    public static BingoSquare CreateFreeSpace(int row, int column) =>
+        new(row, column, "FREE", eventKey: null, isFreeSpace: true);
 
     internal void Mark(SquareMarkedBy markedBy, DateTimeOffset markedAt)
     {
         if (IsFreeSpace)
         {
             throw new DomainConflictException(
-                "square_is_free_space", "Cannot mark a free space — it is always marked.");
+                "square_is_free_space",
+                "Cannot mark a free space — it is always marked."
+            );
         }
 
         if (IsMarked)
         {
-            throw new DomainConflictException(
-                "square_already_marked", "Square is already marked.");
+            throw new DomainConflictException("square_already_marked", "Square is already marked.");
         }
 
         if (markedBy == SquareMarkedBy.Api && EventKey is null)
         {
-            throw new DomainConflictException(
-                "square_is_custom", "Custom squares cannot be auto-marked.");
+            throw new DomainConflictException("square_is_custom", "Custom squares cannot be auto-marked.");
         }
 
         IsMarked = true;
@@ -68,14 +68,12 @@ public sealed class BingoSquare
     {
         if (IsFreeSpace)
         {
-            throw new DomainConflictException(
-                "square_is_free_space", "Cannot unmark a free space.");
+            throw new DomainConflictException("square_is_free_space", "Cannot unmark a free space.");
         }
 
         if (!IsMarked)
         {
-            throw new DomainConflictException(
-                "square_not_marked", "Square is not marked.");
+            throw new DomainConflictException("square_not_marked", "Square is not marked.");
         }
 
         IsMarked = false;
@@ -87,8 +85,7 @@ public sealed class BingoSquare
     {
         if (IsFreeSpace)
         {
-            throw new DomainConflictException(
-                "square_is_free_space", "Cannot edit a free space.");
+            throw new DomainConflictException("square_is_free_space", "Cannot edit a free space.");
         }
 
         ArgumentException.ThrowIfNullOrWhiteSpace(newDisplayText);

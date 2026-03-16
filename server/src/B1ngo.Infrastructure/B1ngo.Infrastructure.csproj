@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -21,5 +20,4 @@
     <ProjectReference Include="..\B1ngo.Domain.Core\B1ngo.Domain.Core.csproj" />
     <ProjectReference Include="..\B1ngo.Domain.Game\B1ngo.Domain.Game.csproj" />
   </ItemGroup>
-
 </Project>

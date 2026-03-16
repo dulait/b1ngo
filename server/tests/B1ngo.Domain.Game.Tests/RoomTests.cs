@@ -327,7 +327,8 @@ public class RoomTests
 
         Assert.True(sut.Players[0].HasWon);
         var ex = Assert.Throws<DomainConflictException>(() =>
-            sut.MarkSquare(playerId, 1, 0, SquareMarkedBy.Player, Now));
+            sut.MarkSquare(playerId, 1, 0, SquareMarkedBy.Player, Now)
+        );
         Assert.Equal("player_already_won", ex.Code);
     }
 
@@ -337,8 +338,7 @@ public class RoomTests
         var sut = CreateLobbyRoomWithCards();
         var playerId = sut.Players[0].Id;
 
-        Assert.Throws<DomainConflictException>(() =>
-            sut.MarkSquare(playerId, 0, 0, SquareMarkedBy.Player, Now));
+        Assert.Throws<DomainConflictException>(() => sut.MarkSquare(playerId, 0, 0, SquareMarkedBy.Player, Now));
     }
 
     [Fact]
@@ -347,8 +347,7 @@ public class RoomTests
         var sut = CreateActiveRoom();
         var fakePlayerId = PlayerId.New();
 
-        Assert.Throws<DomainNotFoundException>(() =>
-            sut.MarkSquare(fakePlayerId, 0, 0, SquareMarkedBy.Player, Now));
+        Assert.Throws<DomainNotFoundException>(() => sut.MarkSquare(fakePlayerId, 0, 0, SquareMarkedBy.Player, Now));
     }
 
     [Fact]
@@ -509,8 +508,7 @@ public class RoomTests
         var sut = CreateActiveRoom();
         var playerId = sut.Players[0].Id;
 
-        var ex = Assert.Throws<DomainConflictException>(() =>
-            sut.EditSquare(playerId, 0, 0, "Custom"));
+        var ex = Assert.Throws<DomainConflictException>(() => sut.EditSquare(playerId, 0, 0, "Custom"));
         Assert.Equal("room_not_in_lobby", ex.Code);
     }
 
@@ -520,8 +518,7 @@ public class RoomTests
         var sut = CreateLobbyRoomWithCards();
         var playerId = sut.Players[0].Id;
 
-        var ex = Assert.Throws<DomainConflictException>(() =>
-            sut.EditSquare(playerId, 2, 2, "Custom"));
+        var ex = Assert.Throws<DomainConflictException>(() => sut.EditSquare(playerId, 2, 2, "Custom"));
         Assert.Equal("square_is_free_space", ex.Code);
     }
 

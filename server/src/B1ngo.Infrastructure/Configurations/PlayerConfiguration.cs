@@ -10,15 +10,17 @@ internal sealed class PlayerConfiguration : IEntityTypeConfiguration<Player>
     {
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.DisplayName)
-            .HasMaxLength(50);
+        builder.Property(x => x.DisplayName).HasMaxLength(50);
 
         builder.Property(x => x.HasWon);
 
-        builder.OwnsOne(x => x.Card, card =>
-        {
-            card.ToJson();
-            card.OwnsMany(c => c.Squares);
-        });
+        builder.OwnsOne(
+            x => x.Card,
+            card =>
+            {
+                card.ToJson();
+                card.OwnsMany(c => c.Squares);
+            }
+        );
     }
 }

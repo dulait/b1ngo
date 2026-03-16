@@ -17,11 +17,8 @@ public class CreateRoomHandlerTests
         _sut = new CreateRoomHandler(_roomRepository, _unitOfWork, _cardGenerator, _playerTokenStore);
     }
 
-    private static CreateRoomCommand ValidCommand => new(
-        HostDisplayName: "Host",
-        Season: 2026,
-        GrandPrixName: "Bahrain Grand Prix",
-        SessionType: SessionType.Race);
+    private static CreateRoomCommand ValidCommand =>
+        new(HostDisplayName: "Host", Season: 2026, GrandPrixName: "Bahrain Grand Prix", SessionType: SessionType.Race);
 
     [Fact]
     public async Task HandleAsync_WithValidInputs_ReturnsSuccessResult()
@@ -62,11 +59,7 @@ public class CreateRoomHandlerTests
     [Fact]
     public async Task HandleAsync_WithCustomConfiguration_CreatesRoomWithCustomConfig()
     {
-        var command = ValidCommand with
-        {
-            MatrixSize = 7,
-            WinningPatterns = [WinPatternType.Blackout]
-        };
+        var command = ValidCommand with { MatrixSize = 7, WinningPatterns = [WinPatternType.Blackout] };
 
         var result = await _sut.HandleAsync(command);
 

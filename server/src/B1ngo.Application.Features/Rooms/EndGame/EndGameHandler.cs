@@ -4,16 +4,15 @@ using B1ngo.Domain.Game;
 
 namespace B1ngo.Application.Features.Rooms.EndGame;
 
-public sealed class EndGameHandler(
-    IRoomRepository roomRepository,
-    IUnitOfWork unitOfWork) : ICommandHandler<EndGameCommand, EndGameResponse>
+public sealed class EndGameHandler(IRoomRepository roomRepository, IUnitOfWork unitOfWork)
+    : ICommandHandler<EndGameCommand, EndGameResponse>
 {
     public async Task<Result<EndGameResponse>> HandleAsync(
         EndGameCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
-        var room = await roomRepository.GetByIdAsync(
-            RoomId.From(command.RoomId), cancellationToken);
+        var room = await roomRepository.GetByIdAsync(RoomId.From(command.RoomId), cancellationToken);
 
         if (room is null)
         {

@@ -6,8 +6,6 @@ public sealed class StartGameCommandValidator : AbstractValidator<StartGameComma
 {
     public StartGameCommandValidator()
     {
-        RuleFor(x => x.RoomId)
-            .NotEmpty()
-            .WithMessage("Room ID is required.");
+        RuleFor(x => x.RoomId).NotEmpty().WithMessage("Room ID is required.");
     }
 }

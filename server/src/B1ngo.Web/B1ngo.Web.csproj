@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -28,5 +27,4 @@
     <ProjectReference Include="..\B1ngo.Domain.Game\B1ngo.Domain.Game.csproj" />
     <ProjectReference Include="..\B1ngo.Infrastructure\B1ngo.Infrastructure.csproj" />
   </ItemGroup>
-
 </Project>

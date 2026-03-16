@@ -102,8 +102,7 @@ public class JoinRoomHandlerTests
         room.AddPlayer("Alice");
         var command = new JoinRoomCommand(room.JoinCode, "Alice");
 
-        var ex = await Assert.ThrowsAsync<DomainConflictException>(
-            () => _sut.HandleAsync(command));
+        var ex = await Assert.ThrowsAsync<DomainConflictException>(() => _sut.HandleAsync(command));
         Assert.Equal("display_name_taken", ex.Code);
     }
 
@@ -114,8 +113,7 @@ public class JoinRoomHandlerTests
         room.AddPlayer("Alice");
         var command = new JoinRoomCommand(room.JoinCode, "alice");
 
-        var ex = await Assert.ThrowsAsync<DomainConflictException>(
-            () => _sut.HandleAsync(command));
+        var ex = await Assert.ThrowsAsync<DomainConflictException>(() => _sut.HandleAsync(command));
         Assert.Equal("display_name_taken", ex.Code);
     }
 }

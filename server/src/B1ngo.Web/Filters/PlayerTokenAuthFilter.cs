@@ -13,8 +13,7 @@ internal sealed class PlayerTokenAuthFilter(IPlayerTokenStore playerTokenStore) 
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        var requiresToken = context.ActionDescriptor.EndpointMetadata
-            .Any(m => m is RequirePlayerTokenAttribute);
+        var requiresToken = context.ActionDescriptor.EndpointMetadata.Any(m => m is RequirePlayerTokenAttribute);
 
         if (!requiresToken)
         {
@@ -22,8 +21,10 @@ internal sealed class PlayerTokenAuthFilter(IPlayerTokenStore playerTokenStore) 
             return;
         }
 
-        if (!context.HttpContext.Request.Headers.TryGetValue(TokenHeader, out var tokenValue) ||
-            !Guid.TryParse(tokenValue.FirstOrDefault(), out var token))
+        if (
+            !context.HttpContext.Request.Headers.TryGetValue(TokenHeader, out var tokenValue)
+            || !Guid.TryParse(tokenValue.FirstOrDefault(), out var token)
+        )
         {
             context.Result = ErrorResult(401, Error.Unauthorized());
             return;
@@ -44,8 +45,7 @@ internal sealed class PlayerTokenAuthFilter(IPlayerTokenStore playerTokenStore) 
             return;
         }
 
-        var requiresHost = context.ActionDescriptor.EndpointMetadata
-            .Any(m => m is HostOnlyAttribute);
+        var requiresHost = context.ActionDescriptor.EndpointMetadata.Any(m => m is HostOnlyAttribute);
 
         if (requiresHost && !identity.IsHost)
         {
@@ -53,13 +53,14 @@ internal sealed class PlayerTokenAuthFilter(IPlayerTokenStore playerTokenStore) 
             return;
         }
 
-        var requiresPlayerOrHost = context.ActionDescriptor.EndpointMetadata
-            .Any(m => m is PlayerOrHostAttribute);
+        var requiresPlayerOrHost = context.ActionDescriptor.EndpointMetadata.Any(m => m is PlayerOrHostAttribute);
 
         if (requiresPlayerOrHost)
         {
-            if (!context.ActionArguments.TryGetValue("playerId", out var routePlayerId) ||
-                routePlayerId is not Guid targetPlayerId)
+            if (
+                !context.ActionArguments.TryGetValue("playerId", out var routePlayerId)
+                || routePlayerId is not Guid targetPlayerId
+            )
             {
                 context.Result = ErrorResult(403, Error.Forbidden());
                 return;
@@ -83,11 +84,11 @@ internal sealed class PlayerTokenAuthFilter(IPlayerTokenStore playerTokenStore) 
         await next();
     }
 
-    private static bool HasRoomIdMismatch(ActionExecutingContext context, PlayerIdentity identity)
-        => context.ActionArguments.TryGetValue("roomId", out var routeRoomId)
-           && routeRoomId is Guid roomId
-           && identity.RoomId != roomId;
+    private static bool HasRoomIdMismatch(ActionExecutingContext context, PlayerIdentity identity) =>
+        context.ActionArguments.TryGetValue("roomId", out var routeRoomId)
+        && routeRoomId is Guid roomId
+        && identity.RoomId != roomId;
 
-    private static ObjectResult ErrorResult(int statusCode, Error error)
-        => new(new { error.Code, error.Message }) { StatusCode = statusCode };
+    private static ObjectResult ErrorResult(int statusCode, Error error) =>
+        new(new { error.Code, error.Message }) { StatusCode = statusCode };
 }

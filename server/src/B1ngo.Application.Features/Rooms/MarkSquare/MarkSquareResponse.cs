@@ -6,6 +6,7 @@ public sealed record MarkSquareResponse(
     bool IsMarked,
     string MarkedBy,
     DateTimeOffset MarkedAt,
-    BingoInfo? Bingo);
+    BingoInfo? Bingo
+);
 
 public sealed record BingoInfo(string Pattern, int Rank);

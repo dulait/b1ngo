@@ -8,11 +8,13 @@ public sealed class CreateRoomHandler(
     IRoomRepository roomRepository,
     IUnitOfWork unitOfWork,
     IBingoCardGenerator cardGenerator,
-    IPlayerTokenStore playerTokenStore) : ICommandHandler<CreateRoomCommand, CreateRoomResponse>
+    IPlayerTokenStore playerTokenStore
+) : ICommandHandler<CreateRoomCommand, CreateRoomResponse>
 {
     public async Task<Result<CreateRoomResponse>> HandleAsync(
         CreateRoomCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         var session = new RaceSession(command.Season, command.GrandPrixName, command.SessionType);
         var configuration = BuildConfiguration(command);
@@ -28,8 +30,7 @@ public sealed class CreateRoomHandler(
         await roomRepository.AddAsync(room, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Ok(new CreateRoomResponse(
-            room.Id.Value, room.JoinCode, host.Id.Value, playerToken));
+        return Result.Ok(new CreateRoomResponse(room.Id.Value, room.JoinCode, host.Id.Value, playerToken));
     }
 
     private static RoomConfiguration? BuildConfiguration(CreateRoomCommand command)
@@ -40,8 +41,7 @@ public sealed class CreateRoomHandler(
         }
 
         var matrixSize = command.MatrixSize ?? RoomConfiguration.DefaultMatrixSize;
-        var patterns = command.WinningPatterns
-            ?? RoomConfiguration.DefaultWinningPatterns;
+        var patterns = command.WinningPatterns ?? RoomConfiguration.DefaultWinningPatterns;
 
         return new RoomConfiguration(matrixSize, patterns);
     }

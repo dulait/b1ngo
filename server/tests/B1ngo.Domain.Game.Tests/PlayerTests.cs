@@ -44,8 +44,7 @@ public class PlayerTests
         var sut = Player.Create("Alice");
         sut.AssignCard(new BingoCardBuilder().Build());
 
-        var ex = Assert.Throws<DomainConflictException>(() =>
-            sut.AssignCard(new BingoCardBuilder().Build()));
+        var ex = Assert.Throws<DomainConflictException>(() => sut.AssignCard(new BingoCardBuilder().Build()));
         Assert.Equal("card_already_assigned", ex.Code);
     }
 

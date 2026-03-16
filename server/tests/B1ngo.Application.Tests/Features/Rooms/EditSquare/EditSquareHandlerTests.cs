@@ -33,8 +33,7 @@ public class EditSquareHandlerTests
     public async Task HandleAsync_WithValidInputs_ReturnsSuccessResult()
     {
         var (room, player) = SeedRoomWithPlayer();
-        var command = new EditSquareCommand(
-            room.Id.Value, player.Id.Value, 0, 0, "My custom text");
+        var command = new EditSquareCommand(room.Id.Value, player.Id.Value, 0, 0, "My custom text");
 
         var result = await _sut.HandleAsync(command);
 
@@ -45,8 +44,7 @@ public class EditSquareHandlerTests
     public async Task HandleAsync_WithValidInputs_ReturnsUpdatedSquare()
     {
         var (room, player) = SeedRoomWithPlayer();
-        var command = new EditSquareCommand(
-            room.Id.Value, player.Id.Value, 0, 0, "My custom text");
+        var command = new EditSquareCommand(room.Id.Value, player.Id.Value, 0, 0, "My custom text");
 
         var result = await _sut.HandleAsync(command);
 
@@ -60,8 +58,7 @@ public class EditSquareHandlerTests
     public async Task HandleAsync_WithValidInputs_SavesChanges()
     {
         var (room, player) = SeedRoomWithPlayer();
-        var command = new EditSquareCommand(
-            room.Id.Value, player.Id.Value, 0, 0, "My custom text");
+        var command = new EditSquareCommand(room.Id.Value, player.Id.Value, 0, 0, "My custom text");
 
         await _sut.HandleAsync(command);
 
@@ -71,8 +68,7 @@ public class EditSquareHandlerTests
     [Fact]
     public async Task HandleAsync_WithNonExistentRoom_ReturnsNotFoundError()
     {
-        var command = new EditSquareCommand(
-            Guid.NewGuid(), Guid.NewGuid(), 0, 0, "My custom text");
+        var command = new EditSquareCommand(Guid.NewGuid(), Guid.NewGuid(), 0, 0, "My custom text");
 
         var result = await _sut.HandleAsync(command);
 
@@ -83,8 +79,7 @@ public class EditSquareHandlerTests
     [Fact]
     public async Task HandleAsync_WithNonExistentRoom_DoesNotSave()
     {
-        var command = new EditSquareCommand(
-            Guid.NewGuid(), Guid.NewGuid(), 0, 0, "My custom text");
+        var command = new EditSquareCommand(Guid.NewGuid(), Guid.NewGuid(), 0, 0, "My custom text");
 
         await _sut.HandleAsync(command);
 
@@ -101,11 +96,9 @@ public class EditSquareHandlerTests
         host.AssignCard(hostCard);
         room.StartGame();
 
-        var command = new EditSquareCommand(
-            room.Id.Value, player.Id.Value, 0, 0, "My custom text");
+        var command = new EditSquareCommand(room.Id.Value, player.Id.Value, 0, 0, "My custom text");
 
-        var ex = await Assert.ThrowsAsync<DomainConflictException>(
-            () => _sut.HandleAsync(command));
+        var ex = await Assert.ThrowsAsync<DomainConflictException>(() => _sut.HandleAsync(command));
         Assert.Equal("room_not_in_lobby", ex.Code);
     }
 
@@ -114,11 +107,9 @@ public class EditSquareHandlerTests
     {
         var (room, player) = SeedRoomWithPlayer();
         var center = room.Configuration.MatrixSize / 2;
-        var command = new EditSquareCommand(
-            room.Id.Value, player.Id.Value, center, center, "My custom text");
+        var command = new EditSquareCommand(room.Id.Value, player.Id.Value, center, center, "My custom text");
 
-        var ex = await Assert.ThrowsAsync<DomainConflictException>(
-            () => _sut.HandleAsync(command));
+        var ex = await Assert.ThrowsAsync<DomainConflictException>(() => _sut.HandleAsync(command));
         Assert.Equal("square_is_free_space", ex.Code);
     }
 }

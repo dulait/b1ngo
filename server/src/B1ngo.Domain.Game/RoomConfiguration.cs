@@ -5,7 +5,11 @@ public sealed record RoomConfiguration
     public const int DefaultMatrixSize = 5;
 
     public static readonly IReadOnlyList<WinPatternType> DefaultWinningPatterns =
-        [WinPatternType.Row, WinPatternType.Column, WinPatternType.Diagonal];
+    [
+        WinPatternType.Row,
+        WinPatternType.Column,
+        WinPatternType.Diagonal,
+    ];
 
     public int MatrixSize { get; init; }
     public IReadOnlyList<WinPatternType> WinningPatterns { get; init; } = [];

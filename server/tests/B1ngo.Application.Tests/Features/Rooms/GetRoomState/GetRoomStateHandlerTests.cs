@@ -170,5 +170,4 @@ public class GetRoomStateHandlerTests
         Assert.True(result.IsFailure);
         Assert.Equal("room_not_found", result.Error!.Code);
     }
-
 }

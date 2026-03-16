@@ -18,7 +18,7 @@ public sealed class PlayerToken
             PlayerId = playerId,
             RoomId = roomId,
             IsHost = isHost,
-            CreatedAt = DateTimeOffset.UtcNow
+            CreatedAt = DateTimeOffset.UtcNow,
         };
     }
 }

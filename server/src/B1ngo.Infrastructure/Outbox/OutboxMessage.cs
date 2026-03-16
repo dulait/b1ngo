@@ -20,7 +20,7 @@ public sealed class OutboxMessage
             EventType = eventType,
             Payload = payload,
             OccurredAt = occurredAt,
-            RetryCount = 0
+            RetryCount = 0,
         };
     }
 

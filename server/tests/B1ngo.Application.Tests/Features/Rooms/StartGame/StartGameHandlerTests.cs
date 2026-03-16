@@ -102,8 +102,7 @@ public class StartGameHandlerTests
         room.StartGame();
         var command = new StartGameCommand(room.Id.Value);
 
-        var ex = await Assert.ThrowsAsync<DomainConflictException>(
-            () => _sut.HandleAsync(command));
+        var ex = await Assert.ThrowsAsync<DomainConflictException>(() => _sut.HandleAsync(command));
         Assert.Equal("room_not_in_lobby", ex.Code);
     }
 
@@ -114,8 +113,7 @@ public class StartGameHandlerTests
         room.AddPlayer("Alice"); // Alice has no card
         var command = new StartGameCommand(room.Id.Value);
 
-        var ex = await Assert.ThrowsAsync<DomainConflictException>(
-            () => _sut.HandleAsync(command));
+        var ex = await Assert.ThrowsAsync<DomainConflictException>(() => _sut.HandleAsync(command));
         Assert.Equal("players_missing_cards", ex.Code);
     }
 
@@ -126,8 +124,7 @@ public class StartGameHandlerTests
         room.AddPlayer("Alice"); // Alice has no card
         var command = new StartGameCommand(room.Id.Value);
 
-        await Assert.ThrowsAsync<DomainConflictException>(
-            () => _sut.HandleAsync(command));
+        await Assert.ThrowsAsync<DomainConflictException>(() => _sut.HandleAsync(command));
 
         Assert.Equal(0, _unitOfWork.SaveChangesCallCount);
     }

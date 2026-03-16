@@ -9,4 +9,5 @@ public sealed record CreateRoomCommand(
     string GrandPrixName,
     SessionType SessionType,
     int? MatrixSize = null,
-    List<WinPatternType>? WinningPatterns = null) : ICommand<CreateRoomResponse>;
+    List<WinPatternType>? WinningPatterns = null
+) : ICommand<CreateRoomResponse>;

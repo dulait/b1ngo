@@ -4,7 +4,10 @@ namespace B1ngo.Infrastructure;
 
 public sealed class DomainEventDispatcher(IServiceProvider serviceProvider) : IDomainEventDispatcher
 {
-    public async Task DispatchAsync(IEnumerable<IDomainEvent> domainEvents, CancellationToken cancellationToken = default)
+    public async Task DispatchAsync(
+        IEnumerable<IDomainEvent> domainEvents,
+        CancellationToken cancellationToken = default
+    )
     {
         foreach (var domainEvent in domainEvents)
         {

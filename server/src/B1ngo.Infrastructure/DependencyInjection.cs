@@ -13,12 +13,11 @@ namespace B1ngo.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(
-        this IServiceCollection services,
-        IConfiguration configuration)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<B1ngoDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("Database")));
+            options.UseNpgsql(configuration.GetConnectionString("Database"))
+        );
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();

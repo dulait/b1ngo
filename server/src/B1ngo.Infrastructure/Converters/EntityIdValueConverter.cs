@@ -5,4 +5,4 @@ namespace B1ngo.Infrastructure.Converters;
 
 public sealed class EntityIdValueConverter<TId>()
     : ValueConverter<TId, Guid>(id => id.Value, guid => EntityId<TId>.From(guid))
-        where TId : EntityId<TId>;
+    where TId : EntityId<TId>;

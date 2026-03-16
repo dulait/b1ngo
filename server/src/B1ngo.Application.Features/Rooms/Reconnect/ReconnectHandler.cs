@@ -3,15 +3,14 @@ using B1ngo.Domain.Game;
 
 namespace B1ngo.Application.Features.Rooms.Reconnect;
 
-public sealed class ReconnectHandler(
-    IRoomRepository roomRepository) : IQueryHandler<ReconnectQuery, ReconnectResponse>
+public sealed class ReconnectHandler(IRoomRepository roomRepository) : IQueryHandler<ReconnectQuery, ReconnectResponse>
 {
     public async Task<Result<ReconnectResponse>> HandleAsync(
         ReconnectQuery query,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
-        var room = await roomRepository.GetByIdAsync(
-            RoomId.From(query.RoomId), cancellationToken);
+        var room = await roomRepository.GetByIdAsync(RoomId.From(query.RoomId), cancellationToken);
 
         if (room is null)
         {

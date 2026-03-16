@@ -4,16 +4,15 @@ using B1ngo.Domain.Game;
 
 namespace B1ngo.Application.Features.Rooms.MarkSquare;
 
-public sealed class MarkSquareHandler(
-    IRoomRepository roomRepository,
-    IUnitOfWork unitOfWork) : ICommandHandler<MarkSquareCommand, MarkSquareResponse>
+public sealed class MarkSquareHandler(IRoomRepository roomRepository, IUnitOfWork unitOfWork)
+    : ICommandHandler<MarkSquareCommand, MarkSquareResponse>
 {
     public async Task<Result<MarkSquareResponse>> HandleAsync(
         MarkSquareCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
-        var room = await roomRepository.GetByIdAsync(
-            RoomId.From(command.RoomId), cancellationToken);
+        var room = await roomRepository.GetByIdAsync(RoomId.From(command.RoomId), cancellationToken);
 
         if (room is null)
         {
@@ -31,16 +30,17 @@ public sealed class MarkSquareHandler(
         var player = room.Players.First(p => p.Id == playerId);
         var square = player.Card!.GetSquare(command.Row, command.Column);
 
-        var bingo = winResult is not null
-            ? new BingoInfo(winResult.Pattern.ToString(), winResult.Rank)
-            : null;
+        var bingo = winResult is not null ? new BingoInfo(winResult.Pattern.ToString(), winResult.Rank) : null;
 
-        return Result.Ok(new MarkSquareResponse(
-            square.Row,
-            square.Column,
-            square.IsMarked,
-            square.MarkedBy!.Value.ToString(),
-            square.MarkedAt!.Value,
-            bingo));
+        return Result.Ok(
+            new MarkSquareResponse(
+                square.Row,
+                square.Column,
+                square.IsMarked,
+                square.MarkedBy!.Value.ToString(),
+                square.MarkedAt!.Value,
+                bingo
+            )
+        );
     }
 }

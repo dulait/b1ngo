@@ -4,5 +4,5 @@ public enum SquareMarkedBy
 {
     Api,
     Player,
-    Host
+    Host,
 }

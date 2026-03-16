@@ -20,12 +20,13 @@ namespace B1ngo.Infrastructure.Migrations
                     created_by = table.Column<Guid>(type: "uuid", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     last_modified_by = table.Column<Guid>(type: "uuid", nullable: true),
-                    last_modified_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                    last_modified_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_rooms", x => x.id);
-                });
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "players",
@@ -38,7 +39,7 @@ namespace B1ngo.Infrastructure.Migrations
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     last_modified_by = table.Column<Guid>(type: "uuid", nullable: true),
                     last_modified_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    BingoCard = table.Column<string>(type: "jsonb", nullable: true)
+                    BingoCard = table.Column<string>(type: "jsonb", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -48,23 +49,20 @@ namespace B1ngo.Infrastructure.Migrations
                         column: x => x.room_id,
                         principalTable: "rooms",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+                        onDelete: ReferentialAction.Cascade
+                    );
+                }
+            );
 
-            migrationBuilder.CreateIndex(
-                name: "IX_players_room_id",
-                table: "players",
-                column: "room_id");
+            migrationBuilder.CreateIndex(name: "IX_players_room_id", table: "players", column: "room_id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "players");
+            migrationBuilder.DropTable(name: "players");
 
-            migrationBuilder.DropTable(
-                name: "rooms");
+            migrationBuilder.DropTable(name: "rooms");
         }
     }
 }

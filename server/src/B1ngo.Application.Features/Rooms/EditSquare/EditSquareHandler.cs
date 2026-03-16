@@ -4,21 +4,19 @@ using B1ngo.Domain.Game;
 
 namespace B1ngo.Application.Features.Rooms.EditSquare;
 
-public sealed class EditSquareHandler(
-    IRoomRepository roomRepository,
-    IUnitOfWork unitOfWork) : ICommandHandler<EditSquareCommand, EditSquareResponse>
+public sealed class EditSquareHandler(IRoomRepository roomRepository, IUnitOfWork unitOfWork)
+    : ICommandHandler<EditSquareCommand, EditSquareResponse>
 {
     public async Task<Result<EditSquareResponse>> HandleAsync(
         EditSquareCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
-        var room = await roomRepository.GetByIdAsync(
-            RoomId.From(command.RoomId), cancellationToken);
+        var room = await roomRepository.GetByIdAsync(RoomId.From(command.RoomId), cancellationToken);
 
         if (room is null)
         {
-            return Result.Fail<EditSquareResponse>(
-                Error.NotFound("room", command.RoomId));
+            return Result.Fail<EditSquareResponse>(Error.NotFound("room", command.RoomId));
         }
 
         var playerId = PlayerId.From(command.PlayerId);
@@ -29,7 +27,6 @@ public sealed class EditSquareHandler(
         var player = room.Players.First(p => p.Id == playerId);
         var square = player.Card!.GetSquare(command.Row, command.Column);
 
-        return Result.Ok(new EditSquareResponse(
-            square.Row, square.Column, square.DisplayText, square.EventKey));
+        return Result.Ok(new EditSquareResponse(square.Row, square.Column, square.DisplayText, square.EventKey));
     }
 }

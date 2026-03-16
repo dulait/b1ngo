@@ -8,11 +8,8 @@ public class CreateRoomCommandValidatorTests
 {
     private readonly CreateRoomCommandValidator _sut = new();
 
-    private static CreateRoomCommand ValidCommand => new(
-        HostDisplayName: "Host",
-        Season: 2026,
-        GrandPrixName: "Bahrain Grand Prix",
-        SessionType: SessionType.Race);
+    private static CreateRoomCommand ValidCommand =>
+        new(HostDisplayName: "Host", Season: 2026, GrandPrixName: "Bahrain Grand Prix", SessionType: SessionType.Race);
 
     [Fact]
     public async Task Validate_WithValidCommand_HasNoErrors()
@@ -111,7 +108,13 @@ public class CreateRoomCommandValidatorTests
     {
         var command = ValidCommand with
         {
-            WinningPatterns = [WinPatternType.Row, WinPatternType.Column, WinPatternType.Diagonal, WinPatternType.Blackout]
+            WinningPatterns =
+            [
+                WinPatternType.Row,
+                WinPatternType.Column,
+                WinPatternType.Diagonal,
+                WinPatternType.Blackout,
+            ],
         };
 
         var result = await _sut.TestValidateAsync(command);

@@ -29,29 +29,25 @@ public class RoomConfigurationTests
     [Fact]
     public void Constructor_WithMatrixSizeLessThan3_ThrowsArgumentOutOfRangeException()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new RoomConfiguration(2, [WinPatternType.Row]));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new RoomConfiguration(2, [WinPatternType.Row]));
     }
 
     [Fact]
     public void Constructor_WithMatrixSizeGreaterThan9_ThrowsArgumentOutOfRangeException()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new RoomConfiguration(10, [WinPatternType.Row]));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new RoomConfiguration(10, [WinPatternType.Row]));
     }
 
     [Fact]
     public void Constructor_WithEvenMatrixSize_ThrowsArgumentException()
     {
-        Assert.Throws<ArgumentException>(() =>
-            new RoomConfiguration(4, [WinPatternType.Row]));
+        Assert.Throws<ArgumentException>(() => new RoomConfiguration(4, [WinPatternType.Row]));
     }
 
     [Fact]
     public void Constructor_WithEmptyWinningPatterns_ThrowsArgumentException()
     {
-        Assert.Throws<ArgumentException>(() =>
-            new RoomConfiguration(5, []));
+        Assert.Throws<ArgumentException>(() => new RoomConfiguration(5, []));
     }
 
     [Fact]

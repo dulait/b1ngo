@@ -4,15 +4,15 @@ namespace B1ngo.Infrastructure.CardGeneration;
 
 internal static class EventPool
 {
-    public static IReadOnlyList<EventPoolEntry> GetEvents(SessionType sessionType)
-        => sessionType switch
+    public static IReadOnlyList<EventPoolEntry> GetEvents(SessionType sessionType) =>
+        sessionType switch
         {
             SessionType.Race => RaceEvents,
             SessionType.Qualifying => QualifyingEvents,
             SessionType.Sprint => SprintEvents,
             SessionType.SprintQualifying => SprintQualifyingEvents,
             SessionType.FP1 or SessionType.FP2 or SessionType.FP3 => PracticeEvents,
-            _ => RaceEvents
+            _ => RaceEvents,
         };
 
     private static readonly List<EventPoolEntry> RaceEvents =

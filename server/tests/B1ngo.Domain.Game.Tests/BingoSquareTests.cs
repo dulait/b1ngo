@@ -49,8 +49,7 @@ public class BingoSquareTests
     {
         var sut = BingoSquare.CreateFreeSpace(2, 2);
 
-        var ex = Assert.Throws<DomainConflictException>(() =>
-            sut.Mark(SquareMarkedBy.Player, DateTimeOffset.UtcNow));
+        var ex = Assert.Throws<DomainConflictException>(() => sut.Mark(SquareMarkedBy.Player, DateTimeOffset.UtcNow));
         Assert.Equal("square_is_free_space", ex.Code);
     }
 
@@ -60,8 +59,7 @@ public class BingoSquareTests
         var sut = BingoSquare.CreatePredefined(0, 0, "Red Flag", "RED_FLAG");
         sut.Mark(SquareMarkedBy.Player, DateTimeOffset.UtcNow);
 
-        var ex = Assert.Throws<DomainConflictException>(() =>
-            sut.Mark(SquareMarkedBy.Player, DateTimeOffset.UtcNow));
+        var ex = Assert.Throws<DomainConflictException>(() => sut.Mark(SquareMarkedBy.Player, DateTimeOffset.UtcNow));
         Assert.Equal("square_already_marked", ex.Code);
     }
 
@@ -71,8 +69,7 @@ public class BingoSquareTests
         var sut = BingoSquare.CreatePredefined(0, 0, "Red Flag", "RED_FLAG");
         sut.Edit("My custom event");
 
-        var ex = Assert.Throws<DomainConflictException>(() =>
-            sut.Mark(SquareMarkedBy.Api, DateTimeOffset.UtcNow));
+        var ex = Assert.Throws<DomainConflictException>(() => sut.Mark(SquareMarkedBy.Api, DateTimeOffset.UtcNow));
         Assert.Equal("square_is_custom", ex.Code);
     }
 

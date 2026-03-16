@@ -10,19 +10,13 @@ namespace B1ngo.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateIndex(
-                name: "IX_rooms_join_code",
-                table: "rooms",
-                column: "join_code",
-                unique: true);
+            migrationBuilder.CreateIndex(name: "IX_rooms_join_code", table: "rooms", column: "join_code", unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropIndex(
-                name: "IX_rooms_join_code",
-                table: "rooms");
+            migrationBuilder.DropIndex(name: "IX_rooms_join_code", table: "rooms");
         }
     }
 }

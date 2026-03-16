@@ -5,5 +5,5 @@ public enum WinPatternType
     Row,
     Column,
     Diagonal,
-    Blackout
+    Blackout,
 }

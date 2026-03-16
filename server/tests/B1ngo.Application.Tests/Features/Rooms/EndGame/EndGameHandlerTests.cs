@@ -102,8 +102,7 @@ public class EndGameHandlerTests
         _roomRepository.Seed(room);
         var command = new EndGameCommand(room.Id.Value);
 
-        var ex = await Assert.ThrowsAsync<DomainConflictException>(
-            () => _sut.HandleAsync(command));
+        var ex = await Assert.ThrowsAsync<DomainConflictException>(() => _sut.HandleAsync(command));
         Assert.Equal("room_not_active", ex.Code);
     }
 }
