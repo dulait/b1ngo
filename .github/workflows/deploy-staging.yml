@@ -1,0 +1,93 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore
+        run: dotnet restore B1ngo.slnx
+        working-directory: server
+
+      - name: Build
+        run: dotnet build B1ngo.slnx --no-restore --configuration Release
+        working-directory: server
+
+      - name: Test
+        run: dotnet test B1ngo.slnx --no-build --configuration Release --verbosity normal
+        working-directory: server
+
+  migrate-staging:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Install EF tool
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Run migrations
+        env:
+          ConnectionStrings__Database: ${{ secrets.NEON_STAGING_CONNECTION_STRING }}
+        run: dotnet ef database update --project src/B1ngo.Infrastructure --startup-project src/B1ngo.Web
+        working-directory: server
+
+  deploy-api-staging:
+    runs-on: ubuntu-latest
+    needs: migrate-staging
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Deploy to Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: railway up --service b1ngo-api-staging
+        working-directory: server
+
+  deploy-spa-staging:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: client/ui
+
+      - name: Build
+        run: npx ng build --configuration staging
+        working-directory: client/ui
+
+      - name: Deploy to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx wrangler pages deploy dist/ui/browser --project-name b1ngo --branch staging
+        working-directory: client/ui

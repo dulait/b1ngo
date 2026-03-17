@@ -1,6 +1,7 @@
 using B1ngo.Infrastructure.Persistence;
 using B1ngo.Web.Hubs;
 using B1ngo.Web.Middleware;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -12,11 +13,25 @@ internal static class WebApplicationExtensions
     {
         public async Task<WebApplication> ConfigurePipeline()
         {
+            app.UseForwardedHeaders(
+                new ForwardedHeadersOptions
+                {
+                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+                }
+            );
+
             app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+            if (!app.Environment.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }
+
+            app.UseCors();
 
             app.MapOpenApi();
 
-            if (app.Environment.IsDevelopment())
+            if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
             {
                 app.MapScalarApiReference(options =>
                 {
@@ -32,9 +47,9 @@ internal static class WebApplicationExtensions
                 await app.ApplyMigrationsAsync();
             }
 
-            app.UseHttpsRedirection();
             app.MapControllers();
             app.MapHub<GameHub>("/hubs/game");
+            app.MapHealthChecks("/health");
 
             return app;
         }

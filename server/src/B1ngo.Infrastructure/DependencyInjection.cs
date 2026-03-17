@@ -16,7 +16,10 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<B1ngoDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("Database"))
+            options.UseNpgsql(
+                configuration.GetConnectionString("Database"),
+                npgsqlOptions => npgsqlOptions.EnableRetryOnFailure(maxRetryCount: 3)
+            )
         );
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();

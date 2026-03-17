@@ -43,8 +43,30 @@ internal static class ServiceCollectionExtensions
                 options.AddOperationTransformer<OperationTransformer>();
                 options.AddSchemaTransformer<SchemaTransformer>();
             });
+            services.AddCorsPolicy(configuration);
+            services.AddHealthChecks();
 
             return services;
+        }
+
+        private void AddCorsPolicy(IConfiguration configuration)
+        {
+            var allowedOrigins = configuration
+                .GetValue<string>("AllowedOrigins")
+                ?.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    if (allowedOrigins is { Length: > 0 })
+                    {
+                        policy.WithOrigins(allowedOrigins);
+                    }
+
+                    policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+                });
+            });
         }
 
         private void AddDomainEventHandlers()
