@@ -47,13 +47,13 @@ jobs:
           POSTMAN_COLLECTION_ID: ${{ secrets.POSTMAN_COLLECTION_ID }}
         run: |
           npx openapi-to-postmanv2 -s docs/openapi.v1.json -o /tmp/postman-collection.json -p
-          BODY=$(jq '{collection: .}' /tmp/postman-collection.json)
+          jq '{collection: .}' /tmp/postman-collection.json | \
           curl --fail --silent \
             -X PUT \
             "https://api.getpostman.com/collections/${POSTMAN_COLLECTION_ID}" \
             -H "X-Api-Key: ${POSTMAN_API_KEY}" \
             -H "Content-Type: application/json" \
-            -d "${BODY}"
+            -d @-
 
       - name: Commit OpenAPI spec
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
