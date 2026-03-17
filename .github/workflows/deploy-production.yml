@@ -30,7 +30,6 @@ jobs:
         run: dotnet tool install --global dotnet-ef
 
       - name: Run migrations
-        if: ${{ secrets.NEON_PROD_CONNECTION_STRING != '' }}
         env:
           ConnectionStrings__Database: ${{ secrets.NEON_PROD_CONNECTION_STRING }}
         run: dotnet ef database update --project src/B1ngo.Infrastructure --startup-project src/B1ngo.Web
