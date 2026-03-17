@@ -47,13 +47,19 @@ jobs:
           POSTMAN_COLLECTION_ID: ${{ secrets.POSTMAN_COLLECTION_ID }}
         run: |
           npx openapi-to-postmanv2 -s docs/openapi.v1.json -o /tmp/postman-collection.json -p
-          jq '{collection: .}' /tmp/postman-collection.json | \
-          curl --fail --silent \
+          jq '{collection: .}' /tmp/postman-collection.json > /tmp/postman-body.json
+          HTTP_CODE=$(curl --silent --output /tmp/postman-response.txt --write-out "%{http_code}" \
             -X PUT \
             "https://api.getpostman.com/collections/${POSTMAN_COLLECTION_ID}" \
             -H "X-Api-Key: ${POSTMAN_API_KEY}" \
             -H "Content-Type: application/json" \
-            -d @-
+            -d @/tmp/postman-body.json)
+          if [ "$HTTP_CODE" -ge 400 ]; then
+            echo "Postman API returned HTTP $HTTP_CODE:"
+            cat /tmp/postman-response.txt
+            exit 1
+          fi
+          echo "Postman sync succeeded (HTTP $HTTP_CODE)"
 
       - name: Commit OpenAPI spec
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
