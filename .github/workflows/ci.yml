@@ -42,14 +42,18 @@ jobs:
       - name: Sync to Postman
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         continue-on-error: true
+        env:
+          POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+          POSTMAN_COLLECTION_ID: ${{ secrets.POSTMAN_COLLECTION_ID }}
         run: |
-          jq -n --arg spec "$(cat docs/openapi.v1.json)" '{"type": "string", "input": $spec}' | \
+          npx openapi-to-postmanv2 -s docs/openapi.v1.json -o /tmp/postman-collection.json -p
+          BODY=$(jq '{collection: .}' /tmp/postman-collection.json)
           curl --fail --silent \
-            -X POST \
-            "https://api.getpostman.com/import/openapi" \
-            -H "X-Api-Key: ${{ secrets.POSTMAN_API_KEY }}" \
+            -X PUT \
+            "https://api.getpostman.com/collections/${POSTMAN_COLLECTION_ID}" \
+            -H "X-Api-Key: ${POSTMAN_API_KEY}" \
             -H "Content-Type: application/json" \
-            -d @-
+            -d "${BODY}"
 
       - name: Commit OpenAPI spec
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
