@@ -24,6 +24,8 @@ changelog:
 | [0006](0006-solution-decomposition.md) | Solution Decomposition into Seven Projects | accepted | 2026-03-14 |
 | [0007](0007-ef-core-persistence-strategy.md) | EF Core Persistence Strategy | accepted | 2026-03-14 |
 | [0008](0008-error-type-enum-for-http-mapping.md) | Add ErrorType Enum for Deterministic HTTP Mapping | proposed | 2026-03-14 |
+| [0009](0009-transactional-outbox-for-domain-events.md) | Transactional Outbox for Domain Events | accepted | 2026-03-15 |
+| [0010](0010-deployment-architecture.md) | Deployment Architecture | proposed | 2026-03-17 |
 
 ## Conventions
 
