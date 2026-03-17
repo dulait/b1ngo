@@ -15,6 +15,7 @@
         "tags": [
           "Rooms"
         ],
+        "operationId": "CreateRoom",
         "requestBody": {
           "content": {
             "application/json": {
@@ -47,6 +48,7 @@
         "tags": [
           "Rooms"
         ],
+        "operationId": "JoinRoom",
         "requestBody": {
           "content": {
             "application/json": {
@@ -79,6 +81,7 @@
         "tags": [
           "Rooms"
         ],
+        "operationId": "Reconnect",
         "responses": {
           "200": {
             "description": "OK"
@@ -91,6 +94,7 @@
         "tags": [
           "Rooms"
         ],
+        "operationId": "StartGame",
         "parameters": [
           {
             "name": "roomId",
@@ -114,6 +118,7 @@
         "tags": [
           "Rooms"
         ],
+        "operationId": "EndGame",
         "parameters": [
           {
             "name": "roomId",
@@ -137,6 +142,7 @@
         "tags": [
           "Rooms"
         ],
+        "operationId": "GetRoomState",
         "parameters": [
           {
             "name": "roomId",
@@ -160,6 +166,7 @@
         "tags": [
           "Rooms"
         ],
+        "operationId": "EditSquare",
         "parameters": [
           {
             "name": "roomId",
@@ -223,6 +230,7 @@
         "tags": [
           "Rooms"
         ],
+        "operationId": "MarkSquare",
         "parameters": [
           {
             "name": "roomId",
@@ -275,6 +283,7 @@
         "tags": [
           "Rooms"
         ],
+        "operationId": "UnmarkSquare",
         "parameters": [
           {
             "name": "roomId",
