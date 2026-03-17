@@ -40,10 +40,15 @@ jobs:
         with:
           dotnet-version: "10.0.x"
 
+      - name: Restore
+        run: dotnet restore B1ngo.slnx
+        working-directory: server
+
       - name: Install EF tool
         run: dotnet tool install --global dotnet-ef
 
       - name: Run migrations
+        if: ${{ secrets.NEON_STAGING_CONNECTION_STRING != '' }}
         env:
           ConnectionStrings__Database: ${{ secrets.NEON_STAGING_CONNECTION_STRING }}
         run: dotnet ef database update --project src/B1ngo.Infrastructure --startup-project src/B1ngo.Web
