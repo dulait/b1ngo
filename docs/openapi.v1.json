@@ -1,0 +1,1856 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "B1ngo API",
+    "description": "B1ngo is a multiplayer F1 bingo game API. Players create or join rooms tied to specific Formula 1 sessions, receive randomized bingo cards populated with real F1 events, and mark squares as events occur during the session. The API manages room lifecycle, card generation, square marking with automatic win detection, and a ranked leaderboard.",
+    "contact": {
+      "name": "B1ngo Team",
+      "email": "support@b1ngo.dev"
+    },
+    "license": {
+      "name": "MIT",
+      "identifier": "MIT"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000",
+      "description": "Local development server"
+    },
+    {
+      "url": "https://api.b1ngo.dev",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/api/v1/rooms": {
+      "post": {
+        "tags": [
+          "Rooms"
+        ],
+        "summary": "Create a new room",
+        "description": "Creates a new bingo room with the caller as host. The room is tied to a specific F1 session (season, Grand Prix, session type). The host receives a join code to share with other players and a player token for session identity. A bingo card is automatically generated and assigned to the host from the predefined event pool for the selected session type. The server also sets a PlayerToken HttpOnly cookie for SignalR connectivity.",
+        "operationId": "CreateRoom",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRoomCommand"
+              },
+              "example": {
+                "hostDisplayName": "Max",
+                "season": 2026,
+                "grandPrixName": "Bahrain Grand Prix",
+                "sessionType": "Race",
+                "matrixSize": 5,
+                "winningPatterns": [
+                  "Row",
+                  "Column",
+                  "Diagonal"
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRoomCommand"
+              }
+            },
+            "application/*\u002Bjson": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRoomCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Room created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateRoomResponse"
+                },
+                "example": {
+                  "roomId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "joinCode": "BHR26R",
+                  "playerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                  "playerToken": "550e8400-e29b-41d4-a716-446655440000"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request body validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "validation_error",
+                  "message": "One or more validation errors occurred.",
+                  "details": [
+                    "HostDisplayName: Host display name is required.",
+                    "GrandPrixName: Grand Prix name is required."
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/rooms/join": {
+      "post": {
+        "tags": [
+          "Rooms"
+        ],
+        "summary": "Join an existing room",
+        "description": "Joins a room using a join code. The room must be in Lobby status. The player\u0027s display name must be unique within the room. Returns player identity and a player token for session authentication. A bingo card is automatically generated and assigned from the predefined event pool for the room\u0027s session type. The server also sets a PlayerToken HttpOnly cookie for SignalR connectivity.",
+        "operationId": "JoinRoom",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JoinRoomCommand"
+              },
+              "example": {
+                "joinCode": "BHR26R",
+                "displayName": "Lewis"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JoinRoomCommand"
+              }
+            },
+            "application/*\u002Bjson": {
+              "schema": {
+                "$ref": "#/components/schemas/JoinRoomCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Joined room successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JoinRoomResponse"
+                },
+                "example": {
+                  "roomId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "playerId": "c9d0e1f2-a3b4-5678-cdef-901234567890",
+                  "playerToken": "661f9511-f3ac-52e5-b827-557766551111",
+                  "displayName": "Lewis"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request body validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "validation_error",
+                  "message": "One or more validation errors occurred.",
+                  "details": [
+                    "JoinCode: Join code is required."
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No room matches the provided join code.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "room_not_found",
+                  "message": "room with ID \u0027BHR26R\u0027 was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Room is not accepting new players, or display name is already taken.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "display_name_taken",
+                  "message": "A player with display name \u0027Max\u0027 already exists in this room."
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/rooms/reconnect": {
+      "post": {
+        "tags": [
+          "Rooms"
+        ],
+        "summary": "Reconnect to a room",
+        "description": "Re-establishes a player\u0027s session with a room using the X-Player-Token header. Use this when a player returns to the app after closing it. Returns the room ID, player ID, and current room status so the client can fetch full state and re-establish the WebSocket connection.",
+        "operationId": "Reconnect",
+        "responses": {
+          "200": {
+            "description": "Reconnected successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconnectResponse"
+                },
+                "example": {
+                  "roomId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "playerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                  "roomStatus": "Active"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid player token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "unauthorized",
+                  "message": "Missing or invalid player token."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The room associated with the token no longer exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "room_not_found",
+                  "message": "room with ID \u0027a1b2c3d4-e5f6-7890-abcd-ef1234567890\u0027 was not found."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "playerToken": []
+          }
+        ]
+      }
+    },
+    "/api/v1/rooms/{roomId}/start": {
+      "post": {
+        "tags": [
+          "Rooms"
+        ],
+        "summary": "Start the game",
+        "description": "Transitions the room from Lobby to Active status. Only the host can start the game. All players must have bingo cards assigned before starting. Once started, players can mark and unmark squares, and win detection becomes active.",
+        "operationId": "StartGame",
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "description": "Unique identifier of the room",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Game started successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StartGameResponse"
+                },
+                "example": {
+                  "roomId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "status": "Active"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid player token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "unauthorized",
+                  "message": "Missing or invalid player token."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Caller is not the host.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "forbidden",
+                  "message": "You do not have permission to perform this action."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Room does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "room_not_found",
+                  "message": "room with ID \u0027a1b2c3d4-e5f6-7890-abcd-ef1234567890\u0027 was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Room is not in Lobby status, or players are missing cards.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "room_not_in_lobby",
+                  "message": "Cannot start the game \u2014 room is in \u0027Active\u0027 state, expected \u0027Lobby\u0027."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "playerToken": []
+          }
+        ]
+      }
+    },
+    "/api/v1/rooms/{roomId}/end": {
+      "post": {
+        "tags": [
+          "Rooms"
+        ],
+        "summary": "End the game",
+        "description": "Transitions the room from Active to Completed status. Only the host can end the game. Once ended, the room becomes read-only \u2014 no further square marking or unmarking is allowed. The leaderboard is finalized.",
+        "operationId": "EndGame",
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "description": "Unique identifier of the room",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Game ended successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EndGameResponse"
+                },
+                "example": {
+                  "roomId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "status": "Completed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid player token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "unauthorized",
+                  "message": "Missing or invalid player token."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Caller is not the host.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "forbidden",
+                  "message": "You do not have permission to perform this action."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Room does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "room_not_found",
+                  "message": "room with ID \u0027a1b2c3d4-e5f6-7890-abcd-ef1234567890\u0027 was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Room is not in Active status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "room_not_active",
+                  "message": "Cannot end the game \u2014 room is in \u0027Lobby\u0027 state, expected \u0027Active\u0027."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "playerToken": []
+          }
+        ]
+      }
+    },
+    "/api/v1/rooms/{roomId}": {
+      "get": {
+        "tags": [
+          "Rooms"
+        ],
+        "summary": "Get full room state",
+        "description": "Returns the complete room state including session info, configuration, all players with their bingo cards, and the leaderboard. Use this for initial page load after joining or reconnecting. The caller must be a member of the room (enforced by token-to-room matching).",
+        "operationId": "GetRoomState",
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "description": "Unique identifier of the room",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Full room state returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetRoomStateResponse"
+                },
+                "example": {
+                  "roomId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "joinCode": "BHR26R",
+                  "status": "Active",
+                  "session": {
+                    "season": 2026,
+                    "grandPrixName": "Bahrain Grand Prix",
+                    "sessionType": "Race"
+                  },
+                  "configuration": {
+                    "matrixSize": 5,
+                    "winningPatterns": [
+                      "Row",
+                      "Column",
+                      "Diagonal"
+                    ]
+                  },
+                  "hostPlayerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                  "players": [
+                    {
+                      "playerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                      "displayName": "Max",
+                      "hasWon": false,
+                      "card": {
+                        "matrixSize": 5,
+                        "squares": [
+                          {
+                            "row": 0,
+                            "column": 0,
+                            "displayText": "Safety Car deployed",
+                            "eventKey": "SAFETY_CAR",
+                            "isFreeSpace": false,
+                            "isMarked": true,
+                            "markedBy": "Player",
+                            "markedAt": "2026-03-17T14:30:00\u002B00:00"
+                          },
+                          {
+                            "row": 0,
+                            "column": 1,
+                            "displayText": "Red flag",
+                            "eventKey": "RED_FLAG",
+                            "isFreeSpace": false,
+                            "isMarked": false,
+                            "markedBy": null,
+                            "markedAt": null
+                          },
+                          {
+                            "row": 2,
+                            "column": 2,
+                            "displayText": "FREE",
+                            "eventKey": null,
+                            "isFreeSpace": true,
+                            "isMarked": true,
+                            "markedBy": null,
+                            "markedAt": null
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "playerId": "c9d0e1f2-a3b4-5678-cdef-901234567890",
+                      "displayName": "Lewis",
+                      "hasWon": true,
+                      "card": {
+                        "matrixSize": 5,
+                        "squares": []
+                      }
+                    }
+                  ],
+                  "leaderboard": [
+                    {
+                      "playerId": "c9d0e1f2-a3b4-5678-cdef-901234567890",
+                      "rank": 1,
+                      "winningPattern": "Row",
+                      "completedAt": "2026-03-17T14:35:00\u002B00:00"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid player token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "unauthorized",
+                  "message": "Missing or invalid player token."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token\u0027s roomId does not match the path roomId.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "forbidden",
+                  "message": "You do not have permission to perform this action."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Room does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "room_not_found",
+                  "message": "room with ID \u0027a1b2c3d4-e5f6-7890-abcd-ef1234567890\u0027 was not found."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "playerToken": []
+          }
+        ]
+      }
+    },
+    "/api/v1/rooms/{roomId}/players/me/card/squares/{row}/{column}": {
+      "put": {
+        "tags": [
+          "Rooms"
+        ],
+        "summary": "Edit a bingo square",
+        "description": "Updates the display text of a square on the caller\u0027s bingo card. Only available during the Lobby phase. Cannot edit free spaces. Editing a predefined square clears its eventKey, making it a custom square that can no longer be auto-marked by the event feed. The player identity is resolved from the X-Player-Token header.",
+        "operationId": "EditSquare",
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "description": "Unique identifier of the room",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          },
+          {
+            "name": "row",
+            "in": "path",
+            "description": "Zero-based row index of the square",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 0
+          },
+          {
+            "name": "column",
+            "in": "path",
+            "description": "Zero-based column index of the square",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 4
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditSquareRequest"
+              },
+              "example": {
+                "displayText": "Verstappen leads lap 1"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditSquareRequest"
+              }
+            },
+            "application/*\u002Bjson": {
+              "schema": {
+                "$ref": "#/components/schemas/EditSquareRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Square updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditSquareResponse"
+                },
+                "example": {
+                  "row": 1,
+                  "column": 3,
+                  "displayText": "Verstappen leads lap 1",
+                  "eventKey": null
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request body validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "validation_error",
+                  "message": "One or more validation errors occurred.",
+                  "details": [
+                    "DisplayText: Display text is required."
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid player token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "unauthorized",
+                  "message": "Missing or invalid player token."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token\u0027s roomId does not match the path roomId.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "forbidden",
+                  "message": "You do not have permission to perform this action."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Room, player, or square not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "room_not_found",
+                  "message": "room with ID \u0027a1b2c3d4-e5f6-7890-abcd-ef1234567890\u0027 was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Room is not in Lobby status, square is a free space, or card is not assigned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "room_not_in_lobby",
+                  "message": "Cannot edit squares \u2014 room is in \u0027Active\u0027 state, expected \u0027Lobby\u0027."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "playerToken": []
+          }
+        ]
+      }
+    },
+    "/api/v1/rooms/{roomId}/players/{playerId}/card/squares/{row}/{column}/mark": {
+      "post": {
+        "tags": [
+          "Rooms"
+        ],
+        "summary": "Mark a bingo square",
+        "description": "Marks a square on a player\u0027s bingo card and automatically evaluates win conditions. A player can mark squares on their own card; the host can mark squares on any player\u0027s card. The markedBy field in the response indicates who performed the mark (Player or Host). If marking completes a winning pattern, the response includes bingo info with the winning pattern and rank on the leaderboard.",
+        "operationId": "MarkSquare",
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "description": "Unique identifier of the room",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          },
+          {
+            "name": "playerId",
+            "in": "path",
+            "description": "Unique identifier of the player",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+          },
+          {
+            "name": "row",
+            "in": "path",
+            "description": "Zero-based row index of the square",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 0
+          },
+          {
+            "name": "column",
+            "in": "path",
+            "description": "Zero-based column index of the square",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 4
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Square marked successfully. Includes bingo info if a winning pattern was completed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarkSquareResponse"
+                },
+                "example": {
+                  "row": 0,
+                  "column": 4,
+                  "isMarked": true,
+                  "markedBy": "Player",
+                  "markedAt": "2026-03-17T14:30:00\u002B00:00",
+                  "bingo": null
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid player token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "unauthorized",
+                  "message": "Missing or invalid player token."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Caller is neither the target player nor the host, or roomId mismatch.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "forbidden",
+                  "message": "You do not have permission to perform this action."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Room, player, or square not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "player_not_found",
+                  "message": "Player with ID \u0027f47ac10b-58cc-4372-a567-0e02b2c3d479\u0027 not found in this room."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Room is not Active, square is already marked, square is a free space, player already won, or card is not assigned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "room_not_active",
+                  "message": "Cannot mark squares \u2014 room is in \u0027Lobby\u0027 state, expected \u0027Active\u0027."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "playerToken": []
+          }
+        ]
+      }
+    },
+    "/api/v1/rooms/{roomId}/players/{playerId}/card/squares/{row}/{column}/unmark": {
+      "post": {
+        "tags": [
+          "Rooms"
+        ],
+        "summary": "Unmark a bingo square",
+        "description": "Unmarks a previously marked square on a player\u0027s bingo card and re-evaluates win status. A player can unmark squares on their own card; the host can unmark squares on any player\u0027s card. If the player had previously won and unmarking breaks the winning pattern, the win is revoked, the player is removed from the leaderboard, and remaining ranks are recalculated.",
+        "operationId": "UnmarkSquare",
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "description": "Unique identifier of the room",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          },
+          {
+            "name": "playerId",
+            "in": "path",
+            "description": "Unique identifier of the player",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+          },
+          {
+            "name": "row",
+            "in": "path",
+            "description": "Zero-based row index of the square",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 0
+          },
+          {
+            "name": "column",
+            "in": "path",
+            "description": "Zero-based column index of the square",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 4
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Square unmarked successfully. Indicates whether a previously achieved win was revoked.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnmarkSquareResponse"
+                },
+                "example": {
+                  "row": 0,
+                  "column": 4,
+                  "isMarked": false,
+                  "markedBy": null,
+                  "markedAt": null,
+                  "winRevoked": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid player token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "unauthorized",
+                  "message": "Missing or invalid player token."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Caller is neither the target player nor the host, or roomId mismatch.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "forbidden",
+                  "message": "You do not have permission to perform this action."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Room, player, or square not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "square_not_found",
+                  "message": "No square at position (0, 4)."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Room is not Active, square is not marked, square is a free space, or card is not assigned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "square_not_marked",
+                  "message": "Square is not marked."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "playerToken": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BingoInfo": {
+        "required": [
+          "pattern",
+          "rank"
+        ],
+        "type": "object",
+        "properties": {
+          "pattern": {
+            "type": "string",
+            "description": "The winning pattern: Row, Column, Diagonal, or Blackout.",
+            "example": "Row"
+          },
+          "rank": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "description": "Player\u0027s rank on the leaderboard (1 = first to win).",
+            "format": "int32",
+            "example": 1
+          }
+        },
+        "description": "Non-null if marking completed a winning pattern."
+      },
+      "CardDto": {
+        "required": [
+          "matrixSize",
+          "squares"
+        ],
+        "type": "object",
+        "properties": {
+          "matrixSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "description": "Grid dimension (e.g., 5 = 5x5).",
+            "format": "int32",
+            "example": 5
+          },
+          "squares": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SquareDto"
+            },
+            "description": "All squares on the card (matrixSize\u00B2 items)."
+          }
+        },
+        "description": "Player\u0027s bingo card (null if not yet assigned)."
+      },
+      "ConfigurationDto": {
+        "required": [
+          "matrixSize",
+          "winningPatterns"
+        ],
+        "type": "object",
+        "properties": {
+          "matrixSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "description": "Bingo card grid size.",
+            "format": "int32",
+            "example": 5
+          },
+          "winningPatterns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Active winning pattern types."
+          }
+        },
+        "description": "Game configuration."
+      },
+      "CreateRoomCommand": {
+        "required": [
+          "hostDisplayName",
+          "season",
+          "grandPrixName",
+          "sessionType"
+        ],
+        "type": "object",
+        "properties": {
+          "hostDisplayName": {
+            "type": "string",
+            "description": "Display name of the player creating the room. Must be unique within the room.",
+            "example": "Max"
+          },
+          "season": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "description": "F1 season year.",
+            "format": "int32",
+            "example": 2026
+          },
+          "grandPrixName": {
+            "type": "string",
+            "description": "Name of the Grand Prix event.",
+            "example": "Bahrain Grand Prix"
+          },
+          "sessionType": {
+            "$ref": "#/components/schemas/SessionType"
+          },
+          "matrixSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "description": "Bingo card grid size. Defaults to 5 if omitted. Must be odd, between 3 and 9.",
+            "format": "int32",
+            "example": 5
+          },
+          "winningPatterns": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/WinPatternType"
+            },
+            "description": "Active win patterns. Defaults to [\u0022Row\u0022, \u0022Column\u0022, \u0022Diagonal\u0022] if omitted."
+          }
+        }
+      },
+      "CreateRoomResponse": {
+        "required": [
+          "roomId",
+          "joinCode",
+          "playerId",
+          "playerToken"
+        ],
+        "type": "object",
+        "properties": {
+          "roomId": {
+            "type": "string",
+            "description": "Unique identifier for the created room.",
+            "format": "uuid",
+            "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          },
+          "joinCode": {
+            "type": "string",
+            "description": "6-character alphanumeric code for other players to join (no ambiguous characters: 0, O, I, 1 excluded).",
+            "example": "BHR26R"
+          },
+          "playerId": {
+            "type": "string",
+            "description": "Unique identifier for the host player.",
+            "format": "uuid",
+            "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+          },
+          "playerToken": {
+            "type": "string",
+            "description": "Opaque token for authenticating subsequent requests.",
+            "format": "uuid",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          }
+        }
+      },
+      "EditSquareRequest": {
+        "required": [
+          "displayText"
+        ],
+        "type": "object",
+        "properties": {
+          "displayText": {
+            "type": "string",
+            "description": "New display text for the square.",
+            "example": "Verstappen leads lap 1"
+          }
+        }
+      },
+      "EditSquareResponse": {
+        "required": [
+          "row",
+          "column",
+          "displayText",
+          "eventKey"
+        ],
+        "type": "object",
+        "properties": {
+          "row": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "description": "Zero-based row index of the edited square.",
+            "format": "int32",
+            "example": 1
+          },
+          "column": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "description": "Zero-based column index of the edited square.",
+            "format": "int32",
+            "example": 3
+          },
+          "displayText": {
+            "type": "string",
+            "description": "Updated display text.",
+            "example": "Verstappen leads lap 1"
+          },
+          "eventKey": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Event key for the square. Always null after editing (cleared on edit)."
+          }
+        }
+      },
+      "EndGameResponse": {
+        "required": [
+          "roomId",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "roomId": {
+            "type": "string",
+            "description": "Unique identifier of the ended room.",
+            "format": "uuid",
+            "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          },
+          "status": {
+            "type": "string",
+            "description": "New room status, always Completed.",
+            "example": "Completed"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Machine-readable snake_case error code.",
+            "example": "validation_error"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable error message.",
+            "example": "One or more validation errors occurred."
+          },
+          "details": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Validation error details. Only present for validation_error responses."
+          }
+        }
+      },
+      "GetRoomStateResponse": {
+        "required": [
+          "roomId",
+          "joinCode",
+          "status",
+          "session",
+          "configuration",
+          "hostPlayerId",
+          "players",
+          "leaderboard"
+        ],
+        "type": "object",
+        "properties": {
+          "roomId": {
+            "type": "string",
+            "description": "Unique room identifier.",
+            "format": "uuid",
+            "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          },
+          "joinCode": {
+            "type": "string",
+            "description": "6-character join code.",
+            "example": "BHR26R"
+          },
+          "status": {
+            "type": "string",
+            "description": "Current room status.",
+            "example": "Active"
+          },
+          "session": {
+            "$ref": "#/components/schemas/SessionDto"
+          },
+          "configuration": {
+            "$ref": "#/components/schemas/ConfigurationDto"
+          },
+          "hostPlayerId": {
+            "type": "string",
+            "description": "Player ID of the host.",
+            "format": "uuid",
+            "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+          },
+          "players": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlayerDto"
+            },
+            "description": "All players in the room."
+          },
+          "leaderboard": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LeaderboardEntryDto"
+            },
+            "description": "Ranked list of winners."
+          }
+        }
+      },
+      "JoinRoomCommand": {
+        "required": [
+          "joinCode",
+          "displayName"
+        ],
+        "type": "object",
+        "properties": {
+          "joinCode": {
+            "type": "string",
+            "description": "The 6-character code shared by the room host.",
+            "example": "BHR26R"
+          },
+          "displayName": {
+            "type": "string",
+            "description": "Display name for the joining player. Must be unique within the room (case-insensitive).",
+            "example": "Lewis"
+          }
+        }
+      },
+      "JoinRoomResponse": {
+        "required": [
+          "roomId",
+          "playerId",
+          "playerToken",
+          "displayName"
+        ],
+        "type": "object",
+        "properties": {
+          "roomId": {
+            "type": "string",
+            "description": "Unique identifier for the joined room.",
+            "format": "uuid",
+            "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          },
+          "playerId": {
+            "type": "string",
+            "description": "Unique identifier for the new player.",
+            "format": "uuid",
+            "example": "c9d0e1f2-a3b4-5678-cdef-901234567890"
+          },
+          "playerToken": {
+            "type": "string",
+            "description": "Opaque token for authenticating subsequent requests.",
+            "format": "uuid",
+            "example": "661f9511-f3ac-52e5-b827-557766551111"
+          },
+          "displayName": {
+            "type": "string",
+            "description": "The player\u0027s confirmed display name.",
+            "example": "Lewis"
+          }
+        }
+      },
+      "LeaderboardEntryDto": {
+        "required": [
+          "playerId",
+          "rank",
+          "winningPattern",
+          "completedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "playerId": {
+            "type": "string",
+            "description": "Unique player identifier.",
+            "format": "uuid",
+            "example": "c9d0e1f2-a3b4-5678-cdef-901234567890"
+          },
+          "rank": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "description": "Sequential rank (1 = first to win).",
+            "format": "int32",
+            "example": 1
+          },
+          "winningPattern": {
+            "type": "string",
+            "description": "Pattern that completed the win.",
+            "example": "Row"
+          },
+          "completedAt": {
+            "type": "string",
+            "description": "ISO 8601 UTC timestamp of win.",
+            "format": "date-time",
+            "example": "2026-03-17T14:35:00\u002B00:00"
+          }
+        }
+      },
+      "MarkSquareResponse": {
+        "required": [
+          "row",
+          "column",
+          "isMarked",
+          "markedBy",
+          "markedAt",
+          "bingo"
+        ],
+        "type": "object",
+        "properties": {
+          "row": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "description": "Zero-based row index of the marked square.",
+            "format": "int32",
+            "example": 0
+          },
+          "column": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "description": "Zero-based column index of the marked square.",
+            "format": "int32",
+            "example": 4
+          },
+          "isMarked": {
+            "type": "boolean",
+            "description": "Always true after a successful mark.",
+            "example": true
+          },
+          "markedBy": {
+            "type": "string",
+            "description": "Who marked the square: Player or Host.",
+            "example": "Player"
+          },
+          "markedAt": {
+            "type": "string",
+            "description": "ISO 8601 timestamp of when the square was marked.",
+            "format": "date-time",
+            "example": "2026-03-17T14:30:00\u002B00:00"
+          },
+          "bingo": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/BingoInfo"
+              }
+            ]
+          }
+        }
+      },
+      "PlayerDto": {
+        "required": [
+          "playerId",
+          "displayName",
+          "hasWon",
+          "card"
+        ],
+        "type": "object",
+        "properties": {
+          "playerId": {
+            "type": "string",
+            "description": "Unique player identifier.",
+            "format": "uuid",
+            "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+          },
+          "displayName": {
+            "type": "string",
+            "description": "Player\u0027s display name.",
+            "example": "Max"
+          },
+          "hasWon": {
+            "type": "boolean",
+            "description": "Whether the player has achieved bingo.",
+            "example": false
+          },
+          "card": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/CardDto"
+              }
+            ]
+          }
+        }
+      },
+      "ReconnectResponse": {
+        "required": [
+          "roomId",
+          "playerId",
+          "roomStatus"
+        ],
+        "type": "object",
+        "properties": {
+          "roomId": {
+            "type": "string",
+            "description": "Unique identifier for the player\u0027s room.",
+            "format": "uuid",
+            "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          },
+          "playerId": {
+            "type": "string",
+            "description": "Unique identifier for the reconnecting player.",
+            "format": "uuid",
+            "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+          },
+          "roomStatus": {
+            "type": "string",
+            "description": "Current room status: Lobby, Active, or Completed.",
+            "example": "Active"
+          }
+        }
+      },
+      "RoomStatus": {
+        "enum": [
+          "Lobby",
+          "Active",
+          "Completed"
+        ],
+        "type": "string",
+        "description": "Room lifecycle state. Values: Lobby (accepting players, cards can be edited), Active (game in progress, squares can be marked/unmarked), Completed (game over, read-only)."
+      },
+      "SessionDto": {
+        "required": [
+          "season",
+          "grandPrixName",
+          "sessionType"
+        ],
+        "type": "object",
+        "properties": {
+          "season": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "description": "F1 season year.",
+            "format": "int32",
+            "example": 2026
+          },
+          "grandPrixName": {
+            "type": "string",
+            "description": "Grand Prix name.",
+            "example": "Bahrain Grand Prix"
+          },
+          "sessionType": {
+            "type": "string",
+            "description": "Session type.",
+            "example": "Race"
+          }
+        },
+        "description": "F1 session details."
+      },
+      "SessionType": {
+        "enum": [
+          "FP1",
+          "FP2",
+          "FP3",
+          "Qualifying",
+          "SprintQualifying",
+          "Sprint",
+          "Race"
+        ],
+        "type": "string",
+        "description": "F1 session type. Values: FP1 (Free Practice 1), FP2 (Free Practice 2), FP3 (Free Practice 3), Qualifying (Qualifying session), SprintQualifying (Sprint qualifying session), Sprint (Sprint race), Race (Main race).",
+        "example": "Race"
+      },
+      "SquareDto": {
+        "required": [
+          "row",
+          "column",
+          "displayText",
+          "eventKey",
+          "isFreeSpace",
+          "isMarked",
+          "markedBy",
+          "markedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "row": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "description": "Zero-based row index.",
+            "format": "int32",
+            "example": 0
+          },
+          "column": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "description": "Zero-based column index.",
+            "format": "int32",
+            "example": 0
+          },
+          "displayText": {
+            "type": "string",
+            "description": "Text displayed on the square.",
+            "example": "Safety Car deployed"
+          },
+          "eventKey": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Predefined event identifier. Null for free spaces and custom (player-edited) squares.",
+            "example": "SAFETY_CAR"
+          },
+          "isFreeSpace": {
+            "type": "boolean",
+            "description": "Whether this is the center free space.",
+            "example": false
+          },
+          "isMarked": {
+            "type": "boolean",
+            "description": "Whether the square is currently marked.",
+            "example": true
+          },
+          "markedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Who marked the square. Null if unmarked.",
+            "example": "Player"
+          },
+          "markedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "When the square was marked. Null if unmarked.",
+            "format": "date-time",
+            "example": "2026-03-17T14:30:00\u002B00:00"
+          }
+        }
+      },
+      "SquareMarkedBy": {
+        "enum": [
+          "Api",
+          "Player",
+          "Host"
+        ],
+        "type": "string",
+        "description": "Who marked a square. Values: Api (auto-marked by event feed), Player (marked by the card owner), Host (marked by the room host on another player\u0027s card)."
+      },
+      "StartGameResponse": {
+        "required": [
+          "roomId",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "roomId": {
+            "type": "string",
+            "description": "Unique identifier of the started room.",
+            "format": "uuid",
+            "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          },
+          "status": {
+            "type": "string",
+            "description": "New room status, always Active.",
+            "example": "Active"
+          }
+        }
+      },
+      "UnmarkSquareResponse": {
+        "required": [
+          "row",
+          "column",
+          "isMarked",
+          "markedBy",
+          "markedAt",
+          "winRevoked"
+        ],
+        "type": "object",
+        "properties": {
+          "row": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "description": "Zero-based row index of the unmarked square.",
+            "format": "int32",
+            "example": 0
+          },
+          "column": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "description": "Zero-based column index of the unmarked square.",
+            "format": "int32",
+            "example": 4
+          },
+          "isMarked": {
+            "type": "boolean",
+            "description": "Always false after a successful unmark.",
+            "example": false
+          },
+          "markedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Always null after unmarking."
+          },
+          "markedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Always null after unmarking.",
+            "format": "date-time"
+          },
+          "winRevoked": {
+            "type": "boolean",
+            "description": "True if the player previously had a win and it was revoked by this unmark.",
+            "example": false
+          }
+        }
+      },
+      "WinPatternType": {
+        "enum": [
+          "Row",
+          "Column",
+          "Diagonal",
+          "Blackout"
+        ],
+        "type": "string",
+        "description": "Winning pattern type. Values: Row (all squares in any single row are marked), Column (all squares in any single column are marked), Diagonal (all squares on either diagonal are marked), Blackout (all squares on the entire card are marked)."
+      }
+    },
+    "securitySchemes": {
+      "playerToken": {
+        "type": "apiKey",
+        "description": "Opaque GUID token returned by the Create Room and Join Room endpoints. The client stores this token and sends it as the X-Player-Token header on all subsequent requests. The server resolves the token to a player identity (player ID, room ID, host flag). Tokens live as long as the room exists. If the token is lost, the player must re-join as a new player.",
+        "name": "X-Player-Token",
+        "in": "header"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Rooms"
+    }
+  ]
+}
