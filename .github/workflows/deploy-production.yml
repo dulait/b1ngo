@@ -50,7 +50,7 @@ jobs:
       - name: Deploy to Railway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: railway up --service b1ngo-api-prod
+        run: railway up --service b1ngo-api-prod --detach
         working-directory: server
 
   deploy-spa-prod:
