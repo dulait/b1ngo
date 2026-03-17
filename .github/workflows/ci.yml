@@ -43,12 +43,13 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         continue-on-error: true
         run: |
+          jq -n --arg spec "$(cat docs/openapi.v1.json)" '{"type": "string", "input": $spec}' | \
           curl --fail --silent \
             -X POST \
             "https://api.getpostman.com/import/openapi" \
             -H "X-Api-Key: ${{ secrets.POSTMAN_API_KEY }}" \
             -H "Content-Type: application/json" \
-            -d @docs/openapi.v1.json
+            -d @-
 
       - name: Commit OpenAPI spec
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
