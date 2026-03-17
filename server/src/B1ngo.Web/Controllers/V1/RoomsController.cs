@@ -28,36 +28,43 @@ public class RoomsController(
 ) : ApiController
 {
     [HttpPost]
+    [EndpointName("CreateRoom")]
     public async Task<IActionResult> CreateRoom([FromBody] CreateRoomCommand command, CancellationToken ct) =>
         await Send(createRoomHandler, command, ct, response => SetPlayerTokenCookie(response.PlayerToken));
 
     [HttpPost("join")]
+    [EndpointName("JoinRoom")]
     public async Task<IActionResult> JoinRoom([FromBody] JoinRoomCommand command, CancellationToken ct) =>
         await Send(joinRoomHandler, command, ct, response => SetPlayerTokenCookie(response.PlayerToken));
 
     [HttpPost("reconnect")]
+    [EndpointName("Reconnect")]
     [RequirePlayerToken]
     public async Task<IActionResult> Reconnect(CancellationToken ct) =>
         await Send(reconnectHandler, new ReconnectQuery(Identity.RoomId, Identity.PlayerId), ct);
 
     [HttpPost("{roomId:guid}/start")]
+    [EndpointName("StartGame")]
     [RequirePlayerToken]
     [HostOnly]
     public async Task<IActionResult> StartGame(Guid roomId, CancellationToken ct) =>
         await Send(startGameHandler, new StartGameCommand(roomId), ct);
 
     [HttpPost("{roomId:guid}/end")]
+    [EndpointName("EndGame")]
     [RequirePlayerToken]
     [HostOnly]
     public async Task<IActionResult> EndGame(Guid roomId, CancellationToken ct) =>
         await Send(endGameHandler, new EndGameCommand(roomId), ct);
 
     [HttpGet("{roomId:guid}")]
+    [EndpointName("GetRoomState")]
     [RequirePlayerToken]
     public async Task<IActionResult> GetRoomState(Guid roomId, CancellationToken ct) =>
         await Send(getRoomStateHandler, new GetRoomStateQuery(roomId, Identity.PlayerId), ct);
 
     [HttpPut("{roomId:guid}/players/me/card/squares/{row:int}/{column:int}")]
+    [EndpointName("EditSquare")]
     [RequirePlayerToken]
     public async Task<IActionResult> EditSquare(
         Guid roomId,
@@ -73,6 +80,7 @@ public class RoomsController(
         );
 
     [HttpPost("{roomId:guid}/players/{playerId:guid}/card/squares/{row:int}/{column:int}/mark")]
+    [EndpointName("MarkSquare")]
     [RequirePlayerToken]
     [PlayerOrHost]
     public async Task<IActionResult> MarkSquare(
@@ -84,6 +92,7 @@ public class RoomsController(
     ) => await Send(markSquareHandler, new MarkSquareCommand(roomId, playerId, row, column, CallerMarkedBy), ct);
 
     [HttpPost("{roomId:guid}/players/{playerId:guid}/card/squares/{row:int}/{column:int}/unmark")]
+    [EndpointName("UnmarkSquare")]
     [RequirePlayerToken]
     [PlayerOrHost]
     public async Task<IActionResult> UnmarkSquare(
