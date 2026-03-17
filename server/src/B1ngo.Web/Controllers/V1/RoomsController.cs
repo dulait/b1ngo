@@ -10,11 +10,14 @@ using B1ngo.Application.Features.Rooms.Reconnect;
 using B1ngo.Application.Features.Rooms.StartGame;
 using B1ngo.Application.Features.Rooms.UnmarkSquare;
 using B1ngo.Web.Filters;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace B1ngo.Web.Controllers.V1;
 
 [ApiVersion(1)]
+[Produces("application/json")]
+[Tags("Rooms")]
 public class RoomsController(
     ICommandHandler<CreateRoomCommand, CreateRoomResponse> createRoomHandler,
     ICommandHandler<JoinRoomCommand, JoinRoomResponse> joinRoomHandler,
@@ -29,22 +32,46 @@ public class RoomsController(
 {
     [HttpPost]
     [EndpointName("CreateRoom")]
+    [EndpointSummary("Create a new room")]
+    [EndpointDescription(
+        "Creates a new bingo room with the caller as host. Returns a join code and sets a PlayerToken cookie."
+    )]
+    [ProducesResponseType<CreateRoomResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateRoom([FromBody] CreateRoomCommand command, CancellationToken ct) =>
         await Send(createRoomHandler, command, ct, response => SetPlayerTokenCookie(response.PlayerToken));
 
     [HttpPost("join")]
     [EndpointName("JoinRoom")]
+    [EndpointSummary("Join an existing room")]
+    [EndpointDescription("Joins a room using a join code. Returns player identity and sets a PlayerToken cookie.")]
+    [ProducesResponseType<JoinRoomResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> JoinRoom([FromBody] JoinRoomCommand command, CancellationToken ct) =>
         await Send(joinRoomHandler, command, ct, response => SetPlayerTokenCookie(response.PlayerToken));
 
     [HttpPost("reconnect")]
     [EndpointName("Reconnect")]
+    [EndpointSummary("Reconnect to a room")]
+    [EndpointDescription("Re-establishes a player's session with a room using the PlayerToken cookie.")]
+    [ProducesResponseType<ReconnectResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
     [RequirePlayerToken]
     public async Task<IActionResult> Reconnect(CancellationToken ct) =>
         await Send(reconnectHandler, new ReconnectQuery(Identity.RoomId, Identity.PlayerId), ct);
 
     [HttpPost("{roomId:guid}/start")]
     [EndpointName("StartGame")]
+    [EndpointSummary("Start the game")]
+    [EndpointDescription("Transitions the room from lobby to in-progress. Only the host can start the game.")]
+    [ProducesResponseType<StartGameResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     [RequirePlayerToken]
     [HostOnly]
     public async Task<IActionResult> StartGame(Guid roomId, CancellationToken ct) =>
@@ -52,6 +79,13 @@ public class RoomsController(
 
     [HttpPost("{roomId:guid}/end")]
     [EndpointName("EndGame")]
+    [EndpointSummary("End the game")]
+    [EndpointDescription("Transitions the room from in-progress to completed. Only the host can end the game.")]
+    [ProducesResponseType<EndGameResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     [RequirePlayerToken]
     [HostOnly]
     public async Task<IActionResult> EndGame(Guid roomId, CancellationToken ct) =>
@@ -59,12 +93,28 @@ public class RoomsController(
 
     [HttpGet("{roomId:guid}")]
     [EndpointName("GetRoomState")]
+    [EndpointSummary("Get full room state")]
+    [EndpointDescription(
+        "Returns the complete room state including players, cards, and leaderboard. Requires the caller to be a member of the room."
+    )]
+    [ProducesResponseType<GetRoomStateResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
     [RequirePlayerToken]
     public async Task<IActionResult> GetRoomState(Guid roomId, CancellationToken ct) =>
         await Send(getRoomStateHandler, new GetRoomStateQuery(roomId, Identity.PlayerId), ct);
 
     [HttpPut("{roomId:guid}/players/me/card/squares/{row:int}/{column:int}")]
     [EndpointName("EditSquare")]
+    [EndpointSummary("Edit a bingo square")]
+    [EndpointDescription("Updates the display text of a square on the caller's bingo card. Cannot edit free spaces.")]
+    [ProducesResponseType<EditSquareResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     [RequirePlayerToken]
     public async Task<IActionResult> EditSquare(
         Guid roomId,
@@ -81,6 +131,15 @@ public class RoomsController(
 
     [HttpPost("{roomId:guid}/players/{playerId:guid}/card/squares/{row:int}/{column:int}/mark")]
     [EndpointName("MarkSquare")]
+    [EndpointSummary("Mark a bingo square")]
+    [EndpointDescription(
+        "Marks a square on a player's card and evaluates win conditions. Can be called by the player or the host."
+    )]
+    [ProducesResponseType<MarkSquareResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     [RequirePlayerToken]
     [PlayerOrHost]
     public async Task<IActionResult> MarkSquare(
@@ -93,6 +152,13 @@ public class RoomsController(
 
     [HttpPost("{roomId:guid}/players/{playerId:guid}/card/squares/{row:int}/{column:int}/unmark")]
     [EndpointName("UnmarkSquare")]
+    [EndpointSummary("Unmark a bingo square")]
+    [EndpointDescription("Unmarks a square on a player's card and re-evaluates win status. Cannot unmark free spaces.")]
+    [ProducesResponseType<UnmarkSquareResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     [RequirePlayerToken]
     [PlayerOrHost]
     public async Task<IActionResult> UnmarkSquare(

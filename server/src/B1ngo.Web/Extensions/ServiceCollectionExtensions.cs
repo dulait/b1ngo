@@ -30,7 +30,19 @@ internal static class ServiceCollectionExtensions
             services.AddSignalR();
             services.AddDomainEventHandlers();
             services.AddApiVersioningDefaults();
-            services.AddOpenApi();
+            services.AddOpenApi(options =>
+            {
+                options.AddDocumentTransformer(
+                    (document, _, _) =>
+                    {
+                        document.Info.Title = "B1ngo API";
+                        document.Info.Version = "v1";
+                        document.Info.Description =
+                            "F1 Bingo game API — room management, gameplay, and real-time events.";
+                        return Task.CompletedTask;
+                    }
+                );
+            });
 
             return services;
         }

@@ -1,8 +1,9 @@
 {
   "openapi": "3.1.1",
   "info": {
-    "title": "B1ngo.Web | v1",
-    "version": "1.0.0"
+    "title": "B1ngo API",
+    "description": "F1 Bingo game API \u2014 room management, gameplay, and real-time events.",
+    "version": "v1"
   },
   "servers": [
     {
@@ -15,6 +16,8 @@
         "tags": [
           "Rooms"
         ],
+        "summary": "Create a new room",
+        "description": "Creates a new bingo room with the caller as host. Returns a join code and sets a PlayerToken cookie.",
         "operationId": "CreateRoom",
         "requestBody": {
           "content": {
@@ -38,7 +41,24 @@
         },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateRoomResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -48,6 +68,8 @@
         "tags": [
           "Rooms"
         ],
+        "summary": "Join an existing room",
+        "description": "Joins a room using a join code. Returns player identity and sets a PlayerToken cookie.",
         "operationId": "JoinRoom",
         "requestBody": {
           "content": {
@@ -71,7 +93,44 @@
         },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JoinRoomResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -81,10 +140,39 @@
         "tags": [
           "Rooms"
         ],
+        "summary": "Reconnect to a room",
+        "description": "Re-establishes a player\u0027s session with a room using the PlayerToken cookie.",
         "operationId": "Reconnect",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconnectResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -94,6 +182,8 @@
         "tags": [
           "Rooms"
         ],
+        "summary": "Start the game",
+        "description": "Transitions the room from lobby to in-progress. Only the host can start the game.",
         "operationId": "StartGame",
         "parameters": [
           {
@@ -108,7 +198,54 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StartGameResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -118,6 +255,8 @@
         "tags": [
           "Rooms"
         ],
+        "summary": "End the game",
+        "description": "Transitions the room from in-progress to completed. Only the host can end the game.",
         "operationId": "EndGame",
         "parameters": [
           {
@@ -132,7 +271,54 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EndGameResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -142,6 +328,8 @@
         "tags": [
           "Rooms"
         ],
+        "summary": "Get full room state",
+        "description": "Returns the complete room state including players, cards, and leaderboard. Requires the caller to be a member of the room.",
         "operationId": "GetRoomState",
         "parameters": [
           {
@@ -156,7 +344,44 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetRoomStateResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -166,6 +391,8 @@
         "tags": [
           "Rooms"
         ],
+        "summary": "Edit a bingo square",
+        "description": "Updates the display text of a square on the caller\u0027s bingo card. Cannot edit free spaces.",
         "operationId": "EditSquare",
         "parameters": [
           {
@@ -220,7 +447,64 @@
         },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditSquareResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -230,6 +514,8 @@
         "tags": [
           "Rooms"
         ],
+        "summary": "Mark a bingo square",
+        "description": "Marks a square on a player\u0027s card and evaluates win conditions. Can be called by the player or the host.",
         "operationId": "MarkSquare",
         "parameters": [
           {
@@ -273,7 +559,54 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarkSquareResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -283,6 +616,8 @@
         "tags": [
           "Rooms"
         ],
+        "summary": "Unmark a bingo square",
+        "description": "Unmarks a square on a player\u0027s card and re-evaluates win status. Cannot unmark free spaces.",
         "operationId": "UnmarkSquare",
         "parameters": [
           {
@@ -326,7 +661,54 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnmarkSquareResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -334,6 +716,72 @@
   },
   "components": {
     "schemas": {
+      "BingoInfo": {
+        "required": [
+          "pattern",
+          "rank"
+        ],
+        "type": "object",
+        "properties": {
+          "pattern": {
+            "type": "string"
+          },
+          "rank": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "CardDto": {
+        "required": [
+          "matrixSize",
+          "squares"
+        ],
+        "type": "object",
+        "properties": {
+          "matrixSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "squares": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SquareDto"
+            }
+          }
+        }
+      },
+      "ConfigurationDto": {
+        "required": [
+          "matrixSize",
+          "winningPatterns"
+        ],
+        "type": "object",
+        "properties": {
+          "matrixSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "winningPatterns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
       "CreateRoomCommand": {
         "required": [
           "hostDisplayName",
@@ -380,6 +828,32 @@
           }
         }
       },
+      "CreateRoomResponse": {
+        "required": [
+          "roomId",
+          "joinCode",
+          "playerId",
+          "playerToken"
+        ],
+        "type": "object",
+        "properties": {
+          "roomId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "joinCode": {
+            "type": "string"
+          },
+          "playerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "playerToken": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
       "EditSquareRequest": {
         "required": [
           "displayText"
@@ -388,6 +862,129 @@
         "properties": {
           "displayText": {
             "type": "string"
+          }
+        }
+      },
+      "EditSquareResponse": {
+        "required": [
+          "row",
+          "column",
+          "displayText",
+          "eventKey"
+        ],
+        "type": "object",
+        "properties": {
+          "row": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "column": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "displayText": {
+            "type": "string"
+          },
+          "eventKey": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "EndGameResponse": {
+        "required": [
+          "roomId",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "roomId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "GetRoomStateResponse": {
+        "required": [
+          "roomId",
+          "joinCode",
+          "status",
+          "session",
+          "configuration",
+          "hostPlayerId",
+          "players",
+          "leaderboard"
+        ],
+        "type": "object",
+        "properties": {
+          "roomId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "joinCode": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "session": {
+            "$ref": "#/components/schemas/SessionDto"
+          },
+          "configuration": {
+            "$ref": "#/components/schemas/ConfigurationDto"
+          },
+          "hostPlayerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "players": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlayerDto"
+            }
+          },
+          "leaderboard": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LeaderboardEntryDto"
+            }
           }
         }
       },
@@ -406,8 +1003,312 @@
           }
         }
       },
+      "JoinRoomResponse": {
+        "required": [
+          "roomId",
+          "playerId",
+          "playerToken",
+          "displayName"
+        ],
+        "type": "object",
+        "properties": {
+          "roomId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "playerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "playerToken": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayName": {
+            "type": "string"
+          }
+        }
+      },
+      "LeaderboardEntryDto": {
+        "required": [
+          "playerId",
+          "rank",
+          "winningPattern",
+          "completedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "playerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rank": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "winningPattern": {
+            "type": "string"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "MarkSquareResponse": {
+        "required": [
+          "row",
+          "column",
+          "isMarked",
+          "markedBy",
+          "markedAt",
+          "bingo"
+        ],
+        "type": "object",
+        "properties": {
+          "row": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "column": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "isMarked": {
+            "type": "boolean"
+          },
+          "markedBy": {
+            "type": "string"
+          },
+          "markedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "bingo": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/BingoInfo"
+              }
+            ]
+          }
+        }
+      },
+      "PlayerDto": {
+        "required": [
+          "playerId",
+          "displayName",
+          "hasWon",
+          "card"
+        ],
+        "type": "object",
+        "properties": {
+          "playerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "hasWon": {
+            "type": "boolean"
+          },
+          "card": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/CardDto"
+              }
+            ]
+          }
+        }
+      },
+      "ReconnectResponse": {
+        "required": [
+          "roomId",
+          "playerId",
+          "roomStatus"
+        ],
+        "type": "object",
+        "properties": {
+          "roomId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "playerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "roomStatus": {
+            "type": "string"
+          }
+        }
+      },
+      "SessionDto": {
+        "required": [
+          "season",
+          "grandPrixName",
+          "sessionType"
+        ],
+        "type": "object",
+        "properties": {
+          "season": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "grandPrixName": {
+            "type": "string"
+          },
+          "sessionType": {
+            "type": "string"
+          }
+        }
+      },
       "SessionType": {
         "type": "integer"
+      },
+      "SquareDto": {
+        "required": [
+          "row",
+          "column",
+          "displayText",
+          "eventKey",
+          "isFreeSpace",
+          "isMarked",
+          "markedBy",
+          "markedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "row": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "column": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "displayText": {
+            "type": "string"
+          },
+          "eventKey": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "isFreeSpace": {
+            "type": "boolean"
+          },
+          "isMarked": {
+            "type": "boolean"
+          },
+          "markedBy": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "markedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "StartGameResponse": {
+        "required": [
+          "roomId",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "roomId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "UnmarkSquareResponse": {
+        "required": [
+          "row",
+          "column",
+          "isMarked",
+          "markedBy",
+          "markedAt",
+          "winRevoked"
+        ],
+        "type": "object",
+        "properties": {
+          "row": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "column": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "isMarked": {
+            "type": "boolean"
+          },
+          "markedBy": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "markedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "winRevoked": {
+            "type": "boolean"
+          }
+        }
       },
       "WinPatternType": {
         "type": "integer"
