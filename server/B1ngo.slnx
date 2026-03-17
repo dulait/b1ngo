@@ -16,5 +16,6 @@
     <Project Path="tests/B1ngo.Application.Tests/B1ngo.Application.Tests.csproj" />
     <Project Path="tests/B1ngo.Infrastructure.Tests/B1ngo.Infrastructure.Tests.csproj" />
     <Project Path="tests/B1ngo.Web.Tests/B1ngo.Web.Tests.csproj" />
+    <Project Path="tests/B1ngo.Integration.Tests/B1ngo.Integration.Tests.csproj" />
   </Folder>
 </Solution>
