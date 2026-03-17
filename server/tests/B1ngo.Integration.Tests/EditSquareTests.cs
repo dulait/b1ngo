@@ -13,7 +13,8 @@ public sealed class EditSquareTests(B1ngoApiFactory factory) : IntegrationTestBa
         using var client = Factory.CreateClient();
         var response = await client.PutAsJsonAsync(
             $"/api/v1/rooms/{room.RoomId}/players/me/card/squares/0/0",
-            new { displayText = "Test" });
+            new { displayText = "Test" }
+        );
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
@@ -49,10 +50,8 @@ public sealed class EditSquareTests(B1ngoApiFactory factory) : IntegrationTestBa
 
 internal static class HttpClientJsonExtensions
 {
-    public static Task<HttpResponseMessage> PutAsJsonAsync<T>(
-        this HttpClient client, string requestUri, T value)
+    public static Task<HttpResponseMessage> PutAsJsonAsync<T>(this HttpClient client, string requestUri, T value)
     {
-        return client.PutAsync(requestUri,
-            System.Net.Http.Json.JsonContent.Create(value));
+        return client.PutAsync(requestUri, System.Net.Http.Json.JsonContent.Create(value));
     }
 }

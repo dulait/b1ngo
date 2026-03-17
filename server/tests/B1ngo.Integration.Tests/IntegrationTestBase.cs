@@ -19,19 +19,20 @@ public abstract class IntegrationTestBase
         Factory = factory;
     }
 
-    protected async Task<CreateRoomResult> CreateRoom(
-        string hostDisplayName = "Host",
-        int matrixSize = 3)
+    protected async Task<CreateRoomResult> CreateRoom(string hostDisplayName = "Host", int matrixSize = 3)
     {
         using var client = Factory.CreateClient();
-        var response = await client.PostAsJsonAsync("/api/v1/rooms", new
-        {
-            hostDisplayName,
-            matrixSize,
-            season = 2026,
-            grandPrixName = "Monaco",
-            sessionType = 6, // SessionType.Race
-        });
+        var response = await client.PostAsJsonAsync(
+            "/api/v1/rooms",
+            new
+            {
+                hostDisplayName,
+                matrixSize,
+                season = 2026,
+                grandPrixName = "Monaco",
+                sessionType = 6, // SessionType.Race
+            }
+        );
 
         response.EnsureSuccessStatusCode();
 
@@ -42,11 +43,7 @@ public abstract class IntegrationTestBase
     protected async Task<JoinRoomResult> JoinRoom(string joinCode, string displayName = "Player2")
     {
         using var client = Factory.CreateClient();
-        var response = await client.PostAsJsonAsync("/api/v1/rooms/join", new
-        {
-            joinCode,
-            displayName,
-        });
+        var response = await client.PostAsJsonAsync("/api/v1/rooms/join", new { joinCode, displayName });
 
         response.EnsureSuccessStatusCode();
 
@@ -67,28 +64,48 @@ public abstract class IntegrationTestBase
     }
 
     protected async Task<HttpResponseMessage> EditSquare(
-        Guid roomId, Guid playerToken, int row, int column, string displayText)
+        Guid roomId,
+        Guid playerToken,
+        int row,
+        int column,
+        string displayText
+    )
     {
         using var client = Factory.CreateAuthenticatedClient(playerToken);
         return await client.PutAsJsonAsync(
             $"/api/v1/rooms/{roomId}/players/me/card/squares/{row}/{column}",
-            new { displayText });
+            new { displayText }
+        );
     }
 
     protected async Task<HttpResponseMessage> MarkSquare(
-        Guid roomId, Guid playerId, Guid playerToken, int row, int column)
+        Guid roomId,
+        Guid playerId,
+        Guid playerToken,
+        int row,
+        int column
+    )
     {
         using var client = Factory.CreateAuthenticatedClient(playerToken);
         return await client.PostAsync(
-            $"/api/v1/rooms/{roomId}/players/{playerId}/card/squares/{row}/{column}/mark", null);
+            $"/api/v1/rooms/{roomId}/players/{playerId}/card/squares/{row}/{column}/mark",
+            null
+        );
     }
 
     protected async Task<HttpResponseMessage> UnmarkSquare(
-        Guid roomId, Guid playerId, Guid playerToken, int row, int column)
+        Guid roomId,
+        Guid playerId,
+        Guid playerToken,
+        int row,
+        int column
+    )
     {
         using var client = Factory.CreateAuthenticatedClient(playerToken);
         return await client.PostAsync(
-            $"/api/v1/rooms/{roomId}/players/{playerId}/card/squares/{row}/{column}/unmark", null);
+            $"/api/v1/rooms/{roomId}/players/{playerId}/card/squares/{row}/{column}/unmark",
+            null
+        );
     }
 
     protected async Task<HttpResponseMessage> GetRoomState(Guid roomId, Guid playerToken)
@@ -110,8 +127,10 @@ public abstract class IntegrationTestBase
     }
 
     protected record CreateRoomResult(Guid RoomId, string JoinCode, Guid PlayerId, Guid PlayerToken);
+
     protected record JoinRoomResult(Guid RoomId, Guid PlayerId, Guid PlayerToken, string DisplayName);
 
     private record CreateRoomApiResponse(Guid RoomId, string JoinCode, Guid PlayerId, Guid PlayerToken);
+
     private record JoinRoomApiResponse(Guid RoomId, Guid PlayerId, Guid PlayerToken, string DisplayName);
 }

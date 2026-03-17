@@ -13,7 +13,9 @@ public sealed class MarkSquareTests(B1ngoApiFactory factory) : IntegrationTestBa
 
         using var client = Factory.CreateClient();
         var response = await client.PostAsync(
-            $"/api/v1/rooms/{room.RoomId}/players/{room.PlayerId}/card/squares/0/0/mark", null);
+            $"/api/v1/rooms/{room.RoomId}/players/{room.PlayerId}/card/squares/0/0/mark",
+            null
+        );
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }

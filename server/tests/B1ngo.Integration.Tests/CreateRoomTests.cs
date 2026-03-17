@@ -11,14 +11,17 @@ public sealed class CreateRoomTests(B1ngoApiFactory factory) : IntegrationTestBa
     {
         using var client = Factory.CreateClient();
 
-        var response = await client.PostAsJsonAsync("/api/v1/rooms", new
-        {
-            hostDisplayName = "",
-            season = 2026,
-            grandPrixName = "Monaco",
-            sessionType = 6,
-            matrixSize = 3,
-        });
+        var response = await client.PostAsJsonAsync(
+            "/api/v1/rooms",
+            new
+            {
+                hostDisplayName = "",
+                season = 2026,
+                grandPrixName = "Monaco",
+                sessionType = 6,
+                matrixSize = 3,
+            }
+        );
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
@@ -28,14 +31,17 @@ public sealed class CreateRoomTests(B1ngoApiFactory factory) : IntegrationTestBa
     {
         using var client = Factory.CreateClient();
 
-        var response = await client.PostAsJsonAsync("/api/v1/rooms", new
-        {
-            hostDisplayName = "Host",
-            season = 2026,
-            grandPrixName = "Monaco",
-            sessionType = 6,
-            matrixSize = 4,
-        });
+        var response = await client.PostAsJsonAsync(
+            "/api/v1/rooms",
+            new
+            {
+                hostDisplayName = "Host",
+                season = 2026,
+                grandPrixName = "Monaco",
+                sessionType = 6,
+                matrixSize = 4,
+            }
+        );
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }

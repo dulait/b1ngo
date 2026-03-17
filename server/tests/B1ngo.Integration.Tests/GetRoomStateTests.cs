@@ -55,9 +55,12 @@ public sealed class GetRoomStateTests(B1ngoApiFactory factory) : IntegrationTest
         ConfigurationDto Configuration,
         Guid HostPlayerId,
         List<PlayerDto> Players,
-        List<object> Leaderboard);
+        List<object> Leaderboard
+    );
 
     private record SessionDto(int Season, string GrandPrixName, string SessionType);
+
     private record ConfigurationDto(int MatrixSize, List<string> WinningPatterns);
+
     private record PlayerDto(Guid PlayerId, string DisplayName, bool HasWon);
 }

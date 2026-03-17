@@ -11,11 +11,10 @@ public sealed class JoinRoomTests(B1ngoApiFactory factory) : IntegrationTestBase
     {
         using var client = Factory.CreateClient();
 
-        var response = await client.PostAsJsonAsync("/api/v1/rooms/join", new
-        {
-            joinCode = "ZZZZZZ",
-            displayName = "Player",
-        });
+        var response = await client.PostAsJsonAsync(
+            "/api/v1/rooms/join",
+            new { joinCode = "ZZZZZZ", displayName = "Player" }
+        );
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -26,11 +25,10 @@ public sealed class JoinRoomTests(B1ngoApiFactory factory) : IntegrationTestBase
         var room = await CreateRoom("HostPlayer");
 
         using var client = Factory.CreateClient();
-        var response = await client.PostAsJsonAsync("/api/v1/rooms/join", new
-        {
-            joinCode = room.JoinCode,
-            displayName = "HostPlayer",
-        });
+        var response = await client.PostAsJsonAsync(
+            "/api/v1/rooms/join",
+            new { joinCode = room.JoinCode, displayName = "HostPlayer" }
+        );
 
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
     }
@@ -42,11 +40,10 @@ public sealed class JoinRoomTests(B1ngoApiFactory factory) : IntegrationTestBase
         await StartGame(room.RoomId, room.PlayerToken);
 
         using var client = Factory.CreateClient();
-        var response = await client.PostAsJsonAsync("/api/v1/rooms/join", new
-        {
-            joinCode = room.JoinCode,
-            displayName = "LatePlayer",
-        });
+        var response = await client.PostAsJsonAsync(
+            "/api/v1/rooms/join",
+            new { joinCode = room.JoinCode, displayName = "LatePlayer" }
+        );
 
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
     }
