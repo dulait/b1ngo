@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { BngSquareComponent } from './square.component';
 
 describe('BngSquareComponent', () => {

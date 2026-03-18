@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { BngSquarePopoverComponent } from './square-popover.component';
 
 describe('BngSquarePopoverComponent', () => {
@@ -7,7 +8,6 @@ describe('BngSquarePopoverComponent', () => {
   let anchorEl: HTMLElement;
 
   beforeEach(async () => {
-    // Create a mock anchor element
     anchorEl = document.createElement('div');
     anchorEl.style.position = 'fixed';
     anchorEl.style.top = '200px';

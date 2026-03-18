@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { BngToastContainerComponent } from './toast.component';
 import { ToastService } from '../../services/toast.service';
 
@@ -53,10 +53,9 @@ describe('BngToastContainerComponent', () => {
 
     toastService.dismiss(id);
     fixture.detectChanges();
-    // Toast is still present but in dismissing state (exit animation playing)
     expect(fixture.nativeElement.textContent).toContain('Dismissable');
 
-    vi.advanceTimersByTime(200); // Wait for exit animation
+    vi.advanceTimersByTime(200);
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).not.toContain('Dismissable');
     vi.useRealTimers();
@@ -86,10 +85,8 @@ describe('ToastService', () => {
     service.info('Info', 0);
     service.success('Success', 0);
     service.warning('Warning', 0);
-    // toasts() is capped at 3 (MAX_VISIBLE)
     expect(service.toasts().length).toBe(3);
     service.error('Error', 0);
-    // Still 3 visible, 4th queued behind
     expect(service.toasts().length).toBe(3);
   });
 
@@ -103,9 +100,9 @@ describe('ToastService', () => {
     vi.useFakeTimers();
     const id = service.show('Test', 'info', 0);
     service.dismiss(id);
-    expect(service.toasts().length).toBe(1); // Still present, dismissing
-    vi.advanceTimersByTime(200); // Exit animation duration
-    expect(service.toasts().length).toBe(0); // Now removed
+    expect(service.toasts().length).toBe(1);
+    vi.advanceTimersByTime(200);
+    expect(service.toasts().length).toBe(0);
     vi.useRealTimers();
   });
 

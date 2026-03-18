@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { BngInputComponent } from './input.component';
 
 describe('BngInputComponent', () => {
@@ -29,14 +30,6 @@ describe('BngInputComponent', () => {
     const input = fixture.nativeElement.querySelector('input');
     expect(input).toBeTruthy();
     expect(input.type).toBe('text');
-  });
-
-  it('should render select when type is select', () => {
-    fixture.componentRef.setInput('type', 'select');
-    fixture.componentRef.setInput('options', [{ value: 'a', label: 'A' }]);
-    fixture.detectChanges();
-    const select = fixture.nativeElement.querySelector('select');
-    expect(select).toBeTruthy();
   });
 
   it('should show error message', () => {

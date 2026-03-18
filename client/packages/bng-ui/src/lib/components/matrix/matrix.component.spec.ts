@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { BngMatrixComponent } from './matrix.component';
 import { SquareData } from '../../types';
 
@@ -64,7 +65,6 @@ describe('BngMatrixComponent', () => {
     fixture.detectChanges();
     const spy = vi.fn();
     fixture.componentInstance.squareMark.subscribe(spy);
-    // First square is markable in game mode (not free space)
     const squares = fixture.nativeElement.querySelectorAll('bng-square');
     const gridcell = squares[0].querySelector('[role="gridcell"]');
     gridcell?.click();

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { BngThemePickerComponent } from './theme-picker.component';
 
 describe('BngThemePickerComponent', () => {
@@ -39,7 +40,7 @@ describe('BngThemePickerComponent', () => {
     const spy = vi.fn();
     component.themeChange.subscribe(spy);
     const radios = fixture.nativeElement.querySelectorAll('[role="radio"]');
-    radios[1].click(); // Ocean
+    radios[1].click();
     expect(spy).toHaveBeenCalledWith('ocean');
   });
 
@@ -52,7 +53,6 @@ describe('BngThemePickerComponent', () => {
 });
 
 describe('ThemeService', () => {
-  // Theme service tested via the picker as it's tightly coupled
   it('should be importable', async () => {
     const { ThemeService } = await import('../../services/theme.service');
     expect(ThemeService).toBeTruthy();

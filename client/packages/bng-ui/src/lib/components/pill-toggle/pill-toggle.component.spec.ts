@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { BngPillToggleComponent } from './pill-toggle.component';
 
 describe('BngPillToggleComponent', () => {
@@ -33,12 +34,12 @@ describe('BngPillToggleComponent', () => {
 
   it('should show selected state with filled checkbox', () => {
     const svgs = fixture.nativeElement.querySelectorAll('svg');
-    expect(svgs.length).toBe(2); // Row and Diagonal are selected
+    expect(svgs.length).toBe(2);
   });
 
   it('should show unselected state with empty checkbox', () => {
     const empties = fixture.nativeElement.querySelectorAll('span.w-3\\.5');
-    expect(empties.length).toBe(1); // Column is unselected
+    expect(empties.length).toBe(1);
   });
 
   it('should apply accent classes to selected pills', () => {

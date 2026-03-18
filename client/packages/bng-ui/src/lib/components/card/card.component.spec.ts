@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { BngCardComponent } from './card.component';
 
 describe('BngCardComponent', () => {

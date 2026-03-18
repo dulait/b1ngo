@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { BngPlayerListComponent } from './player-list.component';
 
 describe('BngPlayerListComponent', () => {
@@ -38,7 +39,6 @@ describe('BngPlayerListComponent', () => {
 
   it('should render host first', () => {
     const chips = fixture.nativeElement.querySelectorAll('bng-player-chip');
-    // Host (Max) should be first
     expect(chips[0].textContent).toContain('Max Verstappen');
   });
 
