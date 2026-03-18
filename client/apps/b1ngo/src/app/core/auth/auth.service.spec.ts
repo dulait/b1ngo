@@ -1,0 +1,60 @@
+import { describe, it, beforeEach, expect, vi } from 'vitest';
+import { AuthService } from './auth.service';
+
+describe('AuthService', () => {
+  let service: AuthService;
+
+  beforeEach(() => {
+    localStorage.clear();
+    service = new AuthService();
+  });
+
+  it('should return false for hasSession when no session exists', () => {
+    expect(service.hasSession()).toBe(false);
+  });
+
+  it('should return empty string for getPlayerId when no session', () => {
+    expect(service.getPlayerId()).toBe('');
+  });
+
+  it('should save and load session', () => {
+    service.saveSession('room-1', 'player-1');
+
+    expect(service.hasSession()).toBe(true);
+    expect(service.getPlayerId()).toBe('player-1');
+    expect(service.getRoomId()).toBe('room-1');
+    expect(service.session()).toEqual({ roomId: 'room-1', playerId: 'player-1' });
+  });
+
+  it('should persist session to localStorage', () => {
+    service.saveSession('room-1', 'player-1');
+
+    const stored = localStorage.getItem('bng-session');
+    expect(stored).toBeTruthy();
+    expect(JSON.parse(stored!)).toEqual({ roomId: 'room-1', playerId: 'player-1' });
+  });
+
+  it('should clear session', () => {
+    service.saveSession('room-1', 'player-1');
+    service.clearSession();
+
+    expect(service.hasSession()).toBe(false);
+    expect(service.session()).toBeNull();
+    expect(localStorage.getItem('bng-session')).toBeNull();
+  });
+
+  it('should load session from localStorage on construction', () => {
+    localStorage.setItem('bng-session', JSON.stringify({ roomId: 'r1', playerId: 'p1' }));
+
+    const freshService = new AuthService();
+    expect(freshService.hasSession()).toBe(true);
+    expect(freshService.getPlayerId()).toBe('p1');
+  });
+
+  it('should handle corrupted localStorage gracefully', () => {
+    localStorage.setItem('bng-session', 'not-json');
+
+    const freshService = new AuthService();
+    expect(freshService.hasSession()).toBe(false);
+  });
+});
