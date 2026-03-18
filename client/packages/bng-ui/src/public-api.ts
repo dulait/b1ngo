@@ -5,6 +5,7 @@
 // Components
 export { BngButtonComponent } from './lib/components/button/button.component';
 export { BngInputComponent } from './lib/components/input/input.component';
+export { BngSelectComponent } from './lib/components/select/select.component';
 export { BngCodeInputComponent } from './lib/components/code-input/code-input.component';
 export { BngSquareComponent } from './lib/components/square/square.component';
 export { BngMatrixComponent } from './lib/components/matrix/matrix.component';
