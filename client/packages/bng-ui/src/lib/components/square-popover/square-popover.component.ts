@@ -32,7 +32,7 @@ const MIN_SPACE_ABOVE_PX = 80;
     <div
       #popoverEl
       role="tooltip"
-      class="fixed z-50 max-w-[200px] bg-bg-surface-elevated border border-border-default rounded-lg px-3 py-2.5 shadow-lg"
+      class="fixed z-50 max-w-[200px] bg-bg-surface-elevated border border-border-default rounded-lg px-3 py-2.5 shadow-lg text-center"
       [style.left.px]="posX()"
       [style.top.px]="posY()"
       [style.animation]="'popover-open 150ms cubic-bezier(0.21, 1.02, 0.73, 1)'"
@@ -69,7 +69,7 @@ const MIN_SPACE_ABOVE_PX = 80;
       } @else {
         <p class="text-sm text-text-primary">{{ displayText() }}</p>
         @if (isMarked() && markedBy()) {
-          <div class="border-t border-border-subtle mt-2 pt-2 flex justify-between">
+          <div class="border-t border-border-subtle mt-2 pt-2 flex justify-center gap-2">
             <span class="text-xs text-text-secondary">Marked by {{ markedByLabel() }}</span>
             @if (markedAt()) {
               <span class="text-xs text-text-secondary">{{ relativeTime() }}</span>
@@ -99,9 +99,10 @@ export class BngSquarePopoverComponent implements OnDestroy {
   protected readonly posX = signal(0);
   protected readonly posY = signal(0);
   protected readonly arrowX = signal(0);
-  protected readonly arrowAbove = signal(true); // true = popover above anchor, arrow points down
+  protected readonly arrowAbove = signal(true);
 
   private autoCloseTimer: ReturnType<typeof setTimeout> | null = null;
+  private destroyed = false;
   private readonly outsideClickHandler = (e: MouseEvent): void => this.onOutsideClick(e);
   private readonly scrollHandler = (): void => this.close();
   private readonly escHandler = (e: KeyboardEvent): void => {
@@ -132,6 +133,7 @@ export class BngSquarePopoverComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroyed = true;
     this.teardownDismissListeners();
     if (this.autoCloseTimer) {
       clearTimeout(this.autoCloseTimer);
@@ -144,7 +146,9 @@ export class BngSquarePopoverComponent implements OnDestroy {
       clearTimeout(this.autoCloseTimer);
       this.autoCloseTimer = null;
     }
-    this.closed.emit();
+    if (!this.destroyed) {
+      this.closed.emit();
+    }
   }
 
   private position(anchor: HTMLElement): void {
@@ -155,14 +159,12 @@ export class BngSquarePopoverComponent implements OnDestroy {
     }
 
     const popoverRect = popover.getBoundingClientRect();
-    // Horizontal: center on anchor, clamp to viewport
     let x = anchorRect.left + anchorRect.width / 2 - popoverRect.width / 2;
     x = Math.max(
       POPOVER_VIEWPORT_MARGIN_PX,
       Math.min(x, window.innerWidth - popoverRect.width - POPOVER_VIEWPORT_MARGIN_PX),
     );
 
-    // Vertical: prefer above
     const above = anchorRect.top >= MIN_SPACE_ABOVE_PX;
 
     let y: number;
@@ -174,7 +176,6 @@ export class BngSquarePopoverComponent implements OnDestroy {
       this.arrowAbove.set(false);
     }
 
-    // Arrow X relative to popover
     const anchorCenterX = anchorRect.left + anchorRect.width / 2;
     this.arrowX.set(
       Math.max(
@@ -191,7 +192,6 @@ export class BngSquarePopoverComponent implements OnDestroy {
     if (!this.isBrowser) {
       return;
     }
-    // Delay to avoid the current pointerup from immediately closing
     setTimeout(() => {
       document.addEventListener('click', this.outsideClickHandler, true);
       document.addEventListener('scroll', this.scrollHandler, true);
