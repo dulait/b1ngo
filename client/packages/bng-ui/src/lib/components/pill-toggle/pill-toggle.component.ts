@@ -24,7 +24,7 @@ export interface PillToggleOption {
       @for (option of options(); track option.value) {
         <button
           type="button"
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm transition-colors cursor-pointer"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm cursor-pointer"
           [class.border-accent]="option.selected"
           [class.bg-accent-muted]="option.selected"
           [class.text-accent]="option.selected"
