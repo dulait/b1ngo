@@ -1,17 +1,12 @@
-// Tree-shakeable SVG icon constants. Each exports the inner SVG content (paths only).
-
 export const bngIconCopy = `<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>`;
 
 export const bngIconShare = `<path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/>`;
 
 export const bngIconChevronDown = `<path d="M6 9l6 6 6-6"/>`;
 
-// Stroke-only checkmark
 export const bngIconCheck = `<path d="M20 6L9 17l-5-5"/>`;
 
-// Filled checkbox (selected state) — exception to stroke-only rule for toggle indicators.
-// Uses 14x14 viewBox. The filled rect uses var(--bng-accent) so it follows the active theme.
-export const bngIconCheckFilled = `<rect width="14" height="14" rx="2" fill="var(--bng-accent)"/><path d="M3.5 7l2.5 2.5 4.5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`;
+export const bngIconCheckFilled = `<rect width="14" height="14" rx="2" fill="var(--bng-accent)" stroke="none"/><path d="M3.5 7l2.5 2.5 4.5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`;
 
 export const bngIconCrown = `<path d="M2 20h20"/><path d="M2 17l2-12 5 5 3-7 3 7 5-5 2 12"/>`;
 
