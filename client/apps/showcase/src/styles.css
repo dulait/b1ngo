@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@700&display=swap');
+
+@import "tailwindcss";
+@source "../../../packages/bng-ui/src/**/*.ts";
+@import "../../../packages/bng-ui/src/lib/styles/tokens.css";
+@import "../../../packages/bng-ui/src/lib/styles/themes.css";
+@import "../../../packages/bng-ui/src/lib/styles/base.css";
+
+@theme {
+  --color-bg-base: #0A0A0F;
+  --color-bg-surface: #14141F;
+  --color-bg-surface-elevated: #1E1E2E;
+  --color-bg-surface-hover: #26263A;
+
+  --color-border-default: #2A2A3D;
+  --color-border-subtle: #1E1E2E;
+
+  --color-text-primary: #E8E8F0;
+  --color-text-secondary: #9898B0;
+  --color-text-disabled: #55556A;
+
+  --color-accent: var(--bng-accent);
+  --color-accent-hover: var(--bng-accent-hover);
+  --color-accent-muted: var(--bng-accent-muted);
+
+  --color-success: #22C55E;
+  --color-warning: #EAB308;
+  --color-error: #EF4444;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+}
