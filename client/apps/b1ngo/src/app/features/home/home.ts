@@ -19,7 +19,9 @@ export class Home implements OnInit {
   protected readonly themeService = inject(ThemeService);
 
   async ngOnInit(): Promise<void> {
-    if (!this.auth.hasSession()) return;
+    if (!this.auth.hasSession()) {
+      return;
+    }
 
     try {
       const result = await this.roomApi.reconnect();
