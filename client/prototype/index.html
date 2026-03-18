@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B1NGO — Prototype</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'bg-base': '#0A0A0F',
+            'bg-surface': '#14141F',
+            'bg-surface-elevated': '#1E1E2E',
+            'bg-surface-hover': '#26263A',
+            'border-default': '#2A2A3D',
+            'border-subtle': '#1E1E2E',
+            'text-primary': '#E8E8F0',
+            'text-secondary': '#9898B0',
+            'text-disabled': '#55556A',
+            'accent': '#DC2626',
+            'accent-hover': '#EF4444',
+            'accent-muted': 'rgba(220,38,38,0.10)',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'Courier New', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Tab switching via CSS :checked */
+    .tab-content { display: none; }
+    #tab-home:checked ~ .tabs-container .tab-content-home,
+    #tab-lobby:checked ~ .tabs-container .tab-content-lobby,
+    #tab-game:checked ~ .tabs-container .tab-content-game,
+    #tab-results:checked ~ .tabs-container .tab-content-results {
+      display: block;
+    }
+
+    /* Tab label active styles */
+    #tab-home:checked ~ .tabs-container .tab-bar label[for="tab-home"],
+    #tab-lobby:checked ~ .tabs-container .tab-bar label[for="tab-lobby"],
+    #tab-game:checked ~ .tabs-container .tab-bar label[for="tab-game"],
+    #tab-results:checked ~ .tabs-container .tab-bar label[for="tab-results"] {
+      color: #DC2626;
+      border-bottom-color: #DC2626;
+    }
+
+    /* Active status dot pulse */
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+    /* Square text clamping */
+    .square-text {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Custom select arrow */
+    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 5l3 3 3-3' stroke='%239898B0' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+
+    /* Inline SVG icons */
+    .icon-copy { display: inline-block; width: 14px; height: 14px; background: currentColor; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='9' y='9' width='13' height='13' rx='2'/%3E%3Cpath d='M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1'/%3E%3C/svg%3E") no-repeat center / contain; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='9' y='9' width='13' height='13' rx='2'/%3E%3Cpath d='M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1'/%3E%3C/svg%3E") no-repeat center / contain; }
+    .icon-share { display: inline-block; width: 14px; height: 14px; background: currentColor; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8'/%3E%3Cpolyline points='16 6 12 2 8 6'/%3E%3Cline x1='12' y1='2' x2='12' y2='15'/%3E%3C/svg%3E") no-repeat center / contain; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8'/%3E%3Cpolyline points='16 6 12 2 8 6'/%3E%3Cline x1='12' y1='2' x2='12' y2='15'/%3E%3C/svg%3E") no-repeat center / contain; }
+    .icon-chevron { display: inline-block; width: 12px; height: 12px; background: currentColor; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat center / contain; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat center / contain; }
+  </style>
+</head>
+<body class="bg-bg-base text-text-primary font-sans min-h-screen">
+
+  <!-- Hidden radio inputs for tab switching -->
+  <input type="radio" name="tab" id="tab-home" class="hidden" checked>
+  <input type="radio" name="tab" id="tab-lobby" class="hidden">
+  <input type="radio" name="tab" id="tab-game" class="hidden">
+  <input type="radio" name="tab" id="tab-results" class="hidden">
+
+  <div class="tabs-container max-w-md mx-auto">
+
+    <!-- Tab bar -->
+    <div class="tab-bar flex border-b border-border-default bg-bg-surface sticky top-0 z-50">
+      <label for="tab-home" class="flex-1 text-center py-3 text-sm font-medium text-text-secondary border-b-2 border-transparent cursor-pointer transition-colors">Home</label>
+      <label for="tab-lobby" class="flex-1 text-center py-3 text-sm font-medium text-text-secondary border-b-2 border-transparent cursor-pointer transition-colors">Lobby</label>
+      <label for="tab-game" class="flex-1 text-center py-3 text-sm font-medium text-text-secondary border-b-2 border-transparent cursor-pointer transition-colors">Game</label>
+      <label for="tab-results" class="flex-1 text-center py-3 text-sm font-medium text-text-secondary border-b-2 border-transparent cursor-pointer transition-colors">Results</label>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- VIEW 1: HOME -->
+    <!-- ============================================================ -->
+    <div class="tab-content tab-content-home">
+
+      <main class="p-4 space-y-4">
+
+        <!-- Branding -->
+        <div class="text-center pt-6 pb-2">
+          <h1 class="font-mono font-bold text-accent text-[1.875rem] leading-[1.2] tracking-[-0.02em]">B1NGO</h1>
+          <p class="text-text-secondary text-base mt-1">F1 Bingo / Play Live</p>
+        </div>
+
+        <!-- Create Room Card -->
+        <div class="bg-bg-surface border border-border-default rounded-xl p-4">
+          <h2 class="text-[1.125rem] font-semibold leading-[1.33] pb-3 border-b border-border-subtle mb-4">Create Room</h2>
+
+          <!-- Your Name -->
+          <div class="mb-4">
+            <label class="block text-sm text-text-secondary mb-1.5">Your Name</label>
+            <input type="text" placeholder="Enter your display name" value="Charles"
+              class="w-full h-12 bg-bg-surface border border-border-default rounded-lg px-4 text-text-primary text-base placeholder:text-text-disabled focus:outline-none focus:border-accent">
+          </div>
+
+          <!-- Season (dropdown) -->
+          <div class="mb-4">
+            <label class="block text-sm text-text-secondary mb-1.5">Season</label>
+            <select class="w-full h-12 bg-bg-surface border border-border-default rounded-lg px-4 pr-10 text-text-primary text-base appearance-none focus:outline-none focus:border-accent">
+              <option>2024</option>
+              <option>2025</option>
+              <option selected>2026</option>
+            </select>
+          </div>
+
+          <!-- Grand Prix (dropdown) -->
+          <div class="mb-4">
+            <label class="block text-sm text-text-secondary mb-1.5">Grand Prix</label>
+            <select class="w-full h-12 bg-bg-surface border border-border-default rounded-lg px-4 pr-10 text-text-primary text-base appearance-none focus:outline-none focus:border-accent">
+              <option selected>Bahrain Grand Prix</option>
+              <option>Saudi Arabian Grand Prix</option>
+              <option>Australian Grand Prix</option>
+              <option>Japanese Grand Prix</option>
+              <option>Chinese Grand Prix</option>
+              <option>Miami Grand Prix</option>
+              <option>Emilia Romagna Grand Prix</option>
+              <option>Monaco Grand Prix</option>
+              <option>Spanish Grand Prix</option>
+              <option>Canadian Grand Prix</option>
+              <option>Austrian Grand Prix</option>
+              <option>British Grand Prix</option>
+              <option>Belgian Grand Prix</option>
+              <option>Hungarian Grand Prix</option>
+              <option>Dutch Grand Prix</option>
+              <option>Italian Grand Prix</option>
+              <option>Azerbaijan Grand Prix</option>
+              <option>Singapore Grand Prix</option>
+              <option>United States Grand Prix</option>
+              <option>Mexico City Grand Prix</option>
+              <option>Brazilian Grand Prix</option>
+              <option>Las Vegas Grand Prix</option>
+              <option>Qatar Grand Prix</option>
+              <option>Abu Dhabi Grand Prix</option>
+            </select>
+          </div>
+
+          <!-- Session Type -->
+          <div class="mb-4">
+            <label class="block text-sm text-text-secondary mb-1.5">Session Type</label>
+            <select class="w-full h-12 bg-bg-surface border border-border-default rounded-lg px-4 pr-10 text-text-primary text-base appearance-none focus:outline-none focus:border-accent">
+              <option>FP1</option>
+              <option>FP2</option>
+              <option>FP3</option>
+              <option>Qualifying</option>
+              <option>Sprint Qualifying</option>
+              <option>Sprint</option>
+              <option selected>Race</option>
+            </select>
+          </div>
+
+          <!-- More options (expanded state) -->
+          <div class="mb-4">
+            <button class="flex items-center gap-1.5 text-accent text-sm font-medium mb-3">
+              <span class="icon-chevron text-accent" style="transform: rotate(180deg)"></span>
+              Less options
+            </button>
+
+            <div class="space-y-4 pl-0.5">
+              <!-- Matrix Size -->
+              <div>
+                <label class="block text-sm text-text-secondary mb-2">Card Size</label>
+                <div class="flex gap-2">
+                  <span class="w-10 h-10 rounded-lg border border-border-default bg-bg-surface flex items-center justify-center text-sm text-text-secondary">3</span>
+                  <span class="w-10 h-10 rounded-lg border border-accent bg-accent-muted flex items-center justify-center text-sm text-accent font-semibold">5</span>
+                  <span class="w-10 h-10 rounded-lg border border-border-default bg-bg-surface flex items-center justify-center text-sm text-text-secondary">7</span>
+                  <span class="w-10 h-10 rounded-lg border border-border-default bg-bg-surface flex items-center justify-center text-sm text-text-secondary">9</span>
+                </div>
+              </div>
+
+              <!-- Win Patterns -->
+              <div>
+                <label class="block text-sm text-text-secondary mb-2">Win Patterns</label>
+                <div class="flex flex-wrap gap-2">
+                  <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-accent bg-accent-muted text-sm text-accent">
+                    <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 14 14" fill="none"><rect width="14" height="14" rx="2" fill="#DC2626"/><path d="M3.5 7l2.5 2.5 4.5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Row
+                  </span>
+                  <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-accent bg-accent-muted text-sm text-accent">
+                    <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 14 14" fill="none"><rect width="14" height="14" rx="2" fill="#DC2626"/><path d="M3.5 7l2.5 2.5 4.5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Column
+                  </span>
+                  <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-accent bg-accent-muted text-sm text-accent">
+                    <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 14 14" fill="none"><rect width="14" height="14" rx="2" fill="#DC2626"/><path d="M3.5 7l2.5 2.5 4.5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Diagonal
+                  </span>
+                  <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border-default text-sm text-text-secondary">
+                    <span class="w-3.5 h-3.5 rounded border border-border-default shrink-0"></span>
+                    Blackout
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Create Room button -->
+          <button class="w-full h-[52px] bg-accent text-white font-semibold text-base rounded-lg">
+            Create Room
+          </button>
+        </div>
+
+        <!-- Join Room Card -->
+        <div class="bg-bg-surface border border-border-default rounded-xl p-4">
+          <h2 class="text-[1.125rem] font-semibold leading-[1.33] pb-3 border-b border-border-subtle mb-4">Join Room</h2>
+
+          <!-- 6-char code input -->
+          <div class="mb-4">
+            <label class="block text-sm text-text-secondary mb-1.5">Join Code</label>
+            <div class="flex gap-2 justify-center">
+              <div class="w-12 h-14 bg-bg-surface border border-border-default rounded-lg flex items-center justify-center font-mono font-bold text-[1.75rem] text-text-primary">H</div>
+              <div class="w-12 h-14 bg-bg-surface border border-border-default rounded-lg flex items-center justify-center font-mono font-bold text-[1.75rem] text-text-primary">7</div>
+              <div class="w-12 h-14 bg-bg-surface border border-border-default rounded-lg flex items-center justify-center font-mono font-bold text-[1.75rem] text-text-primary">K</div>
+              <div class="w-12 h-14 bg-bg-surface border border-border-default rounded-lg flex items-center justify-center font-mono font-bold text-[1.75rem] text-text-primary">M</div>
+              <div class="w-12 h-14 bg-bg-surface border border-border-default rounded-lg flex items-center justify-center font-mono font-bold text-[1.75rem] text-text-primary">3</div>
+              <div class="w-12 h-14 bg-bg-surface border border-accent rounded-lg flex items-center justify-center font-mono font-bold text-[1.75rem] text-text-primary">V</div>
+            </div>
+          </div>
+
+          <!-- Your Name -->
+          <div class="mb-4">
+            <label class="block text-sm text-text-secondary mb-1.5">Your Name</label>
+            <input type="text" placeholder="Enter your display name" value="Charles"
+              class="w-full h-12 bg-bg-surface border border-border-default rounded-lg px-4 text-text-primary text-base placeholder:text-text-disabled focus:outline-none focus:border-accent">
+          </div>
+
+          <!-- Join Room button -->
+          <button class="w-full h-[52px] bg-accent text-white font-semibold text-base rounded-lg">
+            Join Room
+          </button>
+        </div>
+
+        <!-- Bottom spacer -->
+        <div class="h-4"></div>
+      </main>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- VIEW 2: LOBBY -->
+    <!-- ============================================================ -->
+    <div class="tab-content tab-content-lobby">
+
+      <!-- Header -->
+      <header class="h-14 flex items-center justify-between px-4 bg-bg-surface border-b border-border-default">
+        <span class="font-mono font-bold text-lg text-accent">B1NGO</span>
+        <span class="text-sm text-text-secondary truncate mx-3">Bahrain GP / Race</span>
+        <span class="flex items-center gap-1.5 bg-[rgba(234,179,8,0.15)] rounded-full px-2.5 py-1 shrink-0">
+          <span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span>
+          <span class="text-xs font-semibold text-yellow-500">Lobby</span>
+        </span>
+      </header>
+
+      <main class="p-4 space-y-4 pb-24">
+
+        <!-- Join Code Display -->
+        <div class="text-center">
+          <div class="flex gap-2 justify-center mb-3">
+            <span class="bg-bg-surface-elevated px-2.5 py-2 rounded-md font-mono font-bold text-2xl tracking-[0.15em] text-text-primary">H</span>
+            <span class="bg-bg-surface-elevated px-2.5 py-2 rounded-md font-mono font-bold text-2xl tracking-[0.15em] text-text-primary">7</span>
+            <span class="bg-bg-surface-elevated px-2.5 py-2 rounded-md font-mono font-bold text-2xl tracking-[0.15em] text-text-primary">K</span>
+            <span class="bg-bg-surface-elevated px-2.5 py-2 rounded-md font-mono font-bold text-2xl tracking-[0.15em] text-text-primary">M</span>
+            <span class="bg-bg-surface-elevated px-2.5 py-2 rounded-md font-mono font-bold text-2xl tracking-[0.15em] text-text-primary">3</span>
+            <span class="bg-bg-surface-elevated px-2.5 py-2 rounded-md font-mono font-bold text-2xl tracking-[0.15em] text-text-primary">V</span>
+          </div>
+          <div class="flex gap-3 justify-center">
+            <button class="flex items-center gap-1.5 text-accent text-sm font-medium px-3 py-2 rounded-lg">
+              <span class="icon-copy text-accent"></span> Copy
+            </button>
+            <button class="flex items-center gap-1.5 text-accent text-sm font-medium px-3 py-2 rounded-lg">
+              <span class="icon-share text-accent"></span> Share
+            </button>
+          </div>
+        </div>
+
+        <!-- Bingo Card (Lobby - same clean style as Game) -->
+        <div class="bg-bg-surface border border-border-default rounded-xl p-4">
+          <h3 class="text-[1.125rem] font-semibold leading-[1.33] pb-3 border-b border-border-subtle mb-3">Your Card</h3>
+
+          <div class="aspect-square grid grid-cols-5 gap-1">
+            <!-- Row 0 -->
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Safety Car deployed</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Red flag shown</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Fastest lap by leader</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">DRS failure</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Team radio rage</span>
+            </div>
+
+            <!-- Row 1 -->
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Pit stop under 2s</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Team orders swap</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Track limits penalty</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Rain mid-race</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">VSC deployed</span>
+            </div>
+
+            <!-- Row 2 -->
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Turn 1 overtake</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Driver DNF</span>
+            </div>
+            <!-- FREE SPACE -->
+            <div class="bg-bg-surface-elevated border border-border-subtle rounded flex items-center justify-center p-1.5 opacity-40">
+              <span class="text-[11px] font-medium text-text-disabled text-center">FREE</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Formation lap incident</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Debris on track</span>
+            </div>
+
+            <!-- Row 3 -->
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Undercut works</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Late SC restart</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Fastest pit stop</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Double stack</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">DRS train forms</span>
+            </div>
+
+            <!-- Row 4 -->
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Blue flag ignored</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Tyre deg surprise</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Podium outsider</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Gravel lock-up</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Last-lap overtake</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Player List -->
+        <div class="bg-bg-surface border border-border-default rounded-xl p-4">
+          <h3 class="text-[1.125rem] font-semibold leading-[1.33] pb-3 border-b border-border-subtle mb-3">Players (4)</h3>
+          <div class="space-y-2">
+            <!-- Max (Host) -->
+            <div class="flex items-center gap-3 px-2 py-1.5 rounded-lg">
+              <div class="w-8 h-8 rounded-full bg-[#6366F1] flex items-center justify-center text-white text-xs font-medium shrink-0">MA</div>
+              <span class="text-base text-text-primary">Max</span>
+              <span class="text-xs font-medium text-accent bg-accent-muted rounded-full px-2 py-0.5">Host</span>
+            </div>
+            <!-- Lewis -->
+            <div class="flex items-center gap-3 px-2 py-1.5 rounded-lg">
+              <div class="w-8 h-8 rounded-full bg-[#8B5CF6] flex items-center justify-center text-white text-xs font-medium shrink-0">LE</div>
+              <span class="text-base text-text-primary">Lewis</span>
+            </div>
+            <!-- Charles (You) -->
+            <div class="flex items-center gap-3 px-2 py-1.5 rounded-lg bg-accent-muted">
+              <div class="w-8 h-8 rounded-full bg-[#EC4899] flex items-center justify-center text-white text-xs font-medium shrink-0">CH</div>
+              <span class="text-base text-text-primary leading-none">Charles</span>
+              <span class="text-xs text-text-secondary leading-none">(You)</span>
+            </div>
+            <!-- Lando -->
+            <div class="flex items-center gap-3 px-2 py-1.5 rounded-lg">
+              <div class="w-8 h-8 rounded-full bg-[#F97316] flex items-center justify-center text-white text-xs font-medium shrink-0">LA</div>
+              <span class="text-base text-text-primary">Lando</span>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Fixed bottom Start Game button -->
+      <div class="fixed bottom-0 left-0 right-0 bg-bg-surface border-t border-border-default p-4">
+        <div class="max-w-md mx-auto">
+          <button class="w-full h-[52px] bg-accent text-white font-semibold text-base rounded-lg">
+            Start Game
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- VIEW 3: GAME (ACTIVE) -->
+    <!-- ============================================================ -->
+    <div class="tab-content tab-content-game">
+
+      <!-- Header -->
+      <header class="h-14 flex items-center justify-between px-4 bg-bg-surface border-b border-border-default">
+        <span class="font-mono font-bold text-lg text-accent">B1NGO</span>
+        <span class="text-sm text-text-secondary truncate mx-3">Bahrain GP / Race</span>
+        <span class="flex items-center gap-1.5 bg-[rgba(34,197,94,0.15)] rounded-full px-2.5 py-1 shrink-0">
+          <span class="w-1.5 h-1.5 rounded-full bg-green-500 pulse-dot"></span>
+          <span class="text-xs font-semibold text-green-500">Active</span>
+        </span>
+      </header>
+
+      <main class="p-4 space-y-4 pb-24">
+
+        <!-- Bingo Card (Game mode - 5x5) -->
+        <div class="aspect-square grid grid-cols-5 gap-1">
+
+          <!-- Row 0 -->
+          <!-- Marked (You) -->
+          <div class="bg-accent-muted border border-accent rounded relative flex items-center justify-center pt-1.5 px-1.5 pb-4">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Safety Car deployed</span>
+            <span class="absolute bottom-1 text-[9px] font-medium text-accent leading-none">You</span>
+          </div>
+          <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Red flag shown</span>
+          </div>
+          <!-- Marked (Auto) -->
+          <div class="bg-accent-muted border border-accent rounded relative flex items-center justify-center pt-1.5 px-1.5 pb-4">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Fastest lap by leader</span>
+            <span class="absolute bottom-1 text-[9px] font-medium text-text-secondary leading-none">Auto</span>
+          </div>
+          <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">DRS failure</span>
+          </div>
+          <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Team radio rage</span>
+          </div>
+
+          <!-- Row 1 -->
+          <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Pit stop under 2s</span>
+          </div>
+          <!-- Marked (You) -->
+          <div class="bg-accent-muted border border-accent rounded relative flex items-center justify-center pt-1.5 px-1.5 pb-4">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Team orders swap</span>
+            <span class="absolute bottom-1 text-[9px] font-medium text-accent leading-none">You</span>
+          </div>
+          <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Track limits penalty</span>
+          </div>
+          <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Rain mid-race</span>
+          </div>
+          <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">VSC deployed</span>
+          </div>
+
+          <!-- Row 2 -->
+          <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Turn 1 overtake</span>
+          </div>
+          <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Driver DNF</span>
+          </div>
+          <!-- FREE SPACE -->
+          <div class="bg-bg-surface-elevated border border-border-subtle rounded flex items-center justify-center p-1.5 opacity-40">
+            <span class="text-[11px] font-medium text-text-disabled text-center">FREE</span>
+          </div>
+          <!-- Marked (Host) -->
+          <div class="bg-accent-muted border border-accent rounded relative flex items-center justify-center pt-1.5 px-1.5 pb-4">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Formation lap incident</span>
+            <span class="absolute bottom-1 text-[9px] font-medium text-text-secondary leading-none">Host</span>
+          </div>
+          <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Debris on track</span>
+          </div>
+
+          <!-- Row 3 -->
+          <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Undercut works</span>
+          </div>
+          <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Late SC restart</span>
+          </div>
+          <!-- Marked (You) -->
+          <div class="bg-accent-muted border border-accent rounded relative flex items-center justify-center pt-1.5 px-1.5 pb-4">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Fastest pit stop</span>
+            <span class="absolute bottom-1 text-[9px] font-medium text-accent leading-none">You</span>
+          </div>
+          <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Double stack</span>
+          </div>
+          <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">DRS train forms</span>
+          </div>
+
+          <!-- Row 4 -->
+          <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Blue flag ignored</span>
+          </div>
+          <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Tyre deg surprise</span>
+          </div>
+          <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Podium outsider</span>
+          </div>
+          <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Gravel lock-up</span>
+          </div>
+          <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+            <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Last-lap overtake</span>
+          </div>
+        </div>
+
+        <!-- Leaderboard Card -->
+        <div class="bg-bg-surface border border-border-default rounded-xl p-4">
+          <h3 class="text-[1.125rem] font-semibold leading-[1.33] pb-3 border-b border-border-subtle mb-3">Winners</h3>
+          <div class="flex items-center gap-3 px-2 py-1.5">
+            <span class="w-7 text-center text-green-500 font-bold text-sm">#1</span>
+            <div class="w-7 h-7 rounded-full bg-[#8B5CF6] flex items-center justify-center text-white text-[10px] font-medium shrink-0">LE</div>
+            <span class="text-sm text-text-primary font-medium">Lewis</span>
+            <span class="text-xs bg-bg-surface-elevated text-text-secondary rounded-full px-2 py-0.5">Row</span>
+            <span class="text-xs text-text-secondary ml-auto">2m ago</span>
+          </div>
+        </div>
+      </main>
+
+      <!-- Fixed bottom End Game button -->
+      <div class="fixed bottom-0 left-0 right-0 bg-bg-surface border-t border-border-default p-4">
+        <div class="max-w-md mx-auto">
+          <button class="w-full h-[52px] bg-[#7F1D1D] text-[#FCA5A5] font-semibold text-base rounded-lg">
+            End Game
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- VIEW 4: RESULTS -->
+    <!-- ============================================================ -->
+    <div class="tab-content tab-content-results">
+
+      <!-- Header -->
+      <header class="h-14 flex items-center justify-between px-4 bg-bg-surface border-b border-border-default">
+        <span class="font-mono font-bold text-lg text-accent">B1NGO</span>
+        <span class="text-sm text-text-secondary truncate mx-3">Bahrain GP / Race</span>
+        <span class="flex items-center gap-1.5 bg-[rgba(148,163,184,0.15)] rounded-full px-2.5 py-1 shrink-0">
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+          <span class="text-xs font-semibold text-slate-400">Completed</span>
+        </span>
+      </header>
+
+      <main class="p-4 space-y-4">
+
+        <!-- Results Banner -->
+        <div class="text-center py-6">
+          <h2 class="text-[1.5rem] font-bold leading-[1.25] tracking-[-0.01em] text-text-primary mb-2">Game Over</h2>
+          <p class="text-[1.875rem] font-bold leading-[1.2] tracking-[-0.02em] text-green-500">You finished #2!</p>
+        </div>
+
+        <!-- Final Standings -->
+        <div class="bg-bg-surface border border-border-default rounded-xl p-4">
+          <h3 class="text-[1.125rem] font-semibold leading-[1.33] pb-3 border-b border-border-subtle mb-3">Final Standings</h3>
+          <div class="space-y-1">
+            <!-- #1 Lewis -->
+            <div class="flex items-center gap-3 px-3 py-2.5 rounded-lg">
+              <span class="w-7 text-center text-green-500 font-bold text-sm">#1</span>
+              <div class="w-8 h-8 rounded-full bg-[#8B5CF6] flex items-center justify-center text-white text-xs font-medium shrink-0">LE</div>
+              <span class="text-sm text-text-primary font-medium flex-1">Lewis</span>
+              <span class="text-xs bg-bg-surface-elevated text-text-secondary rounded-full px-2 py-0.5">Row</span>
+              <span class="text-xs text-text-secondary tabular-nums">14:32:15</span>
+            </div>
+            <!-- #2 Charles (You) -->
+            <div class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-accent-muted">
+              <span class="w-7 text-center text-text-secondary font-bold text-sm">#2</span>
+              <div class="w-8 h-8 rounded-full bg-[#EC4899] flex items-center justify-center text-white text-xs font-medium shrink-0">CH</div>
+              <span class="text-sm text-text-primary font-medium flex-1">Charles <span class="text-text-secondary font-normal">(You)</span></span>
+              <span class="text-xs bg-bg-surface-elevated text-text-secondary rounded-full px-2 py-0.5">Diagonal</span>
+              <span class="text-xs text-text-secondary tabular-nums">14:35:22</span>
+            </div>
+            <!-- #3 Max -->
+            <div class="flex items-center gap-3 px-3 py-2.5 rounded-lg">
+              <span class="w-7 text-center text-text-secondary font-bold text-sm">#3</span>
+              <div class="w-8 h-8 rounded-full bg-[#6366F1] flex items-center justify-center text-white text-xs font-medium shrink-0">MA</div>
+              <span class="text-sm text-text-primary font-medium flex-1">Max</span>
+              <span class="text-xs bg-bg-surface-elevated text-text-secondary rounded-full px-2 py-0.5">Column</span>
+              <span class="text-xs text-text-secondary tabular-nums">14:38:01</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Final Card (5x5 read-only, winning diagonal highlighted) -->
+        <div class="bg-bg-surface border border-border-default rounded-xl p-4">
+          <h3 class="text-[1.125rem] font-semibold leading-[1.33] pb-3 border-b border-border-subtle mb-3">Your Card</h3>
+
+          <div class="aspect-square grid grid-cols-5 gap-1">
+            <!-- Row 0 -->
+            <!-- [0,0] Marked (You) + WINNING DIAGONAL -->
+            <div class="bg-accent-muted border-2 border-[#22C55E] rounded relative flex items-center justify-center pt-1.5 px-1.5 pb-4">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Safety Car deployed</span>
+              <span class="absolute bottom-1 text-[9px] font-medium text-accent leading-none">You</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Red flag shown</span>
+            </div>
+            <!-- Marked (Auto) -->
+            <div class="bg-accent-muted border border-accent rounded relative flex items-center justify-center pt-1.5 px-1.5 pb-4">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Fastest lap by leader</span>
+              <span class="absolute bottom-1 text-[9px] font-medium text-text-secondary leading-none">Auto</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">DRS failure</span>
+            </div>
+            <!-- Marked (You) -->
+            <div class="bg-accent-muted border border-accent rounded relative flex items-center justify-center pt-1.5 px-1.5 pb-4">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Team radio rage</span>
+              <span class="absolute bottom-1 text-[9px] font-medium text-accent leading-none">You</span>
+            </div>
+
+            <!-- Row 1 -->
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Pit stop under 2s</span>
+            </div>
+            <!-- [1,1] Marked (You) + WINNING DIAGONAL -->
+            <div class="bg-accent-muted border-2 border-[#22C55E] rounded relative flex items-center justify-center pt-1.5 px-1.5 pb-4">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Team orders swap</span>
+              <span class="absolute bottom-1 text-[9px] font-medium text-accent leading-none">You</span>
+            </div>
+            <!-- Marked (You) -->
+            <div class="bg-accent-muted border border-accent rounded relative flex items-center justify-center pt-1.5 px-1.5 pb-4">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Track limits penalty</span>
+              <span class="absolute bottom-1 text-[9px] font-medium text-accent leading-none">You</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Rain mid-race</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">VSC deployed</span>
+            </div>
+
+            <!-- Row 2 -->
+            <!-- Marked (Host) -->
+            <div class="bg-accent-muted border border-accent rounded relative flex items-center justify-center pt-1.5 px-1.5 pb-4">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Turn 1 overtake</span>
+              <span class="absolute bottom-1 text-[9px] font-medium text-text-secondary leading-none">Host</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Driver DNF</span>
+            </div>
+            <!-- [2,2] FREE SPACE + WINNING DIAGONAL -->
+            <div class="bg-bg-surface-elevated border-2 border-[#22C55E] rounded flex items-center justify-center p-1.5 opacity-40">
+              <span class="text-[11px] font-medium text-text-disabled text-center">FREE</span>
+            </div>
+            <!-- Marked (You) -->
+            <div class="bg-accent-muted border border-accent rounded relative flex items-center justify-center pt-1.5 px-1.5 pb-4">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Formation lap incident</span>
+              <span class="absolute bottom-1 text-[9px] font-medium text-accent leading-none">You</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Debris on track</span>
+            </div>
+
+            <!-- Row 3 -->
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Undercut works</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Late SC restart</span>
+            </div>
+            <!-- Marked (You) -->
+            <div class="bg-accent-muted border border-accent rounded relative flex items-center justify-center pt-1.5 px-1.5 pb-4">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Fastest pit stop</span>
+              <span class="absolute bottom-1 text-[9px] font-medium text-accent leading-none">You</span>
+            </div>
+            <!-- [3,3] Marked (You) + WINNING DIAGONAL -->
+            <div class="bg-accent-muted border-2 border-[#22C55E] rounded relative flex items-center justify-center pt-1.5 px-1.5 pb-4">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Double stack</span>
+              <span class="absolute bottom-1 text-[9px] font-medium text-accent leading-none">You</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">DRS train forms</span>
+            </div>
+
+            <!-- Row 4 -->
+            <!-- Marked (Auto) -->
+            <div class="bg-accent-muted border border-accent rounded relative flex items-center justify-center pt-1.5 px-1.5 pb-4">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Blue flag ignored</span>
+              <span class="absolute bottom-1 text-[9px] font-medium text-text-secondary leading-none">Auto</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Tyre deg surprise</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Podium outsider</span>
+            </div>
+            <div class="bg-bg-surface border border-border-default rounded flex items-center justify-center p-1.5">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Gravel lock-up</span>
+            </div>
+            <!-- [4,4] Marked (You) + WINNING DIAGONAL -->
+            <div class="bg-accent-muted border-2 border-[#22C55E] rounded relative flex items-center justify-center pt-1.5 px-1.5 pb-4">
+              <span class="square-text text-[11px] font-medium leading-tight text-text-primary text-center">Last-lap overtake</span>
+              <span class="absolute bottom-1 text-[9px] font-medium text-accent leading-none">You</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="space-y-3 pb-8">
+          <button class="w-full h-[52px] bg-accent text-white font-semibold text-base rounded-lg">
+            New Room
+          </button>
+          <button class="w-full h-[44px] bg-transparent border border-border-default text-text-primary font-semibold text-base rounded-lg">
+            Share Result
+          </button>
+        </div>
+      </main>
+    </div>
+
+  </div>
+</body>
+</html>
