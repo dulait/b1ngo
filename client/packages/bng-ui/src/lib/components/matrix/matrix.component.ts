@@ -131,7 +131,7 @@ export class BngMatrixComponent {
         }
         break;
       default:
-        return; // Don't prevent default for unhandled keys
+        return;
     }
 
     event.preventDefault();

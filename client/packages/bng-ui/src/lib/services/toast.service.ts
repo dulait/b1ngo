@@ -42,11 +42,9 @@ export class ToastService {
   }
 
   dismiss(id: string): void {
-    // Mark as dismissing to trigger exit animation
     this._toasts.update((current) =>
       current.map((t) => (t.id === id ? { ...t, dismissing: true } : t)),
     );
-    // Remove after exit animation completes
     setTimeout(() => {
       this._toasts.update((current) => current.filter((t) => t.id !== id));
     }, EXIT_ANIMATION_MS);
