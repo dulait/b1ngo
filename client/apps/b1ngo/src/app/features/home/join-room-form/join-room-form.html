@@ -1,0 +1,34 @@
+<bng-card header="Join Room">
+  <div class="space-y-4">
+    <div>
+      <label class="block text-sm text-text-secondary mb-1.5">Join Code</label>
+      <bng-code-input
+        [length]="6"
+        mode="input"
+        [error]="codeError()"
+        (codeChange)="onCodeChange($event)"
+        (codeComplete)="onCodeComplete($event)"
+      />
+    </div>
+
+    <bng-input
+      label="Your Name"
+      placeholder="Enter your display name"
+      [value]="displayName()"
+      [error]="nameError()"
+      [maxlength]="50"
+      (valueChange)="onNameChange($event)"
+    />
+
+    <bng-button
+      variant="primary"
+      size="lg"
+      [fullWidth]="true"
+      [loading]="loading()"
+      type="submit"
+      (clicked)="onSubmit()"
+    >
+      Join Room
+    </bng-button>
+  </div>
+</bng-card>

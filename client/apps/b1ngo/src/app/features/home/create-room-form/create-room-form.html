@@ -1,0 +1,44 @@
+<bng-card header="Create Room">
+  <div class="space-y-4">
+    <bng-input
+      label="Your Name"
+      placeholder="Enter your display name"
+      [value]="hostDisplayName()"
+      [error]="nameError()"
+      [maxlength]="50"
+      (valueChange)="onNameChange($event)"
+    />
+
+    <bng-select
+      label="Season"
+      [options]="seasonOptions"
+      [value]="season()"
+      (valueChange)="season.set($event)"
+    />
+
+    <bng-select
+      label="Grand Prix"
+      [options]="grandPrixOptions"
+      [value]="grandPrixName()"
+      (valueChange)="grandPrixName.set($event)"
+    />
+
+    <bng-select
+      label="Session Type"
+      [options]="sessionTypeOptions"
+      [value]="sessionType()"
+      (valueChange)="sessionType.set($event)"
+    />
+
+    <bng-button
+      variant="primary"
+      size="lg"
+      [fullWidth]="true"
+      [loading]="loading()"
+      type="submit"
+      (clicked)="onSubmit()"
+    >
+      Create Room
+    </bng-button>
+  </div>
+</bng-card>
