@@ -1,0 +1,7 @@
+{
+  "$schema": "../../apps/b1ngo/node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../apps/b1ngo/dist/bng-ui",
+  "lib": {
+    "entryFile": "src/public-api.ts"
+  }
+}

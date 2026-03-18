@@ -1,0 +1,78 @@
+/* B1ngo Base Styles — Reset, keyframes, reduced-motion */
+/* Font import is in the consuming app's styles.css (must be first) */
+
+html {
+  background-color: var(--bng-bg-base);
+  color: var(--bng-text-primary);
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes toast-enter {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toast-exit {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes popover-open {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes sheet-open {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes sheet-close {
+  from { transform: translateY(0); }
+  to { transform: translateY(100%); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+.skeleton-pulse {
+  animation: skeleton-pulse 1500ms ease-in-out infinite;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0ms !important;
+    transition-duration: 0ms !important;
+  }
+}

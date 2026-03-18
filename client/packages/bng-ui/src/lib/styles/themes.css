@@ -1,0 +1,25 @@
+/* B1ngo Theme Definitions — Applied via data-theme attribute on <html> */
+
+[data-theme="crimson"] {
+  --bng-theme-accent: #DC2626;
+  --bng-theme-accent-hover: #EF4444;
+  --bng-theme-accent-muted: rgba(220, 38, 38, 0.10);
+}
+
+[data-theme="ocean"] {
+  --bng-theme-accent: #2563EB;
+  --bng-theme-accent-hover: #3B82F6;
+  --bng-theme-accent-muted: rgba(37, 99, 235, 0.10);
+}
+
+[data-theme="citrus"] {
+  --bng-theme-accent: #CA8A04;
+  --bng-theme-accent-hover: #EAB308;
+  --bng-theme-accent-muted: rgba(202, 138, 4, 0.10);
+}
+
+[data-theme="midnight"] {
+  --bng-theme-accent: #6366F1;
+  --bng-theme-accent-hover: #818CF8;
+  --bng-theme-accent-muted: rgba(99, 102, 241, 0.10);
+}
