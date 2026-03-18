@@ -15,6 +15,7 @@ import {
 import { isPlatformBrowser } from '@angular/common';
 
 const SWIPE_DISMISS_THRESHOLD_PX = 100;
+const SWIPE_VELOCITY_THRESHOLD_PX_PER_MS = 0.3;
 const DESKTOP_BREAKPOINT_PX = 1024;
 const FOCUSABLE_SELECTOR =
   'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
@@ -44,7 +45,7 @@ let nextSheetId = 0;
             ? 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-md w-full rounded-xl'
             : 'bottom-0 left-0 right-0 rounded-t-2xl'
         "
-        [style.animation]="dragging() ? 'none' : 'sheet-open 300ms cubic-bezier(0.32, 0.72, 0, 1)'"
+        [style.animation]="animating() && !dragging() ? 'sheet-open 300ms cubic-bezier(0.32, 0.72, 0, 1)' : 'none'"
         [style.transform]="sheetTransform()"
         (keydown.escape)="close()"
         (keydown)="onSheetKeydown($event)"
@@ -92,9 +93,11 @@ export class BngBottomSheetComponent {
   protected readonly isDesktop = signal(false);
   protected readonly dragging = signal(false);
   protected readonly dragOffset = signal(0);
+  protected readonly animating = signal(true);
   protected readonly titleId = `bng-sheet-title-${++nextSheetId}`;
 
   private dragStartY = 0;
+  private dragStartTime = 0;
   private previouslyFocusedElement: HTMLElement | null = null;
 
   protected sheetTransform = computed(() => {
@@ -108,11 +111,12 @@ export class BngBottomSheetComponent {
   constructor() {
     effect(() => {
       if (this.open() && this.isBrowser) {
-        // Capture the element that had focus before the sheet opened
         this.previouslyFocusedElement = document.activeElement as HTMLElement | null;
         this.checkDesktop();
         this.dragOffset.set(0);
         this.dragging.set(false);
+        this.animating.set(true);
+        setTimeout(() => this.animating.set(false), 300);
         requestAnimationFrame(() => {
           const el = this.sheetEl()?.nativeElement;
           if (el) {
@@ -122,7 +126,6 @@ export class BngBottomSheetComponent {
         });
       }
       if (!this.open() && this.isBrowser) {
-        // Restore focus to the trigger element on close
         this.previouslyFocusedElement?.focus();
         this.previouslyFocusedElement = null;
       }
@@ -165,8 +168,9 @@ export class BngBottomSheetComponent {
       return;
     }
     this.dragStartY = event.clientY;
+    this.dragStartTime = Date.now();
     this.dragging.set(true);
-    // Capture pointer for reliable tracking even if finger leaves element
+
     (event.target as HTMLElement).setPointerCapture?.(event.pointerId);
   }
 
@@ -175,7 +179,6 @@ export class BngBottomSheetComponent {
       return;
     }
     const delta = event.clientY - this.dragStartY;
-    // Only allow dragging downward (positive delta)
     this.dragOffset.set(Math.max(0, delta));
   }
 
@@ -183,12 +186,16 @@ export class BngBottomSheetComponent {
     if (!this.dragging()) {
       return;
     }
-    if (this.dragOffset() > SWIPE_DISMISS_THRESHOLD_PX) {
+    const offset = this.dragOffset();
+    const elapsed = Date.now() - this.dragStartTime;
+    const velocity = elapsed > 0 ? offset / elapsed : 0;
+    if (offset > SWIPE_DISMISS_THRESHOLD_PX || velocity > SWIPE_VELOCITY_THRESHOLD_PX_PER_MS) {
       this.close();
     }
     this.dragOffset.set(0);
     this.dragging.set(false);
     this.dragStartY = 0;
+    this.dragStartTime = 0;
   }
 
   private checkDesktop(): void {
