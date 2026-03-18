@@ -145,7 +145,7 @@ export class BngSquareComponent {
   protected onClick(): void {
     if (this.longPressTriggered) {
       return;
-    } // Don't toggle if long-press just fired
+    }
     if (this.isFreeSpace()) {
       return;
     }
@@ -170,8 +170,8 @@ export class BngSquareComponent {
     this.longPressTimer = setTimeout(() => {
       this.longPressTriggered = true;
       this.pressing.set(false);
-      if (typeof navigator !== 'undefined' && navigator.vibrate) {
-        navigator.vibrate(HAPTIC_DURATION_MS);
+      if (navigator?.userActivation?.hasBeenActive) {
+        navigator.vibrate?.(HAPTIC_DURATION_MS);
       }
       const el = this.squareEl()?.nativeElement;
       if (el) {
