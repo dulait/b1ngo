@@ -1,10 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { BngHeaderComponent, BngToastContainerComponent, ThemeService } from 'bng-ui';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, BngHeaderComponent, BngToastContainerComponent],
   templateUrl: './app.html',
-  styleUrl: './app.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class App {}
+export class App implements OnInit {
+  private readonly themeService = inject(ThemeService);
+
+  ngOnInit(): void {
+    this.themeService.initialize();
+  }
+}
