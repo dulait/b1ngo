@@ -43,6 +43,16 @@ html {
   to { opacity: 1; transform: scale(1); }
 }
 
+@keyframes select-open {
+  from { opacity: 0; transform: scaleY(0.95); transform-origin: top; }
+  to { opacity: 1; transform: scaleY(1); transform-origin: top; }
+}
+
+@keyframes select-close {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
 @keyframes sheet-open {
   from { transform: translateY(100%); }
   to { transform: translateY(0); }
@@ -68,6 +78,28 @@ html {
 
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+
+.bng-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bng-border-default) transparent;
+}
+
+.bng-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.bng-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.bng-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--bng-border-default);
+  border-radius: 3px;
+}
+
+.bng-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--bng-bg-surface-hover);
 }
 
 @media (prefers-reduced-motion: reduce) {
