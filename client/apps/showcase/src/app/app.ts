@@ -3,6 +3,7 @@ import { ThemeService } from 'bng-ui';
 import { BngToastContainerComponent } from 'bng-ui';
 import { ButtonsSection } from './sections/buttons.section';
 import { InputsSection } from './sections/inputs.section';
+import { SelectSection } from './sections/select.section';
 import { CodeInputSection } from './sections/code-input.section';
 import { SquaresSection } from './sections/squares.section';
 import { MatrixSection } from './sections/matrix.section';
@@ -26,6 +27,7 @@ import { PillToggleSection } from './sections/pill-toggle.section';
     BngToastContainerComponent,
     ButtonsSection,
     InputsSection,
+    SelectSection,
     CodeInputSection,
     SquaresSection,
     MatrixSection,
@@ -114,6 +116,7 @@ import { PillToggleSection } from './sections/pill-toggle.section';
         <ds-theme-picker id="theme-picker" />
         <ds-buttons id="buttons" />
         <ds-inputs id="inputs" />
+        <ds-select id="select" />
         <ds-code-input id="code-input" />
         <ds-squares id="squares" />
         <ds-matrix id="matrix" />
@@ -144,6 +147,7 @@ export class AppComponent implements OnInit {
     { id: 'theme-picker', label: 'Theme Picker' },
     { id: 'buttons', label: 'Buttons' },
     { id: 'inputs', label: 'Inputs' },
+    { id: 'select', label: 'Select' },
     { id: 'code-input', label: 'Code Input' },
     { id: 'squares', label: 'Squares' },
     { id: 'matrix', label: 'Matrix' },
