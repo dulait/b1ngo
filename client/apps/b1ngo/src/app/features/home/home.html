@@ -1,17 +1,15 @@
-<main class="p-4 space-y-4 max-w-md mx-auto">
-  <!-- Branding -->
+<main class="flex flex-col gap-1 p-4 space-y-4 max-w-md mx-auto">
   <div class="text-center pt-6 pb-2">
-    <h1 class="font-mono font-bold text-accent text-[1.875rem] leading-[1.2] tracking-[-0.02em]">B1NGO</h1>
+    <h1 class="font-mono font-bold text-accent text-[1.875rem] leading-[1.2] tracking-[-0.02em]">
+      B1NGO
+    </h1>
     <p class="text-text-secondary text-base mt-1">F1 Bingo / Play Live</p>
   </div>
 
-  <!-- Create Room -->
   <create-room-form (success)="onRoomCreated($event)" />
 
-  <!-- Join Room -->
   <join-room-form (success)="onRoomJoined($event)" />
 
-  <!-- Theme Picker -->
   <div class="pt-2 pb-4">
     <bng-theme-picker
       [currentTheme]="themeService.currentTheme()"
