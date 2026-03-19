@@ -3,7 +3,6 @@ using B1ngo.Domain.Core;
 using B1ngo.Domain.Game;
 using B1ngo.Infrastructure.Auth;
 using B1ngo.Infrastructure.CardGeneration;
-using B1ngo.Infrastructure.Outbox;
 using B1ngo.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -27,8 +26,6 @@ public static class DependencyInjection
         services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<IPlayerTokenStore, PlayerTokenStore>();
         services.AddSingleton<IBingoCardGenerator, BingoCardGenerator>();
-
-        services.AddHostedService<OutboxProcessor>();
 
         return services;
     }

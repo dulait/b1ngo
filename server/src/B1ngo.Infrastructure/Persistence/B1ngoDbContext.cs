@@ -1,24 +1,20 @@
-using System.Text.Json;
 using B1ngo.Application.Common;
 using B1ngo.Domain.Core;
 using B1ngo.Domain.Game;
 using B1ngo.Infrastructure.Extensions;
-using B1ngo.Infrastructure.Outbox;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace B1ngo.Infrastructure.Persistence;
 
-public sealed class B1ngoDbContext(DbContextOptions<B1ngoDbContext> options, ICurrentUserProvider currentUserProvider)
-    : DbContext(options)
+public sealed class B1ngoDbContext(
+    DbContextOptions<B1ngoDbContext> options,
+    ICurrentUserProvider currentUserProvider,
+    IServiceProvider serviceProvider
+) : DbContext(options)
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        WriteIndented = false,
-    };
-
     public DbSet<Room> Rooms => Set<Room>();
-    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -29,15 +25,17 @@ public sealed class B1ngoDbContext(DbContextOptions<B1ngoDbContext> options, ICu
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         SetAuditFields();
-        ConvertDomainEventsToOutboxMessages();
+        var domainEvents = CollectDomainEvents();
 
-        return await base.SaveChangesAsync(cancellationToken);
+        var result = await base.SaveChangesAsync(cancellationToken);
+
+        await DispatchCollectedEvents(domainEvents, cancellationToken);
+
+        return result;
     }
 
-    private void ConvertDomainEventsToOutboxMessages()
+    private List<IDomainEvent> CollectDomainEvents()
     {
-        var utcNow = DateTimeOffset.UtcNow;
-
         var domainEvents = ChangeTracker
             .Entries<IHasDomainEvents>()
             .SelectMany(entry =>
@@ -48,13 +46,28 @@ public sealed class B1ngoDbContext(DbContextOptions<B1ngoDbContext> options, ICu
             })
             .ToList();
 
-        foreach (var domainEvent in domainEvents)
-        {
-            var eventType = domainEvent.GetType().AssemblyQualifiedName!;
-            var payload = JsonSerializer.Serialize(domainEvent, domainEvent.GetType(), JsonOptions);
+        return domainEvents;
+    }
 
-            var outboxMessage = OutboxMessage.Create(eventType, payload, utcNow);
-            OutboxMessages.Add(outboxMessage);
+    private async Task DispatchCollectedEvents(
+        List<IDomainEvent> domainEvents,
+        CancellationToken cancellationToken
+    )
+    {
+        if (domainEvents.Count == 0)
+        {
+            return;
+        }
+
+        try
+        {
+            var dispatcher = serviceProvider.GetRequiredService<IDomainEventDispatcher>();
+            await dispatcher.DispatchAsync(domainEvents, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            var logger = serviceProvider.GetService<ILogger<B1ngoDbContext>>();
+            logger?.LogWarning(ex, "Failed to dispatch {Count} domain events after commit", domainEvents.Count);
         }
     }
 
