@@ -4,11 +4,11 @@ namespace B1ngo.Domain.Game;
 
 public sealed class BingoSquare
 {
-    public int Row { get; }
-    public int Column { get; }
+    public int Row { get; private set; }
+    public int Column { get; private set; }
     public string DisplayText { get; private set; }
     public string? EventKey { get; private set; }
-    public bool IsFreeSpace { get; }
+    public bool IsFreeSpace { get; private set; }
     public bool IsMarked { get; private set; }
     public SquareMarkedBy? MarkedBy { get; private set; }
     public DateTimeOffset? MarkedAt { get; private set; }
