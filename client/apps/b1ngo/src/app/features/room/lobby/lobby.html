@@ -1,0 +1,63 @@
+<main class="p-4 space-y-4 pb-24">
+  <bng-code-input mode="display" [value]="store.joinCode()" />
+
+  <bng-card header="Your Card">
+    @if (store.currentCard(); as card) {
+      <bng-matrix
+        [squares]="card.squares"
+        [matrixSize]="store.matrixSize()"
+        mode="lobby"
+        [currentPlayerId]="store.currentPlayerId()"
+        [winningSquares]="emptySet"
+        (squareEdit)="onSquareEdit($event)"
+      />
+    }
+  </bng-card>
+
+  <bng-card [header]="'Players (' + store.players().length + ')'">
+    <bng-player-list
+      [players]="store.uiPlayers()"
+      [hostPlayerId]="store.hostPlayerId()"
+      [currentPlayerId]="store.currentPlayerId()"
+    />
+  </bng-card>
+</main>
+
+@if (store.isHost()) {
+  <div class="fixed bottom-0 left-0 right-0 bg-bg-surface border-t border-border-default p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+    <bng-button
+      variant="primary"
+      size="lg"
+      [fullWidth]="true"
+      [loading]="isStarting()"
+      [disabled]="store.players().length < 2"
+      (clicked)="onStartGame()"
+    >
+      Start Game
+    </bng-button>
+  </div>
+}
+
+<bng-bottom-sheet
+  title="Edit Square"
+  [open]="editSheetOpen()"
+  (closed)="onEditSheetClosed()"
+>
+  <div class="space-y-4">
+    <bng-input
+      label="Square Text"
+      placeholder="Enter text for this square"
+      [maxlength]="50"
+      [value]="editingSquareText()"
+      (valueChange)="editingSquareText.set($event)"
+    />
+    <bng-button
+      variant="primary"
+      [fullWidth]="true"
+      [loading]="editingSaving()"
+      (clicked)="onSaveSquareEdit()"
+    >
+      Save
+    </bng-button>
+  </div>
+</bng-bottom-sheet>
