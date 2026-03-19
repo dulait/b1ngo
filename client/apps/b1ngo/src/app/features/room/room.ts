@@ -70,8 +70,8 @@ export class Room implements OnInit, OnDestroy {
     effect(() => {
       const event = this.signalr.playerJoined();
       if (event) {
-        this.store.addPlayer(event.player);
-        this.toast.info(`${event.player.displayName} joined.`);
+        this.store.addPlayer(event.playerId, event.displayName);
+        this.toast.info(`${event.displayName} joined.`);
       }
     });
 
@@ -108,11 +108,18 @@ export class Room implements OnInit, OnDestroy {
     effect(() => {
       const event = this.signalr.bingoAchieved();
       if (event) {
-        this.store.updateLeaderboard(event.leaderboard);
+        const newEntry = {
+          rank: event.rank,
+          playerId: event.playerId,
+          winningPattern: event.pattern,
+          completedAt: new Date().toISOString(),
+        };
+        this.store.updateLeaderboard([...this.store.leaderboard(), newEntry]);
         if (event.playerId === this.store.currentPlayerId()) {
           this.toast.success('BINGO! You won!');
         } else {
-          this.toast.info(`${event.displayName} got BINGO!`);
+          const player = this.store.players().find((p) => p.playerId === event.playerId);
+          this.toast.info(`${player?.displayName ?? 'A player'} got BINGO!`);
         }
       }
     });
@@ -121,7 +128,9 @@ export class Room implements OnInit, OnDestroy {
       const event = this.signalr.gameCompleted();
       if (event) {
         this.store.setStatus('Completed');
-        this.store.updateLeaderboard(event.leaderboard);
+        this.roomApi.getRoomState(event.roomId).then((state) => {
+          this.store.updateLeaderboard(state.leaderboard);
+        });
         this.toast.info('Game over!');
       }
     });

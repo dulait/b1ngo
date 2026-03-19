@@ -89,7 +89,7 @@ export class CreateRoomForm {
     try {
       const response = await this.roomApi.createRoom({
         hostDisplayName: this.hostDisplayName().trim(),
-        season: this.season(),
+        season: parseInt(this.season(), 10),
         grandPrixName: this.grandPrixName(),
         sessionType: this.sessionType() as SessionType,
       });

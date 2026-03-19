@@ -12,6 +12,6 @@ internal sealed class GameCompletedEventHandler(IHubContext<GameHub> hubContext)
     {
         await hubContext
             .Clients.Group($"room:{domainEvent.RoomId.Value}")
-            .SendAsync("GameCompleted", new { roomId = domainEvent.RoomId.Value }, cancellationToken);
+            .SendAsync("GameCompleted", new GameCompletedHubEvent(domainEvent.RoomId.Value), cancellationToken);
     }
 }

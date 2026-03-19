@@ -14,12 +14,7 @@ internal sealed class SquareUnmarkedEventHandler(IHubContext<GameHub> hubContext
             .Clients.Group($"room:{domainEvent.RoomId.Value}")
             .SendAsync(
                 "SquareUnmarked",
-                new
-                {
-                    playerId = domainEvent.PlayerId.Value,
-                    row = domainEvent.Row,
-                    column = domainEvent.Column,
-                },
+                new SquareUnmarkedHubEvent(domainEvent.PlayerId.Value, domainEvent.Row, domainEvent.Column),
                 cancellationToken
             );
     }

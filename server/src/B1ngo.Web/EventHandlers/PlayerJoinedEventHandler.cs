@@ -17,7 +17,7 @@ internal sealed class PlayerJoinedEventHandler(IHubContext<GameHub> hubContext)
             .Clients.Group($"room:{domainEvent.RoomId.Value}")
             .SendAsync(
                 "PlayerJoined",
-                new { playerId = domainEvent.PlayerId.Value, displayName = domainEvent.DisplayName },
+                new PlayerJoinedHubEvent(domainEvent.PlayerId.Value, domainEvent.DisplayName),
                 cancellationToken
             );
     }

@@ -14,13 +14,12 @@ internal sealed class SquareMarkedEventHandler(IHubContext<GameHub> hubContext)
             .Clients.Group($"room:{domainEvent.RoomId.Value}")
             .SendAsync(
                 "SquareMarked",
-                new
-                {
-                    playerId = domainEvent.PlayerId.Value,
-                    row = domainEvent.Row,
-                    column = domainEvent.Column,
-                    markedBy = domainEvent.MarkedBy.ToString(),
-                },
+                new SquareMarkedHubEvent(
+                    domainEvent.PlayerId.Value,
+                    domainEvent.Row,
+                    domainEvent.Column,
+                    domainEvent.MarkedBy.ToString()
+                ),
                 cancellationToken
             );
     }

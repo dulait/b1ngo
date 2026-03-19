@@ -12,6 +12,6 @@ internal sealed class GameStartedEventHandler(IHubContext<GameHub> hubContext)
     {
         await hubContext
             .Clients.Group($"room:{domainEvent.RoomId.Value}")
-            .SendAsync("GameStarted", new { roomId = domainEvent.RoomId.Value }, cancellationToken);
+            .SendAsync("GameStarted", new GameStartedHubEvent(domainEvent.RoomId.Value), cancellationToken);
     }
 }

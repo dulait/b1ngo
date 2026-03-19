@@ -14,12 +14,11 @@ internal sealed class BingoAchievedEventHandler(IHubContext<GameHub> hubContext)
             .Clients.Group($"room:{domainEvent.RoomId.Value}")
             .SendAsync(
                 "BingoAchieved",
-                new
-                {
-                    playerId = domainEvent.PlayerId.Value,
-                    pattern = domainEvent.Pattern.ToString(),
-                    rank = domainEvent.Rank,
-                },
+                new BingoAchievedHubEvent(
+                    domainEvent.PlayerId.Value,
+                    domainEvent.Pattern.ToString(),
+                    domainEvent.Rank
+                ),
                 cancellationToken
             );
     }

@@ -41,7 +41,7 @@ export class RoomStore {
     this.leaderboard().map((e) => ({
       rank: e.rank,
       playerId: e.playerId,
-      pattern: e.pattern,
+      pattern: e.winningPattern,
       completedAt: e.completedAt,
     })),
   );
@@ -69,8 +69,11 @@ export class RoomStore {
     this.currentPlayerId.set(currentPlayerId);
   }
 
-  addPlayer(player: PlayerDto): void {
-    this.players.update((list) => [...list, player]);
+  addPlayer(playerId: string, displayName: string): void {
+    this.players.update((list) => [
+      ...list,
+      { playerId, displayName, hasWon: false, card: null },
+    ]);
   }
 
   updateSquare(playerId: string, row: number, col: number, patch: Partial<SquareDto>): void {

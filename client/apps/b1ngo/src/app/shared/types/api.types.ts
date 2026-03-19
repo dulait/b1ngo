@@ -14,7 +14,7 @@ export type WinPatternType = 'Row' | 'Column' | 'Diagonal' | 'Corners' | 'Blacko
 
 export interface CreateRoomCommand {
   hostDisplayName: string;
-  season: string;
+  season: number;
   grandPrixName: string;
   sessionType: SessionType;
   matrixSize?: number;
@@ -80,6 +80,7 @@ export interface PlayerDto {
 }
 
 export interface CardDto {
+  matrixSize: number;
   squares: SquareDto[];
 }
 
@@ -87,6 +88,7 @@ export interface SquareDto {
   row: number;
   column: number;
   displayText: string;
+  eventKey: string | null;
   isFreeSpace: boolean;
   isMarked: boolean;
   markedBy: MarkedBySource | null;
@@ -96,19 +98,19 @@ export interface SquareDto {
 export interface LeaderboardEntryDto {
   rank: number;
   playerId: string;
-  displayName: string;
-  pattern: string;
+  winningPattern: string;
   completedAt: string;
 }
 
 // --- SignalR Event Payloads ---
 
 export interface PlayerJoinedEvent {
-  player: PlayerDto;
+  playerId: string;
+  displayName: string;
 }
 
 export interface GameStartedEvent {
-  startedAt: string;
+  roomId: string;
 }
 
 export interface SquareMarkedEvent {
@@ -116,7 +118,6 @@ export interface SquareMarkedEvent {
   row: number;
   column: number;
   markedBy: MarkedBySource;
-  markedAt: string;
 }
 
 export interface SquareUnmarkedEvent {
@@ -127,12 +128,10 @@ export interface SquareUnmarkedEvent {
 
 export interface BingoAchievedEvent {
   playerId: string;
-  displayName: string;
   pattern: string;
-  leaderboard: LeaderboardEntryDto[];
+  rank: number;
 }
 
 export interface GameCompletedEvent {
-  leaderboard: LeaderboardEntryDto[];
-  completedAt: string;
+  roomId: string;
 }
