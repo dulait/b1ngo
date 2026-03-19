@@ -65,7 +65,7 @@ export class BngButtonComponent {
       secondary:
         'bg-transparent border border-border-default text-text-primary hover:bg-bg-surface-hover active:scale-[0.97]',
       ghost: 'bg-transparent text-accent hover:bg-accent-muted active:scale-[0.97]',
-      danger: 'bg-[#7F1D1D] text-[#FCA5A5] hover:bg-[#991B1B] active:scale-[0.97]',
+      danger: 'bg-[#DC2626] text-white hover:bg-[#B91C1C] active:scale-[0.97]',
     };
 
     const width = this.fullWidth() ? 'w-full' : '';

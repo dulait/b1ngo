@@ -51,8 +51,8 @@ describe('BngButtonComponent', () => {
     fixture.componentRef.setInput('variant', 'danger');
     fixture.detectChanges();
     const btn = fixture.nativeElement.querySelector('button');
-    expect(btn.className).toContain('bg-[#7F1D1D]');
-    expect(btn.className).toContain('text-[#FCA5A5]');
+    expect(btn.className).toContain('bg-[#DC2626]');
+    expect(btn.className).toContain('text-white');
   });
 
   it('should apply size lg height', () => {
