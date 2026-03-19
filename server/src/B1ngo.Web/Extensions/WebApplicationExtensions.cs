@@ -28,11 +28,11 @@ internal static class WebApplicationExtensions
             }
 
             app.UseCors();
+            app.UseRateLimiter();
 
-            app.MapOpenApi();
-
-            if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
+            if (!app.Environment.IsProduction())
             {
+                app.MapOpenApi();
                 app.MapScalarApiReference(options =>
                 {
                     options

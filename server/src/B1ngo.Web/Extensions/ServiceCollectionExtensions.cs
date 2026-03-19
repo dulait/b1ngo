@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using System.Threading.RateLimiting;
 using Asp.Versioning;
 using B1ngo.Application.Common;
 using B1ngo.Application.Features;
@@ -9,6 +10,7 @@ using B1ngo.Web.EventHandlers;
 using B1ngo.Web.Filters;
 using B1ngo.Web.OpenApi;
 using B1ngo.Web.Services;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace B1ngo.Web.Extensions;
 
@@ -44,6 +46,7 @@ internal static class ServiceCollectionExtensions
                 options.AddSchemaTransformer<SchemaTransformer>();
             });
             services.AddCorsPolicy(configuration);
+            services.AddRateLimiterPolicies();
             services.AddHealthChecks();
 
             return services;
@@ -54,6 +57,17 @@ internal static class ServiceCollectionExtensions
             var allowedOrigins = configuration
                 .GetValue<string>("AllowedOrigins")
                 ?.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            if (allowedOrigins is not { Length: > 0 })
+            {
+                var env = services.BuildServiceProvider().GetRequiredService<IHostEnvironment>();
+                if (!env.IsDevelopment() && !env.IsStaging() && !env.IsEnvironment("Testing"))
+                {
+                    throw new InvalidOperationException(
+                        "AllowedOrigins must be configured in production environments."
+                    );
+                }
+            }
 
             services.AddCors(options =>
             {
@@ -66,6 +80,36 @@ internal static class ServiceCollectionExtensions
 
                     policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials();
                 });
+            });
+        }
+
+        private void AddRateLimiterPolicies()
+        {
+            services.AddRateLimiter(options =>
+            {
+                options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+                options.AddFixedWindowLimiter(
+                    "auth",
+                    limiter =>
+                    {
+                        limiter.PermitLimit = 10;
+                        limiter.Window = TimeSpan.FromMinutes(1);
+                        limiter.QueueLimit = 0;
+                    }
+                );
+
+                options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                        _ => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = 60,
+                            Window = TimeSpan.FromMinutes(1),
+                            QueueLimit = 0,
+                        }
+                    )
+                );
             });
         }
 
