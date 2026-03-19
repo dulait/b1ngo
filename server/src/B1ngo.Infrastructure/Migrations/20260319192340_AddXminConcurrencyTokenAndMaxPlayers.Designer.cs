@@ -3,6 +3,7 @@ using System;
 using B1ngo.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace B1ngo.Infrastructure.Migrations
 {
     [DbContext(typeof(B1ngoDbContext))]
-    partial class B1ngoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260319192340_AddXminConcurrencyTokenAndMaxPlayers")]
+    partial class AddXminConcurrencyTokenAndMaxPlayers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

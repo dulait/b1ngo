@@ -1,6 +1,7 @@
 using B1ngo.Application.Common;
 using B1ngo.Domain.Core;
 using B1ngo.Domain.Game;
+using Microsoft.EntityFrameworkCore;
 
 namespace B1ngo.Application.Features.Rooms.UnmarkSquare;
 
@@ -24,7 +25,16 @@ public sealed class UnmarkSquareHandler(IRoomRepository roomRepository, IUnitOfW
         room.UnmarkSquare(playerId, command.Row, command.Column);
         var winRevoked = room.ReevaluateWin(playerId);
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            return Result.Fail<UnmarkSquareResponse>(
+                Error.Conflict("concurrency_conflict", "The room was modified by another request. Please try again.")
+            );
+        }
 
         var player = room.Players.First(p => p.Id == playerId);
         var square = player.Card!.GetSquare(command.Row, command.Column);

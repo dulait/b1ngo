@@ -1,6 +1,7 @@
 using B1ngo.Application.Common;
 using B1ngo.Domain.Core;
 using B1ngo.Domain.Game;
+using Microsoft.EntityFrameworkCore;
 
 namespace B1ngo.Application.Features.Rooms.EndGame;
 
@@ -20,7 +21,17 @@ public sealed class EndGameHandler(IRoomRepository roomRepository, IUnitOfWork u
         }
 
         room.EndGame();
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        try
+        {
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            return Result.Fail<EndGameResponse>(
+                Error.Conflict("concurrency_conflict", "The room was modified by another request. Please try again.")
+            );
+        }
 
         return Result.Ok(new EndGameResponse(room.Id.Value, room.Status.ToString()));
     }
