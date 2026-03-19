@@ -38,24 +38,10 @@ export class Results {
   });
 
   readonly winningSquares = computed(() => {
-    const set = new Set<string>();
     const currentId = this.store.currentPlayerId();
-    const entry = this.store.leaderboard().find((entry) => entry.playerId === currentId);
-    if (!entry) {
-      return set;
-    }
-
-    const card = this.store.currentCard();
-    if (!card) {
-      return set;
-    }
-
-    for (const square of card.squares) {
-      if (square.isMarked) {
-        set.add(`${square.row},${square.column}`);
-      }
-    }
-    return set;
+    const entry = this.store.leaderboard().find((e) => e.playerId === currentId);
+    if (!entry || !entry.winningSquares) return new Set<string>();
+    return new Set(entry.winningSquares.map((s) => `${s.row},${s.column}`));
   });
 
   onNewRoom(): void {

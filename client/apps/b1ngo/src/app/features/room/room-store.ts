@@ -104,9 +104,26 @@ export class RoomStore {
     this.leaderboard.set(entries);
   }
 
+  addLeaderboardEntry(entry: LeaderboardEntryDto): void {
+    this.leaderboard.update((list) => [
+      ...list.filter((e) => e.playerId !== entry.playerId),
+      entry,
+    ]);
+  }
+
+  removeLeaderboardEntry(playerId: string): void {
+    this.leaderboard.update((list) => list.filter((e) => e.playerId !== playerId));
+  }
+
   setPlayerWon(playerId: string): void {
     this.players.update((list) =>
       list.map((p) => (p.playerId === playerId ? { ...p, hasWon: true } : p)),
+    );
+  }
+
+  revokePlayerWon(playerId: string): void {
+    this.players.update((list) =>
+      list.map((p) => (p.playerId === playerId ? { ...p, hasWon: false } : p)),
     );
   }
 

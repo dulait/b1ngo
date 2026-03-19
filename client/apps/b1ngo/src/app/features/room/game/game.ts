@@ -11,6 +11,7 @@ import {
   BngPlayerListComponent,
   BngLeaderboardComponent,
   BngButtonComponent,
+  BngBottomSheetComponent,
   ToastService,
 } from 'bng-ui';
 import { ROOM_STORE } from '../room';
@@ -26,6 +27,7 @@ import { RoomApiService } from '../../../core/api/room-api.service';
     BngPlayerListComponent,
     BngLeaderboardComponent,
     BngButtonComponent,
+    BngBottomSheetComponent,
   ],
 })
 export class Game {
@@ -34,24 +36,14 @@ export class Game {
   private readonly toast = inject(ToastService);
 
   readonly isEnding = signal(false);
+  readonly endGameSheetOpen = signal(false);
   readonly playersExpanded = signal(false);
 
   readonly winningSquares = computed(() => {
-    const set = new Set<string>();
-    const leaderboard = this.store.leaderboard();
     const currentId = this.store.currentPlayerId();
-    const entry = leaderboard.find((e) => e.playerId === currentId);
-    if (!entry) return set;
-
-    const card = this.store.currentCard();
-    if (!card) return set;
-
-    for (const square of card.squares) {
-      if (square.isMarked) {
-        set.add(`${square.row},${square.column}`);
-      }
-    }
-    return set;
+    const entry = this.store.leaderboard().find((e) => e.playerId === currentId);
+    if (!entry || !entry.winningSquares) return new Set<string>();
+    return new Set(entry.winningSquares.map((s) => `${s.row},${s.column}`));
   });
 
   async onSquareMark(event: { row: number; column: number }): Promise<void> {
@@ -104,10 +96,19 @@ export class Game {
     }
   }
 
-  async onEndGame(): Promise<void> {
+  onEndGame(): void {
+    this.endGameSheetOpen.set(true);
+  }
+
+  onCancelEndGame(): void {
+    this.endGameSheetOpen.set(false);
+  }
+
+  async onConfirmEndGame(): Promise<void> {
     this.isEnding.set(true);
     try {
       await this.roomApi.endGame(this.store.roomId());
+      this.endGameSheetOpen.set(false);
     } catch {
       this.toast.error('Failed to end game.');
     } finally {

@@ -95,10 +95,16 @@ export interface SquareDto {
   markedAt: string | null;
 }
 
+export interface SquarePositionDto {
+  row: number;
+  column: number;
+}
+
 export interface LeaderboardEntryDto {
   rank: number;
   playerId: string;
   winningPattern: string;
+  winningSquares: SquarePositionDto[];
   completedAt: string;
 }
 
@@ -130,8 +136,13 @@ export interface SquareUnmarkedEvent {
 export interface BingoAchievedEvent {
   playerId: string;
   pattern: string;
+  winningSquares: SquarePositionDto[];
   rank: number;
   completedAt: string;
+}
+
+export interface BingoRevokedEvent {
+  playerId: string;
 }
 
 export interface GameCompletedEvent {

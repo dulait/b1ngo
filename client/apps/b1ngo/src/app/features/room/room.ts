@@ -4,6 +4,7 @@ import {
   inject,
   signal,
   effect,
+  untracked,
   OnInit,
   OnDestroy,
   InjectionToken,
@@ -13,7 +14,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { RoomApiService } from '../../core/api/room-api.service';
 import { SignalRService } from '../../core/realtime/signalr.service';
 import { AuthService } from '../../core/auth/auth.service';
-import { BngHeaderComponent, BngSkeletonComponent, ToastService } from 'bng-ui';
+import { BngHeaderComponent, BngSkeletonComponent, BngButtonComponent, ToastService } from 'bng-ui';
 import { RoomStore } from './room-store';
 import { Lobby } from './lobby/lobby';
 import { Game } from './game/game';
@@ -25,7 +26,7 @@ export const ROOM_STORE = new InjectionToken<RoomStore>('RoomStore');
   selector: 'app-room',
   templateUrl: './room.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BngHeaderComponent, BngSkeletonComponent, Lobby, Game, Results],
+  imports: [BngHeaderComponent, BngSkeletonComponent, BngButtonComponent, Lobby, Game, Results],
   providers: [
     {
       provide: ROOM_STORE,
@@ -44,6 +45,7 @@ export class Room implements OnInit, OnDestroy {
   readonly store = inject(ROOM_STORE);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
+  private destroyed = false;
 
   constructor() {
     this.wireSignalREvents();
@@ -56,26 +58,41 @@ export class Room implements OnInit, OnDestroy {
     try {
       const state = await this.roomApi.getRoomState(roomId);
       this.store.initialize(state, this.auth.getPlayerId());
-      await this.signalr.connect(roomId);
     } catch (err: unknown) {
       if (err instanceof HttpErrorResponse) {
         if (err.status === 401 || err.status === 404) {
           this.auth.clearSession();
+          this.toast.error('Your session has expired. Please join the room again.');
           this.router.navigate(['/']);
           return;
         }
         if (err.status === 403) {
+          this.toast.error("You're not a member of this room.");
           this.router.navigate(['/']);
           return;
         }
       }
-      this.error.set('Failed to load room.');
+      this.error.set("Can't connect to the server.");
+      return;
     } finally {
       this.loading.set(false);
     }
+
+    try {
+      await this.signalr.connect(roomId);
+    } catch {
+      console.warn('[Room] SignalR connection failed; room will function without real-time updates');
+    }
+  }
+
+  retry(): void {
+    this.error.set(null);
+    this.loading.set(true);
+    this.ngOnInit();
   }
 
   ngOnDestroy(): void {
+    this.destroyed = true;
     this.signalr.disconnect();
   }
 
@@ -121,20 +138,32 @@ export class Room implements OnInit, OnDestroy {
     effect(() => {
       const event = this.signalr.bingoAchieved();
       if (event) {
-        const newEntry = {
-          rank: event.rank,
-          playerId: event.playerId,
-          winningPattern: event.pattern,
-          completedAt: event.completedAt,
-        };
-        this.store.updateLeaderboard([...this.store.leaderboard(), newEntry]);
-        this.store.setPlayerWon(event.playerId);
-        if (event.playerId === this.store.currentPlayerId()) {
-          this.toast.success('BINGO! You won!');
-        } else {
-          const player = this.store.players().find((p) => p.playerId === event.playerId);
-          this.toast.info(`${player?.displayName ?? 'A player'} got BINGO!`);
-        }
+        untracked(() => {
+          this.store.addLeaderboardEntry({
+            rank: event.rank,
+            playerId: event.playerId,
+            winningPattern: event.pattern,
+            winningSquares: event.winningSquares,
+            completedAt: event.completedAt,
+          });
+          this.store.setPlayerWon(event.playerId);
+          if (event.playerId === this.store.currentPlayerId()) {
+            this.toast.success('BINGO! You won!');
+          } else {
+            const player = this.store.players().find((p) => p.playerId === event.playerId);
+            this.toast.info(`${player?.displayName ?? 'A player'} got BINGO!`);
+          }
+        });
+      }
+    });
+
+    effect(() => {
+      const event = this.signalr.bingoRevoked();
+      if (event) {
+        untracked(() => {
+          this.store.removeLeaderboardEntry(event.playerId);
+          this.store.revokePlayerWon(event.playerId);
+        });
       }
     });
 
@@ -144,8 +173,12 @@ export class Room implements OnInit, OnDestroy {
         this.store.setStatus('Completed');
         this.toast.info('The game is over!');
         this.roomApi.getRoomState(event.roomId).then(
-          (state) => this.store.updateLeaderboard(state.leaderboard),
-          () => { }
+          (state) => {
+            if (!this.destroyed) {
+              this.store.updateLeaderboard(state.leaderboard);
+            }
+          },
+          () => {}
         );
       }
     });

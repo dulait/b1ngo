@@ -7,6 +7,7 @@ import {
   SquareMarkedEvent,
   SquareUnmarkedEvent,
   BingoAchievedEvent,
+  BingoRevokedEvent,
   GameCompletedEvent,
 } from '../../shared/types/api.types';
 
@@ -22,11 +23,14 @@ export class SignalRService {
   readonly squareMarked = signal<SquareMarkedEvent | null>(null);
   readonly squareUnmarked = signal<SquareUnmarkedEvent | null>(null);
   readonly bingoAchieved = signal<BingoAchievedEvent | null>(null);
+  readonly bingoRevoked = signal<BingoRevokedEvent | null>(null);
   readonly gameCompleted = signal<GameCompletedEvent | null>(null);
 
   readonly connectionState = signal<ConnectionState>('disconnected');
 
   async connect(roomId: string): Promise<void> {
+    await this.disconnect();
+
     this.connection = new HubConnectionBuilder()
       .withUrl(`${this.baseUrl}/hubs/game?roomId=${roomId}`, {
         withCredentials: true,
@@ -43,11 +47,28 @@ export class SignalRService {
   }
 
   async disconnect(): Promise<void> {
-    if (this.connection) {
-      await this.connection.stop();
-      this.connection = null;
-      this.connectionState.set('disconnected');
+    const conn = this.connection;
+    this.connection = null;
+    this.resetSignals();
+    this.connectionState.set('disconnected');
+
+    if (conn) {
+      try {
+        await conn.stop();
+      } catch {
+        // Connection may already be stopped; safe to ignore
+      }
     }
+  }
+
+  private resetSignals(): void {
+    this.playerJoined.set(null);
+    this.gameStarted.set(null);
+    this.squareMarked.set(null);
+    this.squareUnmarked.set(null);
+    this.bingoAchieved.set(null);
+    this.bingoRevoked.set(null);
+    this.gameCompleted.set(null);
   }
 
   private registerHandlers(): void {
@@ -57,6 +78,7 @@ export class SignalRService {
     conn.on('SquareMarked', (data) => this.squareMarked.set(data));
     conn.on('SquareUnmarked', (data) => this.squareUnmarked.set(data));
     conn.on('BingoAchieved', (data) => this.bingoAchieved.set(data));
+    conn.on('BingoRevoked', (data) => this.bingoRevoked.set(data));
     conn.on('GameCompleted', (data) => this.gameCompleted.set(data));
   }
 
