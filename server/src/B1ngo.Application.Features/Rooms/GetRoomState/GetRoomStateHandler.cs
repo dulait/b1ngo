@@ -44,6 +44,7 @@ public sealed class GetRoomStateHandler(IRoomRepository roomRepository)
                 e.PlayerId.Value,
                 e.Rank,
                 e.WinningPattern.ToString(),
+                e.WinningSquares.Select(s => new SquarePositionDto(s.Row, s.Column)).ToList(),
                 e.CompletedAt
             ))
             .ToList();

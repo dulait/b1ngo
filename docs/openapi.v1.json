@@ -1456,6 +1456,7 @@
           "playerId",
           "rank",
           "winningPattern",
+          "winningSquares",
           "completedAt"
         ],
         "type": "object",
@@ -1480,6 +1481,12 @@
             "type": "string",
             "description": "Pattern that completed the win.",
             "example": "Row"
+          },
+          "winningSquares": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SquarePositionDto"
+            }
           },
           "completedAt": {
             "type": "string",
@@ -1749,6 +1756,31 @@
         ],
         "type": "string",
         "description": "Who marked a square. Values: Api (auto-marked by event feed), Player (marked by the card owner), Host (marked by the room host on another player\u0027s card)."
+      },
+      "SquarePositionDto": {
+        "required": [
+          "row",
+          "column"
+        ],
+        "type": "object",
+        "properties": {
+          "row": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "column": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
       },
       "StartGameResponse": {
         "required": [

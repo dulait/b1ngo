@@ -59,14 +59,23 @@ public sealed class B1ngoDbContext(
             return;
         }
 
+        var logger = serviceProvider.GetService<ILogger<B1ngoDbContext>>();
+
         try
         {
+            logger?.LogInformation(
+                "Dispatching {Count} domain events: [{EventTypes}]",
+                domainEvents.Count,
+                string.Join(", ", domainEvents.Select(e => e.GetType().Name))
+            );
+
             var dispatcher = serviceProvider.GetRequiredService<IDomainEventDispatcher>();
             await dispatcher.DispatchAsync(domainEvents, cancellationToken);
+
+            logger?.LogInformation("Successfully dispatched {Count} domain events", domainEvents.Count);
         }
         catch (Exception ex)
         {
-            var logger = serviceProvider.GetService<ILogger<B1ngoDbContext>>();
             logger?.LogWarning(ex, "Failed to dispatch {Count} domain events after commit", domainEvents.Count);
         }
     }

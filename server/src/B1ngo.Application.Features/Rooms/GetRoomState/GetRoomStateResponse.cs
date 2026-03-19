@@ -30,4 +30,12 @@ public sealed record SquareDto(
     DateTimeOffset? MarkedAt
 );
 
-public sealed record LeaderboardEntryDto(Guid PlayerId, int Rank, string WinningPattern, DateTimeOffset CompletedAt);
+public sealed record LeaderboardEntryDto(
+    Guid PlayerId,
+    int Rank,
+    string WinningPattern,
+    IReadOnlyList<SquarePositionDto> WinningSquares,
+    DateTimeOffset CompletedAt
+);
+
+public sealed record SquarePositionDto(int Row, int Column);

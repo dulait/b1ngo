@@ -1,3 +1,4 @@
+using B1ngo.Application.Features.Rooms.GetRoomState;
 using B1ngo.Domain.Core;
 using B1ngo.Domain.Game.Events;
 using B1ngo.Web.Hubs;
@@ -17,6 +18,9 @@ internal sealed class BingoAchievedEventHandler(IHubContext<GameHub> hubContext)
                 new BingoAchievedHubEvent(
                     domainEvent.PlayerId.Value,
                     domainEvent.Pattern.ToString(),
+                    domainEvent.WinningSquares
+                        .Select(s => new SquarePositionDto(s.Row, s.Column))
+                        .ToList(),
                     domainEvent.Rank,
                     domainEvent.CompletedAt
                 ),

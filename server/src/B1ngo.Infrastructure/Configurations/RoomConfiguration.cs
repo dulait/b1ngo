@@ -51,6 +51,7 @@ internal sealed class RoomEntityConfiguration : IEntityTypeConfiguration<Room>
                 lb.ToJson();
                 lb.Property(e => e.PlayerId).HasConversion(new EntityIdValueConverter<PlayerId>());
                 lb.Property(e => e.WinningPattern).HasConversion<string>();
+                lb.OwnsMany(e => e.WinningSquares);
             }
         );
     }

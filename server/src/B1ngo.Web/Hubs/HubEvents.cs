@@ -8,6 +8,14 @@ public sealed record SquareMarkedHubEvent(Guid PlayerId, int Row, int Column, st
 
 public sealed record SquareUnmarkedHubEvent(Guid PlayerId, int Row, int Column);
 
-public sealed record BingoAchievedHubEvent(Guid PlayerId, string Pattern, int Rank, DateTimeOffset CompletedAt);
+public sealed record BingoAchievedHubEvent(
+    Guid PlayerId,
+    string Pattern,
+    IReadOnlyList<Application.Features.Rooms.GetRoomState.SquarePositionDto> WinningSquares,
+    int Rank,
+    DateTimeOffset CompletedAt
+);
+
+public sealed record BingoRevokedHubEvent(Guid PlayerId);
 
 public sealed record GameCompletedHubEvent(Guid RoomId);

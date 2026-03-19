@@ -120,6 +120,7 @@ internal static class ServiceCollectionExtensions
             services.AddScoped<IDomainEventHandler<SquareMarkedDomainEvent>, SquareMarkedEventHandler>();
             services.AddScoped<IDomainEventHandler<SquareUnmarkedDomainEvent>, SquareUnmarkedEventHandler>();
             services.AddScoped<IDomainEventHandler<BingoAchievedDomainEvent>, BingoAchievedEventHandler>();
+            services.AddScoped<IDomainEventHandler<BingoRevokedDomainEvent>, BingoRevokedEventHandler>();
             services.AddScoped<IDomainEventHandler<GameCompletedDomainEvent>, GameCompletedEventHandler>();
         }
 
