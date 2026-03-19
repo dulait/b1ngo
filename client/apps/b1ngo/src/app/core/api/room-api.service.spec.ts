@@ -25,7 +25,7 @@ describe('RoomApiService', () => {
   it('should POST to /api/v1/rooms for createRoom', async () => {
     const cmd = {
       hostDisplayName: 'Max',
-      season: '2026',
+      season: 2026,
       grandPrixName: 'Bahrain Grand Prix',
       sessionType: 'Race' as const,
     };
@@ -72,7 +72,7 @@ describe('RoomApiService', () => {
       roomId: 'r1',
       joinCode: 'ABC123',
       status: 'Lobby',
-      session: { season: '2026', grandPrixName: 'Bahrain', grandPrixShort: 'BAH', sessionType: 'Race' },
+      session: { season: 2026, grandPrixName: 'Bahrain', sessionType: 'Race' },
       configuration: { matrixSize: 5, winningPatterns: ['Row'] },
       hostPlayerId: 'p1',
       players: [],

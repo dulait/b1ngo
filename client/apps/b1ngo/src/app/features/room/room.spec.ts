@@ -17,24 +17,25 @@ function mockRoomState(): GetRoomStateResponse {
     joinCode: 'ABC123',
     status: 'Lobby',
     session: {
-      season: '2026',
+      season: 2026,
       grandPrixName: 'Monaco Grand Prix',
-      grandPrixShort: 'MON',
       sessionType: 'Race',
     },
     configuration: { matrixSize: 5, winningPatterns: ['Row', 'Column'] },
     hostPlayerId: 'p1',
     players: [
       {
-        id: 'p1',
+        playerId: 'p1',
         displayName: 'Max',
-        isHost: true,
+        hasWon: false,
         card: {
+          matrixSize: 5,
           squares: [
             {
               row: 0,
               column: 0,
               displayText: 'Test',
+              eventKey: null,
               isFreeSpace: false,
               isMarked: false,
               markedBy: null,
@@ -104,12 +105,7 @@ describe('Room orchestrator logic', () => {
 
   it('should add player on PlayerJoined event', () => {
     store.initialize(mockRoomState(), 'p1');
-    store.addPlayer({
-      id: 'p2',
-      displayName: 'Lewis',
-      isHost: false,
-      card: null,
-    });
+    store.addPlayer('p2', 'Lewis');
     expect(store.players()).toHaveLength(2);
     expect(store.players()[1].displayName).toBe('Lewis');
   });
@@ -137,8 +133,7 @@ describe('Room orchestrator logic', () => {
       {
         rank: 1,
         playerId: 'p1',
-        displayName: 'Max',
-        pattern: 'Row',
+        winningPattern: 'Row',
         completedAt: '2026-03-19T00:01:00Z',
       },
     ]);

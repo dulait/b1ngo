@@ -51,6 +51,28 @@ public class RoomConfigurationTests
     }
 
     [Fact]
+    public void Default_SetsMaxPlayersTo20()
+    {
+        var sut = RoomConfiguration.Default;
+
+        Assert.Equal(20, sut.MaxPlayers);
+    }
+
+    [Fact]
+    public void Constructor_WithCustomMaxPlayers_SetsMaxPlayers()
+    {
+        var sut = new RoomConfiguration(5, [WinPatternType.Row], maxPlayers: 10);
+
+        Assert.Equal(10, sut.MaxPlayers);
+    }
+
+    [Fact]
+    public void Constructor_WithMaxPlayersLessThan2_ThrowsArgumentOutOfRangeException()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new RoomConfiguration(5, [WinPatternType.Row], maxPlayers: 1));
+    }
+
+    [Fact]
     public void Equality_WithSameValues_AreEqual()
     {
         var a = new RoomConfiguration(5, [WinPatternType.Row, WinPatternType.Column]);

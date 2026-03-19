@@ -12,6 +12,7 @@ function mockSquare(overrides: Partial<SquareDto> = {}): SquareDto {
     row: 0,
     column: 0,
     displayText: 'Test',
+    eventKey: null,
     isFreeSpace: false,
     isMarked: false,
     markedBy: null,
@@ -22,10 +23,10 @@ function mockSquare(overrides: Partial<SquareDto> = {}): SquareDto {
 
 function mockPlayer(overrides: Partial<PlayerDto> = {}): PlayerDto {
   return {
-    id: 'p1',
+    playerId: 'p1',
     displayName: 'Player 1',
-    isHost: false,
-    card: { squares: [mockSquare()] },
+    hasWon: false,
+    card: { matrixSize: 5, squares: [mockSquare()] },
     ...overrides,
   };
 }
@@ -38,9 +39,8 @@ function mockRoomState(
     joinCode: 'ABC123',
     status: 'Lobby',
     session: {
-      season: '2026',
+      season: 2026,
       grandPrixName: 'Monaco Grand Prix',
-      grandPrixShort: 'MON',
       sessionType: 'Race',
     },
     configuration: { matrixSize: 5, winningPatterns: ['Row', 'Column'] },
@@ -87,7 +87,7 @@ describe('RoomStore', () => {
     });
 
     it('should derive currentPlayer from players list', () => {
-      const player = mockPlayer({ id: 'p2', displayName: 'Alice' });
+      const player = mockPlayer({ playerId: 'p2', displayName: 'Alice' });
       store.initialize(mockRoomState({ players: [mockPlayer(), player] }), 'p2');
       expect(store.currentPlayer()?.displayName).toBe('Alice');
     });
@@ -99,7 +99,7 @@ describe('RoomStore', () => {
 
     it('should derive currentCard from currentPlayer', () => {
       const squares = [mockSquare({ displayText: 'Test square' })];
-      const player = mockPlayer({ id: 'p1', card: { squares } });
+      const player = mockPlayer({ playerId: 'p1', card: { matrixSize: 5, squares } });
       store.initialize(mockRoomState({ players: [player] }), 'p1');
       expect(store.currentCard()?.squares).toHaveLength(1);
       expect(store.currentCard()?.squares[0].displayText).toBe('Test square');
@@ -123,8 +123,8 @@ describe('RoomStore', () => {
       store.initialize(
         mockRoomState({
           players: [
-            mockPlayer({ id: 'p1', displayName: 'Max' }),
-            mockPlayer({ id: 'p2', displayName: 'Lewis' }),
+            mockPlayer({ playerId: 'p1', displayName: 'Max' }),
+            mockPlayer({ playerId: 'p2', displayName: 'Lewis' }),
           ],
         }),
         'p1',
@@ -140,8 +140,7 @@ describe('RoomStore', () => {
       const entry: LeaderboardEntryDto = {
         rank: 1,
         playerId: 'p1',
-        displayName: 'Max',
-        pattern: 'Row',
+        winningPattern: 'Row',
         completedAt: '2026-03-19T00:00:00Z',
       };
       store.initialize(mockRoomState({ leaderboard: [entry] }), 'p1');
@@ -170,8 +169,7 @@ describe('RoomStore', () => {
   describe('mutations', () => {
     it('should add player to list', () => {
       store.initialize(mockRoomState({ players: [] }), 'p1');
-      const newPlayer = mockPlayer({ id: 'p2', displayName: 'Alice' });
-      store.addPlayer(newPlayer);
+      store.addPlayer('p2', 'Alice');
       expect(store.players()).toHaveLength(1);
       expect(store.players()[0].displayName).toBe('Alice');
     });
@@ -181,7 +179,7 @@ describe('RoomStore', () => {
         mockSquare({ row: 0, column: 0, displayText: 'Original' }),
         mockSquare({ row: 0, column: 1, displayText: 'Other' }),
       ];
-      const player = mockPlayer({ id: 'p1', card: { squares } });
+      const player = mockPlayer({ playerId: 'p1', card: { matrixSize: 5, squares } });
       store.initialize(mockRoomState({ players: [player] }), 'p1');
 
       store.updateSquare('p1', 0, 0, { isMarked: true, markedBy: 'Player' });
@@ -193,7 +191,7 @@ describe('RoomStore', () => {
     });
 
     it('should not update square for wrong player', () => {
-      const player = mockPlayer({ id: 'p1', card: { squares: [mockSquare()] } });
+      const player = mockPlayer({ playerId: 'p1', card: { matrixSize: 5, squares: [mockSquare()] } });
       store.initialize(mockRoomState({ players: [player] }), 'p1');
 
       store.updateSquare('p99', 0, 0, { isMarked: true });
@@ -202,7 +200,7 @@ describe('RoomStore', () => {
     });
 
     it('should handle updateSquare when player has no card', () => {
-      const player = mockPlayer({ id: 'p1', card: null });
+      const player = mockPlayer({ playerId: 'p1', card: null });
       store.initialize(mockRoomState({ players: [player] }), 'p1');
 
       store.updateSquare('p1', 0, 0, { isMarked: true });
@@ -221,8 +219,7 @@ describe('RoomStore', () => {
         {
           rank: 1,
           playerId: 'p1',
-          displayName: 'Max',
-          pattern: 'Row',
+          winningPattern: 'Row',
           completedAt: '2026-03-19T00:00:00Z',
         },
       ];

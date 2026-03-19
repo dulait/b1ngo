@@ -170,6 +170,19 @@ public class RoomTests
     }
 
     [Fact]
+    public void AddPlayer_WhenRoomIsFull_ThrowsDomainConflictException()
+    {
+        var config = new RoomConfiguration(5, [WinPatternType.Row], maxPlayers: 2);
+        var sut = _builder.WithConfiguration(config).Build();
+
+        // Host is player 1, add player 2 to reach max
+        sut.AddPlayer("Player2");
+
+        var ex = Assert.Throws<DomainConflictException>(() => sut.AddPlayer("Player3"));
+        Assert.Equal("room_full", ex.Code);
+    }
+
+    [Fact]
     public void AddPlayer_WithDuplicateDisplayName_ThrowsDomainConflictException()
     {
         var sut = _builder.WithHostDisplayName("Alice").Build();

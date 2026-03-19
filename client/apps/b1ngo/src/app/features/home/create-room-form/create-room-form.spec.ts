@@ -63,7 +63,7 @@ describe('CreateRoomForm', () => {
 
     expect(createSpy).toHaveBeenCalledWith({
       hostDisplayName: 'Max',
-      season: '2026',
+      season: 2026,
       grandPrixName: 'Bahrain Grand Prix',
       sessionType: 'Race',
     });

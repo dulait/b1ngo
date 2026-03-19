@@ -170,4 +170,49 @@ public class GetRoomStateHandlerTests
         Assert.True(result.IsFailure);
         Assert.Equal("room_not_found", result.Error!.Code);
     }
+
+    [Fact]
+    public async Task HandleAsync_AsHost_SeesAllPlayersCards()
+    {
+        var room = SeedRoomWithTwoPlayers();
+        var hostId = room.HostPlayerId.Value;
+        var query = new GetRoomStateQuery(room.Id.Value, hostId);
+
+        var result = await _sut.HandleAsync(query);
+
+        Assert.True(result.IsSuccess);
+        foreach (var player in result.Value.Players)
+        {
+            Assert.NotNull(player.Card);
+        }
+    }
+
+    [Fact]
+    public async Task HandleAsync_AsNonHost_SeesOnlyOwnCard()
+    {
+        var room = SeedRoomWithTwoPlayers();
+        var aliceId = room.Players[1].Id.Value;
+        var query = new GetRoomStateQuery(room.Id.Value, aliceId);
+
+        var result = await _sut.HandleAsync(query);
+
+        Assert.True(result.IsSuccess);
+        var players = result.Value.Players;
+
+        var aliceDto = players.First(p => p.PlayerId == aliceId);
+        Assert.NotNull(aliceDto.Card);
+
+        var hostDto = players.First(p => p.PlayerId == room.HostPlayerId.Value);
+        Assert.Null(hostDto.Card);
+    }
+
+    private Room SeedRoomWithTwoPlayers()
+    {
+        var room = Room.Create("Host", DefaultSession);
+        var alice = room.AddPlayer("Alice");
+        room.Players[0].AssignCard(_cardGenerator.Generate(SessionType.Race, 5));
+        alice.AssignCard(_cardGenerator.Generate(SessionType.Race, 5));
+        _roomRepository.Seed(room);
+        return room;
+    }
 }
