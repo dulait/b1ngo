@@ -6,6 +6,20 @@ namespace B1ngo.Integration.Tests;
 public sealed class StartGameTests(B1ngoApiFactory factory) : IntegrationTestBase(factory)
 {
     [Fact]
+    public async Task StartGame_WithHostToken_Returns200()
+    {
+        var room = await CreateRoom();
+
+        var response = await StartGame(room.RoomId, room.PlayerToken);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var state = await GetRoomState(room.RoomId, room.PlayerToken);
+        var body = await Deserialize<RoomStateResponse>(state);
+        Assert.Equal("Active", body.Status);
+    }
+
+    [Fact]
     public async Task StartGame_WithNoToken_Returns401()
     {
         var room = await CreateRoom();
@@ -36,5 +50,15 @@ public sealed class StartGameTests(B1ngoApiFactory factory) : IntegrationTestBas
         var response = await StartGame(room.RoomId, room.PlayerToken);
 
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task StartGame_WithSinglePlayer_Returns200()
+    {
+        var room = await CreateRoom();
+
+        var response = await StartGame(room.RoomId, room.PlayerToken);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 }
