@@ -1,0 +1,70 @@
+<main class="p-4 space-y-4 pb-24">
+  @if (store.currentCard(); as card) {
+    <bng-matrix
+      [squares]="card.squares"
+      [matrixSize]="store.matrixSize()"
+      mode="game"
+      [currentPlayerId]="store.currentPlayerId()"
+      [winningSquares]="winningSquares()"
+      (squareMark)="onSquareMark($event)"
+      (squareUnmark)="onSquareUnmark($event)"
+    />
+  }
+
+  @if (store.leaderboard().length > 0) {
+    <bng-card header="Winners">
+      <bng-leaderboard
+        [entries]="store.uiLeaderboard()"
+        [players]="store.uiPlayers()"
+        [currentPlayerId]="store.currentPlayerId()"
+        variant="compact"
+      />
+    </bng-card>
+  }
+
+  <div>
+    <button
+      type="button"
+      class="flex items-center gap-1.5 text-sm text-text-secondary mb-3"
+      (click)="togglePlayers()"
+    >
+      <svg
+        class="w-3 h-3 transition-transform duration-200"
+        [class.rotate-180]="playersExpanded()"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M6 9l6 6 6-6"/>
+      </svg>
+      Players ({{ store.players().length }})
+    </button>
+
+    @if (playersExpanded()) {
+      <bng-card>
+        <bng-player-list
+          [players]="store.uiPlayers()"
+          [hostPlayerId]="store.hostPlayerId()"
+          [currentPlayerId]="store.currentPlayerId()"
+        />
+      </bng-card>
+    }
+  </div>
+</main>
+
+@if (store.isHost()) {
+  <div class="fixed bottom-0 left-0 right-0 bg-bg-surface border-t border-border-default p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+    <bng-button
+      variant="danger"
+      size="lg"
+      [fullWidth]="true"
+      [loading]="isEnding()"
+      (clicked)="onEndGame()"
+    >
+      End Game
+    </bng-button>
+  </div>
+}
