@@ -52,7 +52,7 @@ const SMALL_TEXT_SIZE_THRESHOLD = 7;
     </div>
   `,
   host: {
-    style: 'display: block; aspect-ratio: 1;',
+    style: 'display: block; aspect-ratio: 1; min-width: 0;',
   },
   styles: `
     .square-text-clamp {
