@@ -1,10 +1,10 @@
 import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { BngHeaderComponent, BngToastContainerComponent, ThemeService } from 'bng-ui';
+import { BngToastContainerComponent, ThemeService } from 'bng-ui';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, BngHeaderComponent, BngToastContainerComponent],
+  imports: [RouterOutlet, BngToastContainerComponent],
   templateUrl: './app.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
