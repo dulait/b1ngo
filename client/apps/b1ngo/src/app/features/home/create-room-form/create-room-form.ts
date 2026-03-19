@@ -4,9 +4,11 @@ import {
   BngInputComponent,
   BngSelectComponent,
   BngButtonComponent,
+  BngPillToggleComponent,
+  PillToggleOption,
 } from 'bng-ui';
 import { RoomApiService } from '../../../core/api/room-api.service';
-import { SessionType } from '../../../shared/types/api.types';
+import { SessionType, WinPatternType } from '../../../shared/types/api.types';
 
 const SESSION_TYPE_OPTIONS: { value: string; label: string }[] = [
   { value: 'FP1', label: 'FP1' },
@@ -53,7 +55,7 @@ const GRAND_PRIX_OPTIONS: { value: string; label: string }[] = [
 
 @Component({
   selector: 'create-room-form',
-  imports: [BngCardComponent, BngInputComponent, BngSelectComponent, BngButtonComponent],
+  imports: [BngCardComponent, BngInputComponent, BngSelectComponent, BngButtonComponent, BngPillToggleComponent],
   templateUrl: './create-room-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -68,10 +70,33 @@ export class CreateRoomForm {
   readonly sessionType = signal<string>('Race');
   readonly loading = signal(false);
   readonly nameError = signal<string | null>(null);
+  readonly showAdvanced = signal(false);
+  readonly matrixSize = signal(5);
+  readonly winningPatterns = signal<PillToggleOption[]>([
+    { value: 'Row', label: 'Row', selected: true },
+    { value: 'Column', label: 'Column', selected: true },
+    { value: 'Diagonal', label: 'Diagonal', selected: true },
+    { value: 'Blackout', label: 'Blackout', selected: false },
+  ]);
 
   protected readonly sessionTypeOptions = SESSION_TYPE_OPTIONS;
   protected readonly seasonOptions = SEASON_OPTIONS;
   protected readonly grandPrixOptions = GRAND_PRIX_OPTIONS;
+  protected readonly matrixSizes = [3, 5, 7, 9];
+
+  toggleAdvanced(): void {
+    this.showAdvanced.update((v) => !v);
+  }
+
+  setMatrixSize(size: number): void {
+    this.matrixSize.set(size);
+  }
+
+  onPatternToggled(value: string): void {
+    this.winningPatterns.update((patterns) =>
+      patterns.map((p) => (p.value === value ? { ...p, selected: !p.selected } : p)),
+    );
+  }
 
   onNameChange(value: string): void {
     this.hostDisplayName.set(value);
@@ -87,11 +112,17 @@ export class CreateRoomForm {
 
     this.loading.set(true);
     try {
+      const selectedPatterns = this.winningPatterns()
+        .filter((p) => p.selected)
+        .map((p) => p.value as WinPatternType);
+
       const response = await this.roomApi.createRoom({
         hostDisplayName: this.hostDisplayName().trim(),
         season: parseInt(this.season(), 10),
         grandPrixName: this.grandPrixName(),
         sessionType: this.sessionType() as SessionType,
+        matrixSize: this.matrixSize(),
+        winningPatterns: selectedPatterns,
       });
       this.success.emit({ roomId: response.roomId, playerId: response.playerId, playerToken: response.playerToken });
     } catch {

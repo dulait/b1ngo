@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ThemeService, BngThemePickerComponent } from 'bng-ui';
+import { ThemeService, BngThemePickerComponent, BngHeaderComponent } from 'bng-ui';
 import { RoomApiService } from '../../core/api/room-api.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { CreateRoomForm } from './create-room-form/create-room-form';
@@ -8,7 +8,7 @@ import { JoinRoomForm } from './join-room-form/join-room-form';
 
 @Component({
   selector: 'app-home',
-  imports: [CreateRoomForm, JoinRoomForm, BngThemePickerComponent],
+  imports: [CreateRoomForm, JoinRoomForm, BngThemePickerComponent, BngHeaderComponent],
   templateUrl: './home.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

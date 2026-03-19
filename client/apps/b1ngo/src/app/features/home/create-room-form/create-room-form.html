@@ -30,6 +30,47 @@
       (valueChange)="sessionType.set($event)"
     />
 
+    <div>
+      <bng-button variant="ghost" (clicked)="toggleAdvanced()">
+        {{ showAdvanced() ? 'Less options' : 'More options' }}
+      </bng-button>
+
+      @if (showAdvanced()) {
+        <div class="space-y-4 mt-3">
+          <div>
+            <label class="block text-sm text-text-secondary mb-2">Card Size</label>
+            <div class="flex gap-2">
+              @for (size of matrixSizes; track size) {
+                <button
+                  type="button"
+                  class="w-10 h-10 rounded-lg border flex items-center justify-center text-sm cursor-pointer"
+                  [class.border-accent]="matrixSize() === size"
+                  [class.bg-accent-muted]="matrixSize() === size"
+                  [class.text-accent]="matrixSize() === size"
+                  [class.font-semibold]="matrixSize() === size"
+                  [class.border-border-default]="matrixSize() !== size"
+                  [class.bg-bg-surface]="matrixSize() !== size"
+                  [class.text-text-secondary]="matrixSize() !== size"
+                  (click)="setMatrixSize(size)"
+                >
+                  {{ size }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm text-text-secondary mb-2">Win Patterns</label>
+            <bng-pill-toggle
+              [options]="winningPatterns()"
+              ariaLabel="Win patterns"
+              (toggled)="onPatternToggled($event)"
+            />
+          </div>
+        </div>
+      }
+    </div>
+
     <bng-button
       variant="primary"
       size="lg"

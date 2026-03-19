@@ -1,11 +1,6 @@
-<main class="flex flex-col gap-1 p-4 space-y-4 max-w-md mx-auto">
-  <div class="text-center pt-6 pb-2">
-    <h1 class="font-mono font-bold text-accent text-[1.875rem] leading-[1.2] tracking-[-0.02em]">
-      B1NGO
-    </h1>
-    <p class="text-text-secondary text-base mt-1">F1 Bingo / Play Live</p>
-  </div>
+<bng-header />
 
+<main class="flex flex-col p-4 space-y-4 max-w-md mx-auto">
   <create-room-form (success)="onRoomCreated($event)" />
 
   <join-room-form (success)="onRoomJoined($event)" />
