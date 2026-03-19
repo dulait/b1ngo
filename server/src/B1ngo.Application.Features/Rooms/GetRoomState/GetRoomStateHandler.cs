@@ -18,10 +18,13 @@ public sealed class GetRoomStateHandler(IRoomRepository roomRepository)
             return Result.Fail<GetRoomStateResponse>(Error.NotFound("room", query.RoomId));
         }
 
-        return Result.Ok(MapRoomState(room));
+        var requestingPlayerId = PlayerId.From(query.PlayerId);
+        var isHost = room.HostPlayerId == requestingPlayerId;
+
+        return Result.Ok(MapRoomState(room, requestingPlayerId, isHost));
     }
 
-    private static GetRoomStateResponse MapRoomState(Room room)
+    private static GetRoomStateResponse MapRoomState(Room room, PlayerId requestingPlayerId, bool isHost)
     {
         var session = new SessionDto(
             room.Session.Season,
@@ -34,7 +37,7 @@ public sealed class GetRoomStateHandler(IRoomRepository roomRepository)
             room.Configuration.WinningPatterns.Select(p => p.ToString()).ToList()
         );
 
-        var players = room.Players.Select(MapPlayer).ToList();
+        var players = room.Players.Select(p => MapPlayer(p, requestingPlayerId, isHost)).ToList();
 
         var leaderboard = room
             .Leaderboard.Select(e => new LeaderboardEntryDto(
@@ -57,11 +60,12 @@ public sealed class GetRoomStateHandler(IRoomRepository roomRepository)
         );
     }
 
-    private static PlayerDto MapPlayer(Player player)
+    private static PlayerDto MapPlayer(Player player, PlayerId requestingPlayerId, bool isHost)
     {
+        var isOwnCard = player.Id == requestingPlayerId;
         CardDto? card = null;
 
-        if (player.Card is not null)
+        if (player.Card is not null && (isOwnCard || isHost))
         {
             var squares = player
                 .Card.Squares.Select(s => new SquareDto(
