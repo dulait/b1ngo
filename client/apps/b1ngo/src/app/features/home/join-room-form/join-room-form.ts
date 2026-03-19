@@ -18,7 +18,7 @@ const JOIN_CODE_LENGTH = 6;
 export class JoinRoomForm {
   private readonly roomApi = inject(RoomApiService);
 
-  success = output<{ roomId: string; playerId: string }>();
+  success = output<{ roomId: string; playerId: string; playerToken: string }>();
 
   readonly joinCode = signal('');
   readonly displayName = signal('');
@@ -48,8 +48,9 @@ export class JoinRoomForm {
   async onSubmit(): Promise<void> {
     const codeValid = this.validateCode();
     const nameValid = this.validateName();
-    if (!codeValid || !nameValid) return;
-    if (this.loading()) return;
+    if (!codeValid || !nameValid || this.loading()) {
+      return;
+    }
 
     this.loading.set(true);
     try {
@@ -57,7 +58,7 @@ export class JoinRoomForm {
         joinCode: this.joinCode(),
         displayName: this.displayName().trim(),
       });
-      this.success.emit({ roomId: response.roomId, playerId: response.playerId });
+      this.success.emit({ roomId: response.roomId, playerId: response.playerId, playerToken: response.playerToken });
     } catch {
       // Error interceptor handles toast
     } finally {

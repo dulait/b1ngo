@@ -60,7 +60,7 @@ const GRAND_PRIX_OPTIONS: { value: string; label: string }[] = [
 export class CreateRoomForm {
   private readonly roomApi = inject(RoomApiService);
 
-  success = output<{ roomId: string; playerId: string }>();
+  success = output<{ roomId: string; playerId: string; playerToken: string }>();
 
   readonly hostDisplayName = signal('');
   readonly season = signal('2026');
@@ -81,8 +81,9 @@ export class CreateRoomForm {
   }
 
   async onSubmit(): Promise<void> {
-    if (!this.validateName()) return;
-    if (this.loading()) return;
+    if (!this.validateName() || this.loading()) {
+      return;
+    }
 
     this.loading.set(true);
     try {
@@ -92,7 +93,7 @@ export class CreateRoomForm {
         grandPrixName: this.grandPrixName(),
         sessionType: this.sessionType() as SessionType,
       });
-      this.success.emit({ roomId: response.roomId, playerId: response.playerId });
+      this.success.emit({ roomId: response.roomId, playerId: response.playerId, playerToken: response.playerToken });
     } catch {
       // Error interceptor handles toast
     } finally {

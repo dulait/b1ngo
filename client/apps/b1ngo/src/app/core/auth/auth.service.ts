@@ -3,6 +3,7 @@ import { Injectable, signal } from '@angular/core';
 interface SessionInfo {
   roomId: string;
   playerId: string;
+  playerToken: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -23,8 +24,12 @@ export class AuthService {
     return this.session()?.roomId ?? '';
   }
 
-  saveSession(roomId: string, playerId: string): void {
-    const info: SessionInfo = { roomId, playerId };
+  getPlayerToken(): string {
+    return this.session()?.playerToken ?? '';
+  }
+
+  saveSession(roomId: string, playerId: string, playerToken: string): void {
+    const info: SessionInfo = { roomId, playerId, playerToken };
     localStorage.setItem(AuthService.SESSION_KEY, JSON.stringify(info));
     this.session.set(info);
   }

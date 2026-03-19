@@ -25,20 +25,20 @@ export class Home implements OnInit {
 
     try {
       const result = await this.roomApi.reconnect();
-      this.auth.saveSession(result.roomId, result.playerId);
+      this.auth.saveSession(result.roomId, result.playerId, this.auth.getPlayerToken());
       this.router.navigate(['/room', result.roomId]);
     } catch {
       this.auth.clearSession();
     }
   }
 
-  onRoomCreated(event: { roomId: string; playerId: string }): void {
-    this.auth.saveSession(event.roomId, event.playerId);
+  onRoomCreated(event: { roomId: string; playerId: string; playerToken: string }): void {
+    this.auth.saveSession(event.roomId, event.playerId, event.playerToken);
     this.router.navigate(['/room', event.roomId]);
   }
 
-  onRoomJoined(event: { roomId: string; playerId: string }): void {
-    this.auth.saveSession(event.roomId, event.playerId);
+  onRoomJoined(event: { roomId: string; playerId: string; playerToken: string }): void {
+    this.auth.saveSession(event.roomId, event.playerId, event.playerToken);
     this.router.navigate(['/room', event.roomId]);
   }
 }
