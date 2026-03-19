@@ -17,7 +17,8 @@ internal sealed class BingoAchievedEventHandler(IHubContext<GameHub> hubContext)
                 new BingoAchievedHubEvent(
                     domainEvent.PlayerId.Value,
                     domainEvent.Pattern.ToString(),
-                    domainEvent.Rank
+                    domainEvent.Rank,
+                    domainEvent.CompletedAt
                 ),
                 cancellationToken
             );

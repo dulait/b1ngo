@@ -112,7 +112,7 @@ export class Room implements OnInit, OnDestroy {
           rank: event.rank,
           playerId: event.playerId,
           winningPattern: event.pattern,
-          completedAt: new Date().toISOString(),
+          completedAt: event.completedAt,
         };
         this.store.updateLeaderboard([...this.store.leaderboard(), newEntry]);
         if (event.playerId === this.store.currentPlayerId()) {

@@ -118,6 +118,7 @@ export interface SquareMarkedEvent {
   row: number;
   column: number;
   markedBy: MarkedBySource;
+  markedAt: string;
 }
 
 export interface SquareUnmarkedEvent {
@@ -130,6 +131,7 @@ export interface BingoAchievedEvent {
   playerId: string;
   pattern: string;
   rank: number;
+  completedAt: string;
 }
 
 export interface GameCompletedEvent {

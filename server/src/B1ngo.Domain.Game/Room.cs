@@ -119,7 +119,7 @@ public class Room : Entity<RoomId>
         }
 
         player.Card.MarkSquare(row, column, markedBy, utcNow);
-        RaiseDomainEvent(new SquareMarkedDomainEvent(Id, playerId, row, column, markedBy));
+        RaiseDomainEvent(new SquareMarkedDomainEvent(Id, playerId, row, column, markedBy, utcNow));
     }
 
     public WinResult? EvaluateWin(PlayerId playerId, DateTimeOffset utcNow)
@@ -140,7 +140,7 @@ public class Room : Entity<RoomId>
         var rank = _leaderboard.Count + 1;
         _leaderboard.Add(new LeaderboardEntry(playerId, rank, winningPattern.Value, utcNow));
         player.SetWon();
-        RaiseDomainEvent(new BingoAchievedDomainEvent(Id, playerId, winningPattern.Value, rank));
+        RaiseDomainEvent(new BingoAchievedDomainEvent(Id, playerId, winningPattern.Value, rank, utcNow));
 
         return new WinResult(winningPattern.Value, rank);
     }

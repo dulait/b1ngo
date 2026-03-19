@@ -18,7 +18,8 @@ internal sealed class SquareMarkedEventHandler(IHubContext<GameHub> hubContext)
                     domainEvent.PlayerId.Value,
                     domainEvent.Row,
                     domainEvent.Column,
-                    domainEvent.MarkedBy.ToString()
+                    domainEvent.MarkedBy.ToString(),
+                    domainEvent.MarkedAt
                 ),
                 cancellationToken
             );

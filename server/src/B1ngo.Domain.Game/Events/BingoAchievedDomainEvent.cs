@@ -2,5 +2,10 @@ using B1ngo.Domain.Core;
 
 namespace B1ngo.Domain.Game.Events;
 
-public sealed record BingoAchievedDomainEvent(RoomId RoomId, PlayerId PlayerId, WinPatternType Pattern, int Rank)
-    : IDomainEvent;
+public sealed record BingoAchievedDomainEvent(
+    RoomId RoomId,
+    PlayerId PlayerId,
+    WinPatternType Pattern,
+    int Rank,
+    DateTimeOffset CompletedAt
+) : IDomainEvent;
