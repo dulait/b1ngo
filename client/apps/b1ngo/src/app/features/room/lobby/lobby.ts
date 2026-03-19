@@ -88,7 +88,7 @@ export class Lobby {
         this.store.currentPlayerId(),
         this.editingRow,
         this.editingCol,
-        { displayText: this.editingSquareText() },
+        { displayText: this.editingSquareText(), eventKey: null },
       );
       this.editSheetOpen.set(false);
     } catch {
