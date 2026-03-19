@@ -104,6 +104,12 @@ export class RoomStore {
     this.leaderboard.set(entries);
   }
 
+  setPlayerWon(playerId: string): void {
+    this.players.update((list) =>
+      list.map((p) => (p.playerId === playerId ? { ...p, hasWon: true } : p)),
+    );
+  }
+
   // --- Deduplication for optimistic updates ---
   private readonly markTimestamps = new Map<string, number>();
   private readonly DEDUP_WINDOW_MS = 2000;
