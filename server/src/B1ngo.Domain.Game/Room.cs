@@ -229,11 +229,7 @@ public class Room : Entity<RoomId>
 
         for (var i = 0; i < _leaderboard.Count; i++)
         {
-            var entry = _leaderboard[i];
-            if (entry.Rank != i + 1)
-            {
-                _leaderboard[i] = entry with { Rank = i + 1 };
-            }
+            _leaderboard[i].Rank = i + 1;
         }
     }
 

@@ -77,7 +77,7 @@ public sealed class BingoCard
             _ => false,
         };
 
-    private IReadOnlyList<SquarePosition>? GetWinningSquares(WinPatternType pattern) =>
+    private List<SquarePosition>? GetWinningSquares(WinPatternType pattern) =>
         pattern switch
         {
             WinPatternType.Row => GetCompletedRowSquares(),
@@ -87,7 +87,7 @@ public sealed class BingoCard
             _ => null,
         };
 
-    private IReadOnlyList<SquarePosition>? GetCompletedRowSquares()
+    private List<SquarePosition>? GetCompletedRowSquares()
     {
         for (var row = 0; row < MatrixSize; row++)
         {
@@ -102,7 +102,7 @@ public sealed class BingoCard
         return null;
     }
 
-    private IReadOnlyList<SquarePosition>? GetCompletedColumnSquares()
+    private List<SquarePosition>? GetCompletedColumnSquares()
     {
         for (var col = 0; col < MatrixSize; col++)
         {
@@ -117,7 +117,7 @@ public sealed class BingoCard
         return null;
     }
 
-    private IReadOnlyList<SquarePosition>? GetCompletedDiagonalSquares()
+    private List<SquarePosition>? GetCompletedDiagonalSquares()
     {
         if (IsMainDiagonalComplete())
         {
@@ -136,7 +136,7 @@ public sealed class BingoCard
         return null;
     }
 
-    private IReadOnlyList<SquarePosition>? GetBlackoutSquares()
+    private List<SquarePosition>? GetBlackoutSquares()
     {
         if (!HasBlackout())
         {
