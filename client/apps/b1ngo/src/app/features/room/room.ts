@@ -8,7 +8,8 @@ import {
   OnDestroy,
   InjectionToken,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { RoomApiService } from '../../core/api/room-api.service';
 import { SignalRService } from '../../core/realtime/signalr.service';
 import { AuthService } from '../../core/auth/auth.service';
@@ -34,6 +35,7 @@ export const ROOM_STORE = new InjectionToken<RoomStore>('RoomStore');
 })
 export class Room implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly roomApi = inject(RoomApiService);
   private readonly signalr = inject(SignalRService);
   private readonly auth = inject(AuthService);
@@ -55,7 +57,18 @@ export class Room implements OnInit, OnDestroy {
       const state = await this.roomApi.getRoomState(roomId);
       this.store.initialize(state, this.auth.getPlayerId());
       await this.signalr.connect(roomId);
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof HttpErrorResponse) {
+        if (err.status === 401 || err.status === 404) {
+          this.auth.clearSession();
+          this.router.navigate(['/']);
+          return;
+        }
+        if (err.status === 403) {
+          this.router.navigate(['/']);
+          return;
+        }
+      }
       this.error.set('Failed to load room.');
     } finally {
       this.loading.set(false);
@@ -115,6 +128,7 @@ export class Room implements OnInit, OnDestroy {
           completedAt: event.completedAt,
         };
         this.store.updateLeaderboard([...this.store.leaderboard(), newEntry]);
+        this.store.setPlayerWon(event.playerId);
         if (event.playerId === this.store.currentPlayerId()) {
           this.toast.success('BINGO! You won!');
         } else {
@@ -128,10 +142,11 @@ export class Room implements OnInit, OnDestroy {
       const event = this.signalr.gameCompleted();
       if (event) {
         this.store.setStatus('Completed');
-        this.roomApi.getRoomState(event.roomId).then((state) => {
-          this.store.updateLeaderboard(state.leaderboard);
-        });
-        this.toast.info('Game over!');
+        this.toast.info('The game is over!');
+        this.roomApi.getRoomState(event.roomId).then(
+          (state) => this.store.updateLeaderboard(state.leaderboard),
+          () => { }
+        );
       }
     });
   }
