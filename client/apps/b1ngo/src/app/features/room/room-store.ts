@@ -27,14 +27,14 @@ export class RoomStore {
 
   readonly isHost = computed(() => this.currentPlayerId() === this.hostPlayerId());
   readonly currentPlayer = computed(
-    () => this.players().find((p) => p.id === this.currentPlayerId()) ?? null,
+    () => this.players().find((p) => p.playerId === this.currentPlayerId()) ?? null,
   );
   readonly currentCard = computed(() => this.currentPlayer()?.card ?? null);
 
   readonly matrixSize = computed(() => this.configuration()?.matrixSize ?? 5);
 
   readonly uiPlayers = computed<UiPlayerDto[]>(() =>
-    this.players().map((p) => ({ playerId: p.id, displayName: p.displayName })),
+    this.players().map((p) => ({ playerId: p.playerId, displayName: p.displayName })),
   );
 
   readonly uiLeaderboard = computed<UiLeaderboardEntryDto[]>(() =>
@@ -51,7 +51,10 @@ export class RoomStore {
     if (!session) {
       return null;
     }
-    return { grandPrixShort: session.grandPrixShort, sessionType: session.sessionType };
+    // todo: find a better way to get short names; possibly return from backend
+    const words = session.grandPrixName.split(' ');
+    const short = words.length >= 2 ? words[0].substring(0, 3).toUpperCase() : session.grandPrixName.substring(0, 3).toUpperCase();
+    return { grandPrixShort: short, sessionType: session.sessionType };
   });
 
   initialize(state: GetRoomStateResponse, currentPlayerId: string): void {
@@ -73,7 +76,7 @@ export class RoomStore {
   updateSquare(playerId: string, row: number, col: number, patch: Partial<SquareDto>): void {
     this.players.update((list) =>
       list.map((player) => {
-        if (player.id !== playerId || !player.card) {
+        if (player.playerId !== playerId || !player.card) {
           return player;
         }
 
