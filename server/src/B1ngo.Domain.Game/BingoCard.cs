@@ -7,7 +7,7 @@ public sealed class BingoCard
     private readonly List<BingoSquare> _squares;
 
     public IReadOnlyList<BingoSquare> Squares => _squares.AsReadOnly();
-    public int MatrixSize { get; }
+    public int MatrixSize { get; private set; }
 
     private BingoCard()
     {
