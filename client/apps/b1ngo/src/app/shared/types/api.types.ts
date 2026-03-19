@@ -1,5 +1,3 @@
-// --- Enums as union types (matching .NET JsonStringEnumConverter camelCase) ---
-
 export type RoomStatus = 'Lobby' | 'Active' | 'Completed';
 export type MarkedBySource = 'Player' | 'Host' | 'Api';
 export type SessionType =
@@ -64,9 +62,8 @@ export interface GetRoomStateResponse {
 // --- DTOs ---
 
 export interface SessionDto {
-  season: string;
+  season: number;
   grandPrixName: string;
-  grandPrixShort: string;
   sessionType: string;
 }
 
@@ -76,9 +73,9 @@ export interface ConfigurationDto {
 }
 
 export interface PlayerDto {
-  id: string;
+  playerId: string;
   displayName: string;
-  isHost: boolean;
+  hasWon: boolean;
   card: CardDto | null;
 }
 
