@@ -11,16 +11,18 @@
     />
   }
 
-  @if (store.leaderboard().length > 0) {
-    <bng-card header="Winners">
+  <bng-card header="Winners">
+    @if (store.uiLeaderboard().length > 0) {
       <bng-leaderboard
         [entries]="store.uiLeaderboard()"
         [players]="store.uiPlayers()"
         [currentPlayerId]="store.currentPlayerId()"
         variant="compact"
       />
-    </bng-card>
-  }
+    } @else {
+      <p class="text-base text-text-secondary text-center py-4">No winners yet.</p>
+    }
+  </bng-card>
 
   <div>
     <button
@@ -63,10 +65,25 @@
       variant="danger"
       size="lg"
       [fullWidth]="true"
-      [loading]="isEnding()"
       (clicked)="onEndGame()"
     >
       End Game
     </bng-button>
   </div>
 }
+
+<bng-bottom-sheet title="End Game?" [open]="endGameSheetOpen()" (closed)="onCancelEndGame()">
+  <div class="space-y-4">
+    <p class="text-sm text-text-secondary">
+      This will end the game for all players. This cannot be undone.
+    </p>
+    <div class="flex gap-3">
+      <bng-button variant="secondary" [fullWidth]="true" (clicked)="onCancelEndGame()">
+        Cancel
+      </bng-button>
+      <bng-button variant="danger" [fullWidth]="true" [loading]="isEnding()" (clicked)="onConfirmEndGame()">
+        End Game
+      </bng-button>
+    </div>
+  </div>
+</bng-bottom-sheet>

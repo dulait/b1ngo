@@ -1,6 +1,6 @@
 @if (loading()) {
   <bng-header />
-  <main class="p-4 space-y-4">
+  <main class="p-4 space-y-4" aria-busy="true">
     <bng-skeleton variant="rect" height="3rem" />
     <bng-skeleton variant="matrix" />
     <bng-skeleton variant="player-list" />
@@ -9,8 +9,8 @@
   <bng-header />
   <main class="p-4">
     <div class="text-center pt-8">
-      <p class="text-text-primary text-lg font-semibold mb-2">Something went wrong</p>
-      <p class="text-text-secondary text-sm">{{ error() }}</p>
+      <p class="text-text-primary text-lg font-semibold mb-2">{{ error() }}</p>
+      <bng-button variant="primary" (clicked)="retry()">Retry</bng-button>
     </div>
   </main>
 } @else {
