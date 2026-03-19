@@ -67,7 +67,6 @@ jobs:
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: railway up --service b1ngo-api-staging --detach
-        working-directory: server
 
   deploy-spa-staging:
     runs-on: ubuntu-latest

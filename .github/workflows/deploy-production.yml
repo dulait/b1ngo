@@ -51,7 +51,6 @@ jobs:
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: railway up --service b1ngo-api-prod --detach
-        working-directory: server
 
   deploy-spa-prod:
     runs-on: ubuntu-latest
