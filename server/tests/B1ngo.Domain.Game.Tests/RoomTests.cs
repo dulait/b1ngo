@@ -331,18 +331,18 @@ public class RoomTests
     }
 
     [Fact]
-    public void MarkSquare_WhenPlayerHasWon_ThrowsDomainConflictException()
+    public void MarkSquare_WhenPlayerHasWon_AllowsMarking()
     {
         var sut = CreateActiveRoom();
         var playerId = sut.Players[0].Id;
 
         MarkEntireRow(sut, playerId, 0);
-
         Assert.True(sut.Players[0].HasWon);
-        var ex = Assert.Throws<DomainConflictException>(() =>
-            sut.MarkSquare(playerId, 1, 0, SquareMarkedBy.Player, Now)
-        );
-        Assert.Equal("player_already_won", ex.Code);
+
+        sut.MarkSquare(playerId, 1, 0, SquareMarkedBy.Player, Now);
+
+        var square = sut.Players[0].Card!.GetSquare(1, 0);
+        Assert.True(square.IsMarked);
     }
 
     [Fact]
@@ -402,6 +402,74 @@ public class RoomTests
         Assert.Equal(playerId, bingoEvent.PlayerId);
         Assert.Equal(WinPatternType.Row, bingoEvent.Pattern);
         Assert.Equal(1, bingoEvent.Rank);
+    }
+
+    [Fact]
+    public void EvaluateWin_WhenPlayerHasWon_ReturnsNull()
+    {
+        var sut = CreateActiveRoom();
+        var playerId = sut.Players[0].Id;
+
+        MarkEntireRow(sut, playerId, 0);
+        Assert.True(sut.Players[0].HasWon);
+
+        var result = sut.EvaluateWin(playerId, Now);
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void EvaluateWin_StoresWinningSquaresInLeaderboardEntry()
+    {
+        var sut = CreateActiveRoom();
+        var playerId = sut.Players[0].Id;
+
+        MarkEntireRow(sut, playerId, 0);
+
+        var entry = Assert.Single(sut.Leaderboard);
+        Assert.Equal(5, entry.WinningSquares.Count);
+        Assert.All(entry.WinningSquares, s => Assert.Equal(0, s.Row));
+    }
+
+    [Fact]
+    public void EvaluateWin_IncludesWinningSquaresInDomainEvent()
+    {
+        var sut = CreateActiveRoom();
+        var playerId = sut.Players[0].Id;
+        sut.ClearDomainEvents();
+
+        MarkEntireRow(sut, playerId, 0);
+
+        var bingoEvent = sut.DomainEvents.OfType<BingoAchievedDomainEvent>().Single();
+        Assert.Equal(5, bingoEvent.WinningSquares.Count);
+        Assert.All(bingoEvent.WinningSquares, s => Assert.Equal(0, s.Row));
+    }
+
+    [Fact]
+    public void ReevaluateWin_AfterRevocation_RewinWithNewPattern_CreatesNewEntry()
+    {
+        var sut = CreateActiveRoom();
+        var playerId = sut.Players[0].Id;
+
+        // Win via row 0
+        MarkEntireRow(sut, playerId, 0);
+        Assert.True(sut.Players[0].HasWon);
+        Assert.Single(sut.Leaderboard);
+
+        // Unmark to revoke
+        sut.UnmarkSquare(playerId, 0, 0);
+        sut.ReevaluateWin(playerId);
+        Assert.False(sut.Players[0].HasWon);
+        Assert.Empty(sut.Leaderboard);
+
+        // Mark column 0 to win again (row 0 col 0 was unmarked, re-mark it then mark remaining col 0)
+        sut.MarkSquare(playerId, 0, 0, SquareMarkedBy.Player, Now);
+        sut.EvaluateWin(playerId, Now);
+        // Row 0 should be complete again
+        Assert.True(sut.Players[0].HasWon);
+        var entry = Assert.Single(sut.Leaderboard);
+        Assert.Equal(WinPatternType.Row, entry.WinningPattern);
+        Assert.Equal(5, entry.WinningSquares.Count);
     }
 
     #endregion

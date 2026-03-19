@@ -53,13 +53,14 @@ public sealed class BingoCard
         square.Edit(newDisplayText);
     }
 
-    public WinPatternType? CheckForWin(IReadOnlyList<WinPatternType> patterns)
+    public WinDetection? CheckForWin(IReadOnlyList<WinPatternType> patterns)
     {
         foreach (var pattern in patterns)
         {
-            if (HasWinningPattern(pattern))
+            var squares = GetWinningSquares(pattern);
+            if (squares is not null)
             {
-                return pattern;
+                return new WinDetection(pattern, squares);
             }
         }
 
@@ -75,6 +76,75 @@ public sealed class BingoCard
             WinPatternType.Blackout => HasBlackout(),
             _ => false,
         };
+
+    private IReadOnlyList<SquarePosition>? GetWinningSquares(WinPatternType pattern) =>
+        pattern switch
+        {
+            WinPatternType.Row => GetCompletedRowSquares(),
+            WinPatternType.Column => GetCompletedColumnSquares(),
+            WinPatternType.Diagonal => GetCompletedDiagonalSquares(),
+            WinPatternType.Blackout => GetBlackoutSquares(),
+            _ => null,
+        };
+
+    private IReadOnlyList<SquarePosition>? GetCompletedRowSquares()
+    {
+        for (var row = 0; row < MatrixSize; row++)
+        {
+            if (IsRowComplete(row))
+            {
+                return Enumerable.Range(0, MatrixSize)
+                    .Select(col => new SquarePosition(row, col))
+                    .ToList();
+            }
+        }
+
+        return null;
+    }
+
+    private IReadOnlyList<SquarePosition>? GetCompletedColumnSquares()
+    {
+        for (var col = 0; col < MatrixSize; col++)
+        {
+            if (IsColumnComplete(col))
+            {
+                return Enumerable.Range(0, MatrixSize)
+                    .Select(row => new SquarePosition(row, col))
+                    .ToList();
+            }
+        }
+
+        return null;
+    }
+
+    private IReadOnlyList<SquarePosition>? GetCompletedDiagonalSquares()
+    {
+        if (IsMainDiagonalComplete())
+        {
+            return Enumerable.Range(0, MatrixSize)
+                .Select(i => new SquarePosition(i, i))
+                .ToList();
+        }
+
+        if (IsAntiDiagonalComplete())
+        {
+            return Enumerable.Range(0, MatrixSize)
+                .Select(i => new SquarePosition(i, MatrixSize - 1 - i))
+                .ToList();
+        }
+
+        return null;
+    }
+
+    private IReadOnlyList<SquarePosition>? GetBlackoutSquares()
+    {
+        if (!HasBlackout())
+        {
+            return null;
+        }
+
+        return _squares.Select(s => new SquarePosition(s.Row, s.Column)).ToList();
+    }
 
     private bool HasCompletedRow()
     {

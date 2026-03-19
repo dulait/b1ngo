@@ -6,6 +6,7 @@ public sealed record BingoAchievedDomainEvent(
     RoomId RoomId,
     PlayerId PlayerId,
     WinPatternType Pattern,
+    IReadOnlyList<SquarePosition> WinningSquares,
     int Rank,
     DateTimeOffset CompletedAt
 ) : IDomainEvent;

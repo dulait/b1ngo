@@ -108,11 +108,6 @@ public class Room : Entity<RoomId>
 
         var player = GetPlayerOrThrow(playerId);
 
-        if (player.HasWon)
-        {
-            throw new DomainConflictException("player_already_won", "Cannot mark squares — player has already won.");
-        }
-
         if (player.Card is null)
         {
             throw new DomainConflictException("card_not_assigned", "Player does not have a card assigned.");
@@ -131,18 +126,18 @@ public class Room : Entity<RoomId>
             return null;
         }
 
-        var winningPattern = player.Card.CheckForWin(Configuration.WinningPatterns);
-        if (winningPattern is null)
+        var detection = player.Card.CheckForWin(Configuration.WinningPatterns);
+        if (detection is null)
         {
             return null;
         }
 
         var rank = _leaderboard.Count + 1;
-        _leaderboard.Add(new LeaderboardEntry(playerId, rank, winningPattern.Value, utcNow));
+        _leaderboard.Add(new LeaderboardEntry(playerId, rank, detection.Pattern, detection.Squares, utcNow));
         player.SetWon();
-        RaiseDomainEvent(new BingoAchievedDomainEvent(Id, playerId, winningPattern.Value, rank, utcNow));
+        RaiseDomainEvent(new BingoAchievedDomainEvent(Id, playerId, detection.Pattern, detection.Squares, rank, utcNow));
 
-        return new WinResult(winningPattern.Value, rank);
+        return new WinResult(detection.Pattern, rank);
     }
 
     public void UnmarkSquare(PlayerId playerId, int row, int column)
@@ -177,6 +172,7 @@ public class Room : Entity<RoomId>
 
         player.RevokeWin();
         RemoveFromLeaderboard(playerId);
+        RaiseDomainEvent(new BingoRevokedDomainEvent(Id, playerId));
         return true;
     }
 

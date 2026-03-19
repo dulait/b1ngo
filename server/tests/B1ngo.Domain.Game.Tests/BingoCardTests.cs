@@ -187,7 +187,10 @@ public class BingoCardTests
 
         var result = sut.CheckForWin([WinPatternType.Row, WinPatternType.Column, WinPatternType.Diagonal]);
 
-        Assert.Equal(WinPatternType.Row, result);
+        Assert.NotNull(result);
+        Assert.Equal(WinPatternType.Row, result.Pattern);
+        Assert.Equal(5, result.Squares.Count);
+        Assert.All(result.Squares, s => Assert.Equal(0, s.Row));
     }
 
     [Fact]
@@ -198,6 +201,111 @@ public class BingoCardTests
         var result = sut.CheckForWin([WinPatternType.Row, WinPatternType.Column]);
 
         Assert.Null(result);
+    }
+
+    [Fact]
+    public void CheckForWin_Row_ReturnsCorrectCoordinates()
+    {
+        var sut = _builder.Build();
+
+        for (var col = 0; col < 5; col++)
+        {
+            var square = sut.GetSquare(0, col);
+            if (!square.IsFreeSpace) square.Mark(SquareMarkedBy.Player, DateTimeOffset.UtcNow);
+        }
+
+        var result = sut.CheckForWin([WinPatternType.Row]);
+
+        Assert.NotNull(result);
+        Assert.Equal(WinPatternType.Row, result.Pattern);
+        Assert.Equal(5, result.Squares.Count);
+        for (var col = 0; col < 5; col++)
+        {
+            Assert.Contains(result.Squares, s => s.Row == 0 && s.Column == col);
+        }
+    }
+
+    [Fact]
+    public void CheckForWin_Column_ReturnsCorrectCoordinates()
+    {
+        var sut = _builder.Build();
+
+        for (var row = 0; row < 5; row++)
+        {
+            var square = sut.GetSquare(row, 0);
+            if (!square.IsFreeSpace) square.Mark(SquareMarkedBy.Player, DateTimeOffset.UtcNow);
+        }
+
+        var result = sut.CheckForWin([WinPatternType.Column]);
+
+        Assert.NotNull(result);
+        Assert.Equal(WinPatternType.Column, result.Pattern);
+        Assert.Equal(5, result.Squares.Count);
+        for (var row = 0; row < 5; row++)
+        {
+            Assert.Contains(result.Squares, s => s.Row == row && s.Column == 0);
+        }
+    }
+
+    [Fact]
+    public void CheckForWin_MainDiagonal_ReturnsCorrectCoordinates()
+    {
+        var sut = _builder.Build();
+
+        for (var i = 0; i < 5; i++)
+        {
+            var square = sut.GetSquare(i, i);
+            if (!square.IsFreeSpace) square.Mark(SquareMarkedBy.Player, DateTimeOffset.UtcNow);
+        }
+
+        var result = sut.CheckForWin([WinPatternType.Diagonal]);
+
+        Assert.NotNull(result);
+        Assert.Equal(WinPatternType.Diagonal, result.Pattern);
+        Assert.Equal(5, result.Squares.Count);
+        for (var i = 0; i < 5; i++)
+        {
+            Assert.Contains(result.Squares, s => s.Row == i && s.Column == i);
+        }
+    }
+
+    [Fact]
+    public void CheckForWin_AntiDiagonal_ReturnsCorrectCoordinates()
+    {
+        var sut = _builder.Build();
+
+        for (var i = 0; i < 5; i++)
+        {
+            var square = sut.GetSquare(i, 4 - i);
+            if (!square.IsFreeSpace) square.Mark(SquareMarkedBy.Player, DateTimeOffset.UtcNow);
+        }
+
+        var result = sut.CheckForWin([WinPatternType.Diagonal]);
+
+        Assert.NotNull(result);
+        Assert.Equal(WinPatternType.Diagonal, result.Pattern);
+        Assert.Equal(5, result.Squares.Count);
+        for (var i = 0; i < 5; i++)
+        {
+            Assert.Contains(result.Squares, s => s.Row == i && s.Column == 4 - i);
+        }
+    }
+
+    [Fact]
+    public void CheckForWin_Blackout_ReturnsAllSquares()
+    {
+        var sut = _builder.Build();
+
+        foreach (var square in sut.Squares)
+        {
+            if (!square.IsFreeSpace) square.Mark(SquareMarkedBy.Player, DateTimeOffset.UtcNow);
+        }
+
+        var result = sut.CheckForWin([WinPatternType.Blackout]);
+
+        Assert.NotNull(result);
+        Assert.Equal(WinPatternType.Blackout, result.Pattern);
+        Assert.Equal(25, result.Squares.Count);
     }
 
     [Fact]
