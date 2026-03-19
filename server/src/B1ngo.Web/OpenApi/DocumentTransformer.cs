@@ -60,7 +60,10 @@ internal sealed class DocumentTransformer : IOpenApiDocumentTransformer
             foreach (var pathItem in document.Paths.Values)
             {
                 if (pathItem.Operations is null)
+                {
                     continue;
+                }
+
                 foreach (var op in pathItem.Operations.Values)
                 {
                     if (op.OperationId is null || unauthenticatedOps.Contains(op.OperationId))

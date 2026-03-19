@@ -1,5 +1,4 @@
 using B1ngo.Domain.Core;
-using B1ngo.Domain.Game;
 using B1ngo.Domain.Game.Tests.Helpers;
 
 namespace B1ngo.Domain.Game.Tests;
@@ -211,7 +210,10 @@ public class BingoCardTests
         for (var col = 0; col < 5; col++)
         {
             var square = sut.GetSquare(0, col);
-            if (!square.IsFreeSpace) square.Mark(SquareMarkedBy.Player, DateTimeOffset.UtcNow);
+            if (!square.IsFreeSpace)
+            {
+                square.Mark(SquareMarkedBy.Player, DateTimeOffset.UtcNow);
+            }
         }
 
         var result = sut.CheckForWin([WinPatternType.Row]);
@@ -233,7 +235,10 @@ public class BingoCardTests
         for (var row = 0; row < 5; row++)
         {
             var square = sut.GetSquare(row, 0);
-            if (!square.IsFreeSpace) square.Mark(SquareMarkedBy.Player, DateTimeOffset.UtcNow);
+            if (!square.IsFreeSpace)
+            {
+                square.Mark(SquareMarkedBy.Player, DateTimeOffset.UtcNow);
+            }
         }
 
         var result = sut.CheckForWin([WinPatternType.Column]);
@@ -255,7 +260,10 @@ public class BingoCardTests
         for (var i = 0; i < 5; i++)
         {
             var square = sut.GetSquare(i, i);
-            if (!square.IsFreeSpace) square.Mark(SquareMarkedBy.Player, DateTimeOffset.UtcNow);
+            if (!square.IsFreeSpace)
+            {
+                square.Mark(SquareMarkedBy.Player, DateTimeOffset.UtcNow);
+            }
         }
 
         var result = sut.CheckForWin([WinPatternType.Diagonal]);
@@ -277,7 +285,10 @@ public class BingoCardTests
         for (var i = 0; i < 5; i++)
         {
             var square = sut.GetSquare(i, 4 - i);
-            if (!square.IsFreeSpace) square.Mark(SquareMarkedBy.Player, DateTimeOffset.UtcNow);
+            if (!square.IsFreeSpace)
+            {
+                square.Mark(SquareMarkedBy.Player, DateTimeOffset.UtcNow);
+            }
         }
 
         var result = sut.CheckForWin([WinPatternType.Diagonal]);
@@ -298,7 +309,10 @@ public class BingoCardTests
 
         foreach (var square in sut.Squares)
         {
-            if (!square.IsFreeSpace) square.Mark(SquareMarkedBy.Player, DateTimeOffset.UtcNow);
+            if (!square.IsFreeSpace)
+            {
+                square.Mark(SquareMarkedBy.Player, DateTimeOffset.UtcNow);
+            }
         }
 
         var result = sut.CheckForWin([WinPatternType.Blackout]);

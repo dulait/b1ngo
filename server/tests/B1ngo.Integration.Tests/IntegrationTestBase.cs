@@ -1,4 +1,3 @@
-using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -214,7 +213,11 @@ public abstract class IntegrationTestBase
 
         for (var col = 0; col < matrixSize; col++)
         {
-            if (row == center && col == center) continue;
+            if (row == center && col == center)
+            {
+                continue;
+            }
+
             last = await MarkSquare(roomId, playerId, playerToken, row, col);
         }
 
@@ -229,7 +232,11 @@ public abstract class IntegrationTestBase
 
         for (var row = 0; row < matrixSize; row++)
         {
-            if (row == center && col == center) continue;
+            if (row == center && col == center)
+            {
+                continue;
+            }
+
             last = await MarkSquare(roomId, playerId, playerToken, row, col);
         }
 
@@ -244,7 +251,11 @@ public abstract class IntegrationTestBase
 
         for (var i = 0; i < matrixSize; i++)
         {
-            if (i == center) continue;
+            if (i == center)
+            {
+                continue;
+            }
+
             last = await MarkSquare(roomId, playerId, playerToken, i, i);
         }
 
@@ -259,7 +270,11 @@ public abstract class IntegrationTestBase
 
         for (var i = 0; i < matrixSize; i++)
         {
-            if (i == center && (matrixSize - 1 - i) == center) continue;
+            if (i == center && (matrixSize - 1 - i) == center)
+            {
+                continue;
+            }
+
             last = await MarkSquare(roomId, playerId, playerToken, i, matrixSize - 1 - i);
         }
 
@@ -276,7 +291,11 @@ public abstract class IntegrationTestBase
         {
             for (var col = 0; col < matrixSize; col++)
             {
-                if (row == center && col == center) continue;
+                if (row == center && col == center)
+                {
+                    continue;
+                }
+
                 last = await MarkSquare(roomId, playerId, playerToken, row, col);
             }
         }
