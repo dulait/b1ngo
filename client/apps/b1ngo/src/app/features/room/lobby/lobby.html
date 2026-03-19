@@ -24,7 +24,9 @@
 </main>
 
 @if (store.isHost()) {
-  <div class="fixed bottom-0 left-0 right-0 bg-bg-surface border-t border-border-default p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+  <div
+    class="fixed bottom-0 left-0 right-0 bg-bg-surface border-t border-border-default p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]"
+  >
     <bng-button
       variant="primary"
       size="lg"
@@ -38,11 +40,7 @@
   </div>
 }
 
-<bng-bottom-sheet
-  title="Edit Square"
-  [open]="editSheetOpen()"
-  (closed)="onEditSheetClosed()"
->
+<bng-bottom-sheet title="Edit Square" [open]="editSheetOpen()" (closed)="onEditSheetClosed()">
   <div class="space-y-4">
     <bng-input
       label="Square Text"
