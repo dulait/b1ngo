@@ -46,7 +46,13 @@ internal static class ServiceCollectionExtensions
                 options.AddSchemaTransformer<SchemaTransformer>();
             });
             services.AddCorsPolicy(configuration);
-            services.AddRateLimiterPolicies();
+
+            var env = services.BuildServiceProvider().GetRequiredService<IHostEnvironment>();
+            if (!env.IsEnvironment("Testing"))
+            {
+                services.AddRateLimiterPolicies();
+            }
+
             services.AddHealthChecks();
 
             return services;

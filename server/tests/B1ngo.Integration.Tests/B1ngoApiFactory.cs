@@ -17,7 +17,7 @@ public sealed class B1ngoApiFactory : WebApplicationFactory<Program>, IAsyncLife
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseEnvironment("Development");
+        builder.UseEnvironment("Testing");
 
         builder.UseSetting("ConnectionStrings:Database", _postgres.GetConnectionString());
 
@@ -30,6 +30,7 @@ public sealed class B1ngoApiFactory : WebApplicationFactory<Program>, IAsyncLife
             {
                 services.Remove(outboxDescriptor);
             }
+
         });
     }
 

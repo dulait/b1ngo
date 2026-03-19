@@ -28,7 +28,11 @@ internal static class WebApplicationExtensions
             }
 
             app.UseCors();
-            app.UseRateLimiter();
+
+            if (!app.Environment.IsEnvironment("Testing"))
+            {
+                app.UseRateLimiter();
+            }
 
             if (!app.Environment.IsProduction())
             {
@@ -42,7 +46,7 @@ internal static class WebApplicationExtensions
                 });
             }
 
-            if (app.Environment.IsDevelopment())
+            if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Testing"))
             {
                 await app.ApplyMigrationsAsync();
             }

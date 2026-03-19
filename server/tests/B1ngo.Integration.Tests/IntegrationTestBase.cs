@@ -19,6 +19,8 @@ public abstract class IntegrationTestBase
         Factory = factory;
     }
 
+    // --- Room CRUD helpers ---
+
     protected async Task<CreateRoomResult> CreateRoom(string hostDisplayName = "Host", int matrixSize = 3)
     {
         using var client = Factory.CreateClient();
@@ -40,6 +42,37 @@ public abstract class IntegrationTestBase
         return new CreateRoomResult(body!.RoomId, body.JoinCode, body.PlayerId, body.PlayerToken);
     }
 
+    protected async Task<CreateRoomResult> CreateRoomWithPatterns(
+        IReadOnlyList<string> winningPatterns,
+        int matrixSize = 3,
+        string hostDisplayName = "Host")
+    {
+        using var client = Factory.CreateClient();
+        var response = await client.PostAsJsonAsync(
+            "/api/v1/rooms",
+            new
+            {
+                hostDisplayName,
+                matrixSize,
+                season = 2026,
+                grandPrixName = "Monaco",
+                sessionType = 6,
+                winningPatterns,
+            }
+        );
+
+        response.EnsureSuccessStatusCode();
+
+        var body = await response.Content.ReadFromJsonAsync<CreateRoomApiResponse>(JsonOptions);
+        return new CreateRoomResult(body!.RoomId, body.JoinCode, body.PlayerId, body.PlayerToken);
+    }
+
+    protected async Task<HttpResponseMessage> CreateRoomRaw(object payload)
+    {
+        using var client = Factory.CreateClient();
+        return await client.PostAsJsonAsync("/api/v1/rooms", payload);
+    }
+
     protected async Task<JoinRoomResult> JoinRoom(string joinCode, string displayName = "Player2")
     {
         using var client = Factory.CreateClient();
@@ -49,6 +82,12 @@ public abstract class IntegrationTestBase
 
         var body = await response.Content.ReadFromJsonAsync<JoinRoomApiResponse>(JsonOptions);
         return new JoinRoomResult(body!.RoomId, body.PlayerId, body.PlayerToken, body.DisplayName);
+    }
+
+    protected async Task<HttpResponseMessage> JoinRoomRaw(object payload)
+    {
+        using var client = Factory.CreateClient();
+        return await client.PostAsJsonAsync("/api/v1/rooms/join", payload);
     }
 
     protected async Task<HttpResponseMessage> StartGame(Guid roomId, Guid hostToken)
@@ -120,17 +159,206 @@ public abstract class IntegrationTestBase
         return await client.PostAsync("/api/v1/rooms/reconnect", null);
     }
 
+    // --- Composite helpers ---
+
+    protected async Task<ActiveGameContext> SetupActiveGame(int matrixSize = 3, int playerCount = 1)
+    {
+        var room = await CreateRoom("Host", matrixSize);
+
+        var players = new List<PlayerContext>();
+        for (var i = 0; i < playerCount - 1; i++)
+        {
+            var joined = await JoinRoom(room.JoinCode, $"Player{i + 2}");
+            players.Add(new PlayerContext(joined.PlayerId, joined.PlayerToken));
+        }
+
+        await StartGame(room.RoomId, room.PlayerToken);
+
+        return new ActiveGameContext(
+            room.RoomId,
+            room.JoinCode,
+            new PlayerContext(room.PlayerId, room.PlayerToken),
+            players
+        );
+    }
+
+    protected async Task<ActiveGameContext> SetupActiveGameWithPatterns(
+        IReadOnlyList<string> winningPatterns,
+        int matrixSize = 3,
+        int playerCount = 1)
+    {
+        var room = await CreateRoomWithPatterns(winningPatterns, matrixSize);
+
+        var players = new List<PlayerContext>();
+        for (var i = 0; i < playerCount - 1; i++)
+        {
+            var joined = await JoinRoom(room.JoinCode, $"Player{i + 2}");
+            players.Add(new PlayerContext(joined.PlayerId, joined.PlayerToken));
+        }
+
+        await StartGame(room.RoomId, room.PlayerToken);
+
+        return new ActiveGameContext(
+            room.RoomId,
+            room.JoinCode,
+            new PlayerContext(room.PlayerId, room.PlayerToken),
+            players
+        );
+    }
+
+    protected async Task<HttpResponseMessage> MarkRow(
+        Guid roomId, Guid playerId, Guid playerToken, int row, int matrixSize = 3)
+    {
+        var center = matrixSize / 2;
+        HttpResponseMessage? last = null;
+
+        for (var col = 0; col < matrixSize; col++)
+        {
+            if (row == center && col == center) continue;
+            last = await MarkSquare(roomId, playerId, playerToken, row, col);
+        }
+
+        return last!;
+    }
+
+    protected async Task<HttpResponseMessage> MarkColumn(
+        Guid roomId, Guid playerId, Guid playerToken, int col, int matrixSize = 3)
+    {
+        var center = matrixSize / 2;
+        HttpResponseMessage? last = null;
+
+        for (var row = 0; row < matrixSize; row++)
+        {
+            if (row == center && col == center) continue;
+            last = await MarkSquare(roomId, playerId, playerToken, row, col);
+        }
+
+        return last!;
+    }
+
+    protected async Task<HttpResponseMessage> MarkMainDiagonal(
+        Guid roomId, Guid playerId, Guid playerToken, int matrixSize = 3)
+    {
+        var center = matrixSize / 2;
+        HttpResponseMessage? last = null;
+
+        for (var i = 0; i < matrixSize; i++)
+        {
+            if (i == center) continue;
+            last = await MarkSquare(roomId, playerId, playerToken, i, i);
+        }
+
+        return last!;
+    }
+
+    protected async Task<HttpResponseMessage> MarkAntiDiagonal(
+        Guid roomId, Guid playerId, Guid playerToken, int matrixSize = 3)
+    {
+        var center = matrixSize / 2;
+        HttpResponseMessage? last = null;
+
+        for (var i = 0; i < matrixSize; i++)
+        {
+            if (i == center && (matrixSize - 1 - i) == center) continue;
+            last = await MarkSquare(roomId, playerId, playerToken, i, matrixSize - 1 - i);
+        }
+
+        return last!;
+    }
+
+    protected async Task<HttpResponseMessage> MarkAllNonFreeSquares(
+        Guid roomId, Guid playerId, Guid playerToken, int matrixSize = 3)
+    {
+        var center = matrixSize / 2;
+        HttpResponseMessage? last = null;
+
+        for (var row = 0; row < matrixSize; row++)
+        {
+            for (var col = 0; col < matrixSize; col++)
+            {
+                if (row == center && col == center) continue;
+                last = await MarkSquare(roomId, playerId, playerToken, row, col);
+            }
+        }
+
+        return last!;
+    }
+
+    protected async Task<List<LeaderboardEntryResponse>> GetLeaderboard(Guid roomId, Guid playerToken)
+    {
+        var response = await GetRoomState(roomId, playerToken);
+        response.EnsureSuccessStatusCode();
+        var state = await Deserialize<RoomStateResponse>(response);
+        return state.Leaderboard;
+    }
+
+    // --- Deserialization ---
+
     protected static async Task<T> Deserialize<T>(HttpResponseMessage response)
     {
         var result = await response.Content.ReadFromJsonAsync<T>(JsonOptions);
         return result!;
     }
 
-    protected record CreateRoomResult(Guid RoomId, string JoinCode, Guid PlayerId, Guid PlayerToken);
+    // --- Context records ---
 
+    protected record CreateRoomResult(Guid RoomId, string JoinCode, Guid PlayerId, Guid PlayerToken);
     protected record JoinRoomResult(Guid RoomId, Guid PlayerId, Guid PlayerToken, string DisplayName);
+    protected record PlayerContext(Guid PlayerId, Guid PlayerToken);
+    protected record ActiveGameContext(
+        Guid RoomId,
+        string JoinCode,
+        PlayerContext Host,
+        List<PlayerContext> Players
+    );
+
+    // --- Response DTOs ---
+
+    protected record RoomStateResponse(
+        Guid RoomId,
+        string JoinCode,
+        string Status,
+        SessionResponse Session,
+        ConfigurationResponse Configuration,
+        Guid HostPlayerId,
+        List<PlayerResponse> Players,
+        List<LeaderboardEntryResponse> Leaderboard
+    );
+
+    protected record SessionResponse(int Season, string GrandPrixName, string SessionType);
+    protected record ConfigurationResponse(int MatrixSize, List<string> WinningPatterns);
+
+    protected record PlayerResponse(Guid PlayerId, string DisplayName, bool HasWon, CardResponse? Card);
+    protected record CardResponse(int MatrixSize, List<SquareResponse> Squares);
+
+    protected record SquareResponse(
+        int Row, int Column, string DisplayText, string? EventKey,
+        bool IsFreeSpace, bool IsMarked, string? MarkedBy, DateTimeOffset? MarkedAt
+    );
+
+    protected record LeaderboardEntryResponse(
+        Guid PlayerId, int Rank, string WinningPattern,
+        List<SquarePositionResponse> WinningSquares, DateTimeOffset CompletedAt
+    );
+
+    protected record SquarePositionResponse(int Row, int Column);
+
+    protected record MarkSquareApiResponse(
+        int Row, int Column, bool IsMarked, string MarkedBy,
+        DateTimeOffset MarkedAt, BingoInfoResponse? Bingo
+    );
+
+    protected record BingoInfoResponse(string Pattern, int Rank);
+
+    protected record UnmarkSquareApiResponse(
+        int Row, int Column, bool IsMarked, string? MarkedBy,
+        DateTimeOffset? MarkedAt, bool WinRevoked
+    );
+
+    protected record ReconnectApiResponse(Guid RoomId, Guid PlayerId, string RoomStatus);
+
+    // --- Private API response records ---
 
     private record CreateRoomApiResponse(Guid RoomId, string JoinCode, Guid PlayerId, Guid PlayerToken);
-
     private record JoinRoomApiResponse(Guid RoomId, Guid PlayerId, Guid PlayerToken, string DisplayName);
 }
