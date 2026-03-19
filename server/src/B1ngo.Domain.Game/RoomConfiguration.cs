@@ -3,6 +3,7 @@ namespace B1ngo.Domain.Game;
 public sealed record RoomConfiguration
 {
     public const int DefaultMatrixSize = 5;
+    public const int DefaultMaxPlayers = 20;
 
     public static readonly IReadOnlyList<WinPatternType> DefaultWinningPatterns =
     [
@@ -12,14 +13,16 @@ public sealed record RoomConfiguration
     ];
 
     public int MatrixSize { get; init; }
+    public int MaxPlayers { get; init; }
     public IReadOnlyList<WinPatternType> WinningPatterns { get; init; } = [];
 
     private RoomConfiguration() { }
 
-    public RoomConfiguration(int matrixSize, IReadOnlyList<WinPatternType> winningPatterns)
+    public RoomConfiguration(int matrixSize, IReadOnlyList<WinPatternType> winningPatterns, int maxPlayers = DefaultMaxPlayers)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(matrixSize, 3);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(matrixSize, 9);
+        ArgumentOutOfRangeException.ThrowIfLessThan(maxPlayers, 2);
 
         if (matrixSize % 2 == 0)
         {
@@ -32,6 +35,7 @@ public sealed record RoomConfiguration
         }
 
         MatrixSize = matrixSize;
+        MaxPlayers = maxPlayers;
         WinningPatterns = winningPatterns;
     }
 

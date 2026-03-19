@@ -11,6 +11,8 @@ internal sealed class RoomEntityConfiguration : IEntityTypeConfiguration<Room>
     {
         builder.HasKey(x => x.Id);
 
+        builder.Property<uint>("xmin").IsRowVersion();
+
         builder.Property(x => x.JoinCode).HasMaxLength(15);
 
         builder.HasIndex(x => x.JoinCode).IsUnique();
@@ -36,6 +38,7 @@ internal sealed class RoomEntityConfiguration : IEntityTypeConfiguration<Room>
             {
                 config.ToJson();
                 config.Property(c => c.MatrixSize);
+                config.Property(c => c.MaxPlayers);
             }
         );
 

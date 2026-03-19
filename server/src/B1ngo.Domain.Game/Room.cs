@@ -55,6 +55,14 @@ public class Room : Entity<RoomId>
         EnsureStatus(RoomStatus.Lobby, "add players");
         ArgumentException.ThrowIfNullOrWhiteSpace(displayName);
 
+        if (_players.Count >= Configuration.MaxPlayers)
+        {
+            throw new DomainConflictException(
+                "room_full",
+                $"This room has reached the maximum of {Configuration.MaxPlayers} players."
+            );
+        }
+
         if (HasPlayerWithDisplayName(displayName))
         {
             throw new DomainConflictException(
