@@ -40,6 +40,8 @@ export class Lobby {
   readonly isStarting = signal(false);
   readonly editSheetOpen = signal(false);
   readonly editingSquareText = signal('');
+  readonly editingSquareCurrentText = signal('');
+  readonly editingSquareHasEventKey = signal(false);
   readonly editingSaving = signal(false);
 
   private editingRow = 0;
@@ -67,6 +69,8 @@ export class Lobby {
     );
     this.editingRow = event.row;
     this.editingCol = event.column;
+    this.editingSquareCurrentText.set(square?.displayText ?? '');
+    this.editingSquareHasEventKey.set(!!square?.eventKey);
     this.editingSquareText.set(square?.displayText ?? '');
     this.editSheetOpen.set(true);
   }

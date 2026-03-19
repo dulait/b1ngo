@@ -32,7 +32,6 @@
       size="lg"
       [fullWidth]="true"
       [loading]="isStarting()"
-      [disabled]="store.players().length < 2"
       (clicked)="onStartGame()"
     >
       Start Game
@@ -42,20 +41,29 @@
 
 <bng-bottom-sheet title="Edit Square" [open]="editSheetOpen()" (closed)="onEditSheetClosed()">
   <div class="space-y-4">
+    <p class="text-sm text-text-secondary">{{ editingSquareCurrentText() }}</p>
+
+    @if (editingSquareHasEventKey()) {
+      <p class="text-xs text-warning">
+        This square is linked to an auto-event. Editing will make it a custom square that won't be auto-marked.
+      </p>
+    }
+
     <bng-input
-      label="Square Text"
+      label="New text"
       placeholder="Enter text for this square"
       [maxlength]="50"
       [value]="editingSquareText()"
       (valueChange)="editingSquareText.set($event)"
     />
-    <bng-button
-      variant="primary"
-      [fullWidth]="true"
-      [loading]="editingSaving()"
-      (clicked)="onSaveSquareEdit()"
-    >
-      Save
-    </bng-button>
+
+    <div class="flex gap-3">
+      <bng-button variant="secondary" [fullWidth]="true" (clicked)="onEditSheetClosed()">
+        Cancel
+      </bng-button>
+      <bng-button variant="primary" [fullWidth]="true" [loading]="editingSaving()" (clicked)="onSaveSquareEdit()">
+        Save
+      </bng-button>
+    </div>
   </div>
 </bng-bottom-sheet>
