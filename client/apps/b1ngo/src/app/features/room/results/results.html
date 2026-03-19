@@ -1,0 +1,51 @@
+<main class="p-4 space-y-4">
+  <div class="text-center py-6">
+    <p class="text-[1.5rem] font-bold leading-[1.25] tracking-[-0.01em] text-text-primary mb-2">
+      Game Over
+    </p>
+    @if (currentRank(); as rank) {
+      <p class="text-[1.875rem] font-bold leading-[1.2] tracking-[-0.02em] text-green-500">
+        You finished #{{ rank }}!
+      </p>
+    }
+  </div>
+
+  <bng-card header="Final Standings">
+    <bng-leaderboard
+      [entries]="store.uiLeaderboard()"
+      [players]="store.uiPlayers()"
+      [currentPlayerId]="store.currentPlayerId()"
+      variant="full"
+    />
+  </bng-card>
+
+  @if (store.currentCard(); as card) {
+    <bng-card header="Your Card">
+      <bng-matrix
+        [squares]="card.squares"
+        [matrixSize]="store.matrixSize()"
+        mode="results"
+        [currentPlayerId]="store.currentPlayerId()"
+        [winningSquares]="winningSquares()"
+      />
+    </bng-card>
+  }
+
+  <div class="space-y-3 pb-8">
+    <bng-button
+      variant="primary"
+      size="lg"
+      [fullWidth]="true"
+      (clicked)="onNewRoom()"
+    >
+      New Room
+    </bng-button>
+    <bng-button
+      variant="secondary"
+      [fullWidth]="true"
+      (clicked)="onShareResult()"
+    >
+      Share Result
+    </bng-button>
+  </div>
+</main>
