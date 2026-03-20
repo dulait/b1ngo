@@ -19,6 +19,7 @@ import { ThemePickerSection } from './sections/theme-picker.section';
 import { SkeletonsSection } from './sections/skeletons.section';
 import { IconsSection } from './sections/icons.section';
 import { PillToggleSection } from './sections/pill-toggle.section';
+import { CollapsibleSection } from './sections/collapsible.section';
 
 @Component({
   selector: 'ds-root',
@@ -43,6 +44,7 @@ import { PillToggleSection } from './sections/pill-toggle.section';
     SkeletonsSection,
     IconsSection,
     PillToggleSection,
+    CollapsibleSection,
   ],
   template: `
     <div class="min-h-screen bg-bg-base text-text-primary">
@@ -130,6 +132,7 @@ import { PillToggleSection } from './sections/pill-toggle.section';
         <ds-bottom-sheet-section id="bottom-sheet" />
         <ds-skeletons id="skeletons" />
         <ds-pill-toggle id="pill-toggle" />
+        <ds-collapsible id="collapsible" />
         <ds-icons id="icons" />
         <div class="h-32"></div>
       </main>
@@ -161,6 +164,7 @@ export class AppComponent implements OnInit {
     { id: 'bottom-sheet', label: 'Bottom Sheet' },
     { id: 'skeletons', label: 'Skeletons' },
     { id: 'pill-toggle', label: 'Pill Toggle' },
+    { id: 'collapsible', label: 'Collapsible' },
     { id: 'icons', label: 'Icons' },
   ];
 
