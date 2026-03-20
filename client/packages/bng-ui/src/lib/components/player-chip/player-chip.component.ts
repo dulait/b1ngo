@@ -24,7 +24,7 @@ import { getAvatarColor, getAvatarInitials } from '../../types';
       </div>
 
       <div class="flex items-center gap-2 min-w-0 flex-1">
-        <span class="text-base text-text-primary truncate" [class.leading-none]="isCurrentPlayer()">
+        <span class="text-base text-text-primary truncate leading-normal">
           {{ displayName() }}
           @if (isCurrentPlayer()) {
             <span class="text-xs text-text-secondary leading-none"> (You)</span>
