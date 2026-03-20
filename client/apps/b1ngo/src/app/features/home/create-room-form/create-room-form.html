@@ -11,21 +11,21 @@
 
     <bng-select
       label="Season"
-      [options]="seasonOptions"
+      [options]="seasonOptions()"
       [value]="season()"
-      (valueChange)="season.set($event)"
+      (valueChange)="onSeasonChange($event)"
     />
 
     <bng-select
       label="Grand Prix"
-      [options]="grandPrixOptions"
+      [options]="grandPrixOptions()"
       [value]="grandPrixName()"
       (valueChange)="grandPrixName.set($event)"
     />
 
     <bng-select
       label="Session Type"
-      [options]="sessionTypeOptions"
+      [options]="sessionTypeOptions()"
       [value]="sessionType()"
       (valueChange)="sessionType.set($event)"
     />
@@ -38,8 +38,10 @@
       @if (showAdvanced()) {
         <div class="space-y-4 mt-3">
           <div>
-            <label class="block text-sm text-text-secondary mb-2">Card Size</label>
-            <div class="flex gap-2">
+            <span id="card-size-label" class="block text-sm text-text-secondary mb-2"
+              >Card Size</span
+            >
+            <div class="flex gap-2" role="radiogroup" aria-labelledby="card-size-label">
               @for (size of matrixSizes; track size) {
                 <button
                   type="button"
@@ -60,7 +62,9 @@
           </div>
 
           <div>
-            <label class="block text-sm text-text-secondary mb-2">Win Patterns</label>
+            <span id="win-patterns-label" class="block text-sm text-text-secondary mb-2"
+              >Win Patterns</span
+            >
             <bng-pill-toggle
               [options]="winningPatterns()"
               ariaLabel="Win patterns"

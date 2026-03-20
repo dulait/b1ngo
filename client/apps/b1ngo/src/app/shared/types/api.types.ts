@@ -10,6 +10,25 @@ export type SessionType =
   | 'Race';
 export type WinPatternType = 'Row' | 'Column' | 'Diagonal' | 'Corners' | 'Blackout';
 
+// --- Reference Data ---
+
+export interface ReferenceDataResponse {
+  sessionTypes: SessionTypeOption[];
+  grandPrix: GrandPrixOption[];
+}
+
+export interface SessionTypeOption {
+  name: string;
+  displayName: string;
+  sortOrder: number;
+}
+
+export interface GrandPrixOption {
+  name: string;
+  season: number;
+  sortOrder: number;
+}
+
 // --- API Request Commands ---
 
 export interface CreateRoomCommand {

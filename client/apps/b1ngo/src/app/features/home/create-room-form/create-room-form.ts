@@ -1,4 +1,12 @@
-import { Component, ChangeDetectionStrategy, inject, output, signal } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  output,
+  signal,
+  computed,
+  effect,
+} from '@angular/core';
 import {
   BngCardComponent,
   BngInputComponent,
@@ -8,60 +16,25 @@ import {
   PillToggleOption,
 } from 'bng-ui';
 import { RoomApiService } from '../../../core/api/room-api.service';
+import { ReferenceDataService } from '../../../core/api/reference-data.service';
 import { safeAsync } from '../../../core/api/safe-async';
 import { SessionType, WinPatternType } from '../../../shared/types/api.types';
 
-const SESSION_TYPE_OPTIONS: { value: string; label: string }[] = [
-  { value: 'FP1', label: 'FP1' },
-  { value: 'FP2', label: 'FP2' },
-  { value: 'FP3', label: 'FP3' },
-  { value: 'Qualifying', label: 'Qualifying' },
-  { value: 'SprintQualifying', label: 'Sprint Qualifying' },
-  { value: 'Sprint', label: 'Sprint' },
-  { value: 'Race', label: 'Race' },
-];
-
-const SEASON_OPTIONS: { value: string; label: string }[] = [
-  { value: '2024', label: '2024' },
-  { value: '2025', label: '2025' },
-  { value: '2026', label: '2026' },
-];
-
-const GRAND_PRIX_OPTIONS: { value: string; label: string }[] = [
-  { value: 'Bahrain Grand Prix', label: 'Bahrain Grand Prix' },
-  { value: 'Saudi Arabian Grand Prix', label: 'Saudi Arabian Grand Prix' },
-  { value: 'Australian Grand Prix', label: 'Australian Grand Prix' },
-  { value: 'Japanese Grand Prix', label: 'Japanese Grand Prix' },
-  { value: 'Chinese Grand Prix', label: 'Chinese Grand Prix' },
-  { value: 'Miami Grand Prix', label: 'Miami Grand Prix' },
-  { value: 'Emilia Romagna Grand Prix', label: 'Emilia Romagna Grand Prix' },
-  { value: 'Monaco Grand Prix', label: 'Monaco Grand Prix' },
-  { value: 'Spanish Grand Prix', label: 'Spanish Grand Prix' },
-  { value: 'Canadian Grand Prix', label: 'Canadian Grand Prix' },
-  { value: 'Austrian Grand Prix', label: 'Austrian Grand Prix' },
-  { value: 'British Grand Prix', label: 'British Grand Prix' },
-  { value: 'Belgian Grand Prix', label: 'Belgian Grand Prix' },
-  { value: 'Hungarian Grand Prix', label: 'Hungarian Grand Prix' },
-  { value: 'Dutch Grand Prix', label: 'Dutch Grand Prix' },
-  { value: 'Italian Grand Prix', label: 'Italian Grand Prix' },
-  { value: 'Azerbaijan Grand Prix', label: 'Azerbaijan Grand Prix' },
-  { value: 'Singapore Grand Prix', label: 'Singapore Grand Prix' },
-  { value: 'United States Grand Prix', label: 'United States Grand Prix' },
-  { value: 'Mexico City Grand Prix', label: 'Mexico City Grand Prix' },
-  { value: 'Brazilian Grand Prix', label: 'Brazilian Grand Prix' },
-  { value: 'Las Vegas Grand Prix', label: 'Las Vegas Grand Prix' },
-  { value: 'Qatar Grand Prix', label: 'Qatar Grand Prix' },
-  { value: 'Abu Dhabi Grand Prix', label: 'Abu Dhabi Grand Prix' },
-];
-
 @Component({
   selector: 'create-room-form',
-  imports: [BngCardComponent, BngInputComponent, BngSelectComponent, BngButtonComponent, BngPillToggleComponent],
+  imports: [
+    BngCardComponent,
+    BngInputComponent,
+    BngSelectComponent,
+    BngButtonComponent,
+    BngPillToggleComponent,
+  ],
   templateUrl: './create-room-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateRoomForm {
   private readonly roomApi = inject(RoomApiService);
+  private readonly refData = inject(ReferenceDataService);
 
   success = output<{ roomId: string; playerId: string; playerToken: string }>();
 
@@ -80,10 +53,37 @@ export class CreateRoomForm {
     { value: 'Blackout', label: 'Blackout', selected: false },
   ]);
 
-  protected readonly sessionTypeOptions = SESSION_TYPE_OPTIONS;
-  protected readonly seasonOptions = SEASON_OPTIONS;
-  protected readonly grandPrixOptions = GRAND_PRIX_OPTIONS;
+  protected readonly sessionTypeOptions = computed(() =>
+    this.refData.sessionTypes().map((st) => ({ value: st.name, label: st.displayName })),
+  );
+  protected readonly seasonOptions = computed(() =>
+    this.refData.seasons().map((s) => ({ value: String(s), label: String(s) })),
+  );
+  protected readonly grandPrixOptions = computed(() =>
+    this.refData
+      .grandPrixBySeason(parseInt(this.season(), 10))()
+      .map((gp) => ({ value: gp.name, label: gp.name })),
+  );
   protected readonly matrixSizes = [3, 5, 7, 9];
+
+  constructor() {
+    this.refData.load();
+
+    effect(() => {
+      const seasons = this.refData.seasons();
+      if (seasons.length > 0 && !this.season()) {
+        this.season.set(String(seasons[0]));
+      }
+    });
+  }
+
+  onSeasonChange(value: string): void {
+    this.season.set(value);
+    const gps = this.refData.grandPrixBySeason(parseInt(value, 10))();
+    if (gps.length > 0) {
+      this.grandPrixName.set(gps[0].name);
+    }
+  }
 
   toggleAdvanced(): void {
     this.showAdvanced.update((v) => !v);
@@ -127,7 +127,11 @@ export class CreateRoomForm {
       }),
     );
     if (result.ok) {
-      this.success.emit({ roomId: result.value.roomId, playerId: result.value.playerId, playerToken: result.value.playerToken });
+      this.success.emit({
+        roomId: result.value.roomId,
+        playerId: result.value.playerId,
+        playerToken: result.value.playerToken,
+      });
     }
     this.loading.set(false);
   }
