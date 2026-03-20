@@ -12,14 +12,8 @@ internal sealed class EventPoolRepository(B1ngoDbContext dbContext) : IEventPool
         CancellationToken cancellationToken = default
     )
     {
-        var lookupName = sessionType switch
-        {
-            SessionType.FP2 or SessionType.FP3 => SessionType.FP1.ToString(),
-            _ => sessionType.ToString(),
-        };
-
         return await dbContext
-            .EventPoolEntries.Where(e => e.SessionType.Name == lookupName)
+            .EventPoolEntries.Where(e => e.SessionType == sessionType.ToString())
             .Select(e => new EventPoolEntry(e.EventKey, e.DisplayText))
             .ToListAsync(cancellationToken);
     }
