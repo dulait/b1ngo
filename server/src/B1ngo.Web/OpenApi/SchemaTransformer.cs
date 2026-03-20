@@ -198,6 +198,23 @@ internal sealed class SchemaTransformer : IOpenApiSchemaTransformer
             ["winningPattern"] = ("Pattern that completed the win.", JsonValue.Create("Row")),
             ["completedAt"] = ("ISO 8601 UTC timestamp of win.", JsonValue.Create("2026-03-17T14:35:00+00:00")),
         },
+        ["GetReferenceDataResponse"] = new()
+        {
+            ["sessionTypes"] = ("Available F1 session types.", null),
+            ["grandPrix"] = ("Available Grand Prix events by season.", null),
+        },
+        ["SessionTypeDto"] = new()
+        {
+            ["name"] = ("Session type identifier, matches SessionType enum.", JsonValue.Create("Race")),
+            ["displayName"] = ("Human-readable label.", JsonValue.Create("Race")),
+            ["sortOrder"] = ("Display ordering.", JsonValue.Create(7)),
+        },
+        ["GrandPrixDto"] = new()
+        {
+            ["name"] = ("Grand Prix name.", JsonValue.Create("Bahrain Grand Prix")),
+            ["season"] = ("F1 season year.", JsonValue.Create(2026)),
+            ["sortOrder"] = ("Calendar order within the season.", JsonValue.Create(1)),
+        },
         ["ErrorResponse"] = new()
         {
             ["code"] = ("Machine-readable snake_case error code.", JsonValue.Create("validation_error")),

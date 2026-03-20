@@ -1,4 +1,5 @@
 using B1ngo.Application.Common;
+using B1ngo.Application.Features.ReferenceData;
 using B1ngo.Application.Features.Rooms.CreateRoom;
 using B1ngo.Application.Features.Rooms.EditSquare;
 using B1ngo.Application.Features.Rooms.EndGame;
@@ -31,6 +32,10 @@ public static class DependencyInjection
 
             services.AddScoped<IQueryHandler<ReconnectQuery, ReconnectResponse>, ReconnectHandler>();
             services.AddScoped<IQueryHandler<GetRoomStateQuery, GetRoomStateResponse>, GetRoomStateHandler>();
+            services.AddScoped<
+                IQueryHandler<GetReferenceDataQuery, GetReferenceDataResponse>,
+                GetReferenceDataHandler
+            >();
 
             return services;
         }

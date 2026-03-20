@@ -4,6 +4,7 @@ using B1ngo.Domain.Game;
 using B1ngo.Infrastructure.Auth;
 using B1ngo.Infrastructure.CardGeneration;
 using B1ngo.Infrastructure.Persistence;
+using B1ngo.Infrastructure.ReferenceData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +26,9 @@ public static class DependencyInjection
         services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
         services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<IPlayerTokenStore, PlayerTokenStore>();
-        services.AddSingleton<IBingoCardGenerator, BingoCardGenerator>();
+        services.AddScoped<IEventPoolRepository, EventPoolRepository>();
+        services.AddScoped<IReferenceDataRepository, ReferenceDataRepository>();
+        services.AddScoped<IBingoCardGenerator, BingoCardGenerator>();
 
         return services;
     }
