@@ -7,7 +7,8 @@ public sealed class CreateRoomHandler(
     IRoomRepository roomRepository,
     IUnitOfWork unitOfWork,
     IBingoCardGenerator cardGenerator,
-    IPlayerTokenStore playerTokenStore
+    IPlayerTokenStore playerTokenStore,
+    IReferenceDataRepository referenceDataRepository
 ) : ICommandHandler<CreateRoomCommand, CreateRoomResponse>
 {
     public async Task<Result<CreateRoomResponse>> HandleAsync(
@@ -15,6 +16,12 @@ public sealed class CreateRoomHandler(
         CancellationToken cancellationToken = default
     )
     {
+        var validationResult = await ValidateSessionType(command, cancellationToken);
+        if (validationResult is not null)
+        {
+            return validationResult;
+        }
+
         var session = new RaceSession(command.Season, command.GrandPrixName, command.SessionType);
         var configuration = BuildConfiguration(command);
 
@@ -39,6 +46,30 @@ public sealed class CreateRoomHandler(
         }
 
         return Result.Ok(new CreateRoomResponse(room.Id.Value, room.JoinCode, host.Id.Value, playerToken));
+    }
+
+    private async Task<Result<CreateRoomResponse>?> ValidateSessionType(
+        CreateRoomCommand command,
+        CancellationToken cancellationToken
+    )
+    {
+        var gp = await referenceDataRepository.GetGrandPrixAsync(
+            command.GrandPrixName,
+            command.Season,
+            cancellationToken
+        );
+
+        if (gp is null || !gp.SessionTypes.Contains(command.SessionType.ToString()))
+        {
+            return Result.Fail<CreateRoomResponse>(
+                Error.Validation(
+                    "session_type_invalid_for_gp",
+                    $"Session type '{command.SessionType}' is not valid for {command.GrandPrixName} ({command.Season})."
+                )
+            );
+        }
+
+        return null;
     }
 
     private static RoomConfiguration? BuildConfiguration(CreateRoomCommand command)
