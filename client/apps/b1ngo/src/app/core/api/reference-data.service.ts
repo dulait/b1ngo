@@ -7,17 +7,14 @@ export class ReferenceDataService {
   private readonly http = inject(HttpClient);
   private readonly data = signal<ReferenceDataResponse | null>(null);
 
-  readonly sessionTypes = computed(() => this.data()?.sessionTypes ?? []);
+  readonly seasons = computed(() => this.data()?.seasons ?? []);
   readonly grandPrix = computed(() => this.data()?.grandPrix ?? []);
-  readonly seasons = computed(() =>
-    [...new Set(this.grandPrix().map((gp) => gp.season))].sort((a, b) => b - a),
-  );
 
   grandPrixBySeason(season: number): Signal<GrandPrixOption[]> {
     return computed(() =>
       this.grandPrix()
         .filter((gp) => gp.season === season)
-        .sort((a, b) => a.sortOrder - b.sortOrder),
+        .sort((a, b) => a.round - b.round),
     );
   }
 

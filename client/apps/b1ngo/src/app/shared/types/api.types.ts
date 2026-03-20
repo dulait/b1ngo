@@ -8,25 +8,21 @@ export type SessionType =
   | 'SprintQualifying'
   | 'Sprint'
   | 'Race';
-export type WinPatternType = 'Row' | 'Column' | 'Diagonal' | 'Corners' | 'Blackout';
+export type WinPatternType = 'Row' | 'Column' | 'Diagonal' | 'Blackout';
 
 // --- Reference Data ---
 
 export interface ReferenceDataResponse {
-  sessionTypes: SessionTypeOption[];
+  seasons: number[];
   grandPrix: GrandPrixOption[];
-}
-
-export interface SessionTypeOption {
-  name: string;
-  displayName: string;
-  sortOrder: number;
 }
 
 export interface GrandPrixOption {
   name: string;
   season: number;
-  sortOrder: number;
+  round: number;
+  isSprint: boolean;
+  sessionTypes: string[];
 }
 
 // --- API Request Commands ---

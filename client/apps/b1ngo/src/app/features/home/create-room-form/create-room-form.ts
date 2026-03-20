@@ -39,9 +39,9 @@ export class CreateRoomForm {
   success = output<{ roomId: string; playerId: string; playerToken: string }>();
 
   readonly hostDisplayName = signal('');
-  readonly season = signal('2026');
-  readonly grandPrixName = signal('Bahrain Grand Prix');
-  readonly sessionType = signal<string>('Race');
+  readonly season = signal('');
+  readonly grandPrixName = signal('');
+  readonly sessionType = signal('');
   readonly loading = signal(false);
   readonly nameError = signal<string | null>(null);
   readonly showAdvanced = signal(false);
@@ -53,17 +53,33 @@ export class CreateRoomForm {
     { value: 'Blackout', label: 'Blackout', selected: false },
   ]);
 
-  protected readonly sessionTypeOptions = computed(() =>
-    this.refData.sessionTypes().map((st) => ({ value: st.name, label: st.displayName })),
-  );
   protected readonly seasonOptions = computed(() =>
     this.refData.seasons().map((s) => ({ value: String(s), label: String(s) })),
   );
-  protected readonly grandPrixOptions = computed(() =>
-    this.refData
-      .grandPrixBySeason(parseInt(this.season(), 10))()
-      .map((gp) => ({ value: gp.name, label: gp.name })),
-  );
+
+  protected readonly grandPrixOptions = computed(() => {
+    const session = parseInt(this.season(), 10);
+    if (!session) {
+      return [];
+    }
+    return this.refData
+      .grandPrixBySeason(session)()
+      .map((gp) => ({ value: gp.name, label: gp.name }));
+  });
+
+  protected readonly sessionTypeOptions = computed(() => {
+    const gpName = this.grandPrixName();
+    const session = parseInt(this.season(), 10);
+    if (!gpName || !session) {
+      return [];
+    }
+    const gp = this.refData.grandPrix().find((gp) => gp.name === gpName && gp.season === session);
+    if (!gp) {
+      return [];
+    }
+    return gp.sessionTypes.map((st) => ({ value: st, label: st }));
+  });
+
   protected readonly matrixSizes = [3, 5, 7, 9];
 
   constructor() {
@@ -71,18 +87,23 @@ export class CreateRoomForm {
 
     effect(() => {
       const seasons = this.refData.seasons();
+      const currentYear = new Date().getFullYear();
       if (seasons.length > 0 && !this.season()) {
-        this.season.set(String(seasons[0]));
+        const defaultSeason = seasons.includes(currentYear) ? currentYear : seasons[0];
+        this.season.set(String(defaultSeason));
       }
     });
   }
 
   onSeasonChange(value: string): void {
     this.season.set(value);
-    const gps = this.refData.grandPrixBySeason(parseInt(value, 10))();
-    if (gps.length > 0) {
-      this.grandPrixName.set(gps[0].name);
-    }
+    this.grandPrixName.set('');
+    this.sessionType.set('');
+  }
+
+  onGrandPrixChange(value: string): void {
+    this.grandPrixName.set(value);
+    this.sessionType.set('');
   }
 
   toggleAdvanced(): void {

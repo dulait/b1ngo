@@ -20,13 +20,17 @@
       label="Grand Prix"
       [options]="grandPrixOptions()"
       [value]="grandPrixName()"
-      (valueChange)="grandPrixName.set($event)"
+      [disabled]="!season()"
+      placeholder="Select a Grand Prix"
+      (valueChange)="onGrandPrixChange($event)"
     />
 
     <bng-select
       label="Session Type"
       [options]="sessionTypeOptions()"
       [value]="sessionType()"
+      [disabled]="!grandPrixName()"
+      placeholder="Select a session type"
       (valueChange)="sessionType.set($event)"
     />
 
@@ -80,6 +84,9 @@
       size="lg"
       [fullWidth]="true"
       [loading]="loading()"
+      [disabled]="
+        !season() || !grandPrixName() || !sessionType() || !hostDisplayName().trim() || loading()
+      "
       type="submit"
       (clicked)="onSubmit()"
     >
