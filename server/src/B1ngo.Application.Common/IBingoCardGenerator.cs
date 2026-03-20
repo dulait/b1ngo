@@ -4,5 +4,9 @@ namespace B1ngo.Application.Common;
 
 public interface IBingoCardGenerator
 {
-    BingoCard Generate(SessionType sessionType, int matrixSize);
+    Task<BingoCard> GenerateAsync(
+        SessionType sessionType,
+        int matrixSize,
+        CancellationToken cancellationToken = default
+    );
 }

@@ -29,4 +29,13 @@ public sealed class FakeBingoCardGenerator : IBingoCardGenerator
 
         return new BingoCard(matrixSize, squares);
     }
+
+    public Task<BingoCard> GenerateAsync(
+        SessionType sessionType,
+        int matrixSize,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return Task.FromResult(Generate(sessionType, matrixSize));
+    }
 }

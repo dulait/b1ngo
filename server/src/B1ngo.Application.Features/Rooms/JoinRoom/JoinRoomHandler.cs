@@ -25,7 +25,11 @@ public sealed class JoinRoomHandler(
 
         var player = room.AddPlayer(command.DisplayName);
 
-        var card = cardGenerator.Generate(room.Session.SessionType, room.Configuration.MatrixSize);
+        var card = await cardGenerator.GenerateAsync(
+            room.Session.SessionType,
+            room.Configuration.MatrixSize,
+            cancellationToken
+        );
         player.AssignCard(card);
 
         var playerToken = playerTokenStore.Create(player.Id.Value, room.Id.Value, isHost: false);

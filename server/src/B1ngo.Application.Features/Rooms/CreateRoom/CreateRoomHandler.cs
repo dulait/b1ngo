@@ -21,7 +21,11 @@ public sealed class CreateRoomHandler(
         var room = Room.Create(command.HostDisplayName, session, configuration);
         var host = room.GetHost();
 
-        var card = cardGenerator.Generate(command.SessionType, room.Configuration.MatrixSize);
+        var card = await cardGenerator.GenerateAsync(
+            command.SessionType,
+            room.Configuration.MatrixSize,
+            cancellationToken
+        );
         host.AssignCard(card);
 
         var playerToken = playerTokenStore.Create(host.Id.Value, room.Id.Value, isHost: true);

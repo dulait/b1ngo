@@ -3,11 +3,15 @@ using B1ngo.Domain.Game;
 
 namespace B1ngo.Infrastructure.CardGeneration;
 
-internal sealed class BingoCardGenerator : IBingoCardGenerator
+internal sealed class BingoCardGenerator(IEventPoolRepository eventPoolRepository) : IBingoCardGenerator
 {
-    public BingoCard Generate(SessionType sessionType, int matrixSize)
+    public async Task<BingoCard> GenerateAsync(
+        SessionType sessionType,
+        int matrixSize,
+        CancellationToken cancellationToken = default
+    )
     {
-        var pool = EventPool.GetEvents(sessionType);
+        var pool = await eventPoolRepository.GetEventsAsync(sessionType, cancellationToken);
         var totalSquares = matrixSize * matrixSize;
         var hasFreeSpace = matrixSize % 2 == 1;
         var eventSlotsNeeded = hasFreeSpace ? totalSquares - 1 : totalSquares;
