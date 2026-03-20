@@ -14,6 +14,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { RoomApiService } from '../../core/api/room-api.service';
 import { SignalRService } from '../../core/realtime/signalr.service';
 import { AuthService } from '../../core/auth/auth.service';
+import { safeAsync } from '../../core/api/safe-async';
 import { BngHeaderComponent, BngSkeletonComponent, BngCardComponent, BngButtonComponent, ToastService } from 'bng-ui';
 import { RoomStore } from './room-store';
 import { Lobby } from './lobby/lobby';
@@ -55,34 +56,28 @@ export class Room implements OnInit, OnDestroy {
   async ngOnInit(): Promise<void> {
     const roomId = this.route.snapshot.params['roomId'];
 
-    try {
-      const state = await this.roomApi.getRoomState(roomId);
-      this.store.initialize(state, this.auth.getPlayerId());
-    } catch (err: unknown) {
-      if (err instanceof HttpErrorResponse) {
-        if (err.status === 401 || err.status === 404) {
-          this.auth.clearSession();
-          this.toast.error('Your session has expired. Please join the room again.');
-          this.router.navigate(['/']);
-          return;
-        }
-        if (err.status === 403) {
-          this.toast.error("You're not a member of this room.");
-          this.router.navigate(['/']);
-          return;
-        }
+    const result = await safeAsync(this.roomApi.getRoomState(roomId));
+    this.loading.set(false);
+
+    if (!result.ok) {
+      if (result.error instanceof HttpErrorResponse && result.error.status === 404) {
+        this.auth.clearSession();
+        this.toast.error('Your session has expired. Please join the room again.');
+        this.router.navigate(['/']);
+        return;
       }
+      // 401/403 already handled by error interceptor (clears session, navigates home)
+      // For network errors or other failures, show connection error
       this.error.set("Can't connect to the server.");
       return;
-    } finally {
-      this.loading.set(false);
     }
 
-    try {
-      await this.signalr.connect(roomId);
-    } catch {
+    this.store.initialize(result.value, this.auth.getPlayerId());
+
+    // SignalR is non-critical; degrade gracefully
+    await this.signalr.connect(roomId).catch(() => {
       console.warn('[Room] SignalR connection failed; room will function without real-time updates');
-    }
+    });
   }
 
   retry(): void {

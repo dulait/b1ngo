@@ -6,6 +6,7 @@ import {
   BngButtonComponent,
 } from 'bng-ui';
 import { RoomApiService } from '../../../core/api/room-api.service';
+import { safeAsync } from '../../../core/api/safe-async';
 
 const JOIN_CODE_LENGTH = 6;
 
@@ -53,17 +54,16 @@ export class JoinRoomForm {
     }
 
     this.loading.set(true);
-    try {
-      const response = await this.roomApi.joinRoom({
+    const result = await safeAsync(
+      this.roomApi.joinRoom({
         joinCode: this.joinCode(),
         displayName: this.displayName().trim(),
-      });
-      this.success.emit({ roomId: response.roomId, playerId: response.playerId, playerToken: response.playerToken });
-    } catch {
-      // Error interceptor handles toast
-    } finally {
-      this.loading.set(false);
+      }),
+    );
+    if (result.ok) {
+      this.success.emit({ roomId: result.value.roomId, playerId: result.value.playerId, playerToken: result.value.playerToken });
     }
+    this.loading.set(false);
   }
 
   private validateCode(): boolean {

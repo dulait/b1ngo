@@ -17,6 +17,7 @@ import {
 } from 'bng-ui';
 import { ROOM_STORE } from '../room';
 import { RoomApiService } from '../../../core/api/room-api.service';
+import { safeAsync } from '../../../core/api/safe-async';
 
 @Component({
   selector: 'app-game',
@@ -44,7 +45,10 @@ export class Game {
   readonly winningSquares = computed(() => {
     const currentId = this.store.currentPlayerId();
     const entry = this.store.leaderboard().find((e) => e.playerId === currentId);
-    if (!entry || !entry.winningSquares) return new Set<string>();
+    if (!entry || !entry.winningSquares) {
+      return new Set<string>();
+    }
+
     return new Set(entry.winningSquares.map((s) => `${s.row},${s.column}`));
   });
 
@@ -57,14 +61,16 @@ export class Game {
     });
     this.store.recordMarkTimestamp(event.row, event.column);
 
-    try {
-      await this.roomApi.markSquare(
+    const result = await safeAsync(
+      this.roomApi.markSquare(
         this.store.roomId(),
         playerId,
         event.row,
         event.column,
-      );
-    } catch {
+      ),
+    );
+
+    if (!result.ok) {
       this.store.updateSquare(playerId, event.row, event.column, {
         isMarked: false,
         markedBy: null,
@@ -82,14 +88,16 @@ export class Game {
     });
     this.store.recordMarkTimestamp(event.row, event.column);
 
-    try {
-      await this.roomApi.unmarkSquare(
+    const result = await safeAsync(
+      this.roomApi.unmarkSquare(
         this.store.roomId(),
         playerId,
         event.row,
         event.column,
-      );
-    } catch {
+      ),
+    );
+
+    if (!result.ok) {
       this.store.updateSquare(playerId, event.row, event.column, {
         isMarked: true,
         markedBy: 'Player',
@@ -108,14 +116,13 @@ export class Game {
 
   async onConfirmEndGame(): Promise<void> {
     this.isEnding.set(true);
-    try {
-      await this.roomApi.endGame(this.store.roomId());
+    const result = await safeAsync(this.roomApi.endGame(this.store.roomId()));
+    if (result.ok) {
       this.endGameSheetOpen.set(false);
-    } catch {
+    } else {
       this.toast.error('Failed to end game.');
-    } finally {
-      this.isEnding.set(false);
     }
+    this.isEnding.set(false);
   }
 
 }

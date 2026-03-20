@@ -8,6 +8,7 @@ import {
   PillToggleOption,
 } from 'bng-ui';
 import { RoomApiService } from '../../../core/api/room-api.service';
+import { safeAsync } from '../../../core/api/safe-async';
 import { SessionType, WinPatternType } from '../../../shared/types/api.types';
 
 const SESSION_TYPE_OPTIONS: { value: string; label: string }[] = [
@@ -111,25 +112,24 @@ export class CreateRoomForm {
     }
 
     this.loading.set(true);
-    try {
-      const selectedPatterns = this.winningPatterns()
-        .filter((p) => p.selected)
-        .map((p) => p.value as WinPatternType);
+    const selectedPatterns = this.winningPatterns()
+      .filter((p) => p.selected)
+      .map((p) => p.value as WinPatternType);
 
-      const response = await this.roomApi.createRoom({
+    const result = await safeAsync(
+      this.roomApi.createRoom({
         hostDisplayName: this.hostDisplayName().trim(),
         season: parseInt(this.season(), 10),
         grandPrixName: this.grandPrixName(),
         sessionType: this.sessionType() as SessionType,
         matrixSize: this.matrixSize(),
         winningPatterns: selectedPatterns,
-      });
-      this.success.emit({ roomId: response.roomId, playerId: response.playerId, playerToken: response.playerToken });
-    } catch {
-      // Error interceptor handles toast
-    } finally {
-      this.loading.set(false);
+      }),
+    );
+    if (result.ok) {
+      this.success.emit({ roomId: result.value.roomId, playerId: result.value.playerId, playerToken: result.value.playerToken });
     }
+    this.loading.set(false);
   }
 
   private validateName(): boolean {

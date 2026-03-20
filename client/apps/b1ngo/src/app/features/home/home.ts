@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ThemeService, BngThemePickerComponent, BngHeaderComponent } from 'bng-ui';
 import { RoomApiService } from '../../core/api/room-api.service';
 import { AuthService } from '../../core/auth/auth.service';
+import { safeAsync } from '../../core/api/safe-async';
 import { CreateRoomForm } from './create-room-form/create-room-form';
 import { JoinRoomForm } from './join-room-form/join-room-form';
 
@@ -23,11 +24,11 @@ export class Home implements OnInit {
       return;
     }
 
-    try {
-      const result = await this.roomApi.reconnect();
-      this.auth.saveSession(result.roomId, result.playerId, this.auth.getPlayerToken());
-      this.router.navigate(['/room', result.roomId]);
-    } catch {
+    const result = await safeAsync(this.roomApi.reconnect());
+    if (result.ok) {
+      this.auth.saveSession(result.value.roomId, result.value.playerId, this.auth.getPlayerToken());
+      this.router.navigate(['/room', result.value.roomId]);
+    } else {
       this.auth.clearSession();
     }
   }

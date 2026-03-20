@@ -16,6 +16,7 @@ import {
 } from 'bng-ui';
 import { ROOM_STORE } from '../room';
 import { RoomApiService } from '../../../core/api/room-api.service';
+import { safeAsync } from '../../../core/api/safe-async';
 
 @Component({
   selector: 'app-lobby',
@@ -49,13 +50,11 @@ export class Lobby {
 
   async onStartGame(): Promise<void> {
     this.isStarting.set(true);
-    try {
-      await this.roomApi.startGame(this.store.roomId());
-    } catch {
+    const result = await safeAsync(this.roomApi.startGame(this.store.roomId()));
+    if (!result.ok) {
       this.toast.error('Failed to start game.');
-    } finally {
-      this.isStarting.set(false);
     }
+    this.isStarting.set(false);
   }
 
   onSquareEdit(event: { row: number; column: number }): void {
@@ -77,13 +76,15 @@ export class Lobby {
 
   async onSaveSquareEdit(): Promise<void> {
     this.editingSaving.set(true);
-    try {
-      await this.roomApi.editSquare(
+    const result = await safeAsync(
+      this.roomApi.editSquare(
         this.store.roomId(),
         this.editingRow,
         this.editingCol,
         this.editingSquareText(),
-      );
+      ),
+    );
+    if (result.ok) {
       this.store.updateSquare(
         this.store.currentPlayerId(),
         this.editingRow,
@@ -91,11 +92,10 @@ export class Lobby {
         { displayText: this.editingSquareText(), eventKey: null },
       );
       this.editSheetOpen.set(false);
-    } catch {
+    } else {
       this.toast.error('Failed to save square.');
-    } finally {
-      this.editingSaving.set(false);
     }
+    this.editingSaving.set(false);
   }
 
   onEditSheetClosed(): void {
