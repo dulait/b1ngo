@@ -13,6 +13,7 @@ const PLAYER_LIST_ROW_COUNT = 3;
 @Component({
   selector: 'bng-skeleton',
   standalone: true,
+  host: { class: 'block' },
   template: `
     @switch (variant()) {
       @case ('text') {

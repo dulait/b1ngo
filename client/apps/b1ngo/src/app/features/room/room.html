@@ -2,8 +2,12 @@
   <bng-header />
   <main class="p-4 space-y-4" aria-busy="true">
     <bng-skeleton variant="rect" height="3rem" />
-    <bng-skeleton variant="matrix" />
-    <bng-skeleton variant="player-list" />
+    <bng-card header="Your Card">
+      <bng-skeleton variant="matrix" />
+    </bng-card>
+    <bng-card header="Players">
+      <bng-skeleton variant="player-list" />
+    </bng-card>
   </main>
 } @else if (error()) {
   <bng-header />

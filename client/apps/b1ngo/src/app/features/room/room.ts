@@ -14,7 +14,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { RoomApiService } from '../../core/api/room-api.service';
 import { SignalRService } from '../../core/realtime/signalr.service';
 import { AuthService } from '../../core/auth/auth.service';
-import { BngHeaderComponent, BngSkeletonComponent, BngButtonComponent, ToastService } from 'bng-ui';
+import { BngHeaderComponent, BngSkeletonComponent, BngCardComponent, BngButtonComponent, ToastService } from 'bng-ui';
 import { RoomStore } from './room-store';
 import { Lobby } from './lobby/lobby';
 import { Game } from './game/game';
@@ -26,7 +26,7 @@ export const ROOM_STORE = new InjectionToken<RoomStore>('RoomStore');
   selector: 'app-room',
   templateUrl: './room.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BngHeaderComponent, BngSkeletonComponent, BngButtonComponent, Lobby, Game, Results],
+  imports: [BngHeaderComponent, BngSkeletonComponent, BngCardComponent, BngButtonComponent, Lobby, Game, Results],
   providers: [
     {
       provide: ROOM_STORE,
