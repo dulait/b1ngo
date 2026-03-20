@@ -58,23 +58,16 @@ public sealed class B1ngoDbContext(
 
         var logger = serviceProvider.GetService<ILogger<B1ngoDbContext>>();
 
-        try
-        {
-            logger?.LogInformation(
-                "Dispatching {Count} domain events: [{EventTypes}]",
-                domainEvents.Count,
-                string.Join(", ", domainEvents.Select(e => e.GetType().Name))
-            );
+        logger?.LogInformation(
+            "Dispatching {Count} domain events: [{EventTypes}]",
+            domainEvents.Count,
+            string.Join(", ", domainEvents.Select(e => e.GetType().Name))
+        );
 
-            var dispatcher = serviceProvider.GetRequiredService<IDomainEventDispatcher>();
-            await dispatcher.DispatchAsync(domainEvents, cancellationToken);
+        var dispatcher = serviceProvider.GetRequiredService<IDomainEventDispatcher>();
+        await dispatcher.DispatchAsync(domainEvents, cancellationToken);
 
-            logger?.LogInformation("Successfully dispatched {Count} domain events", domainEvents.Count);
-        }
-        catch (Exception ex)
-        {
-            logger?.LogWarning(ex, "Failed to dispatch {Count} domain events after commit", domainEvents.Count);
-        }
+        logger?.LogInformation("Successfully dispatched {Count} domain events", domainEvents.Count);
     }
 
     private void SetAuditFields()

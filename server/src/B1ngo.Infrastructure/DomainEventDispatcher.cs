@@ -1,8 +1,12 @@
 using B1ngo.Domain.Core;
+using Microsoft.Extensions.Logging;
 
 namespace B1ngo.Infrastructure;
 
-public sealed class DomainEventDispatcher(IServiceProvider serviceProvider) : IDomainEventDispatcher
+public sealed class DomainEventDispatcher(
+    IServiceProvider serviceProvider,
+    ILogger<DomainEventDispatcher> logger
+) : IDomainEventDispatcher
 {
     public async Task DispatchAsync(
         IEnumerable<IDomainEvent> domainEvents,
@@ -23,8 +27,20 @@ public sealed class DomainEventDispatcher(IServiceProvider serviceProvider) : ID
 
             foreach (var handler in (IEnumerable<object>)handlers)
             {
-                var method = handlerType.GetMethod("HandleAsync");
-                await (Task)method!.Invoke(handler, [domainEvent, cancellationToken])!;
+                try
+                {
+                    var method = handlerType.GetMethod("HandleAsync");
+                    await (Task)method!.Invoke(handler, [domainEvent, cancellationToken])!;
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(
+                        ex,
+                        "Failed to handle {EventType} in {HandlerType}",
+                        domainEvent.GetType().Name,
+                        handler.GetType().Name
+                    );
+                }
             }
         }
     }
