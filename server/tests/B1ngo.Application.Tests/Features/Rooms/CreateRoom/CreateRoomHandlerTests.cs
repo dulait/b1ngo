@@ -10,11 +10,18 @@ public class CreateRoomHandlerTests
     private readonly FakeUnitOfWork _unitOfWork = new();
     private readonly FakeBingoCardGenerator _cardGenerator = new();
     private readonly FakePlayerTokenStore _playerTokenStore = new();
+    private readonly FakeReferenceDataRepository _referenceDataRepository = new();
     private readonly CreateRoomHandler _sut;
 
     public CreateRoomHandlerTests()
     {
-        _sut = new CreateRoomHandler(_roomRepository, _unitOfWork, _cardGenerator, _playerTokenStore);
+        _sut = new CreateRoomHandler(
+            _roomRepository,
+            _unitOfWork,
+            _cardGenerator,
+            _playerTokenStore,
+            _referenceDataRepository
+        );
     }
 
     private static CreateRoomCommand ValidCommand =>
@@ -60,6 +67,31 @@ public class CreateRoomHandlerTests
     public async Task HandleAsync_WithCustomConfiguration_CreatesRoomWithCustomConfig()
     {
         var command = ValidCommand with { MatrixSize = 7, WinningPatterns = [WinPatternType.Blackout] };
+
+        var result = await _sut.HandleAsync(command);
+
+        Assert.True(result.IsSuccess);
+    }
+
+    [Fact]
+    public async Task HandleAsync_WithInvalidSessionTypeForGp_ReturnsFailure()
+    {
+        var command = ValidCommand with { SessionType = SessionType.Sprint };
+
+        var result = await _sut.HandleAsync(command);
+
+        Assert.True(result.IsFailure);
+        Assert.Contains("session_type_invalid_for_gp", result.Error!.Code);
+    }
+
+    [Fact]
+    public async Task HandleAsync_WithSprintSessionTypeForSprintGp_ReturnsSuccess()
+    {
+        var command = ValidCommand with
+        {
+            GrandPrixName = "Sprint Grand Prix",
+            SessionType = SessionType.SprintQualifying,
+        };
 
         var result = await _sut.HandleAsync(command);
 
