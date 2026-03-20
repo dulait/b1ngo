@@ -4,8 +4,9 @@
       {
          "name": "csharpier-format",
          "group": "pre-commit",
-         "command": "bash",
-         "args": [".husky/csharpier.sh"]
+         "command": "dotnet",
+         "args": ["csharpier", "format", "${staged}"],
+         "include": ["**/*.cs"]
       }
    ]
 }
