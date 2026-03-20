@@ -23,7 +23,7 @@ const AVATAR_FULL = `w-8 h-8 text-xs ${AVATAR_BASE}`;
   template: `
     <div role="list" aria-label="Leaderboard" class="space-y-1">
       @if (entries().length === 0) {
-        <p class="text-sm text-text-secondary text-center py-4">No winners yet.</p>
+        <p class="text-sm text-text-secondary text-center py-4">{{ emptyText() }}</p>
       }
       @for (entry of entries(); track entry.rank) {
         <div
@@ -79,6 +79,7 @@ export class BngLeaderboardComponent {
   players = input<PlayerDto[]>([]);
   currentPlayerId = input('');
   variant = input<'compact' | 'full'>('compact');
+  emptyText = input('No winners yet.');
 
   protected avatarClasses = computed(() =>
     this.variant() === 'compact' ? AVATAR_COMPACT : AVATAR_FULL,

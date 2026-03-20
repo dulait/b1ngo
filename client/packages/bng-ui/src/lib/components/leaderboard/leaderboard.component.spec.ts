@@ -47,10 +47,17 @@ describe('BngLeaderboardComponent', () => {
     expect(greenRank.textContent).toContain('#1');
   });
 
-  it('should show empty state when no entries', () => {
+  it('should show default empty state when no entries', () => {
     fixture.componentRef.setInput('entries', []);
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('No winners yet.');
+  });
+
+  it('should show custom empty text when provided', () => {
+    fixture.componentRef.setInput('entries', []);
+    fixture.componentRef.setInput('emptyText', 'No winners.');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('No winners.');
   });
 
   it('should show pattern badge', () => {
