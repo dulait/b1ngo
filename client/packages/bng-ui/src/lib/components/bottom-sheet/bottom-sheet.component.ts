@@ -45,7 +45,9 @@ let nextSheetId = 0;
             ? 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-md w-full rounded-xl'
             : 'bottom-0 left-0 right-0 rounded-t-2xl'
         "
-        [style.animation]="animating() && !dragging() ? 'sheet-open 300ms cubic-bezier(0.32, 0.72, 0, 1)' : 'none'"
+        [style.animation]="
+          animating() && !dragging() ? 'sheet-open 300ms cubic-bezier(0.32, 0.72, 0, 1)' : 'none'
+        "
         [style.transform]="sheetTransform()"
         (keydown.escape)="close()"
         (keydown)="onSheetKeydown($event)"

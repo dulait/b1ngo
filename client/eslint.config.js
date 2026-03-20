@@ -6,7 +6,13 @@ import unusedImports from 'eslint-plugin-unused-imports';
 
 export default tseslint.config(
   {
-    ignores: ['**/node_modules/**', '**/dist/**', '**/.angular/**', '**/coverage/**'],
+    ignores: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/.angular/**',
+      '**/coverage/**',
+      '**/prototype/**',
+    ],
   },
 
   // TypeScript files

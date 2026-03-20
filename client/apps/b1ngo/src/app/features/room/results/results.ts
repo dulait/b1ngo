@@ -30,7 +30,9 @@ export class Results {
   readonly winningSquares = computed(() => {
     const currentId = this.store.currentPlayerId();
     const entry = this.store.leaderboard().find((e) => e.playerId === currentId);
-    if (!entry || !entry.winningSquares) {return new Set<string>();}
+    if (!entry || !entry.winningSquares) {
+      return new Set<string>();
+    }
     return new Set(entry.winningSquares.map((s) => `${s.row},${s.column}`));
   });
 
