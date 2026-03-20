@@ -10,6 +10,7 @@ internal sealed class GrandPrixEntityConfiguration : IEntityTypeConfiguration<Gr
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Name).HasColumnType("varchar(100)");
+        builder.Property(x => x.SessionTypes).HasColumnType("jsonb");
         builder.HasIndex(x => new { x.Name, x.Season }).IsUnique();
     }
 }

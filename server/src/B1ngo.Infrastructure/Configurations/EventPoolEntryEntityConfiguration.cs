@@ -9,10 +9,10 @@ internal sealed class EventPoolEntryEntityConfiguration : IEntityTypeConfigurati
     public void Configure(EntityTypeBuilder<EventPoolEntryEntity> builder)
     {
         builder.HasKey(x => x.Id);
+        builder.Property(x => x.SessionType).HasColumnType("varchar(50)");
         builder.Property(x => x.EventKey).HasColumnType("varchar(100)");
         builder.Property(x => x.DisplayText).HasColumnType("varchar(200)");
 
-        builder.HasOne(x => x.SessionType).WithMany().HasForeignKey(x => x.SessionTypeId);
-        builder.HasIndex(x => new { x.SessionTypeId, x.EventKey }).IsUnique();
+        builder.HasIndex(x => new { x.SessionType, x.EventKey }).IsUnique();
     }
 }
