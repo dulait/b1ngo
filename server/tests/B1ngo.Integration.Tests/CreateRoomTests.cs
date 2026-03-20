@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Json;
 
 namespace B1ngo.Integration.Tests;
 
@@ -37,9 +38,9 @@ public sealed class CreateRoomTests(B1ngoApiFactory factory) : IntegrationTestBa
             new
             {
                 hostDisplayName = "",
-                season = 2026,
-                grandPrixName = "Monaco",
-                sessionType = 6,
+                season = TestSeason,
+                grandPrixName = TestGrandPrixName,
+                sessionType = "Race",
                 matrixSize = 3,
             }
         );
@@ -54,9 +55,9 @@ public sealed class CreateRoomTests(B1ngoApiFactory factory) : IntegrationTestBa
             new
             {
                 hostDisplayName = new string('A', 51),
-                season = 2026,
-                grandPrixName = "Monaco",
-                sessionType = 6,
+                season = TestSeason,
+                grandPrixName = TestGrandPrixName,
+                sessionType = "Race",
                 matrixSize = 3,
             }
         );
@@ -71,9 +72,9 @@ public sealed class CreateRoomTests(B1ngoApiFactory factory) : IntegrationTestBa
             new
             {
                 hostDisplayName = "<script>alert(1)</script>",
-                season = 2026,
-                grandPrixName = "Monaco",
-                sessionType = 6,
+                season = TestSeason,
+                grandPrixName = TestGrandPrixName,
+                sessionType = "Race",
                 matrixSize = 3,
             }
         );
@@ -88,9 +89,9 @@ public sealed class CreateRoomTests(B1ngoApiFactory factory) : IntegrationTestBa
             new
             {
                 hostDisplayName = "Host",
-                season = 2026,
-                grandPrixName = "Monaco",
-                sessionType = 6,
+                season = TestSeason,
+                grandPrixName = TestGrandPrixName,
+                sessionType = "Race",
                 matrixSize = 4,
             }
         );
@@ -105,9 +106,9 @@ public sealed class CreateRoomTests(B1ngoApiFactory factory) : IntegrationTestBa
             new
             {
                 hostDisplayName = "Host",
-                season = 2026,
-                grandPrixName = "Monaco",
-                sessionType = 6,
+                season = TestSeason,
+                grandPrixName = TestGrandPrixName,
+                sessionType = "Race",
                 matrixSize = 1,
             }
         );
@@ -122,9 +123,9 @@ public sealed class CreateRoomTests(B1ngoApiFactory factory) : IntegrationTestBa
             new
             {
                 hostDisplayName = "Host",
-                season = 2026,
-                grandPrixName = "Monaco",
-                sessionType = 6,
+                season = TestSeason,
+                grandPrixName = TestGrandPrixName,
+                sessionType = "Race",
                 matrixSize = 11,
             }
         );
@@ -139,9 +140,9 @@ public sealed class CreateRoomTests(B1ngoApiFactory factory) : IntegrationTestBa
             new
             {
                 hostDisplayName = "Host",
-                season = 2026,
-                grandPrixName = "Monaco",
-                sessionType = 6,
+                season = TestSeason,
+                grandPrixName = TestGrandPrixName,
+                sessionType = "Race",
                 matrixSize = 3,
                 winningPatterns = Array.Empty<string>(),
             }
@@ -157,9 +158,9 @@ public sealed class CreateRoomTests(B1ngoApiFactory factory) : IntegrationTestBa
             new
             {
                 hostDisplayName = "Host",
-                season = 2026,
+                season = TestSeason,
                 grandPrixName = new string('A', 101),
-                sessionType = 6,
+                sessionType = "Race",
                 matrixSize = 3,
             }
         );
@@ -174,13 +175,51 @@ public sealed class CreateRoomTests(B1ngoApiFactory factory) : IntegrationTestBa
             new
             {
                 hostDisplayName = "Host",
-                season = 2026,
+                season = TestSeason,
                 grandPrixName = "<img src=x onerror=alert(1)>",
-                sessionType = 6,
+                sessionType = "Race",
                 matrixSize = 3,
             }
         );
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task CreateRoom_WithSessionTypeInvalidForStandardGp_Returns400()
+    {
+        var response = await CreateRoomRaw(
+            new
+            {
+                hostDisplayName = "Host",
+                season = TestSeason,
+                grandPrixName = TestGrandPrixName,
+                sessionType = "Sprint",
+                matrixSize = 3,
+            }
+        );
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.Contains("session_type_invalid_for_gp", body);
+    }
+
+    [Fact]
+    public async Task CreateRoom_WithSprintSessionTypeForSprintGp_Returns200()
+    {
+        using var client = Factory.CreateClient();
+        var response = await client.PostAsJsonAsync(
+            "/api/v1/rooms",
+            new
+            {
+                hostDisplayName = "Host",
+                season = TestSeason,
+                grandPrixName = TestSprintGrandPrixName,
+                sessionType = "SprintQualifying",
+                matrixSize = 3,
+            }
+        );
+
+        response.EnsureSuccessStatusCode();
     }
 }

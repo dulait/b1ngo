@@ -4,7 +4,7 @@ using System.Text.Json;
 namespace B1ngo.Integration.Tests;
 
 [Collection("Integration")]
-public abstract class IntegrationTestBase
+public abstract class IntegrationTestBase : IAsyncLifetime
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -18,6 +18,19 @@ public abstract class IntegrationTestBase
         Factory = factory;
     }
 
+    public async Task InitializeAsync()
+    {
+        await Factory.EnsureTestReferenceDataAsync();
+    }
+
+    public Task DisposeAsync() => Task.CompletedTask;
+
+    // --- Constants for test reference data ---
+
+    protected const string TestGrandPrixName = "Test Grand Prix";
+    protected const string TestSprintGrandPrixName = "Test Sprint Grand Prix";
+    protected const int TestSeason = 2026;
+
     // --- Room CRUD helpers ---
 
     protected async Task<CreateRoomResult> CreateRoom(string hostDisplayName = "Host", int matrixSize = 3)
@@ -29,9 +42,9 @@ public abstract class IntegrationTestBase
             {
                 hostDisplayName,
                 matrixSize,
-                season = 2026,
-                grandPrixName = "Monaco",
-                sessionType = 6, // SessionType.Race
+                season = TestSeason,
+                grandPrixName = TestGrandPrixName,
+                sessionType = "Race",
             }
         );
 
@@ -54,9 +67,9 @@ public abstract class IntegrationTestBase
             {
                 hostDisplayName,
                 matrixSize,
-                season = 2026,
-                grandPrixName = "Monaco",
-                sessionType = 6,
+                season = TestSeason,
+                grandPrixName = TestGrandPrixName,
+                sessionType = "Race",
                 winningPatterns,
             }
         );

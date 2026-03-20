@@ -12,9 +12,9 @@ public sealed class ValidationTests(B1ngoApiFactory factory) : IntegrationTestBa
             new
             {
                 hostDisplayName = new string('A', 50),
-                season = 2026,
-                grandPrixName = "Monaco",
-                sessionType = 6,
+                season = TestSeason,
+                grandPrixName = TestGrandPrixName,
+                sessionType = "Race",
                 matrixSize = 3,
             }
         );
@@ -29,9 +29,9 @@ public sealed class ValidationTests(B1ngoApiFactory factory) : IntegrationTestBa
             new
             {
                 hostDisplayName = new string('A', 51),
-                season = 2026,
-                grandPrixName = "Monaco",
-                sessionType = 6,
+                season = TestSeason,
+                grandPrixName = TestGrandPrixName,
+                sessionType = "Race",
                 matrixSize = 3,
             }
         );
@@ -95,20 +95,21 @@ public sealed class ValidationTests(B1ngoApiFactory factory) : IntegrationTestBa
     }
 
     [Fact]
-    public async Task CreateRoom_GrandPrixNameExactly100Chars_Returns200()
+    public async Task CreateRoom_GrandPrixNameExactly100Chars_Returns400()
     {
         var response = await CreateRoomRaw(
             new
             {
                 hostDisplayName = "Host",
-                season = 2026,
+                season = TestSeason,
                 grandPrixName = new string('G', 100),
-                sessionType = 6,
+                sessionType = "Race",
                 matrixSize = 3,
             }
         );
 
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        // A 100-char GP name doesn't match any seeded reference data, so session type validation rejects it
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     [Fact]
