@@ -180,7 +180,11 @@ public sealed class MarkSquareTests(B1ngoApiFactory factory) : IntegrationTestBa
         var game = await SetupActiveGameWithPatterns(["Blackout"], matrixSize: 3);
 
         var lastMark = await MarkAllNonFreeSquares(
-            game.RoomId, game.Host.PlayerId, game.Host.PlayerToken, matrixSize: 3);
+            game.RoomId,
+            game.Host.PlayerId,
+            game.Host.PlayerToken,
+            matrixSize: 3
+        );
 
         Assert.Equal(HttpStatusCode.OK, lastMark.StatusCode);
         var body = await Deserialize<MarkSquareApiResponse>(lastMark);

@@ -93,9 +93,7 @@ public sealed class BingoCard
         {
             if (IsRowComplete(row))
             {
-                return Enumerable.Range(0, MatrixSize)
-                    .Select(col => new SquarePosition(row, col))
-                    .ToList();
+                return Enumerable.Range(0, MatrixSize).Select(col => new SquarePosition(row, col)).ToList();
             }
         }
 
@@ -108,9 +106,7 @@ public sealed class BingoCard
         {
             if (IsColumnComplete(col))
             {
-                return Enumerable.Range(0, MatrixSize)
-                    .Select(row => new SquarePosition(row, col))
-                    .ToList();
+                return Enumerable.Range(0, MatrixSize).Select(row => new SquarePosition(row, col)).ToList();
             }
         }
 
@@ -121,16 +117,12 @@ public sealed class BingoCard
     {
         if (IsMainDiagonalComplete())
         {
-            return Enumerable.Range(0, MatrixSize)
-                .Select(i => new SquarePosition(i, i))
-                .ToList();
+            return Enumerable.Range(0, MatrixSize).Select(i => new SquarePosition(i, i)).ToList();
         }
 
         if (IsAntiDiagonalComplete())
         {
-            return Enumerable.Range(0, MatrixSize)
-                .Select(i => new SquarePosition(i, MatrixSize - 1 - i))
-                .ToList();
+            return Enumerable.Range(0, MatrixSize).Select(i => new SquarePosition(i, MatrixSize - 1 - i)).ToList();
         }
 
         return null;

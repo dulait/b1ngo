@@ -18,9 +18,7 @@ internal sealed class BingoAchievedEventHandler(IHubContext<GameHub> hubContext)
                 new BingoAchievedHubEvent(
                     domainEvent.PlayerId.Value,
                     domainEvent.Pattern.ToString(),
-                    domainEvent.WinningSquares
-                        .Select(s => new SquarePositionDto(s.Row, s.Column))
-                        .ToList(),
+                    domainEvent.WinningSquares.Select(s => new SquarePositionDto(s.Row, s.Column)).ToList(),
                     domainEvent.Rank,
                     domainEvent.CompletedAt
                 ),

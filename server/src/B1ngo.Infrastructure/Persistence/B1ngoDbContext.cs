@@ -49,10 +49,7 @@ public sealed class B1ngoDbContext(
         return domainEvents;
     }
 
-    private async Task DispatchCollectedEvents(
-        List<IDomainEvent> domainEvents,
-        CancellationToken cancellationToken
-    )
+    private async Task DispatchCollectedEvents(List<IDomainEvent> domainEvents, CancellationToken cancellationToken)
     {
         if (domainEvents.Count == 0)
         {

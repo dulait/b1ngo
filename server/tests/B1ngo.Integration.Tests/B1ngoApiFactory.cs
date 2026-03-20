@@ -30,7 +30,6 @@ public sealed class B1ngoApiFactory : WebApplicationFactory<Program>, IAsyncLife
             {
                 services.Remove(outboxDescriptor);
             }
-
         });
     }
 

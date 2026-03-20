@@ -76,8 +76,7 @@ public sealed class GameLifecycleTests(B1ngoApiFactory factory) : IntegrationTes
         // End game and verify final state
         await EndGame(game.RoomId, game.Host.PlayerToken);
 
-        var state = await Deserialize<RoomStateResponse>(
-            await GetRoomState(game.RoomId, game.Host.PlayerToken));
+        var state = await Deserialize<RoomStateResponse>(await GetRoomState(game.RoomId, game.Host.PlayerToken));
         Assert.Equal("Completed", state.Status);
 
         var entry = Assert.Single(state.Leaderboard);

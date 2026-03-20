@@ -7,8 +7,7 @@ public class CreateRoomCommandValidatorTests
 {
     private readonly CreateRoomCommandValidator _sut = new();
 
-    private static CreateRoomCommand ValidCommand =>
-        new("Host", 2026, "Bahrain Grand Prix", SessionType.Race);
+    private static CreateRoomCommand ValidCommand => new("Host", 2026, "Bahrain Grand Prix", SessionType.Race);
 
     [Fact]
     public void Validate_WithValidCommand_IsValid()

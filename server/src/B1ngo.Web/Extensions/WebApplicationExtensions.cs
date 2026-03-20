@@ -62,6 +62,12 @@ internal static class WebApplicationExtensions
         {
             using var scope = app.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<B1ngoDbContext>();
+
+            if (db.Database.ProviderName?.Contains("Sqlite") == true)
+            {
+                return;
+            }
+
             await db.Database.MigrateAsync();
         }
     }

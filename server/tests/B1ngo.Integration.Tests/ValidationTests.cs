@@ -8,14 +8,16 @@ public sealed class ValidationTests(B1ngoApiFactory factory) : IntegrationTestBa
     [Fact]
     public async Task CreateRoom_HostDisplayNameExactly50Chars_Returns200()
     {
-        var response = await CreateRoomRaw(new
-        {
-            hostDisplayName = new string('A', 50),
-            season = 2026,
-            grandPrixName = "Monaco",
-            sessionType = 6,
-            matrixSize = 3,
-        });
+        var response = await CreateRoomRaw(
+            new
+            {
+                hostDisplayName = new string('A', 50),
+                season = 2026,
+                grandPrixName = "Monaco",
+                sessionType = 6,
+                matrixSize = 3,
+            }
+        );
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
@@ -23,14 +25,16 @@ public sealed class ValidationTests(B1ngoApiFactory factory) : IntegrationTestBa
     [Fact]
     public async Task CreateRoom_HostDisplayName51Chars_Returns400()
     {
-        var response = await CreateRoomRaw(new
-        {
-            hostDisplayName = new string('A', 51),
-            season = 2026,
-            grandPrixName = "Monaco",
-            sessionType = 6,
-            matrixSize = 3,
-        });
+        var response = await CreateRoomRaw(
+            new
+            {
+                hostDisplayName = new string('A', 51),
+                season = 2026,
+                grandPrixName = "Monaco",
+                sessionType = 6,
+                matrixSize = 3,
+            }
+        );
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
@@ -93,14 +97,16 @@ public sealed class ValidationTests(B1ngoApiFactory factory) : IntegrationTestBa
     [Fact]
     public async Task CreateRoom_GrandPrixNameExactly100Chars_Returns200()
     {
-        var response = await CreateRoomRaw(new
-        {
-            hostDisplayName = "Host",
-            season = 2026,
-            grandPrixName = new string('G', 100),
-            sessionType = 6,
-            matrixSize = 3,
-        });
+        var response = await CreateRoomRaw(
+            new
+            {
+                hostDisplayName = "Host",
+                season = 2026,
+                grandPrixName = new string('G', 100),
+                sessionType = 6,
+                matrixSize = 3,
+            }
+        );
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }

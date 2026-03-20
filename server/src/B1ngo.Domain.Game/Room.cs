@@ -135,7 +135,9 @@ public class Room : Entity<RoomId>
         var rank = _leaderboard.Count + 1;
         _leaderboard.Add(new LeaderboardEntry(playerId, rank, detection.Pattern, detection.Squares, utcNow));
         player.SetWon();
-        RaiseDomainEvent(new BingoAchievedDomainEvent(Id, playerId, detection.Pattern, detection.Squares, rank, utcNow));
+        RaiseDomainEvent(
+            new BingoAchievedDomainEvent(Id, playerId, detection.Pattern, detection.Squares, rank, utcNow)
+        );
 
         return new WinResult(detection.Pattern, rank);
     }

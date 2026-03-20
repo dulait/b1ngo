@@ -16,15 +16,14 @@ namespace B1ngo.Infrastructure.Migrations
                 type: "xid",
                 rowVersion: true,
                 nullable: false,
-                defaultValue: 0u);
+                defaultValue: 0u
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "xmin",
-                table: "rooms");
+            migrationBuilder.DropColumn(name: "xmin", table: "rooms");
         }
     }
 }

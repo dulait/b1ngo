@@ -44,7 +44,8 @@ public abstract class IntegrationTestBase
     protected async Task<CreateRoomResult> CreateRoomWithPatterns(
         IReadOnlyList<string> winningPatterns,
         int matrixSize = 3,
-        string hostDisplayName = "Host")
+        string hostDisplayName = "Host"
+    )
     {
         using var client = Factory.CreateClient();
         var response = await client.PostAsJsonAsync(
@@ -184,7 +185,8 @@ public abstract class IntegrationTestBase
     protected async Task<ActiveGameContext> SetupActiveGameWithPatterns(
         IReadOnlyList<string> winningPatterns,
         int matrixSize = 3,
-        int playerCount = 1)
+        int playerCount = 1
+    )
     {
         var room = await CreateRoomWithPatterns(winningPatterns, matrixSize);
 
@@ -206,7 +208,12 @@ public abstract class IntegrationTestBase
     }
 
     protected async Task<HttpResponseMessage> MarkRow(
-        Guid roomId, Guid playerId, Guid playerToken, int row, int matrixSize = 3)
+        Guid roomId,
+        Guid playerId,
+        Guid playerToken,
+        int row,
+        int matrixSize = 3
+    )
     {
         var center = matrixSize / 2;
         HttpResponseMessage? last = null;
@@ -225,7 +232,12 @@ public abstract class IntegrationTestBase
     }
 
     protected async Task<HttpResponseMessage> MarkColumn(
-        Guid roomId, Guid playerId, Guid playerToken, int col, int matrixSize = 3)
+        Guid roomId,
+        Guid playerId,
+        Guid playerToken,
+        int col,
+        int matrixSize = 3
+    )
     {
         var center = matrixSize / 2;
         HttpResponseMessage? last = null;
@@ -244,7 +256,11 @@ public abstract class IntegrationTestBase
     }
 
     protected async Task<HttpResponseMessage> MarkMainDiagonal(
-        Guid roomId, Guid playerId, Guid playerToken, int matrixSize = 3)
+        Guid roomId,
+        Guid playerId,
+        Guid playerToken,
+        int matrixSize = 3
+    )
     {
         var center = matrixSize / 2;
         HttpResponseMessage? last = null;
@@ -263,7 +279,11 @@ public abstract class IntegrationTestBase
     }
 
     protected async Task<HttpResponseMessage> MarkAntiDiagonal(
-        Guid roomId, Guid playerId, Guid playerToken, int matrixSize = 3)
+        Guid roomId,
+        Guid playerId,
+        Guid playerToken,
+        int matrixSize = 3
+    )
     {
         var center = matrixSize / 2;
         HttpResponseMessage? last = null;
@@ -282,7 +302,11 @@ public abstract class IntegrationTestBase
     }
 
     protected async Task<HttpResponseMessage> MarkAllNonFreeSquares(
-        Guid roomId, Guid playerId, Guid playerToken, int matrixSize = 3)
+        Guid roomId,
+        Guid playerId,
+        Guid playerToken,
+        int matrixSize = 3
+    )
     {
         var center = matrixSize / 2;
         HttpResponseMessage? last = null;
@@ -322,14 +346,12 @@ public abstract class IntegrationTestBase
     // --- Context records ---
 
     protected record CreateRoomResult(Guid RoomId, string JoinCode, Guid PlayerId, Guid PlayerToken);
+
     protected record JoinRoomResult(Guid RoomId, Guid PlayerId, Guid PlayerToken, string DisplayName);
+
     protected record PlayerContext(Guid PlayerId, Guid PlayerToken);
-    protected record ActiveGameContext(
-        Guid RoomId,
-        string JoinCode,
-        PlayerContext Host,
-        List<PlayerContext> Players
-    );
+
+    protected record ActiveGameContext(Guid RoomId, string JoinCode, PlayerContext Host, List<PlayerContext> Players);
 
     // --- Response DTOs ---
 
@@ -345,33 +367,52 @@ public abstract class IntegrationTestBase
     );
 
     protected record SessionResponse(int Season, string GrandPrixName, string SessionType);
+
     protected record ConfigurationResponse(int MatrixSize, List<string> WinningPatterns);
 
     protected record PlayerResponse(Guid PlayerId, string DisplayName, bool HasWon, CardResponse? Card);
+
     protected record CardResponse(int MatrixSize, List<SquareResponse> Squares);
 
     protected record SquareResponse(
-        int Row, int Column, string DisplayText, string? EventKey,
-        bool IsFreeSpace, bool IsMarked, string? MarkedBy, DateTimeOffset? MarkedAt
+        int Row,
+        int Column,
+        string DisplayText,
+        string? EventKey,
+        bool IsFreeSpace,
+        bool IsMarked,
+        string? MarkedBy,
+        DateTimeOffset? MarkedAt
     );
 
     protected record LeaderboardEntryResponse(
-        Guid PlayerId, int Rank, string WinningPattern,
-        List<SquarePositionResponse> WinningSquares, DateTimeOffset CompletedAt
+        Guid PlayerId,
+        int Rank,
+        string WinningPattern,
+        List<SquarePositionResponse> WinningSquares,
+        DateTimeOffset CompletedAt
     );
 
     protected record SquarePositionResponse(int Row, int Column);
 
     protected record MarkSquareApiResponse(
-        int Row, int Column, bool IsMarked, string MarkedBy,
-        DateTimeOffset MarkedAt, BingoInfoResponse? Bingo
+        int Row,
+        int Column,
+        bool IsMarked,
+        string MarkedBy,
+        DateTimeOffset MarkedAt,
+        BingoInfoResponse? Bingo
     );
 
     protected record BingoInfoResponse(string Pattern, int Rank);
 
     protected record UnmarkSquareApiResponse(
-        int Row, int Column, bool IsMarked, string? MarkedBy,
-        DateTimeOffset? MarkedAt, bool WinRevoked
+        int Row,
+        int Column,
+        bool IsMarked,
+        string? MarkedBy,
+        DateTimeOffset? MarkedAt,
+        bool WinRevoked
     );
 
     protected record ReconnectApiResponse(Guid RoomId, Guid PlayerId, string RoomStatus);
@@ -379,5 +420,6 @@ public abstract class IntegrationTestBase
     // --- Private API response records ---
 
     private record CreateRoomApiResponse(Guid RoomId, string JoinCode, Guid PlayerId, Guid PlayerToken);
+
     private record JoinRoomApiResponse(Guid RoomId, Guid PlayerId, Guid PlayerToken, string DisplayName);
 }

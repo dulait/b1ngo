@@ -12,10 +12,6 @@ internal sealed class BingoRevokedEventHandler(IHubContext<GameHub> hubContext)
     {
         await hubContext
             .Clients.Group($"room:{domainEvent.RoomId.Value}")
-            .SendAsync(
-                "BingoRevoked",
-                new BingoRevokedHubEvent(domainEvent.PlayerId.Value),
-                cancellationToken
-            );
+            .SendAsync("BingoRevoked", new BingoRevokedHubEvent(domainEvent.PlayerId.Value), cancellationToken);
     }
 }

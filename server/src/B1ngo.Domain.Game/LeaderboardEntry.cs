@@ -13,7 +13,8 @@ public sealed record LeaderboardEntry
         int rank,
         WinPatternType winningPattern,
         List<SquarePosition> winningSquares,
-        DateTimeOffset completedAt)
+        DateTimeOffset completedAt
+    )
     {
         PlayerId = playerId;
         Rank = rank;

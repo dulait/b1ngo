@@ -18,7 +18,11 @@ public sealed record RoomConfiguration
 
     private RoomConfiguration() { }
 
-    public RoomConfiguration(int matrixSize, IReadOnlyList<WinPatternType> winningPatterns, int maxPlayers = DefaultMaxPlayers)
+    public RoomConfiguration(
+        int matrixSize,
+        IReadOnlyList<WinPatternType> winningPatterns,
+        int maxPlayers = DefaultMaxPlayers
+    )
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(matrixSize, 3);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(matrixSize, 9);

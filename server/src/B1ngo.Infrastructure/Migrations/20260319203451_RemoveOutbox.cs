@@ -11,8 +11,7 @@ namespace B1ngo.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "outbox_messages");
+            migrationBuilder.DropTable(name: "outbox_messages");
         }
 
         /// <inheritdoc />
@@ -28,18 +27,20 @@ namespace B1ngo.Infrastructure.Migrations
                     occurred_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     payload = table.Column<string>(type: "jsonb", nullable: false),
                     processed_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    retry_count = table.Column<int>(type: "integer", nullable: false, defaultValue: 0)
+                    retry_count = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_outbox_messages", x => x.id);
-                });
+                }
+            );
 
             migrationBuilder.CreateIndex(
                 name: "ix_outbox_messages_processed_at",
                 table: "outbox_messages",
                 column: "processed_at",
-                filter: "processed_at IS NULL");
+                filter: "processed_at IS NULL"
+            );
         }
     }
 }

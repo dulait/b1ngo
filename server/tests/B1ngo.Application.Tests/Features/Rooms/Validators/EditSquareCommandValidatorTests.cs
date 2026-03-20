@@ -6,8 +6,7 @@ public class EditSquareCommandValidatorTests
 {
     private readonly EditSquareCommandValidator _sut = new();
 
-    private static EditSquareCommand ValidCommand =>
-        new(Guid.NewGuid(), Guid.NewGuid(), 0, 0, "Some event text");
+    private static EditSquareCommand ValidCommand => new(Guid.NewGuid(), Guid.NewGuid(), 0, 0, "Some event text");
 
     [Fact]
     public void Validate_WithValidCommand_IsValid()
