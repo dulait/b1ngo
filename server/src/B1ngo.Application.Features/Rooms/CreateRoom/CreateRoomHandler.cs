@@ -1,5 +1,4 @@
 using B1ngo.Application.Common;
-using B1ngo.Domain.Core;
 using B1ngo.Domain.Game;
 
 namespace B1ngo.Application.Features.Rooms.CreateRoom;
@@ -28,7 +27,12 @@ public sealed class CreateRoomHandler(
         var playerToken = playerTokenStore.Create(host.Id.Value, room.Id.Value, isHost: true);
 
         await roomRepository.AddAsync(room, cancellationToken);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        var saveResult = await unitOfWork.SaveChangesAsync(cancellationToken);
+        if (saveResult.IsFailure)
+        {
+            return Result.Fail<CreateRoomResponse>(saveResult.Error!);
+        }
 
         return Result.Ok(new CreateRoomResponse(room.Id.Value, room.JoinCode, host.Id.Value, playerToken));
     }

@@ -1,7 +1,6 @@
 using B1ngo.Application.Common;
 using B1ngo.Domain.Core;
 using B1ngo.Domain.Game;
-using Microsoft.EntityFrameworkCore;
 
 namespace B1ngo.Application.Features.Rooms.EditSquare;
 
@@ -23,15 +22,10 @@ public sealed class EditSquareHandler(IRoomRepository roomRepository, IUnitOfWor
         var playerId = PlayerId.From(command.PlayerId);
         room.EditSquare(playerId, command.Row, command.Column, command.DisplayText);
 
-        try
+        var saveResult = await unitOfWork.SaveChangesAsync(cancellationToken);
+        if (saveResult.IsFailure)
         {
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            return Result.Fail<EditSquareResponse>(
-                Error.Conflict("concurrency_conflict", "The room was modified by another request. Please try again.")
-            );
+            return Result.Fail<EditSquareResponse>(saveResult.Error!);
         }
 
         var player = room.Players.First(p => p.Id == playerId);

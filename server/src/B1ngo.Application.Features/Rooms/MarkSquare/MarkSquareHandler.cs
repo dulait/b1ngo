@@ -1,7 +1,6 @@
 using B1ngo.Application.Common;
 using B1ngo.Domain.Core;
 using B1ngo.Domain.Game;
-using Microsoft.EntityFrameworkCore;
 
 namespace B1ngo.Application.Features.Rooms.MarkSquare;
 
@@ -26,15 +25,10 @@ public sealed class MarkSquareHandler(IRoomRepository roomRepository, IUnitOfWor
         room.MarkSquare(playerId, command.Row, command.Column, command.MarkedBy, utcNow);
         var winResult = room.EvaluateWin(playerId, utcNow);
 
-        try
+        var saveResult = await unitOfWork.SaveChangesAsync(cancellationToken);
+        if (saveResult.IsFailure)
         {
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            return Result.Fail<MarkSquareResponse>(
-                Error.Conflict("concurrency_conflict", "The room was modified by another request. Please try again.")
-            );
+            return Result.Fail<MarkSquareResponse>(saveResult.Error!);
         }
 
         var player = room.Players.First(p => p.Id == playerId);
