@@ -13,7 +13,7 @@ import { BngBottomSheetComponent } from '../bottom-sheet/bottom-sheet.component'
 import { BngThemePickerComponent } from '../theme-picker/theme-picker.component';
 import { bngIconPalette } from '../../icons/icons';
 import { ThemeService } from '../../services/theme.service';
-import { SessionDto } from '../../types';
+import { SessionDto, ThemeName } from '../../types';
 
 @Component({
   selector: 'bng-header',
@@ -89,7 +89,7 @@ export class BngHeaderComponent {
     return parts.join(', ');
   });
 
-  protected onThemeChange(theme: string): void {
+  protected onThemeChange(theme: ThemeName): void {
     this.themeService.setTheme(theme);
     setTimeout(() => this.themeSheetOpen.set(false), 150);
   }

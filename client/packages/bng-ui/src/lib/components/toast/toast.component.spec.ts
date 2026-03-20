@@ -67,6 +67,12 @@ describe('BngToastContainerComponent', () => {
     const btn = fixture.nativeElement.querySelector('[aria-label="Dismiss notification"]');
     expect(btn).toBeTruthy();
   });
+
+  it('should position container at top of viewport', () => {
+    const container = fixture.nativeElement.querySelector('.fixed');
+    expect(container.classList.contains('top-4')).toBe(true);
+    expect(container.classList.contains('bottom-4')).toBe(false);
+  });
 });
 
 describe('ToastService', () => {
