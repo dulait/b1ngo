@@ -2,6 +2,7 @@ using B1ngo.Application.Common;
 using B1ngo.Domain.Core;
 using B1ngo.Domain.Game;
 using B1ngo.Infrastructure.Extensions;
+using B1ngo.Infrastructure.ReferenceData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -15,11 +16,18 @@ public sealed class B1ngoDbContext(
 ) : DbContext(options)
 {
     public DbSet<Room> Rooms => Set<Room>();
+    public DbSet<SessionTypeEntity> SessionTypes => Set<SessionTypeEntity>();
+    public DbSet<GrandPrixEntity> GrandPrix => Set<GrandPrixEntity>();
+    public DbSet<EventPoolEntryEntity> EventPoolEntries => Set<EventPoolEntryEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
         modelBuilder.ApplyGlobalConventions();
+
+        modelBuilder.Entity<SessionTypeEntity>().ToTable("session_types");
+        modelBuilder.Entity<GrandPrixEntity>().ToTable("grand_prix");
+        modelBuilder.Entity<EventPoolEntryEntity>().ToTable("event_pool_entries");
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
