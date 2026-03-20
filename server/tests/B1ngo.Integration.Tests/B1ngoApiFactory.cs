@@ -6,9 +6,7 @@ namespace B1ngo.Integration.Tests;
 
 public sealed class B1ngoApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
-        .WithImage("postgres:17-alpine")
-        .Build();
+    private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder().WithImage("postgres:17-alpine").Build();
 
     public async Task InitializeAsync()
     {
