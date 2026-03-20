@@ -1,10 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  inject,
-  signal,
-  computed,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
 import {
   BngCardComponent,
   BngMatrixComponent,
@@ -62,12 +56,7 @@ export class Game {
     this.store.recordMarkTimestamp(event.row, event.column);
 
     const result = await safeAsync(
-      this.roomApi.markSquare(
-        this.store.roomId(),
-        playerId,
-        event.row,
-        event.column,
-      ),
+      this.roomApi.markSquare(this.store.roomId(), playerId, event.row, event.column),
     );
 
     if (!result.ok) {
@@ -89,12 +78,7 @@ export class Game {
     this.store.recordMarkTimestamp(event.row, event.column);
 
     const result = await safeAsync(
-      this.roomApi.unmarkSquare(
-        this.store.roomId(),
-        playerId,
-        event.row,
-        event.column,
-      ),
+      this.roomApi.unmarkSquare(this.store.roomId(), playerId, event.row, event.column),
     );
 
     if (!result.ok) {
@@ -124,5 +108,4 @@ export class Game {
     }
     this.isEnding.set(false);
   }
-
 }

@@ -23,7 +23,10 @@ describe('Home', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        { provide: ENVIRONMENT, useValue: { production: false, apiBaseUrl: 'https://test.example.com' } },
+        {
+          provide: ENVIRONMENT,
+          useValue: { production: false, apiBaseUrl: 'https://test.example.com' },
+        },
         {
           provide: Router,
           useValue: { navigate: vi.fn() },

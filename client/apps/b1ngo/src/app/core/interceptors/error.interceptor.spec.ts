@@ -73,7 +73,9 @@ describe('errorInterceptor', () => {
     const errorSpy = vi.spyOn(toastService, 'error');
 
     http.get('/test').subscribe({ error: () => {} });
-    httpMock.expectOne('/test').flush({ message: 'Bad field' }, { status: 400, statusText: 'Bad Request' });
+    httpMock
+      .expectOne('/test')
+      .flush({ message: 'Bad field' }, { status: 400, statusText: 'Bad Request' });
 
     expect(errorSpy).toHaveBeenCalledWith('Bad field');
   });

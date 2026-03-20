@@ -17,7 +17,10 @@ describe('CreateRoomForm', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        { provide: ENVIRONMENT, useValue: { production: false, apiBaseUrl: 'https://test.example.com' } },
+        {
+          provide: ENVIRONMENT,
+          useValue: { production: false, apiBaseUrl: 'https://test.example.com' },
+        },
       ],
     }).compileComponents();
 
@@ -87,9 +90,11 @@ describe('CreateRoomForm', () => {
   });
 
   it('should set loading state during submit', async () => {
-    let resolvePromise: (value: any) => void;
+    let resolvePromise: (value: unknown) => void;
     vi.spyOn(roomApi, 'createRoom').mockReturnValue(
-      new Promise((resolve) => { resolvePromise = resolve; }),
+      new Promise((resolve) => {
+        resolvePromise = resolve;
+      }),
     );
 
     component.onNameChange('Max');

@@ -15,7 +15,13 @@ import { RoomApiService } from '../../core/api/room-api.service';
 import { SignalRService } from '../../core/realtime/signalr.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { safeAsync } from '../../core/api/safe-async';
-import { BngHeaderComponent, BngSkeletonComponent, BngCardComponent, BngButtonComponent, ToastService } from 'bng-ui';
+import {
+  BngHeaderComponent,
+  BngSkeletonComponent,
+  BngCardComponent,
+  BngButtonComponent,
+  ToastService,
+} from 'bng-ui';
 import { RoomStore } from './room-store';
 import { Lobby } from './lobby/lobby';
 import { Game } from './game/game';
@@ -27,7 +33,15 @@ export const ROOM_STORE = new InjectionToken<RoomStore>('RoomStore');
   selector: 'app-room',
   templateUrl: './room.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BngHeaderComponent, BngSkeletonComponent, BngCardComponent, BngButtonComponent, Lobby, Game, Results],
+  imports: [
+    BngHeaderComponent,
+    BngSkeletonComponent,
+    BngCardComponent,
+    BngButtonComponent,
+    Lobby,
+    Game,
+    Results,
+  ],
   providers: [
     {
       provide: ROOM_STORE,
@@ -76,7 +90,9 @@ export class Room implements OnInit, OnDestroy {
 
     // SignalR is non-critical; degrade gracefully
     await this.signalr.connect(roomId).catch(() => {
-      console.warn('[Room] SignalR connection failed; room will function without real-time updates');
+      console.warn(
+        '[Room] SignalR connection failed; room will function without real-time updates',
+      );
     });
   }
 
@@ -173,7 +189,7 @@ export class Room implements OnInit, OnDestroy {
               this.store.updateLeaderboard(state.leaderboard);
             }
           },
-          () => {}
+          () => {},
         );
       }
     });

@@ -11,9 +11,7 @@ import { AppErrorHandler } from './core/error/error-handler';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideHttpClient(
-      withInterceptors([credentialsInterceptor, errorInterceptor]),
-    ),
+    provideHttpClient(withInterceptors([credentialsInterceptor, errorInterceptor])),
     { provide: ENVIRONMENT, useValue: environment },
     { provide: ErrorHandler, useClass: AppErrorHandler },
   ],

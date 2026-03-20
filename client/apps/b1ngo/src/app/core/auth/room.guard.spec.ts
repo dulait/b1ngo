@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { roomGuard } from './room.guard';
 import { AuthService } from './auth.service';
@@ -33,7 +33,7 @@ describe('roomGuard', () => {
     authService.saveSession('r1', 'p1');
 
     const result = TestBed.runInInjectionContext(() =>
-      roomGuard({} as any, {} as any),
+      roomGuard({} as unknown as ActivatedRouteSnapshot, {} as unknown as RouterStateSnapshot),
     );
 
     expect(result).toBe(true);
@@ -43,7 +43,7 @@ describe('roomGuard', () => {
     const warnSpy = vi.spyOn(toastService, 'warning');
 
     const result = TestBed.runInInjectionContext(() =>
-      roomGuard({} as any, {} as any),
+      roomGuard({} as unknown as ActivatedRouteSnapshot, {} as unknown as RouterStateSnapshot),
     );
 
     expect(result).toBe('/');

@@ -41,7 +41,7 @@ export class AuthService {
 
   private loadSession(): SessionInfo | null {
     const raw = localStorage.getItem(AuthService.SESSION_KEY);
-    if (!raw) return null;
+    if (!raw) {return null;}
     try {
       return JSON.parse(raw) as SessionInfo;
     } catch {

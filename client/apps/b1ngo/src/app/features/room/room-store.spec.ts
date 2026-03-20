@@ -31,9 +31,7 @@ function mockPlayer(overrides: Partial<PlayerDto> = {}): PlayerDto {
   };
 }
 
-function mockRoomState(
-  overrides: Partial<GetRoomStateResponse> = {},
-): GetRoomStateResponse {
+function mockRoomState(overrides: Partial<GetRoomStateResponse> = {}): GetRoomStateResponse {
   return {
     roomId: 'r1',
     joinCode: 'ABC123',
@@ -191,7 +189,10 @@ describe('RoomStore', () => {
     });
 
     it('should not update square for wrong player', () => {
-      const player = mockPlayer({ playerId: 'p1', card: { matrixSize: 5, squares: [mockSquare()] } });
+      const player = mockPlayer({
+        playerId: 'p1',
+        card: { matrixSize: 5, squares: [mockSquare()] },
+      });
       store.initialize(mockRoomState({ players: [player] }), 'p1');
 
       store.updateSquare('p99', 0, 0, { isMarked: true });

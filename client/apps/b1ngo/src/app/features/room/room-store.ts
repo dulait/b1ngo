@@ -53,7 +53,10 @@ export class RoomStore {
     }
     // todo: find a better way to get short names; possibly return from backend
     const words = session.grandPrixName.split(' ');
-    const short = words.length >= 2 ? words[0].substring(0, 3).toUpperCase() : session.grandPrixName.substring(0, 3).toUpperCase();
+    const short =
+      words.length >= 2
+        ? words[0].substring(0, 3).toUpperCase()
+        : session.grandPrixName.substring(0, 3).toUpperCase();
     return { grandPrixShort: short, sessionType: session.sessionType };
   });
 
@@ -70,10 +73,7 @@ export class RoomStore {
   }
 
   addPlayer(playerId: string, displayName: string): void {
-    this.players.update((list) => [
-      ...list,
-      { playerId, displayName, hasWon: false, card: null },
-    ]);
+    this.players.update((list) => [...list, { playerId, displayName, hasWon: false, card: null }]);
   }
 
   updateSquare(playerId: string, row: number, col: number, patch: Partial<SquareDto>): void {

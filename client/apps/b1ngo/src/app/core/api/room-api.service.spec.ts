@@ -44,7 +44,12 @@ describe('RoomApiService', () => {
 
   it('should POST to /api/v1/rooms/join for joinRoom', async () => {
     const cmd = { joinCode: 'ABC123', displayName: 'Charles' };
-    const mockResponse = { roomId: 'r1', playerId: 'p2', playerToken: 'tok', displayName: 'Charles' };
+    const mockResponse = {
+      roomId: 'r1',
+      playerId: 'p2',
+      playerToken: 'tok',
+      displayName: 'Charles',
+    };
 
     const promise = service.joinRoom(cmd);
     const req = httpMock.expectOne(`${baseUrl}/api/v1/rooms/join`);

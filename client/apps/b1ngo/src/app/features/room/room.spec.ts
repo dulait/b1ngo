@@ -3,7 +3,6 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
 import { describe, it, beforeEach, expect, vi } from 'vitest';
-import { ROOM_STORE } from './room';
 import { RoomStore } from './room-store';
 import { RoomApiService } from '../../core/api/room-api.service';
 import { SignalRService } from '../../core/realtime/signalr.service';
@@ -51,7 +50,7 @@ function mockRoomState(): GetRoomStateResponse {
 
 describe('Room orchestrator logic', () => {
   let store: RoomStore;
-  let roomApi: RoomApiService;
+  let _roomApi: RoomApiService;
   let signalr: SignalRService;
   let auth: AuthService;
 
@@ -74,7 +73,7 @@ describe('Room orchestrator logic', () => {
     }).compileComponents();
 
     store = new RoomStore();
-    roomApi = TestBed.inject(RoomApiService);
+    _roomApi = TestBed.inject(RoomApiService);
     signalr = TestBed.inject(SignalRService);
     auth = TestBed.inject(AuthService);
     auth.saveSession('r1', 'p1');

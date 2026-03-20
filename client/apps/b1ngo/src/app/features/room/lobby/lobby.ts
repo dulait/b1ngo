@@ -1,9 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  inject,
-  signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import {
   BngCardComponent,
   BngCodeInputComponent,
@@ -85,12 +80,10 @@ export class Lobby {
       ),
     );
     if (result.ok) {
-      this.store.updateSquare(
-        this.store.currentPlayerId(),
-        this.editingRow,
-        this.editingCol,
-        { displayText: this.editingSquareText(), eventKey: null },
-      );
+      this.store.updateSquare(this.store.currentPlayerId(), this.editingRow, this.editingCol, {
+        displayText: this.editingSquareText(),
+        eventKey: null,
+      });
       this.editSheetOpen.set(false);
     } else {
       this.toast.error('Failed to save square.');

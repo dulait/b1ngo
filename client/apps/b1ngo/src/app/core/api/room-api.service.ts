@@ -17,9 +17,7 @@ export class RoomApiService {
   private readonly baseUrl = inject(ENVIRONMENT).apiBaseUrl;
 
   createRoom(cmd: CreateRoomCommand): Promise<CreateRoomResponse> {
-    return firstValueFrom(
-      this.http.post<CreateRoomResponse>(`${this.baseUrl}/api/v1/rooms`, cmd),
-    );
+    return firstValueFrom(this.http.post<CreateRoomResponse>(`${this.baseUrl}/api/v1/rooms`, cmd));
   }
 
   joinRoom(cmd: JoinRoomCommand): Promise<JoinRoomResponse> {
@@ -41,15 +39,11 @@ export class RoomApiService {
   }
 
   startGame(roomId: string): Promise<void> {
-    return firstValueFrom(
-      this.http.post<void>(`${this.baseUrl}/api/v1/rooms/${roomId}/start`, {}),
-    );
+    return firstValueFrom(this.http.post<void>(`${this.baseUrl}/api/v1/rooms/${roomId}/start`, {}));
   }
 
   endGame(roomId: string): Promise<void> {
-    return firstValueFrom(
-      this.http.post<void>(`${this.baseUrl}/api/v1/rooms/${roomId}/end`, {}),
-    );
+    return firstValueFrom(this.http.post<void>(`${this.baseUrl}/api/v1/rooms/${roomId}/end`, {}));
   }
 
   editSquare(roomId: string, row: number, col: number, text: string): Promise<void> {

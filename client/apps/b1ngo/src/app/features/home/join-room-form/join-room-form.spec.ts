@@ -17,7 +17,10 @@ describe('JoinRoomForm', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        { provide: ENVIRONMENT, useValue: { production: false, apiBaseUrl: 'https://test.example.com' } },
+        {
+          provide: ENVIRONMENT,
+          useValue: { production: false, apiBaseUrl: 'https://test.example.com' },
+        },
       ],
     }).compileComponents();
 
@@ -89,9 +92,11 @@ describe('JoinRoomForm', () => {
   });
 
   it('should set and reset loading state', async () => {
-    let resolvePromise: (value: any) => void;
+    let resolvePromise: (value: unknown) => void;
     vi.spyOn(roomApi, 'joinRoom').mockReturnValue(
-      new Promise((resolve) => { resolvePromise = resolve; }),
+      new Promise((resolve) => {
+        resolvePromise = resolve;
+      }),
     );
 
     component.onCodeComplete('H7KM3V');

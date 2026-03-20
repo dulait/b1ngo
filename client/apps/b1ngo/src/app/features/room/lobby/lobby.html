@@ -45,7 +45,8 @@
 
     @if (editingSquareHasEventKey()) {
       <p class="text-xs text-warning">
-        This square is linked to an auto-event. Editing will make it a custom square that won't be auto-marked.
+        This square is linked to an auto-event. Editing will make it a custom square that won't be
+        auto-marked.
       </p>
     }
 
@@ -61,7 +62,12 @@
       <bng-button variant="secondary" [fullWidth]="true" (clicked)="onEditSheetClosed()">
         Cancel
       </bng-button>
-      <bng-button variant="primary" [fullWidth]="true" [loading]="editingSaving()" (clicked)="onSaveSquareEdit()">
+      <bng-button
+        variant="primary"
+        [fullWidth]="true"
+        [loading]="editingSaving()"
+        (clicked)="onSaveSquareEdit()"
+      >
         Save
       </bng-button>
     </div>

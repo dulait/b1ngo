@@ -61,7 +61,11 @@ export class JoinRoomForm {
       }),
     );
     if (result.ok) {
-      this.success.emit({ roomId: result.value.roomId, playerId: result.value.playerId, playerToken: result.value.playerToken });
+      this.success.emit({
+        roomId: result.value.roomId,
+        playerId: result.value.playerId,
+        playerToken: result.value.playerToken,
+      });
     }
     this.loading.set(false);
   }

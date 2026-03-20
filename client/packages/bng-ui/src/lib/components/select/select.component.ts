@@ -24,10 +24,7 @@ let nextSelectId = 0;
   host: { style: 'display: block' },
   template: `
     <div class="relative max-w-full overflow-visible">
-      <label
-        [id]="labelId"
-        class="block text-sm text-text-secondary mb-1.5"
-      >
+      <label [id]="labelId" [attr.for]="triggerId" class="block text-sm text-text-secondary mb-1.5">
         {{ label() }}
       </label>
 

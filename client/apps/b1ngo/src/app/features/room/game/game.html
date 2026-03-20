@@ -35,12 +35,7 @@
   <div
     class="fixed bottom-0 left-0 right-0 bg-bg-surface border-t border-border-default p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]"
   >
-    <bng-button
-      variant="danger"
-      size="lg"
-      [fullWidth]="true"
-      (clicked)="onEndGame()"
-    >
+    <bng-button variant="danger" size="lg" [fullWidth]="true" (clicked)="onEndGame()">
       End Game
     </bng-button>
   </div>
@@ -55,7 +50,12 @@
       <bng-button variant="secondary" [fullWidth]="true" (clicked)="onCancelEndGame()">
         Cancel
       </bng-button>
-      <bng-button variant="danger" [fullWidth]="true" [loading]="isEnding()" (clicked)="onConfirmEndGame()">
+      <bng-button
+        variant="danger"
+        [fullWidth]="true"
+        [loading]="isEnding()"
+        (clicked)="onConfirmEndGame()"
+      >
         End Game
       </bng-button>
     </div>

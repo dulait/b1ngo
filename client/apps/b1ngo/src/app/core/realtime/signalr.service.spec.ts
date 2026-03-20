@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { describe, it, beforeEach, expect, vi } from 'vitest';
+import { describe, it, beforeEach, expect } from 'vitest';
 import { SignalRService } from './signalr.service';
 import { ENVIRONMENT } from '../environment';
 
@@ -10,7 +10,10 @@ describe('SignalRService', () => {
     TestBed.configureTestingModule({
       providers: [
         SignalRService,
-        { provide: ENVIRONMENT, useValue: { production: false, apiBaseUrl: 'https://test.example.com' } },
+        {
+          provide: ENVIRONMENT,
+          useValue: { production: false, apiBaseUrl: 'https://test.example.com' },
+        },
       ],
     });
     service = TestBed.inject(SignalRService);
