@@ -5,12 +5,12 @@ using B1ngo.DataSync.Translation;
 using B1ngo.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-var connectionString = args.Length > 0 ? args[0] : Environment.GetEnvironmentVariable("CONNECTION_STRING");
+var connectionString = args.Length > 0 ? args[0] : Environment.GetEnvironmentVariable("ConnectionStrings__Database");
 
 if (string.IsNullOrWhiteSpace(connectionString))
 {
     Console.Error.WriteLine("Usage: B1ngo.DataSync <connection-string>");
-    Console.Error.WriteLine("  or set CONNECTION_STRING environment variable.");
+    Console.Error.WriteLine("  or set ConnectionStrings__Database environment variable.");
     return 1;
 }
 
