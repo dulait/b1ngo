@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.PostgreSql;
 
 namespace B1ngo.Integration.Tests;
 
 public sealed class B1ngoApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder().WithImage("postgres:17-alpine").Build();
+    private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
+        .WithImage("postgres:17-alpine")
+        .Build();
 
     public async Task InitializeAsync()
     {
@@ -20,17 +20,6 @@ public sealed class B1ngoApiFactory : WebApplicationFactory<Program>, IAsyncLife
         builder.UseEnvironment("Testing");
 
         builder.UseSetting("ConnectionStrings:Database", _postgres.GetConnectionString());
-
-        builder.ConfigureTestServices(services =>
-        {
-            // Remove the OutboxProcessor hosted service to avoid background processing during tests
-            var outboxDescriptor = services.SingleOrDefault(d => d.ImplementationType?.Name == "OutboxProcessor");
-
-            if (outboxDescriptor is not null)
-            {
-                services.Remove(outboxDescriptor);
-            }
-        });
     }
 
     public HttpClient CreateAuthenticatedClient(Guid playerToken)
