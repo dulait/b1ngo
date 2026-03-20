@@ -17,6 +17,7 @@ import { SquareData, FREE_SPACE_LABEL } from '../../types';
   selector: 'bng-matrix',
   standalone: true,
   imports: [BngSquareComponent, BngSquarePopoverComponent],
+  host: { class: 'block' },
   template: `
     <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
     <div
