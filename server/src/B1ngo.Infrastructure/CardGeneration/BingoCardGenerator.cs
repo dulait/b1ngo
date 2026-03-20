@@ -11,7 +11,7 @@ internal sealed class BingoCardGenerator(IEventPoolRepository eventPoolRepositor
         CancellationToken cancellationToken = default
     )
     {
-        var pool = await eventPoolRepository.GetEventsAsync(sessionType, cancellationToken);
+        var pool = await eventPoolRepository.GetEventsAsync(sessionType.EventPoolType(), cancellationToken);
         var totalSquares = matrixSize * matrixSize;
         var hasFreeSpace = matrixSize % 2 == 1;
         var eventSlotsNeeded = hasFreeSpace ? totalSquares - 1 : totalSquares;
