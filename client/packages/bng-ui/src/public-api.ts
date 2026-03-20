@@ -21,6 +21,7 @@ export { BngThemePickerComponent } from './lib/components/theme-picker/theme-pic
 export { BngSkeletonComponent } from './lib/components/skeleton/skeleton.component';
 export { BngPillToggleComponent } from './lib/components/pill-toggle/pill-toggle.component';
 export { BngSquarePopoverComponent } from './lib/components/square-popover/square-popover.component';
+export { BngCollapsibleComponent } from './lib/components/collapsible/collapsible.component';
 export type { PillToggleOption } from './lib/components/pill-toggle/pill-toggle.component';
 
 // Icons
