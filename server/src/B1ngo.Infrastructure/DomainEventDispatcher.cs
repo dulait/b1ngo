@@ -3,10 +3,8 @@ using Microsoft.Extensions.Logging;
 
 namespace B1ngo.Infrastructure;
 
-public sealed class DomainEventDispatcher(
-    IServiceProvider serviceProvider,
-    ILogger<DomainEventDispatcher> logger
-) : IDomainEventDispatcher
+public sealed class DomainEventDispatcher(IServiceProvider serviceProvider, ILogger<DomainEventDispatcher> logger)
+    : IDomainEventDispatcher
 {
     public async Task DispatchAsync(
         IEnumerable<IDomainEvent> domainEvents,
