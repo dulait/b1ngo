@@ -12,6 +12,7 @@ import {
   BngLeaderboardComponent,
   BngButtonComponent,
   BngBottomSheetComponent,
+  BngCollapsibleComponent,
   ToastService,
 } from 'bng-ui';
 import { ROOM_STORE } from '../room';
@@ -28,6 +29,7 @@ import { RoomApiService } from '../../../core/api/room-api.service';
     BngLeaderboardComponent,
     BngButtonComponent,
     BngBottomSheetComponent,
+    BngCollapsibleComponent,
   ],
 })
 export class Game {
@@ -116,7 +118,4 @@ export class Game {
     }
   }
 
-  togglePlayers(): void {
-    this.playersExpanded.update((v) => !v);
-  }
 }

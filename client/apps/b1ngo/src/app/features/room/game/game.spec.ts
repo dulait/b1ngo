@@ -144,11 +144,7 @@ describe('Game', () => {
     expect(component.isEnding()).toBe(false);
   });
 
-  it('should toggle players expanded state', () => {
-    expect(component.playersExpanded()).toBe(false);
-    component.togglePlayers();
-    expect(component.playersExpanded()).toBe(true);
-    component.togglePlayers();
+  it('should start with players collapsed', () => {
     expect(component.playersExpanded()).toBe(false);
   });
 });
