@@ -10,9 +10,10 @@ public sealed class GetReferenceDataHandler(IReferenceDataRepository referenceDa
         CancellationToken cancellationToken = default
     )
     {
-        var sessionTypes = await referenceDataRepository.GetSessionTypesAsync(cancellationToken);
         var grandPrix = await referenceDataRepository.GetGrandPrixAsync(cancellationToken);
 
-        return Result.Ok(new GetReferenceDataResponse(sessionTypes, grandPrix));
+        var seasons = grandPrix.Select(g => g.Season).Distinct().OrderByDescending(s => s).ToList();
+
+        return Result.Ok(new GetReferenceDataResponse(seasons, grandPrix));
     }
 }

@@ -1370,24 +1370,29 @@
       },
       "GetReferenceDataResponse": {
         "required": [
-          "sessionTypes",
+          "seasons",
           "grandPrix"
         ],
         "type": "object",
         "properties": {
-          "sessionTypes": {
+          "seasons": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/SessionTypeDto"
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
             },
-            "description": "Available F1 session types."
+            "description": "Available F1 seasons, sorted descending. Only seasons with data are included."
           },
           "grandPrix": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/GrandPrixDto"
             },
-            "description": "Available Grand Prix events by season."
+            "description": "Grand Prix entries across all seasons with per-GP session types."
           }
         }
       },
@@ -1452,7 +1457,9 @@
         "required": [
           "name",
           "season",
-          "sortOrder"
+          "round",
+          "isSprint",
+          "sessionTypes"
         ],
         "type": "object",
         "properties": {
@@ -1469,17 +1476,29 @@
             ],
             "description": "F1 season year.",
             "format": "int32",
-            "example": 2026
+            "example": 2024
           },
-          "sortOrder": {
+          "round": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "integer",
               "string"
             ],
-            "description": "Calendar order within the season.",
+            "description": "Calendar round number within the season.",
             "format": "int32",
             "example": 1
+          },
+          "isSprint": {
+            "type": "boolean",
+            "description": "Whether this is a sprint weekend.",
+            "example": false
+          },
+          "sessionTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Valid session types for this GP."
           }
         }
       },
@@ -1757,36 +1776,6 @@
         "type": "string",
         "description": "F1 session type. Values: FP1 (Free Practice 1), FP2 (Free Practice 2), FP3 (Free Practice 3), Qualifying (Qualifying session), SprintQualifying (Sprint qualifying session), Sprint (Sprint race), Race (Main race).",
         "example": "Race"
-      },
-      "SessionTypeDto": {
-        "required": [
-          "name",
-          "displayName",
-          "sortOrder"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Session type identifier, matches SessionType enum.",
-            "example": "Race"
-          },
-          "displayName": {
-            "type": "string",
-            "description": "Human-readable label.",
-            "example": "Race"
-          },
-          "sortOrder": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "description": "Display ordering.",
-            "format": "int32",
-            "example": 7
-          }
-        }
       },
       "SquareDto": {
         "required": [

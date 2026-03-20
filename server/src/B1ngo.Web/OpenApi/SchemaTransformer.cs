@@ -200,20 +200,16 @@ internal sealed class SchemaTransformer : IOpenApiSchemaTransformer
         },
         ["GetReferenceDataResponse"] = new()
         {
-            ["sessionTypes"] = ("Available F1 session types.", null),
-            ["grandPrix"] = ("Available Grand Prix events by season.", null),
-        },
-        ["SessionTypeDto"] = new()
-        {
-            ["name"] = ("Session type identifier, matches SessionType enum.", JsonValue.Create("Race")),
-            ["displayName"] = ("Human-readable label.", JsonValue.Create("Race")),
-            ["sortOrder"] = ("Display ordering.", JsonValue.Create(7)),
+            ["seasons"] = ("Available F1 seasons, sorted descending. Only seasons with data are included.", null),
+            ["grandPrix"] = ("Grand Prix entries across all seasons with per-GP session types.", null),
         },
         ["GrandPrixDto"] = new()
         {
             ["name"] = ("Grand Prix name.", JsonValue.Create("Bahrain Grand Prix")),
-            ["season"] = ("F1 season year.", JsonValue.Create(2026)),
-            ["sortOrder"] = ("Calendar order within the season.", JsonValue.Create(1)),
+            ["season"] = ("F1 season year.", JsonValue.Create(2024)),
+            ["round"] = ("Calendar round number within the season.", JsonValue.Create(1)),
+            ["isSprint"] = ("Whether this is a sprint weekend.", JsonValue.Create(false)),
+            ["sessionTypes"] = ("Valid session types for this GP.", null),
         },
         ["ErrorResponse"] = new()
         {
