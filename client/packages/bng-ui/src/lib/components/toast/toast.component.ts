@@ -20,8 +20,8 @@ const SWIPE_OPACITY_DIVISOR = 200;
   imports: [BngIconComponent],
   template: `
     <div
-      class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex flex-col-reverse gap-2 w-full max-w-sm px-4"
-      style="bottom: calc(16px + env(safe-area-inset-bottom, 0px))"
+      class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 w-full max-w-sm px-4"
+      style="top: calc(16px + env(safe-area-inset-top, 0px))"
     >
       @for (toast of toastService.toasts(); track toast.id) {
         <div
