@@ -29,3 +29,5 @@ export const bngIconCheckCircle = `<path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
 export const bngIconAlertTriangle = `<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>`;
 
 export const bngIconXCircle = `<circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6"/><path d="M9 9l6 6"/>`;
+
+export const bngIconPalette = `<circle cx="13.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="17.5" cy="10.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12.5" r="1.5" fill="currentColor" stroke="none"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.5-.47 1.5-1.5 0-.4-.17-.8-.44-1.1-.24-.26-.56-.56-.56-1a1.5 1.5 0 011.5-1.5H15a6 6 0 006-6c0-5.52-4.03-10-9-10z"/>`;
