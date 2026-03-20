@@ -1,0 +1,67 @@
+name: Sync Reference Data
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Every Monday at 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment"
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+          - both
+        default: both
+
+jobs:
+  sync-staging:
+    if: >-
+      github.event_name == 'schedule' ||
+      github.event.inputs.environment == 'staging' ||
+      github.event.inputs.environment == 'both'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Build sync tool
+        run: dotnet build tools/B1ngo.DataSync/B1ngo.DataSync.csproj --configuration Release
+        working-directory: server
+
+      - name: Run sync (staging)
+        env:
+          CONNECTION_STRING: ${{ secrets.NEON_STAGING_CONNECTION_STRING }}
+        run: dotnet run --project tools/B1ngo.DataSync/B1ngo.DataSync.csproj --configuration Release --no-build
+        working-directory: server
+
+  sync-production:
+    if: >-
+      github.event_name == 'schedule' ||
+      github.event.inputs.environment == 'production' ||
+      github.event.inputs.environment == 'both'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Build sync tool
+        run: dotnet build tools/B1ngo.DataSync/B1ngo.DataSync.csproj --configuration Release
+        working-directory: server
+
+      - name: Run sync (production)
+        env:
+          CONNECTION_STRING: ${{ secrets.NEON_PROD_CONNECTION_STRING }}
+        run: dotnet run --project tools/B1ngo.DataSync/B1ngo.DataSync.csproj --configuration Release --no-build
+        working-directory: server
