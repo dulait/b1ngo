@@ -4,11 +4,4 @@
   <create-room-form (success)="onRoomCreated($event)" />
 
   <join-room-form (success)="onRoomJoined($event)" />
-
-  <div class="pt-2 pb-4">
-    <bng-theme-picker
-      [currentTheme]="themeService.currentTheme()"
-      (themeChange)="themeService.setTheme($event)"
-    />
-  </div>
 </main>

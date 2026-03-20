@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ThemeService, BngThemePickerComponent, BngHeaderComponent } from 'bng-ui';
+import { BngHeaderComponent } from 'bng-ui';
 import { RoomApiService } from '../../core/api/room-api.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { safeAsync } from '../../core/api/safe-async';
@@ -9,7 +9,7 @@ import { JoinRoomForm } from './join-room-form/join-room-form';
 
 @Component({
   selector: 'app-home',
-  imports: [CreateRoomForm, JoinRoomForm, BngThemePickerComponent, BngHeaderComponent],
+  imports: [CreateRoomForm, JoinRoomForm, BngHeaderComponent],
   templateUrl: './home.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -17,8 +17,6 @@ export class Home implements OnInit {
   private readonly router = inject(Router);
   private readonly roomApi = inject(RoomApiService);
   private readonly auth = inject(AuthService);
-  protected readonly themeService = inject(ThemeService);
-
   async ngOnInit(): Promise<void> {
     if (!this.auth.hasSession()) {
       return;
