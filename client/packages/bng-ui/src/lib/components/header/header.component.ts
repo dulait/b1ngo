@@ -8,17 +8,15 @@ import {
   inject,
 } from '@angular/core';
 import { BngStatusBadgeComponent } from '../status-badge/status-badge.component';
-import { BngIconComponent } from '../../icons/icon.component';
 import { BngBottomSheetComponent } from '../bottom-sheet/bottom-sheet.component';
 import { BngThemePickerComponent } from '../theme-picker/theme-picker.component';
-import { bngIconPalette } from '../../icons/icons';
 import { ThemeService } from '../../services/theme.service';
 import { SessionDto, ThemeName } from '../../types';
 
 @Component({
   selector: 'bng-header',
   standalone: true,
-  imports: [BngStatusBadgeComponent, BngIconComponent, BngBottomSheetComponent, BngThemePickerComponent],
+  imports: [BngStatusBadgeComponent, BngBottomSheetComponent, BngThemePickerComponent],
   template: `
     <header
       role="banner"
@@ -27,27 +25,26 @@ import { SessionDto, ThemeName } from '../../types';
     >
       <span class="font-mono font-bold text-lg text-accent">B1NGO</span>
 
-      @if (session()) {
-        <span class="text-sm text-text-secondary truncate mx-3">
-          {{ session()!.grandPrixShort }} / {{ session()!.sessionType }}
-        </span>
-      }
-
-      <div class="flex items-center gap-2">
-        @if (roomStatus()) {
-          <bng-status-badge [status]="roomStatus()!" />
-        }
-
+      <div class="flex items-center gap-2.5">
         <button
           type="button"
-          class="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-bg-surface-hover transition-colors"
+          role="button"
+          class="w-6 h-6 rounded-full cursor-pointer hover:ring-2 hover:ring-white/30 transition-all"
+          [style.backgroundColor]="themeService.accentColor()"
           aria-label="Change color theme"
           (click)="themeSheetOpen.set(true)"
-        >
-          <bng-icon [icon]="paletteIcon" size="md" />
-        </button>
+        ></button>
       </div>
     </header>
+
+    @if (roomStatus()) {
+      <div class="flex items-center justify-between px-4 py-2 bg-bg-base border-b border-border-default">
+        <span class="text-sm text-text-secondary">
+          {{ session()!.grandPrixShort }} / {{ session()!.sessionType }}
+        </span>
+        <bng-status-badge [status]="roomStatus()!" />
+      </div>
+    }
 
     <bng-bottom-sheet
       title="Theme"
@@ -70,7 +67,6 @@ export class BngHeaderComponent {
   roomStatus = input<'Lobby' | 'Active' | 'Completed' | null>(null);
   session = input<SessionDto | null>(null);
 
-  protected readonly paletteIcon = bngIconPalette;
   protected readonly themeService = inject(ThemeService);
   protected themeSheetOpen = signal(false);
 
