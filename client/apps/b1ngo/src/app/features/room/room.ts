@@ -9,8 +9,7 @@ import {
   OnDestroy,
   InjectionToken,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 import { RoomApiService } from '../../core/api/room-api.service';
 import { SignalRService } from '../../core/realtime/signalr.service';
 import { AuthService } from '../../core/auth/auth.service';
@@ -51,7 +50,6 @@ export const ROOM_STORE = new InjectionToken<RoomStore>('RoomStore');
 })
 export class Room implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
   private readonly roomApi = inject(RoomApiService);
   private readonly signalr = inject(SignalRService);
   private readonly auth = inject(AuthService);
@@ -59,7 +57,7 @@ export class Room implements OnInit, OnDestroy {
 
   readonly store = inject(ROOM_STORE);
   readonly loading = signal(true);
-  readonly error = signal<string | null>(null);
+  readonly error = signal(false);
   private destroyed = false;
 
   constructor() {
@@ -74,21 +72,12 @@ export class Room implements OnInit, OnDestroy {
     this.loading.set(false);
 
     if (!result.ok) {
-      if (result.error instanceof HttpErrorResponse && result.error.status === 404) {
-        this.auth.clearSession();
-        this.toast.error('Your session has expired. Please join the room again.');
-        this.router.navigate(['/']);
-        return;
-      }
-      // 401/403 already handled by error interceptor (clears session, navigates home)
-      // For network errors or other failures, show connection error
-      this.error.set("Can't connect to the server.");
+      this.error.set(true);
       return;
     }
 
     this.store.initialize(result.value, this.auth.getPlayerId());
 
-    // SignalR is non-critical; degrade gracefully
     await this.signalr.connect(roomId).catch(() => {
       console.warn(
         '[Room] SignalR connection failed; room will function without real-time updates',
@@ -97,7 +86,7 @@ export class Room implements OnInit, OnDestroy {
   }
 
   retry(): void {
-    this.error.set(null);
+    this.error.set(false);
     this.loading.set(true);
     this.ngOnInit();
   }
@@ -189,7 +178,7 @@ export class Room implements OnInit, OnDestroy {
               this.store.updateLeaderboard(state.leaderboard);
             }
           },
-          () => {},
+          () => { },
         );
       }
     });

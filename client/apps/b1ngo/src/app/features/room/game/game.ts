@@ -7,7 +7,6 @@ import {
   BngButtonComponent,
   BngBottomSheetComponent,
   BngCollapsibleComponent,
-  ToastService,
 } from 'bng-ui';
 import { ROOM_STORE } from '../room';
 import { RoomApiService } from '../../../core/api/room-api.service';
@@ -30,7 +29,6 @@ import { safeAsync } from '../../../core/api/safe-async';
 export class Game {
   readonly store = inject(ROOM_STORE);
   private readonly roomApi = inject(RoomApiService);
-  private readonly toast = inject(ToastService);
 
   readonly isEnding = signal(false);
   readonly endGameSheetOpen = signal(false);
@@ -64,7 +62,6 @@ export class Game {
         isMarked: false,
         markedBy: null,
       });
-      this.toast.error('Failed to mark square. Try again.');
     }
   }
 
@@ -86,7 +83,6 @@ export class Game {
         isMarked: true,
         markedBy: 'Player',
       });
-      this.toast.error('Failed to unmark square. Try again.');
     }
   }
 
@@ -103,8 +99,6 @@ export class Game {
     const result = await safeAsync(this.roomApi.endGame(this.store.roomId()));
     if (result.ok) {
       this.endGameSheetOpen.set(false);
-    } else {
-      this.toast.error('Failed to end game.');
     }
     this.isEnding.set(false);
   }

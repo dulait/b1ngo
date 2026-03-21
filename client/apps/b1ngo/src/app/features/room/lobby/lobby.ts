@@ -7,7 +7,6 @@ import {
   BngButtonComponent,
   BngBottomSheetComponent,
   BngInputComponent,
-  ToastService,
 } from 'bng-ui';
 import { ROOM_STORE } from '../room';
 import { RoomApiService } from '../../../core/api/room-api.service';
@@ -30,7 +29,6 @@ import { safeAsync } from '../../../core/api/safe-async';
 export class Lobby {
   readonly store = inject(ROOM_STORE);
   private readonly roomApi = inject(RoomApiService);
-  private readonly toast = inject(ToastService);
 
   readonly emptySet = new Set<string>();
   readonly isStarting = signal(false);
@@ -45,10 +43,7 @@ export class Lobby {
 
   async onStartGame(): Promise<void> {
     this.isStarting.set(true);
-    const result = await safeAsync(this.roomApi.startGame(this.store.roomId()));
-    if (!result.ok) {
-      this.toast.error('Failed to start game.');
-    }
+    await safeAsync(this.roomApi.startGame(this.store.roomId()));
     this.isStarting.set(false);
   }
 
@@ -85,8 +80,6 @@ export class Lobby {
         eventKey: null,
       });
       this.editSheetOpen.set(false);
-    } else {
-      this.toast.error('Failed to save square.');
     }
     this.editingSaving.set(false);
   }
