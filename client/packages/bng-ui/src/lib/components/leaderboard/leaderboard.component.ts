@@ -28,6 +28,7 @@ const AVATAR_FULL = `w-8 h-8 text-xs ${AVATAR_BASE}`;
       @for (entry of entries(); track entry.rank) {
         <div
           role="listitem"
+          [attr.data-testid]="'leaderboard-entry-' + entry.rank"
           [attr.aria-label]="entryAriaLabel(entry)"
           [class]="entryClasses(entry)"
         >

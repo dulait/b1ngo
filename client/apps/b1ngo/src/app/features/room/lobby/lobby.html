@@ -1,7 +1,7 @@
 <main class="p-4 space-y-4" [class.pb-24]="store.isHost()">
-  <bng-code-input mode="display" [value]="store.joinCode()" />
+  <bng-code-input mode="display" [value]="store.joinCode()" data-testid="lobby-join-code" />
 
-  <bng-card header="Your Card">
+  <bng-card header="Your Card" data-testid="lobby-card">
     @if (store.currentCard(); as card) {
       <bng-matrix
         [squares]="card.squares"
@@ -14,7 +14,7 @@
     }
   </bng-card>
 
-  <bng-card [header]="'Players (' + store.players().length + ')'">
+  <bng-card [header]="'Players (' + store.players().length + ')'" data-testid="lobby-player-list">
     <bng-player-list
       [players]="store.uiPlayers()"
       [hostPlayerId]="store.hostPlayerId()"
@@ -28,6 +28,7 @@
     class="fixed bottom-0 left-0 right-0 bg-bg-surface border-t border-border-default p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]"
   >
     <bng-button
+      data-testid="lobby-start-game"
       variant="primary"
       size="lg"
       [fullWidth]="true"
@@ -51,6 +52,7 @@
     }
 
     <bng-input
+      data-testid="edit-square-input"
       label="New text"
       placeholder="Enter text for this square"
       [maxlength]="50"
@@ -59,10 +61,11 @@
     />
 
     <div class="flex gap-3">
-      <bng-button variant="secondary" [fullWidth]="true" (clicked)="onEditSheetClosed()">
+      <bng-button variant="secondary" [fullWidth]="true" (clicked)="onEditSheetClosed()" data-testid="edit-square-cancel">
         Cancel
       </bng-button>
       <bng-button
+        data-testid="edit-square-save"
         variant="primary"
         [fullWidth]="true"
         [loading]="editingSaving()"

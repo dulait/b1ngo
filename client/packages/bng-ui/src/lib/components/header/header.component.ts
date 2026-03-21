@@ -20,15 +20,17 @@ import { SessionDto, ThemeName } from '../../types';
   template: `
     <header
       role="banner"
+      data-testid="app-header"
       [attr.aria-label]="ariaLabel()"
       class="h-14 flex items-center justify-between px-4 bg-bg-surface border-b border-border-default pt-[env(safe-area-inset-top)]"
     >
-      <span class="font-mono font-bold text-lg text-accent">B1NGO</span>
+      <span class="font-mono font-bold text-lg text-accent" data-testid="app-logo">B1NGO</span>
 
       <div class="flex items-center gap-2.5">
         <button
           type="button"
           role="button"
+          data-testid="theme-button"
           class="w-6 h-6 rounded-full cursor-pointer hover:ring-2 hover:ring-white/30 transition-all"
           [style.backgroundColor]="themeService.accentColor()"
           aria-label="Change color theme"
@@ -38,8 +40,8 @@ import { SessionDto, ThemeName } from '../../types';
     </header>
 
     @if (roomStatus()) {
-      <div class="flex items-center justify-between px-4 py-2 bg-bg-base border-b border-border-default">
-        <span class="text-sm text-text-secondary">
+      <div data-testid="header-session-bar" class="flex items-center justify-between px-4 py-2 bg-bg-base border-b border-border-default">
+        <span class="text-sm text-text-secondary" data-testid="header-session-info">
           {{ session()!.grandPrixShort }} / {{ session()!.sessionType }}
         </span>
         <bng-status-badge [status]="roomStatus()!" />

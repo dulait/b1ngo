@@ -21,6 +21,7 @@ import { THEMES, ThemeName } from '../../types';
       @for (theme of themes; track theme.name) {
         <button
           role="radio"
+          [attr.data-testid]="'theme-option-' + theme.name"
           [attr.aria-checked]="theme.name === currentTheme()"
           [attr.aria-label]="theme.label"
           class="flex flex-col items-center gap-1.5 cursor-pointer focus:outline-none"

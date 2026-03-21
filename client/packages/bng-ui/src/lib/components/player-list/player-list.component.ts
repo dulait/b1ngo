@@ -15,7 +15,7 @@ import { PlayerDto } from '../../types';
   template: `
     <div role="list" aria-label="Players in this room" class="space-y-2">
       @for (player of sortedPlayers(); track player.playerId) {
-        <div role="listitem">
+        <div role="listitem" [attr.data-testid]="'player-chip-' + player.displayName">
           <bng-player-chip
             [displayName]="player.displayName"
             [isHost]="player.playerId === hostPlayerId()"

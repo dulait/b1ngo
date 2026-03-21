@@ -11,7 +11,7 @@
     />
   }
 
-  <bng-card header="Winners">
+  <bng-card header="Winners" data-testid="game-leaderboard">
     <bng-leaderboard
       [entries]="store.uiLeaderboard()"
       [players]="store.uiPlayers()"
@@ -20,7 +20,7 @@
     />
   </bng-card>
 
-  <bng-collapsible label="Players" [badge]="store.players().length" [(expanded)]="playersExpanded">
+  <bng-collapsible label="Players" [badge]="store.players().length" [(expanded)]="playersExpanded" data-testid="game-players">
     <bng-card>
       <bng-player-list
         [players]="store.uiPlayers()"
@@ -35,7 +35,7 @@
   <div
     class="fixed bottom-0 left-0 right-0 bg-bg-surface border-t border-border-default p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]"
   >
-    <bng-button variant="danger" size="lg" [fullWidth]="true" (clicked)="onEndGame()">
+    <bng-button data-testid="game-end-game" variant="danger" size="lg" [fullWidth]="true" (clicked)="onEndGame()">
       End Game
     </bng-button>
   </div>
@@ -47,10 +47,11 @@
       This will end the game for all players. This cannot be undone.
     </p>
     <div class="flex justify-between">
-      <bng-button variant="secondary" (clicked)="onCancelEndGame()">
+      <bng-button variant="secondary" (clicked)="onCancelEndGame()" data-testid="end-game-cancel">
         Cancel
       </bng-button>
       <bng-button
+        data-testid="end-game-confirm"
         variant="danger"
         [loading]="isEnding()"
         (clicked)="onConfirmEndGame()"

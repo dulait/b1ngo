@@ -32,7 +32,7 @@ const STATUS_STYLES: Record<RoomStatus, StatusStyle> = {
   selector: 'bng-status-badge',
   standalone: true,
   template: `
-    <div role="status" [attr.aria-label]="'Room status: ' + status()" [class]="containerClasses()">
+    <div role="status" data-testid="status-badge" [attr.aria-label]="'Room status: ' + status()" [class]="containerClasses()">
       <span [class]="dotClasses()"></span>
       <span class="text-xs font-semibold" [class]="textColorClass()">
         {{ status() }}
