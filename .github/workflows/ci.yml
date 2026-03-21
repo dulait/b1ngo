@@ -71,3 +71,89 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/openapi.v1.json
           git diff --cached --quiet || (git commit -m "docs: update openapi spec" && git push)
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: b1ngo_test
+          POSTGRES_USER: b1ngo
+          POSTGRES_PASSWORD: b1ngo
+        ports:
+          - 5434:5432
+        options: >-
+          --health-cmd "pg_isready -U b1ngo -d b1ngo_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Build server
+        run: dotnet build B1ngo.slnx --configuration Release
+        working-directory: server
+
+      - name: Install client dependencies
+        run: npm ci
+        working-directory: client
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+        working-directory: client/apps/b1ngo
+
+      - name: Start API server
+        run: |
+          dotnet run --project src/B1ngo.Web/B1ngo.Web.csproj --no-build --configuration Release &
+        working-directory: server
+        env:
+          ASPNETCORE_ENVIRONMENT: Testing
+          ASPNETCORE_URLS: "http://localhost:5141"
+          ConnectionStrings__Database: "Host=localhost;Port=5434;Database=b1ngo_test;Username=b1ngo;Password=b1ngo"
+
+      - name: Wait for API server
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:5141/health && exit 0
+            sleep 2
+          done
+          echo "API server failed to start"
+          exit 1
+
+      - name: Run Playwright tests
+        run: npx playwright test --config=e2e/playwright.config.ts
+        working-directory: client/apps/b1ngo
+        env:
+          CI: "true"
+          API_BASE_URL: "http://localhost:5141"
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: client/apps/b1ngo/playwright-report/
+          retention-days: 14
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: test-results
+          path: client/apps/b1ngo/test-results/
+          retention-days: 14

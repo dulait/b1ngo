@@ -1,0 +1,14 @@
+services:
+  db-test:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: b1ngo_test
+      POSTGRES_USER: b1ngo
+      POSTGRES_PASSWORD: b1ngo
+    ports:
+      - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U b1ngo -d b1ngo_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
