@@ -26,7 +26,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           toast.warning("You're not a member of this room.");
           break;
         case 404:
-          break; // Context-dependent, let the caller handle it
+          toast.error(err.error?.message ?? 'Not found.');
+          break;
         case 409:
           toast.error(err.error?.message ?? 'Conflict.');
           break;
@@ -35,7 +36,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           break;
         default:
           if (err.status >= 500) {
-            toast.error('Something went wrong. Try again.');
+            toast.error(err.error?.message ?? 'Something went wrong. Please try again.');
           }
       }
 
