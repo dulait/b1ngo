@@ -24,8 +24,10 @@ export class ReferenceDataService {
     if (this.data()) {
       return;
     }
-    this.http.get<ReferenceDataResponse>(`${this.baseUrl}/api/v1/reference-data`).subscribe((data) => {
-      this.data.set(data);
-    });
+    this.http
+      .get<ReferenceDataResponse>(`${this.baseUrl}/api/v1/reference-data`)
+      .subscribe((data) => {
+        this.data.set(data);
+      });
   }
 }
