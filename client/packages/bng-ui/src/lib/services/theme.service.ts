@@ -1,4 +1,4 @@
-import { Injectable, signal, PLATFORM_ID, inject } from '@angular/core';
+import { Injectable, signal, computed, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { ThemeName, THEMES } from '../types';
 
@@ -11,6 +11,10 @@ export class ThemeService {
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
   readonly currentTheme = signal<ThemeName>(this.loadTheme());
+  readonly accentColor = computed(() => {
+    const theme = THEMES.find((t) => t.name === this.currentTheme());
+    return theme?.accent ?? THEMES[0].accent;
+  });
   readonly themes = THEMES;
 
   setTheme(theme: ThemeName): void {

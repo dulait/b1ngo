@@ -37,7 +37,7 @@ export interface ToastData {
   dismissing: boolean;
 }
 
-export type ThemeName = 'crimson' | 'ocean' | 'citrus' | 'midnight';
+export type ThemeName = 'crimson' | 'ocean' | 'citrus' | 'midnight' | 'emerald' | 'silver' | 'teal' | 'coral' | 'fuchsia' | 'lime';
 
 export interface ThemeDefinition {
   name: ThemeName;
