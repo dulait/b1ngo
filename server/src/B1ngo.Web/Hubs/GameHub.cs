@@ -8,7 +8,8 @@ public sealed class GameHub(IPlayerTokenStore playerTokenStore) : Hub
     public override async Task OnConnectedAsync()
     {
         var httpContext = Context.GetHttpContext();
-        var tokenString = httpContext?.Request.Cookies["PlayerToken"];
+        var tokenString =
+            httpContext?.Request.Query["access_token"].FirstOrDefault() ?? httpContext?.Request.Cookies["PlayerToken"];
 
         if (!Guid.TryParse(tokenString, out var token))
         {
