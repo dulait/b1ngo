@@ -95,6 +95,7 @@ export class BngCodeInputComponent {
   mode = input<'input' | 'display'>('input');
   value = input('');
   error = input<string | null>(null);
+  scrollTarget = input<HTMLElement | null>(null);
 
   codeComplete = output<string>();
   codeChange = output<string>();
@@ -116,11 +117,10 @@ export class BngCodeInputComponent {
   }
 
   protected onFocus(): void {
+    // Delay so the mobile keyboard has time to appear and resize the viewport
     setTimeout(() => {
-      this.wrapper()?.nativeElement.scrollIntoView({
-        block: 'center',
-        behavior: 'smooth',
-      });
+      const target = this.scrollTarget() ?? this.wrapper()?.nativeElement;
+      target?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }, 300);
   }
 

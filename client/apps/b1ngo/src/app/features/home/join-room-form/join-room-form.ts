@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, output, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, output, signal, ElementRef } from '@angular/core';
 import {
   BngCardComponent,
   BngInputComponent,
@@ -18,6 +18,7 @@ const JOIN_CODE_LENGTH = 6;
 })
 export class JoinRoomForm {
   private readonly roomApi = inject(RoomApiService);
+  readonly hostElement = inject(ElementRef).nativeElement as HTMLElement;
 
   success = output<{ roomId: string; playerId: string; playerToken: string }>();
 
