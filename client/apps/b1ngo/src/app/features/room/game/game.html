@@ -1,4 +1,4 @@
-<main class="p-4 space-y-4 pb-24">
+<main class="p-4 space-y-4" [class.pb-24]="store.isHost()">
   @if (store.currentCard(); as card) {
     <bng-matrix
       [squares]="card.squares"
