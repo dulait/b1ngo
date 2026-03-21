@@ -66,7 +66,7 @@ internal sealed class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<
                 context,
                 HttpStatusCode.InternalServerError,
                 "unexpected",
-                "An unexpected error occurred."
+                "Something went wrong. Please try again."
             );
         }
     }

@@ -35,7 +35,7 @@ internal sealed class ValidationFilter(IServiceProvider serviceProvider) : IAsyn
                     new
                     {
                         code = "validation_error",
-                        message = "One or more validation errors occurred.",
+                        message = failures[0].ErrorMessage,
                         details,
                     }
                 );

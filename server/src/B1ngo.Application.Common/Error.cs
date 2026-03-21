@@ -21,7 +21,7 @@ public sealed record Error(ErrorType Type, string Code, string Message)
         new(ErrorType.Validation, "validation_error", "One or more validation errors occurred.") { Details = details };
 
     public static Error NotFound(string entity, object id) =>
-        new(ErrorType.NotFound, $"{entity}_not_found", $"{entity} with ID '{id}' was not found.");
+        new(ErrorType.NotFound, $"{entity}_not_found", $"The requested {entity} was not found.");
 
     public static Error Conflict(string code, string message) => new(ErrorType.Conflict, code, message);
 

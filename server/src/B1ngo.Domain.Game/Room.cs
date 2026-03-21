@@ -201,10 +201,7 @@ public class Room : Entity<RoomId>
 
     private Player GetPlayerOrThrow(PlayerId playerId) =>
         _players.Find(p => p.Id == playerId)
-        ?? throw new DomainNotFoundException(
-            "player_not_found",
-            $"Player with ID '{playerId.Value}' not found in this room."
-        );
+        ?? throw new DomainNotFoundException("player_not_found", "Player not found in this room.");
 
     private void EnsureStatus(RoomStatus required, string action)
     {
