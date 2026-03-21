@@ -30,30 +30,13 @@ describe('BngHeaderComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('B1NGO');
   });
 
-  it('should show session info', () => {
-    fixture.componentRef.setInput('session', { grandPrixShort: 'MON', sessionType: 'Race' });
-    fixture.detectChanges();
-    expect(fixture.nativeElement.textContent).toContain('MON / Race');
-  });
-
-  it('should show status badge', () => {
-    fixture.componentRef.setInput('roomStatus', 'Active');
-    fixture.detectChanges();
-    const badge = fixture.nativeElement.querySelector('bng-status-badge');
-    expect(badge).toBeTruthy();
-  });
-
-  it('should not show status badge when null', () => {
-    const badge = fixture.nativeElement.querySelector('bng-status-badge');
-    expect(badge).toBeFalsy();
-  });
-
-  it('should render palette button with aria-label', () => {
+  it('should render theme circle with aria-label', () => {
     const btn = fixture.nativeElement.querySelector('[aria-label="Change color theme"]');
     expect(btn).toBeTruthy();
+    expect(btn.classList.contains('rounded-full')).toBe(true);
   });
 
-  it('should open bottom sheet when palette button is clicked', () => {
+  it('should open bottom sheet when theme circle is clicked', () => {
     const btn: HTMLButtonElement = fixture.nativeElement.querySelector('[aria-label="Change color theme"]');
     btn.click();
     fixture.detectChanges();
@@ -73,5 +56,33 @@ describe('BngHeaderComponent', () => {
       fixture.detectChanges();
       expect(spy).toHaveBeenCalled();
     }
+  });
+
+  it('should not show context sub-bar when roomStatus is null', () => {
+    const subBar = fixture.nativeElement.querySelector('.bg-bg-base');
+    expect(subBar).toBeFalsy();
+  });
+
+  it('should show context sub-bar with session info and status badge when roomStatus is set', () => {
+    fixture.componentRef.setInput('roomStatus', 'Active');
+    fixture.componentRef.setInput('session', { grandPrixShort: 'MON', sessionType: 'Race' });
+    fixture.detectChanges();
+
+    const subBar = fixture.nativeElement.querySelector('.bg-bg-base');
+    expect(subBar).toBeTruthy();
+    expect(subBar.textContent).toContain('MON / Race');
+
+    const badge = subBar.querySelector('bng-status-badge');
+    expect(badge).toBeTruthy();
+  });
+
+  it('should not show session info or status badge in header row', () => {
+    fixture.componentRef.setInput('roomStatus', 'Active');
+    fixture.componentRef.setInput('session', { grandPrixShort: 'MON', sessionType: 'Race' });
+    fixture.detectChanges();
+
+    const header = fixture.nativeElement.querySelector('[role="banner"]');
+    expect(header.querySelector('bng-status-badge')).toBeFalsy();
+    expect(header.textContent).not.toContain('MON / Race');
   });
 });

@@ -25,9 +25,9 @@ describe('BngThemePickerComponent', () => {
     expect(group).toBeTruthy();
   });
 
-  it('should render 4 theme swatches', () => {
+  it('should render 10 theme swatches', () => {
     const radios = fixture.nativeElement.querySelectorAll('[role="radio"]');
-    expect(radios.length).toBe(4);
+    expect(radios.length).toBe(10);
   });
 
   it('should mark current theme as checked', () => {
