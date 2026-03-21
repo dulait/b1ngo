@@ -46,13 +46,12 @@
     <p class="text-sm text-text-secondary">
       This will end the game for all players. This cannot be undone.
     </p>
-    <div class="flex gap-3">
-      <bng-button variant="secondary" [fullWidth]="true" (clicked)="onCancelEndGame()">
+    <div class="flex justify-between">
+      <bng-button variant="secondary" (clicked)="onCancelEndGame()">
         Cancel
       </bng-button>
       <bng-button
         variant="danger"
-        [fullWidth]="true"
         [loading]="isEnding()"
         (clicked)="onConfirmEndGame()"
       >
