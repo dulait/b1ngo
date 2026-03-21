@@ -38,13 +38,14 @@ const COPY_FEEDBACK_DURATION_MS = 2000;
           <input
             #hiddenInput
             type="text"
-            class="absolute opacity-0 w-0 h-0"
+            class="absolute inset-0 opacity-0 w-full h-full"
             [attr.maxlength]="length()"
             [attr.aria-label]="'Join code'"
             [attr.aria-invalid]="error() ? true : null"
             autocomplete="off"
             (input)="onInput($event)"
             (paste)="onPaste($event)"
+            (focus)="onFocus()"
           />
         </div>
         @if (error()) {
@@ -110,6 +111,13 @@ export class BngCodeInputComponent {
 
   protected focusInput(): void {
     this.hiddenInput()?.nativeElement.focus();
+  }
+
+  protected onFocus(): void {
+    this.hiddenInput()?.nativeElement.closest('.flex')?.scrollIntoView({
+      block: 'center',
+      behavior: 'smooth',
+    });
   }
 
   protected onInput(event: Event): void {
