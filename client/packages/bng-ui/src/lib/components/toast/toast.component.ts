@@ -73,7 +73,7 @@ export class BngToastContainerComponent {
   };
 
   private readonly colors: Record<ToastVariant, string> = {
-    info: 'var(--bng-accent)',
+    info: '#94A3B8',
     success: 'var(--bng-success)',
     warning: 'var(--bng-warning)',
     error: 'var(--bng-error)',
