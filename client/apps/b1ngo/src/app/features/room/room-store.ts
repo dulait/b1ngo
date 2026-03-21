@@ -72,6 +72,13 @@ export class RoomStore {
     this.currentPlayerId.set(currentPlayerId);
   }
 
+  refresh(state: GetRoomStateResponse): void {
+    this.status.set(state.status);
+    this.players.set(state.players);
+    this.leaderboard.set(state.leaderboard);
+    this.hostPlayerId.set(state.hostPlayerId);
+  }
+
   addPlayer(playerId: string, displayName: string): void {
     this.players.update((list) => [...list, { playerId, displayName, hasWon: false, card: null }]);
   }

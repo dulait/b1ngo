@@ -185,11 +185,25 @@ export class Room implements OnInit, OnDestroy {
   }
 
   private wireConnectionState(): void {
+    let wasReconnecting = false;
+
     effect(() => {
       const state = this.signalr.connectionState();
       if (state === 'reconnecting') {
+        wasReconnecting = true;
         this.toast.warning('Connection lost. Reconnecting...');
       }
+      if (state === 'connected' && wasReconnecting) {
+        wasReconnecting = false;
+        this.syncRoomState();
+      }
     });
+  }
+
+  private async syncRoomState(): Promise<void> {
+    const result = await safeAsync(this.roomApi.getRoomState(this.store.roomId()));
+    if (result.ok && !this.destroyed) {
+      this.store.refresh(result.value);
+    }
   }
 }
