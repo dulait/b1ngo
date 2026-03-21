@@ -1,10 +1,16 @@
 <main class="p-4 space-y-4">
-  <div class="text-center py-6">
-    <p data-testid="results-game-over" class="text-[1.5rem] font-bold leading-[1.25] tracking-[-0.01em] text-text-primary mb-2">
+  <div class="text-center py-4">
+    <p
+      data-testid="results-game-over"
+      class="text-[1.5rem] font-bold leading-[1.25] tracking-[-0.01em] text-text-primary mb-2"
+    >
       Game Over
     </p>
     @if (currentRank(); as rank) {
-      <p data-testid="results-rank" class="text-[1.875rem] font-bold leading-[1.2] tracking-[-0.02em] text-success">
+      <p
+        data-testid="results-rank"
+        class="text-[1.875rem] font-bold leading-[1.2] tracking-[-0.02em] text-success"
+      >
         You finished #{{ rank }}!
       </p>
     }
@@ -32,11 +38,22 @@
     </bng-card>
   }
 
-  <div class="space-y-3 pb-8">
-    <bng-button data-testid="results-new-room" variant="primary" size="lg" [fullWidth]="true" (clicked)="onNewRoom()">
+  <div class="space-y-3">
+    <bng-button
+      data-testid="results-new-room"
+      variant="primary"
+      size="lg"
+      [fullWidth]="true"
+      (clicked)="onNewRoom()"
+    >
       New Room
     </bng-button>
-    <bng-button data-testid="results-share" variant="secondary" [fullWidth]="true" (clicked)="onShareResult()">
+    <bng-button
+      data-testid="results-share"
+      variant="secondary"
+      [fullWidth]="true"
+      (clicked)="onShareResult()"
+    >
       Share Result
     </bng-button>
   </div>
