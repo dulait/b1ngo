@@ -70,6 +70,17 @@
               ],
               "outputHashing": "all"
             },
+            "testing": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.testing.ts"
+                }
+              ],
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            },
             "development": {
               "optimization": false,
               "extractLicenses": false,
@@ -86,6 +97,9 @@
             },
             "staging": {
               "buildTarget": "b1ngo:build:staging"
+            },
+            "testing": {
+              "buildTarget": "b1ngo:build:testing"
             },
             "development": {
               "buildTarget": "b1ngo:build:development"

@@ -27,7 +27,7 @@ export default defineConfig({
   timeout: 60_000,
   webServer: [
     {
-      command: 'npm start',
+      command: isCI ? 'npx ng serve --configuration testing' : 'npm start',
       url: 'http://localhost:4200',
       reuseExistingServer: !isCI,
       timeout: 120_000,
