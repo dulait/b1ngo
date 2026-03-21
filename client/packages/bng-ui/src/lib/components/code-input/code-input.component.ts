@@ -39,7 +39,7 @@ const COPY_FEEDBACK_DURATION_MS = 2000;
             #hiddenInput
             type="text"
             inputmode="text"
-            class="absolute inset-0 opacity-0 w-full h-full"
+            class="absolute inset-0 w-full h-full bg-transparent border-none outline-none text-transparent caret-transparent"
             [attr.maxlength]="length()"
             [attr.aria-label]="'Join code'"
             [attr.aria-invalid]="error() ? true : null"
@@ -117,10 +117,13 @@ export class BngCodeInputComponent {
   }
 
   protected onFocus(): void {
-    // Delay so the mobile keyboard has time to appear and resize the viewport
+    if (!('ontouchstart' in window)) {
+      return;
+    }
+
     setTimeout(() => {
       const target = this.scrollTarget() ?? this.wrapper()?.nativeElement;
-      target?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      target?.scrollIntoView({ block: 'start', behavior: 'smooth' });
     }, 300);
   }
 
