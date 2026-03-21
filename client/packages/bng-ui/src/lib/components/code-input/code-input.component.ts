@@ -21,7 +21,7 @@ const COPY_FEEDBACK_DURATION_MS = 2000;
   imports: [BngIconComponent],
   template: `
     @if (mode() === 'input') {
-      <div>
+      <div #wrapper>
         <div class="flex gap-2 justify-center relative">
           @for (i of boxIndices(); track i) {
             <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
@@ -38,6 +38,7 @@ const COPY_FEEDBACK_DURATION_MS = 2000;
           <input
             #hiddenInput
             type="text"
+            inputmode="text"
             class="absolute inset-0 opacity-0 w-full h-full"
             [attr.maxlength]="length()"
             [attr.aria-label]="'Join code'"
@@ -99,6 +100,7 @@ export class BngCodeInputComponent {
   codeChange = output<string>();
 
   protected readonly hiddenInput = viewChild<ElementRef<HTMLInputElement>>('hiddenInput');
+  protected readonly wrapper = viewChild<ElementRef<HTMLElement>>('wrapper');
   protected readonly currentValue = signal('');
   protected readonly copied = signal(false);
 
@@ -114,10 +116,12 @@ export class BngCodeInputComponent {
   }
 
   protected onFocus(): void {
-    this.hiddenInput()?.nativeElement.closest('.flex')?.scrollIntoView({
-      block: 'center',
-      behavior: 'smooth',
-    });
+    setTimeout(() => {
+      this.wrapper()?.nativeElement.scrollIntoView({
+        block: 'center',
+        behavior: 'smooth',
+      });
+    }, 300);
   }
 
   protected onInput(event: Event): void {
@@ -129,14 +133,15 @@ export class BngCodeInputComponent {
 
   protected onPaste(event: ClipboardEvent): void {
     event.preventDefault();
-    const pasted = event.clipboardData?.getData('text') ?? '';
-    const filtered = this.sanitizeCode(pasted);
+    const pasted = event.clipboardData?.getData('text/plain') ?? '';
+    const current = this.currentValue();
+    const merged = this.sanitizeCode(current + pasted);
 
     const inputEl = this.hiddenInput()?.nativeElement;
     if (inputEl) {
-      inputEl.value = filtered;
+      inputEl.value = merged;
     }
-    this.applyValue(filtered);
+    this.applyValue(merged);
   }
 
   protected async copyCode(): Promise<void> {
