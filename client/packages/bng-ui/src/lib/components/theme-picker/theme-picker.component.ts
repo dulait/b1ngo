@@ -15,7 +15,7 @@ import { THEMES, ThemeName } from '../../types';
     <div
       role="radiogroup"
       aria-label="Color theme"
-      class="flex gap-4 justify-center"
+      class="flex flex-wrap gap-3 justify-center"
       (keydown)="onKeydown($event)"
     >
       @for (theme of themes; track theme.name) {
