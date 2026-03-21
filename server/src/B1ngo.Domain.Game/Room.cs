@@ -216,10 +216,7 @@ public class Room : Entity<RoomId>
             RoomStatus.Active => "room_not_active",
             _ => "room_wrong_status",
         };
-        throw new DomainConflictException(
-            code,
-            $"Cannot {action} — room is in '{Status}' state, expected '{required}'."
-        );
+        throw new DomainConflictException(code, $"Cannot {action} because the room is {Status}, not {required}.");
     }
 
     private void RemoveFromLeaderboard(PlayerId playerId)

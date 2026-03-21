@@ -303,7 +303,7 @@ public sealed class MarkSquareTests(B1ngoApiFactory factory) : IntegrationTestBa
         await MarkSquare(game.RoomId, game.Host.PlayerId, game.Host.PlayerToken, 0, 1);
         await MarkSquare(game.RoomId, game.Host.PlayerId, game.Host.PlayerToken, 0, 2);
 
-        // Mark col 0: (2,0) — skip (1,0) because we need (0,0) to complete both
+        // Mark col 0: (2,0), skip (1,0) because we need (0,0) to complete both
         await MarkSquare(game.RoomId, game.Host.PlayerId, game.Host.PlayerToken, 2, 0);
 
         // Now mark (0,0) which completes both row 0 and col 0

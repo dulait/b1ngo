@@ -131,7 +131,7 @@ public sealed class UnmarkSquareTests(B1ngoApiFactory factory) : IntegrationTest
         // Unmark (0,1) to revoke the row win
         await UnmarkSquare(game.RoomId, game.Host.PlayerId, game.Host.PlayerToken, 0, 1);
 
-        // Now complete column 0: already have (0,0), need (2,0) — (1,0) is already marked from row attempt? No, row 0 only marks row 0.
+        // Now complete column 0: already have (0,0), need (2,0). (1,0) is already marked from row attempt? No, row 0 only marks row 0.
         // We have (0,0) and (0,2) marked from the original row marks. Need col 0: (0,0) is marked, need (2,0).
         // But we also need (1,0) for col 0 (since center is (1,1), col 0 row 1 is not free).
         await MarkSquare(game.RoomId, game.Host.PlayerId, game.Host.PlayerToken, 1, 0);

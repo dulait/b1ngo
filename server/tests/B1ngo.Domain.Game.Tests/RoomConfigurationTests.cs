@@ -79,7 +79,7 @@ public class RoomConfigurationTests
         var b = new RoomConfiguration(5, [WinPatternType.Row, WinPatternType.Column]);
 
         // Record equality on IReadOnlyList won't match by content, so they won't be equal
-        // This is expected behavior — record equality uses reference equality for collections
+        // This is expected behavior: record equality uses reference equality for collections
         Assert.NotEqual(a, b);
     }
 }

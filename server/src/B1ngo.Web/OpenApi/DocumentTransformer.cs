@@ -50,7 +50,7 @@ internal sealed class DocumentTransformer : IOpenApiDocumentTransformer
         // Add enum schemas that are not auto-generated because the DTOs use string types.
         AddEnumSchemas(document);
 
-        // Fix security requirements — the operation transformer sets them but can't pass the
+        // Fix security requirements: the operation transformer sets them but can't pass the
         // host document to OpenApiSecuritySchemeReference, so we rewrite them here with the
         // document reference so they serialize correctly as { "playerToken": [] }.
         HashSet<string> unauthenticatedOps = ["CreateRoom", "JoinRoom"];

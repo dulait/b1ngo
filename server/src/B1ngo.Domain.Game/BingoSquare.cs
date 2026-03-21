@@ -43,10 +43,7 @@ public sealed class BingoSquare
     {
         if (IsFreeSpace)
         {
-            throw new DomainConflictException(
-                "square_is_free_space",
-                "Cannot mark a free space — it is always marked."
-            );
+            throw new DomainConflictException("square_is_free_space", "Cannot mark a free space. It is always marked.");
         }
 
         if (IsMarked)

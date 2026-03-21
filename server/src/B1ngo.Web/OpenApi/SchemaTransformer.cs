@@ -248,7 +248,7 @@ internal sealed class SchemaTransformer : IOpenApiSchemaTransformer
             }
         }
 
-        // Handle enums — render as string with enum values
+        // Handle enums: render as string with enum values
         if (context.JsonTypeInfo.Type.IsEnum)
         {
             schema.Type = JsonSchemaType.String;
