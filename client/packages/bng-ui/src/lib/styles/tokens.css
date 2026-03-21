@@ -22,6 +22,7 @@
   --bng-accent-muted: var(--bng-theme-accent-muted, rgba(220, 38, 38, 0.10));
 
   /* Semantic */
+  --bng-info: #94A3B8;
   --bng-success: #22C55E;
   --bng-success-bg: rgba(34, 197, 94, 0.15);
   --bng-warning: #EAB308;

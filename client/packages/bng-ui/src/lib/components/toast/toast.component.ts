@@ -73,7 +73,7 @@ export class BngToastContainerComponent {
   };
 
   private readonly colors: Record<ToastVariant, string> = {
-    info: '#94A3B8',
+    info: 'var(--bng-info)',
     success: 'var(--bng-success)',
     warning: 'var(--bng-warning)',
     error: 'var(--bng-error)',
