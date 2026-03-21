@@ -34,6 +34,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         case 400:
           toast.error(err.error?.message ?? 'Invalid request.');
           break;
+        case 429:
+          toast.warning('Too many requests. Please wait a moment.');
+          break;
         default:
           if (err.status >= 500) {
             toast.error(err.error?.message ?? 'Something went wrong. Please try again.');

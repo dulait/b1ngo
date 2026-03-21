@@ -48,7 +48,7 @@ internal static class ServiceCollectionExtensions
             services.AddCorsPolicy(configuration);
 
             var env = services.BuildServiceProvider().GetRequiredService<IHostEnvironment>();
-            if (!env.IsEnvironment("Testing"))
+            if (env.IsProduction() || env.IsEnvironment("Staging"))
             {
                 services.AddRateLimiterPolicies();
             }

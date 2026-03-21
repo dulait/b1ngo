@@ -1,4 +1,5 @@
 using B1ngo.Infrastructure.Persistence;
+using B1ngo.Infrastructure.ReferenceData;
 using B1ngo.Web.Hubs;
 using B1ngo.Web.Middleware;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -29,7 +30,7 @@ internal static class WebApplicationExtensions
 
             app.UseCors();
 
-            if (!app.Environment.IsEnvironment("Testing"))
+            if (app.Environment.IsProduction() || app.Environment.IsEnvironment("Staging"))
             {
                 app.UseRateLimiter();
             }
@@ -51,6 +52,11 @@ internal static class WebApplicationExtensions
                 await app.ApplyMigrationsAsync();
             }
 
+            if (app.Environment.IsEnvironment("Testing"))
+            {
+                await app.SeedTestReferenceDataAsync();
+            }
+
             app.MapControllers();
             app.MapHub<GameHub>("/hubs/game");
             app.MapHealthChecks("/health");
@@ -69,6 +75,38 @@ internal static class WebApplicationExtensions
             }
 
             await db.Database.MigrateAsync();
+        }
+
+        private async Task SeedTestReferenceDataAsync()
+        {
+            using var scope = app.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<B1ngoDbContext>();
+
+            if (db.GrandPrix.Any())
+            {
+                return;
+            }
+
+            db.GrandPrix.AddRange(
+                new GrandPrixEntity
+                {
+                    Name = "Test Grand Prix",
+                    Season = 2026,
+                    Round = 1,
+                    IsSprint = false,
+                    SessionTypes = ["FP1", "FP2", "FP3", "Qualifying", "Race"],
+                },
+                new GrandPrixEntity
+                {
+                    Name = "Test Sprint Grand Prix",
+                    Season = 2026,
+                    Round = 2,
+                    IsSprint = true,
+                    SessionTypes = ["FP1", "SprintQualifying", "Sprint", "Qualifying", "Race"],
+                }
+            );
+
+            await db.SaveChangesAsync();
         }
     }
 }

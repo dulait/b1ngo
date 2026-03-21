@@ -99,6 +99,7 @@ export class Game {
     const result = await safeAsync(this.roomApi.endGame(this.store.roomId()));
     if (result.ok) {
       this.endGameSheetOpen.set(false);
+      this.store.setStatus('Completed');
     }
     this.isEnding.set(false);
   }
