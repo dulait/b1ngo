@@ -28,7 +28,6 @@ internal static class WebApplicationExtensions
                 app.UseHttpsRedirection();
             }
 
-            app.UseWebSockets();
             app.UseCors();
 
             if (app.Environment.IsProduction() || app.Environment.IsEnvironment("Staging"))
