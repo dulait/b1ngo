@@ -1,3 +1,10 @@
+## [0.2.3](https://github.com/dulait/b1ngo/compare/v0.2.2...v0.2.3) (2026-03-22)
+
+
+### Bug Fixes
+
+* **test:** handle optimistic concurrency in concurrent marks test ([#10](https://github.com/dulait/b1ngo/issues/10)) ([353b091](https://github.com/dulait/b1ngo/commit/353b09141d9096529e3376c3a0ed0d8e12b73298))
+
 ## [0.2.2](https://github.com/dulait/b1ngo/compare/v0.2.1...v0.2.2) (2026-03-22)
 
 
