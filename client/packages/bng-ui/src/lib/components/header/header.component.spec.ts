@@ -1,24 +1,51 @@
+import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { BngHeaderComponent } from './header.component';
-import { ThemeService } from '../../services/theme.service';
+import { BngMenuItemComponent } from '../menu-item/menu-item.component';
+import { bngIconHelpCircle } from '../../icons/icons';
+
+@Component({
+  standalone: true,
+  imports: [BngHeaderComponent, BngMenuItemComponent],
+  template: `
+    <bng-header
+      [joinCode]="joinCode()"
+      [roomStatus]="roomStatus()"
+      [session]="session()"
+      [version]="version()"
+    >
+      <bng-menu-item [icon]="helpIcon" label="How to play" />
+      <bng-menu-item label="Theme">
+        <span menuItemIcon class="theme-dot"></span>
+      </bng-menu-item>
+    </bng-header>
+  `,
+})
+class TestHost {
+  joinCode = signal<string | null>(null);
+  roomStatus = signal<'Lobby' | 'Active' | 'Completed' | null>(null);
+  session = signal<{ grandPrixShort: string; sessionType: string } | null>(null);
+  version = signal<string | null>(null);
+  helpIcon = bngIconHelpCircle;
+}
 
 describe('BngHeaderComponent', () => {
-  let fixture: ComponentFixture<BngHeaderComponent>;
-  let themeService: ThemeService;
+  let fixture: ComponentFixture<TestHost>;
+  let host: TestHost;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BngHeaderComponent],
+      imports: [TestHost],
     }).compileComponents();
 
-    themeService = TestBed.inject(ThemeService);
-    fixture = TestBed.createComponent(BngHeaderComponent);
+    fixture = TestBed.createComponent(TestHost);
+    host = fixture.componentInstance;
     fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(fixture.componentInstance).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('bng-header')).toBeTruthy();
   });
 
   it('should have role banner', () => {
@@ -30,45 +57,47 @@ describe('BngHeaderComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('B1NGO');
   });
 
-  it('should render theme circle with aria-label', () => {
-    const btn = fixture.nativeElement.querySelector('[aria-label="Change color theme"]');
+  it('should render kebab icon button', () => {
+    const btn = fixture.nativeElement.querySelector('[aria-label="Menu"]');
     expect(btn).toBeTruthy();
-    expect(btn.classList.contains('rounded-full')).toBe(true);
   });
 
-  it('should open bottom sheet when theme circle is clicked', () => {
-    const btn: HTMLButtonElement = fixture.nativeElement.querySelector('[aria-label="Change color theme"]');
+  it('should open menu when kebab is clicked', () => {
+    const btn: HTMLElement = fixture.nativeElement.querySelector('bng-icon-button');
     btn.click();
     fixture.detectChanges();
-    const sheet = fixture.nativeElement.querySelector('bng-bottom-sheet');
-    expect(sheet).toBeTruthy();
+    const menu = fixture.nativeElement.querySelector('[role="menu"]');
+    expect(menu).toBeTruthy();
   });
 
-  it('should call ThemeService.setTheme on theme change', () => {
-    const spy = vi.spyOn(themeService, 'setTheme');
-    const btn: HTMLButtonElement = fixture.nativeElement.querySelector('[aria-label="Change color theme"]');
+  it('should project menu items into menu', () => {
+    const btn: HTMLElement = fixture.nativeElement.querySelector('bng-icon-button');
     btn.click();
     fixture.detectChanges();
+    const items = fixture.nativeElement.querySelectorAll('[role="menuitem"]');
+    expect(items.length).toBe(2);
+  });
 
-    const themeButton = fixture.nativeElement.querySelector('bng-theme-picker [role="radio"]');
-    if (themeButton) {
-      themeButton.click();
-      fixture.detectChanges();
-      expect(spy).toHaveBeenCalled();
-    }
+  it('should render version footer when provided', () => {
+    host.version.set('v0.1.0');
+    fixture.detectChanges();
+    const btn: HTMLElement = fixture.nativeElement.querySelector('bng-icon-button');
+    btn.click();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('v0.1.0');
   });
 
   it('should not show context sub-bar when roomStatus is null', () => {
-    const subBar = fixture.nativeElement.querySelector('.bg-bg-base');
+    const subBar = fixture.nativeElement.querySelector('[data-testid="header-session-bar"]');
     expect(subBar).toBeFalsy();
   });
 
   it('should show context sub-bar with session info and status badge when roomStatus is set', () => {
-    fixture.componentRef.setInput('roomStatus', 'Active');
-    fixture.componentRef.setInput('session', { grandPrixShort: 'MON', sessionType: 'Race' });
+    host.roomStatus.set('Active');
+    host.session.set({ grandPrixShort: 'MON', sessionType: 'Race' });
     fixture.detectChanges();
 
-    const subBar = fixture.nativeElement.querySelector('.bg-bg-base');
+    const subBar = fixture.nativeElement.querySelector('[data-testid="header-session-bar"]');
     expect(subBar).toBeTruthy();
     expect(subBar.textContent).toContain('MON / Race');
 
@@ -77,8 +106,8 @@ describe('BngHeaderComponent', () => {
   });
 
   it('should not show session info or status badge in header row', () => {
-    fixture.componentRef.setInput('roomStatus', 'Active');
-    fixture.componentRef.setInput('session', { grandPrixShort: 'MON', sessionType: 'Race' });
+    host.roomStatus.set('Active');
+    host.session.set({ grandPrixShort: 'MON', sessionType: 'Race' });
     fixture.detectChanges();
 
     const header = fixture.nativeElement.querySelector('[role="banner"]');
