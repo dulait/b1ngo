@@ -15,9 +15,10 @@ import { Component, ChangeDetectionStrategy, ViewEncapsulation, input, output } 
         (keydown.escape)="closed.emit()"
       >
         <ng-content />
-        @if (footer()) {
-          <div class="mt-1 pt-1.5 pb-1 px-3 border-t border-border-default text-[0.7rem] text-text-secondary text-right opacity-60">
-            {{ footer() }}
+        @if (footer() || copyright()) {
+          <div class="mt-1 pt-1.5 pb-1 px-3 border-t border-border-default text-[0.7rem] text-text-secondary opacity-60 flex items-center justify-between">
+            <span>{{ copyright() ? '\u00A9 ' + currentYear + ' ' + copyright() : '' }}</span>
+            <span>{{ footer() ?? '' }}</span>
           </div>
         }
       </div>
@@ -29,5 +30,8 @@ import { Component, ChangeDetectionStrategy, ViewEncapsulation, input, output } 
 export class BngMenuComponent {
   open = input(false);
   footer = input<string | null>(null);
+  copyright = input<string | null>(null);
   closed = output<void>();
+
+  protected currentYear = new Date().getFullYear();
 }
