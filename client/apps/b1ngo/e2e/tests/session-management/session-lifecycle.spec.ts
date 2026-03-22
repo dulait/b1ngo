@@ -114,7 +114,7 @@ test.describe('BNG-014: Session Lifecycle', () => {
 
     await api.endGame(room.roomId, room.host.playerToken);
 
-    await page.getByTestId('results-game-over').waitFor({ state: 'visible', timeout: 10_000 });
+    await page.getByTestId('results-game-over').waitFor({ state: 'visible' });
 
     const session = await page.evaluate(() => localStorage.getItem('bng-session'));
     expect(session).not.toBeNull();
