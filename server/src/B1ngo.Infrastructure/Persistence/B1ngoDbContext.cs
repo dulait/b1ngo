@@ -83,18 +83,13 @@ public sealed class B1ngoDbContext(
 
         foreach (var entry in ChangeTracker.Entries<IAuditable>())
         {
+            entry.CurrentValues[nameof(IAuditable.LastModifiedAt)] = utcNow;
+            entry.CurrentValues[nameof(IAuditable.LastModifiedBy)] = userId;
+
             if (entry.State == EntityState.Added)
             {
                 entry.CurrentValues[nameof(IAuditable.CreatedAt)] = utcNow;
                 entry.CurrentValues[nameof(IAuditable.CreatedBy)] = userId;
-                entry.CurrentValues[nameof(IAuditable.LastModifiedAt)] = utcNow;
-                entry.CurrentValues[nameof(IAuditable.LastModifiedBy)] = userId;
-            }
-
-            if (entry.State == EntityState.Modified)
-            {
-                entry.CurrentValues[nameof(IAuditable.LastModifiedAt)] = utcNow;
-                entry.CurrentValues[nameof(IAuditable.LastModifiedBy)] = userId;
             }
         }
     }
