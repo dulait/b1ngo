@@ -16,11 +16,17 @@ import { AuthService } from '../../core/auth/auth.service';
 import { safeAsync } from '../../core/api/safe-async';
 import {
   BngHeaderComponent,
+  BngMenuItemComponent,
+  BngBottomSheetComponent,
+  BngThemePickerComponent,
   BngSkeletonComponent,
   BngCardComponent,
   BngButtonComponent,
   ToastService,
+  ThemeService,
+  bngIconHelpCircle,
 } from 'bng-ui';
+import type { ThemeName } from 'bng-ui';
 import { RoomStore } from './room-store';
 import { Lobby } from './lobby/lobby';
 import { Game } from './game/game';
@@ -35,6 +41,9 @@ export const ROOM_STORE = new InjectionToken<RoomStore>('RoomStore');
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     BngHeaderComponent,
+    BngMenuItemComponent,
+    BngBottomSheetComponent,
+    BngThemePickerComponent,
     BngSkeletonComponent,
     BngCardComponent,
     BngButtonComponent,
@@ -57,9 +66,12 @@ export class Room implements OnInit, OnDestroy {
   private readonly auth = inject(AuthService);
   private readonly toast = inject(ToastService);
 
+  readonly themeService = inject(ThemeService);
+  readonly helpIcon = bngIconHelpCircle;
   readonly store = inject(ROOM_STORE);
   readonly loading = signal(true);
   readonly tutorialOpen = signal(false);
+  readonly themeSheetOpen = signal(false);
   readonly error = signal(false);
   private destroyed = false;
 
@@ -100,6 +112,11 @@ export class Room implements OnInit, OnDestroy {
 
   closeTutorial(): void {
     this.tutorialOpen.set(false);
+  }
+
+  onThemeChange(theme: ThemeName): void {
+    this.themeService.setTheme(theme);
+    setTimeout(() => this.themeSheetOpen.set(false), 150);
   }
 
   ngOnDestroy(): void {

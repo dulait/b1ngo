@@ -1,5 +1,21 @@
 @if (loading()) {
-  <bng-header (helpClicked)="openTutorial()" />
+  <bng-header version="v0.1.0">
+    <bng-menu-item
+      [icon]="helpIcon"
+      label="How to play"
+      (clicked)="openTutorial()"
+    />
+    <bng-menu-item
+      label="Theme"
+      (clicked)="themeSheetOpen.set(true)"
+    >
+      <span
+        menuItemIcon
+        class="w-5 h-5 rounded-full"
+        [style.backgroundColor]="themeService.accentColor()"
+      ></span>
+    </bng-menu-item>
+  </bng-header>
   <main class="p-4 space-y-4" aria-busy="true">
     <bng-skeleton variant="rect" height="3rem" />
     <bng-card header="Your Card">
@@ -10,7 +26,23 @@
     </bng-card>
   </main>
 } @else if (error()) {
-  <bng-header (helpClicked)="openTutorial()" />
+  <bng-header version="v0.1.0">
+    <bng-menu-item
+      [icon]="helpIcon"
+      label="How to play"
+      (clicked)="openTutorial()"
+    />
+    <bng-menu-item
+      label="Theme"
+      (clicked)="themeSheetOpen.set(true)"
+    >
+      <span
+        menuItemIcon
+        class="w-5 h-5 rounded-full"
+        [style.backgroundColor]="themeService.accentColor()"
+      ></span>
+    </bng-menu-item>
+  </bng-header>
   <main class="p-4">
     <div class="text-center pt-8">
       <p class="text-text-primary text-lg font-semibold mb-2">Can't connect to the server.</p>
@@ -22,8 +54,24 @@
     [joinCode]="store.joinCode()"
     [roomStatus]="store.status()"
     [session]="store.uiSession()"
-    (helpClicked)="openTutorial()"
-  />
+    version="v0.1.0"
+  >
+    <bng-menu-item
+      [icon]="helpIcon"
+      label="How to play"
+      (clicked)="openTutorial()"
+    />
+    <bng-menu-item
+      label="Theme"
+      (clicked)="themeSheetOpen.set(true)"
+    >
+      <span
+        menuItemIcon
+        class="w-5 h-5 rounded-full"
+        [style.backgroundColor]="themeService.accentColor()"
+      ></span>
+    </bng-menu-item>
+  </bng-header>
 
   @switch (store.status()) {
     @case ('Lobby') {
@@ -37,5 +85,18 @@
     }
   }
 }
+
+<bng-bottom-sheet
+  title="Theme"
+  [open]="themeSheetOpen()"
+  (closed)="themeSheetOpen.set(false)"
+>
+  <div class="flex justify-center py-2">
+    <bng-theme-picker
+      [currentTheme]="themeService.currentTheme()"
+      (themeChange)="onThemeChange($event)"
+    />
+  </div>
+</bng-bottom-sheet>
 
 <app-tutorial [open]="tutorialOpen()" (closed)="closeTutorial()" />

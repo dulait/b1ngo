@@ -1,6 +1,14 @@
 import { Component, ChangeDetectionStrategy, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { BngHeaderComponent } from 'bng-ui';
+import {
+  BngHeaderComponent,
+  BngMenuItemComponent,
+  BngBottomSheetComponent,
+  BngThemePickerComponent,
+  ThemeService,
+  bngIconHelpCircle,
+} from 'bng-ui';
+import type { ThemeName } from 'bng-ui';
 import { RoomApiService } from '../../core/api/room-api.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { safeAsync } from '../../core/api/safe-async';
@@ -10,7 +18,15 @@ import { Tutorial } from '../tutorial/tutorial';
 
 @Component({
   selector: 'app-home',
-  imports: [CreateRoomForm, JoinRoomForm, BngHeaderComponent, Tutorial],
+  imports: [
+    CreateRoomForm,
+    JoinRoomForm,
+    BngHeaderComponent,
+    BngMenuItemComponent,
+    BngBottomSheetComponent,
+    BngThemePickerComponent,
+    Tutorial,
+  ],
   templateUrl: './home.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -19,7 +35,10 @@ export class Home implements OnInit {
   private readonly roomApi = inject(RoomApiService);
   private readonly auth = inject(AuthService);
 
+  readonly themeService = inject(ThemeService);
+  readonly helpIcon = bngIconHelpCircle;
   readonly tutorialOpen = signal(false);
+  readonly themeSheetOpen = signal(false);
 
   async ngOnInit(): Promise<void> {
     if (!localStorage.getItem('bng-tutorial-completed')) {
@@ -56,5 +75,10 @@ export class Home implements OnInit {
   closeTutorial(): void {
     this.tutorialOpen.set(false);
     localStorage.setItem('bng-tutorial-completed', 'true');
+  }
+
+  onThemeChange(theme: ThemeName): void {
+    this.themeService.setTheme(theme);
+    setTimeout(() => this.themeSheetOpen.set(false), 150);
   }
 }
