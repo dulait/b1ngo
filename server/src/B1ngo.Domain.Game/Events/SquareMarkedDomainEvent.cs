@@ -9,4 +9,4 @@ public sealed record SquareMarkedDomainEvent(
     int Column,
     SquareMarkedBy MarkedBy,
     DateTimeOffset MarkedAt
-) : IDomainEvent;
+) : DomainEvent;

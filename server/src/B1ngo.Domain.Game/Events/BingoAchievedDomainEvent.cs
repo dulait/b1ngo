@@ -9,4 +9,4 @@ public sealed record BingoAchievedDomainEvent(
     List<SquarePosition> WinningSquares,
     int Rank,
     DateTimeOffset CompletedAt
-) : IDomainEvent;
+) : DomainEvent;
