@@ -1,0 +1,91 @@
+<bng-modal [open]="open()" maxWidth="md" [blurBackdrop]="true" (closed)="onClose()">
+  <bng-stepper
+    [totalSteps]="4"
+    [currentStep]="step()"
+    (stepChange)="step.set($event)"
+    (skipped)="onClose()"
+    (completed)="onClose()"
+  >
+    <div class="px-6 pt-6 pb-2">
+      @switch (step()) {
+        @case (0) {
+          <div class="h-36 rounded-lg mb-4 relative overflow-hidden bg-bg-surface-hover">
+            <div class="absolute inset-0 flex items-center justify-center tutorial-wordmark-anim">
+              <span class="text-3xl font-mono font-bold text-accent">B1NGO</span>
+            </div>
+          </div>
+          <h3 class="text-lg font-semibold text-text-primary mb-2">Welcome to B1NGO</h3>
+          <p class="text-sm text-text-secondary">
+            F1-themed bingo you play with friends during live race sessions.
+          </p>
+        }
+        @case (1) {
+          <div class="h-36 rounded-lg mb-4 relative overflow-hidden bg-bg-surface-hover">
+            <div class="absolute inset-0 flex items-center justify-center gap-1.5">
+              @for (char of codeChars; track $index) {
+                <div
+                  class="w-9 h-11 rounded-md border border-border-default bg-bg-surface flex items-center justify-center"
+                >
+                  <span
+                    class="text-base font-mono font-bold text-accent tutorial-char-anim"
+                    [style.animation-delay]="$index * 300 + 'ms'"
+                    >{{ char }}</span
+                  >
+                </div>
+              }
+            </div>
+          </div>
+          <h3 class="text-lg font-semibold text-text-primary mb-2">Create or Join</h3>
+          <p class="text-sm text-text-secondary">
+            One player creates a room and shares the join code. Friends enter the code to join.
+          </p>
+        }
+        @case (2) {
+          <div class="h-36 rounded-lg mb-4 relative overflow-hidden bg-bg-surface-hover">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="grid grid-cols-3 gap-1.5">
+                @for (cell of gridCells; track $index) {
+                  <div
+                    class="w-8 h-8 rounded-md opacity-0"
+                    [class]="getStep2CellClass($index)"
+                    [style]="getStep2CellStyle($index)"
+                  ></div>
+                }
+              </div>
+            </div>
+          </div>
+          <h3 class="text-lg font-semibold text-text-primary mb-2">Mark Your Card</h3>
+          <p class="text-sm text-text-secondary">
+            Tap squares as F1 events happen during the session. The center square is always free.
+          </p>
+        }
+        @case (3) {
+          <div class="h-36 rounded-lg mb-4 relative overflow-hidden bg-bg-surface-hover">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="relative">
+                <div class="grid grid-cols-3 gap-1.5">
+                  @for (cell of gridCells; track $index) {
+                    <div
+                      class="w-8 h-8 rounded-md"
+                      [class]="getStep3CellClass($index)"
+                      [style]="getStep3CellStyle($index)"
+                    ></div>
+                  }
+                </div>
+                <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 tutorial-bingo-anim">
+                  <span class="text-sm font-mono font-bold text-accent whitespace-nowrap">
+                    BINGO!
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h3 class="text-lg font-semibold text-text-primary mb-2">Score a Bingo</h3>
+          <p class="text-sm text-text-secondary">
+            Complete a row, column, or diagonal to win. Multiple players can win, ranked by speed.
+          </p>
+        }
+      }
+    </div>
+  </bng-stepper>
+</bng-modal>
