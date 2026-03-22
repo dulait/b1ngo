@@ -3,7 +3,7 @@ import { Component, ChangeDetectionStrategy, ViewEncapsulation, input, output } 
 @Component({
   selector: 'bng-menu',
   standalone: true,
-  host: { class: 'relative inline-block' },
+  host: { style: 'display: contents' },
   template: `
     @if (open()) {
       <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
