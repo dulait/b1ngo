@@ -106,7 +106,7 @@ export class BngSquareComponent {
 
   protected containerClasses = computed(() => {
     const base =
-      'rounded flex items-center justify-center relative transition-all duration-150 h-full';
+      'rounded flex items-center justify-center relative transition-all duration-150 h-full select-none';
 
     if (this.isFreeSpace()) {
       const border = this.isWinning() ? 'border-2 border-success' : 'border border-border-subtle';
