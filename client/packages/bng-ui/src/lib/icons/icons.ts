@@ -31,3 +31,5 @@ export const bngIconAlertTriangle = `<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3
 export const bngIconXCircle = `<circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6"/><path d="M9 9l6 6"/>`;
 
 export const bngIconCar = `<path d="M5 17h1a2 2 0 002-2V9l2-4h6l2 4v6a2 2 0 002 2h1"/><path d="M7 9h10"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/>`;
+
+export const bngIconHelpCircle = `<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>`;
