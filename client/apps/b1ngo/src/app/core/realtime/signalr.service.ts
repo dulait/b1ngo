@@ -29,6 +29,7 @@ export class SignalRService {
   readonly gameCompleted = signal<GameCompletedEvent | null>(null);
 
   readonly connectionState = signal<ConnectionState>('disconnected');
+  readonly reconnectedAt = signal<number | null>(null);
 
   async connect(roomId: string): Promise<void> {
     await this.disconnect();
@@ -88,7 +89,10 @@ export class SignalRService {
   private registerLifecycleEvents(): void {
     const conn = this.connection!;
     conn.onreconnecting(() => this.connectionState.set('reconnecting'));
-    conn.onreconnected(() => this.connectionState.set('connected'));
+    conn.onreconnected(() => {
+      this.connectionState.set('connected');
+      this.reconnectedAt.set(Date.now());
+    });
     conn.onclose(() => this.connectionState.set('disconnected'));
   }
 }

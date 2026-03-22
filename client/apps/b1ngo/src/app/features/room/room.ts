@@ -185,16 +185,16 @@ export class Room implements OnInit, OnDestroy {
   }
 
   private wireConnectionState(): void {
-    let wasReconnecting = false;
-
     effect(() => {
       const state = this.signalr.connectionState();
       if (state === 'reconnecting') {
-        wasReconnecting = true;
         this.toast.warning('Connection lost. Reconnecting...');
       }
-      if (state === 'connected' && wasReconnecting) {
-        wasReconnecting = false;
+    });
+
+    effect(() => {
+      const reconnectedAt = this.signalr.reconnectedAt();
+      if (reconnectedAt) {
         this.syncRoomState();
       }
     });
