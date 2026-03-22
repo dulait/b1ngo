@@ -35,7 +35,7 @@ type SlideDirection = 'none' | 'left' | 'right';
       role="tablist"
       aria-label="Step progress"
     >
-      @for (step of steps(); track step; let i = $index) {
+      @for (step of steps(); track $index; let i = $index) {
         <button
           role="tab"
           [attr.aria-selected]="i === currentStep()"
