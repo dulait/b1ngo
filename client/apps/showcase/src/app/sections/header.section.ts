@@ -34,7 +34,7 @@ import type { ThemeName } from 'bng-ui';
           joinCode="X4K9M2"
           roomStatus="Active"
           [session]="{ grandPrixShort: 'BHR', sessionType: 'Race' }"
-          version="v0.1.0"
+          version="v0.1.0" copyright="B1NGO"
         >
           <bng-menu-item
             [icon]="helpIcon"
@@ -59,7 +59,7 @@ import type { ThemeName } from 'bng-ui';
           joinCode="X4K9M2"
           roomStatus="Lobby"
           [session]="{ grandPrixShort: 'JPN', sessionType: 'Qualifying' }"
-          version="v0.1.0"
+          version="v0.1.0" copyright="B1NGO"
         >
           <bng-menu-item
             [icon]="helpIcon"
@@ -84,7 +84,7 @@ import type { ThemeName } from 'bng-ui';
           joinCode="X4K9M2"
           roomStatus="Completed"
           [session]="{ grandPrixShort: 'MON', sessionType: 'Sprint' }"
-          version="v0.1.0"
+          version="v0.1.0" copyright="B1NGO"
         >
           <bng-menu-item
             [icon]="helpIcon"
