@@ -36,6 +36,7 @@ import { SessionDto } from '../../types';
         <bng-menu
           [open]="menuOpen()"
           [footer]="version()"
+          [copyright]="copyright()"
           (closed)="menuOpen.set(false)"
         >
           <ng-content />
@@ -60,6 +61,7 @@ export class BngHeaderComponent {
   roomStatus = input<'Lobby' | 'Active' | 'Completed' | null>(null);
   session = input<SessionDto | null>(null);
   version = input<string | null>(null);
+  copyright = input<string | null>(null);
 
   protected readonly kebabIcon = bngIconKebab;
   protected menuOpen = signal(false);
