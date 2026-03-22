@@ -85,16 +85,16 @@ public sealed class B1ngoDbContext(
         {
             if (entry.State == EntityState.Added)
             {
-                entry.Entity.CreatedAt = utcNow;
-                entry.Entity.CreatedBy = userId;
-                entry.Entity.LastModifiedAt = utcNow;
-                entry.Entity.LastModifiedBy = userId;
+                entry.CurrentValues[nameof(IAuditable.CreatedAt)] = utcNow;
+                entry.CurrentValues[nameof(IAuditable.CreatedBy)] = userId;
+                entry.CurrentValues[nameof(IAuditable.LastModifiedAt)] = utcNow;
+                entry.CurrentValues[nameof(IAuditable.LastModifiedBy)] = userId;
             }
 
             if (entry.State == EntityState.Modified)
             {
-                entry.Entity.LastModifiedAt = utcNow;
-                entry.Entity.LastModifiedBy = userId;
+                entry.CurrentValues[nameof(IAuditable.LastModifiedAt)] = utcNow;
+                entry.CurrentValues[nameof(IAuditable.LastModifiedBy)] = userId;
             }
         }
     }

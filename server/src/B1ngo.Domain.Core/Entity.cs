@@ -12,27 +12,6 @@ public abstract class Entity<TId> : IHasDomainEvents, IAuditable, IEquatable<Ent
     public Guid? LastModifiedBy { get; private set; }
     public DateTimeOffset? LastModifiedAt { get; private set; }
 
-    Guid IAuditable.CreatedBy
-    {
-        get => CreatedBy;
-        set => CreatedBy = value;
-    }
-    DateTimeOffset IAuditable.CreatedAt
-    {
-        get => CreatedAt;
-        set => CreatedAt = value;
-    }
-    Guid? IAuditable.LastModifiedBy
-    {
-        get => LastModifiedBy;
-        set => LastModifiedBy = value;
-    }
-    DateTimeOffset? IAuditable.LastModifiedAt
-    {
-        get => LastModifiedAt;
-        set => LastModifiedAt = value;
-    }
-
     protected Entity() { }
 
     protected Entity(TId id)
