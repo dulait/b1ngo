@@ -13,7 +13,7 @@ import { BngModalComponent, BngStepperComponent } from 'bng-ui';
   standalone: true,
   imports: [BngModalComponent, BngStepperComponent],
   template: `
-    <bng-modal [open]="open()" maxWidth="md" (closed)="onClose()">
+    <bng-modal [open]="open()" maxWidth="md" [blurBackdrop]="true" (closed)="onClose()">
       <bng-stepper
         [totalSteps]="4"
         [currentStep]="step()"

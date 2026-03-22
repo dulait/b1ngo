@@ -27,6 +27,7 @@ let nextModalId = 0;
       <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
       <div
         class="fixed inset-0 z-50 bg-black/50"
+        [class.backdrop-blur-sm]="blurBackdrop()"
         [style.animation]="backdropAnimation()"
         (click)="close()"
         (keydown.escape)="close()"
@@ -62,6 +63,7 @@ export class BngModalComponent {
 
   open = input(false);
   maxWidth = input<'sm' | 'md' | 'lg'>('md');
+  blurBackdrop = input(false);
 
   closed = output<void>();
 
