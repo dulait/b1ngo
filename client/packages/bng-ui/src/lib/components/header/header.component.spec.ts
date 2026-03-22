@@ -9,24 +9,21 @@ import { bngIconHelpCircle } from '../../icons/icons';
   standalone: true,
   imports: [BngHeaderComponent, BngMenuItemComponent],
   template: `
-    <bng-header
-      [joinCode]="joinCode()"
-      [roomStatus]="roomStatus()"
-      [session]="session()"
-      [version]="version()"
-    >
+    <bng-header [version]="version()" [copyright]="copyright()">
       <bng-menu-item [icon]="helpIcon" label="How to play" />
       <bng-menu-item label="Theme">
         <span menuItemIcon class="theme-dot"></span>
       </bng-menu-item>
+      @if (showSubbar()) {
+        <div headerSubbar class="test-subbar">Sub-bar content</div>
+      }
     </bng-header>
   `,
 })
 class TestHost {
-  joinCode = signal<string | null>(null);
-  roomStatus = signal<'Lobby' | 'Active' | 'Completed' | null>(null);
-  session = signal<{ grandPrixShort: string; sessionType: string } | null>(null);
   version = signal<string | null>(null);
+  copyright = signal<string | null>(null);
+  showSubbar = signal(false);
   helpIcon = bngIconHelpCircle;
 }
 
@@ -87,31 +84,16 @@ describe('BngHeaderComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('v0.1.0');
   });
 
-  it('should not show context sub-bar when roomStatus is null', () => {
-    const subBar = fixture.nativeElement.querySelector('[data-testid="header-session-bar"]');
-    expect(subBar).toBeFalsy();
+  it('should project subbar content when provided', () => {
+    host.showSubbar.set(true);
+    fixture.detectChanges();
+    const subbar = fixture.nativeElement.querySelector('.test-subbar');
+    expect(subbar).toBeTruthy();
+    expect(subbar.textContent).toContain('Sub-bar content');
   });
 
-  it('should show context sub-bar with session info and status badge when roomStatus is set', () => {
-    host.roomStatus.set('Active');
-    host.session.set({ grandPrixShort: 'MON', sessionType: 'Race' });
-    fixture.detectChanges();
-
-    const subBar = fixture.nativeElement.querySelector('[data-testid="header-session-bar"]');
-    expect(subBar).toBeTruthy();
-    expect(subBar.textContent).toContain('MON / Race');
-
-    const badge = subBar.querySelector('bng-status-badge');
-    expect(badge).toBeTruthy();
-  });
-
-  it('should not show session info or status badge in header row', () => {
-    host.roomStatus.set('Active');
-    host.session.set({ grandPrixShort: 'MON', sessionType: 'Race' });
-    fixture.detectChanges();
-
-    const header = fixture.nativeElement.querySelector('[role="banner"]');
-    expect(header.querySelector('bng-status-badge')).toBeFalsy();
-    expect(header.textContent).not.toContain('MON / Race');
+  it('should not show subbar when not projected', () => {
+    const subbar = fixture.nativeElement.querySelector('.test-subbar');
+    expect(subbar).toBeFalsy();
   });
 });
