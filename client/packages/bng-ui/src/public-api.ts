@@ -22,6 +22,8 @@ export { BngSkeletonComponent } from './lib/components/skeleton/skeleton.compone
 export { BngPillToggleComponent } from './lib/components/pill-toggle/pill-toggle.component';
 export { BngSquarePopoverComponent } from './lib/components/square-popover/square-popover.component';
 export { BngCollapsibleComponent } from './lib/components/collapsible/collapsible.component';
+export { BngModalComponent } from './lib/components/modal/modal.component';
+export { BngStepperComponent } from './lib/components/stepper/stepper.component';
 export type { PillToggleOption } from './lib/components/pill-toggle/pill-toggle.component';
 
 // Icons

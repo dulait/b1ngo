@@ -20,6 +20,9 @@ import { SkeletonsSection } from './sections/skeletons.section';
 import { IconsSection } from './sections/icons.section';
 import { PillToggleSection } from './sections/pill-toggle.section';
 import { CollapsibleSection } from './sections/collapsible.section';
+import { ModalSection } from './sections/modal.section';
+import { StepperSection } from './sections/stepper.section';
+import { ModalStepperSection } from './sections/modal-stepper.section';
 
 @Component({
   selector: 'ds-root',
@@ -45,6 +48,9 @@ import { CollapsibleSection } from './sections/collapsible.section';
     IconsSection,
     PillToggleSection,
     CollapsibleSection,
+    ModalSection,
+    StepperSection,
+    ModalStepperSection,
   ],
   template: `
     <div class="min-h-screen bg-bg-base text-text-primary">
@@ -133,6 +139,9 @@ import { CollapsibleSection } from './sections/collapsible.section';
         <ds-skeletons id="skeletons" />
         <ds-pill-toggle id="pill-toggle" />
         <ds-collapsible id="collapsible" />
+        <ds-modal-section id="modal" />
+        <ds-stepper-section id="stepper" />
+        <ds-modal-stepper-section id="modal-stepper" />
         <ds-icons id="icons" />
         <div class="h-32"></div>
       </main>
@@ -165,6 +174,9 @@ export class AppComponent implements OnInit {
     { id: 'skeletons', label: 'Skeletons' },
     { id: 'pill-toggle', label: 'Pill Toggle' },
     { id: 'collapsible', label: 'Collapsible' },
+    { id: 'modal', label: 'Modal' },
+    { id: 'stepper', label: 'Stepper' },
+    { id: 'modal-stepper', label: 'Modal + Stepper' },
     { id: 'icons', label: 'Icons' },
   ];
 
