@@ -5,6 +5,7 @@ import {
   BngMatrixComponent,
   BngLeaderboardComponent,
   BngButtonComponent,
+  ToastService,
 } from 'bng-ui';
 import { ROOM_STORE } from '../room';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -19,6 +20,7 @@ export class Results {
   readonly store = inject(ROOM_STORE);
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
+  private readonly toast = inject(ToastService);
 
   readonly currentRank = computed(() => {
     const entry = this.store
@@ -37,6 +39,7 @@ export class Results {
   });
 
   onNewRoom(): void {
+    this.toast.clear();
     this.auth.clearSession();
     this.router.navigate(['/']);
   }

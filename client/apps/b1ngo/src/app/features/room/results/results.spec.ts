@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { describe, it, beforeEach, expect, vi } from 'vitest';
+import { ToastService } from 'bng-ui';
 import { Results } from './results';
 import { ROOM_STORE } from '../room';
 import { RoomStore } from '../room-store';
@@ -61,6 +62,7 @@ describe('Results', () => {
   let store: RoomStore;
   let router: Router;
   let authService: AuthService;
+  let toastService: ToastService;
 
   beforeEach(async () => {
     localStorage.clear();
@@ -85,6 +87,7 @@ describe('Results', () => {
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
     authService = TestBed.inject(AuthService);
+    toastService = TestBed.inject(ToastService);
     authService.saveSession('r1', 'p1');
   });
 
@@ -108,8 +111,10 @@ describe('Results', () => {
     expect(squares.has('0,0')).toBe(true);
   });
 
-  it('should navigate to home on new room', () => {
+  it('should clear toasts, clear session, and navigate to home on new room', () => {
+    const clearSpy = vi.spyOn(toastService, 'clear');
     component.onNewRoom();
+    expect(clearSpy).toHaveBeenCalled();
     expect(authService.hasSession()).toBe(false);
     expect(router.navigate).toHaveBeenCalledWith(['/']);
   });
