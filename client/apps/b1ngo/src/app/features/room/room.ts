@@ -25,6 +25,7 @@ import { RoomStore } from './room-store';
 import { Lobby } from './lobby/lobby';
 import { Game } from './game/game';
 import { Results } from './results/results';
+import { Tutorial } from '../tutorial/tutorial';
 
 export const ROOM_STORE = new InjectionToken<RoomStore>('RoomStore');
 
@@ -40,6 +41,7 @@ export const ROOM_STORE = new InjectionToken<RoomStore>('RoomStore');
     Lobby,
     Game,
     Results,
+    Tutorial,
   ],
   providers: [
     {
@@ -57,6 +59,7 @@ export class Room implements OnInit, OnDestroy {
 
   readonly store = inject(ROOM_STORE);
   readonly loading = signal(true);
+  readonly tutorialOpen = signal(false);
   readonly error = signal(false);
   private destroyed = false;
 
@@ -89,6 +92,14 @@ export class Room implements OnInit, OnDestroy {
     this.error.set(false);
     this.loading.set(true);
     this.ngOnInit();
+  }
+
+  openTutorial(): void {
+    this.tutorialOpen.set(true);
+  }
+
+  closeTutorial(): void {
+    this.tutorialOpen.set(false);
   }
 
   ngOnDestroy(): void {

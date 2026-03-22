@@ -1,5 +1,5 @@
 @if (loading()) {
-  <bng-header />
+  <bng-header (helpClicked)="openTutorial()" />
   <main class="p-4 space-y-4" aria-busy="true">
     <bng-skeleton variant="rect" height="3rem" />
     <bng-card header="Your Card">
@@ -10,7 +10,7 @@
     </bng-card>
   </main>
 } @else if (error()) {
-  <bng-header />
+  <bng-header (helpClicked)="openTutorial()" />
   <main class="p-4">
     <div class="text-center pt-8">
       <p class="text-text-primary text-lg font-semibold mb-2">Can't connect to the server.</p>
@@ -22,6 +22,7 @@
     [joinCode]="store.joinCode()"
     [roomStatus]="store.status()"
     [session]="store.uiSession()"
+    (helpClicked)="openTutorial()"
   />
 
   @switch (store.status()) {
@@ -36,3 +37,5 @@
     }
   }
 }
+
+<app-tutorial [open]="tutorialOpen()" (closed)="closeTutorial()" />
