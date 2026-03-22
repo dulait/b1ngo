@@ -25,6 +25,7 @@ export { BngCollapsibleComponent } from './lib/components/collapsible/collapsibl
 export { BngModalComponent } from './lib/components/modal/modal.component';
 export { BngStepperComponent } from './lib/components/stepper/stepper.component';
 export { BngIconButtonComponent } from './lib/components/icon-button/icon-button.component';
+export { BngMenuComponent } from './lib/components/menu/menu.component';
 export type { PillToggleOption } from './lib/components/pill-toggle/pill-toggle.component';
 
 // Icons
