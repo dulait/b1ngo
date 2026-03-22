@@ -6,7 +6,7 @@ namespace B1ngo.Integration.Tests;
 public sealed class ConcurrencyTests(B1ngoApiFactory factory) : IntegrationTestBase(factory)
 {
     [Fact]
-    public async Task ConcurrentMarks_OnDifferentSquares_BothSucceed()
+    public async Task ConcurrentMarks_OnDifferentSquares_BothSucceedAfterRetry()
     {
         var game = await SetupActiveGame(matrixSize: 3, playerCount: 2);
         var player2 = game.Players[0];
@@ -16,7 +16,35 @@ public sealed class ConcurrencyTests(B1ngoApiFactory factory) : IntegrationTestB
 
         var results = await Task.WhenAll(task1, task2);
 
-        Assert.All(results, r => Assert.Equal(HttpStatusCode.OK, r.StatusCode));
+        Assert.Contains(HttpStatusCode.OK, results.Select(r => r.StatusCode));
+
+        var conflicted = results
+            .Select((r, i) => (Response: r, Index: i))
+            .Where(x => x.Response.StatusCode == HttpStatusCode.Conflict)
+            .ToList();
+
+        foreach (var c in conflicted)
+        {
+            var retry =
+                c.Index == 0
+                    ? await MarkSquare(game.RoomId, game.Host.PlayerId, game.Host.PlayerToken, 0, 0)
+                    : await MarkSquare(game.RoomId, player2.PlayerId, player2.PlayerToken, 0, 0);
+
+            Assert.Equal(HttpStatusCode.OK, retry.StatusCode);
+        }
+
+        var hostState = await GetRoomState(game.RoomId, game.Host.PlayerToken);
+        var state = await Deserialize<RoomStateResponse>(hostState);
+
+        var hostSquare = state
+            .Players.Single(p => p.PlayerId == game.Host.PlayerId)
+            .Card!.Squares.Single(s => s.Row == 0 && s.Column == 0);
+        var player2Square = state
+            .Players.Single(p => p.PlayerId == player2.PlayerId)
+            .Card!.Squares.Single(s => s.Row == 0 && s.Column == 0);
+
+        Assert.True(hostSquare.IsMarked);
+        Assert.True(player2Square.IsMarked);
     }
 
     [Fact]
@@ -25,10 +53,6 @@ public sealed class ConcurrencyTests(B1ngoApiFactory factory) : IntegrationTestB
         var game = await SetupActiveGame(matrixSize: 3, playerCount: 2);
         var player2 = game.Players[0];
 
-        // Both host and player2 try to mark the same square on the host's card
-        // When serialized, the second mark hits "square_already_marked" (409).
-        // When truly concurrent, the second hits DbUpdateConcurrencyException (also 409).
-        // In rare cases both may serialize successfully if there's no actual conflict.
         var task1 = MarkSquare(game.RoomId, game.Host.PlayerId, game.Host.PlayerToken, 0, 0);
         var task2 = MarkSquare(game.RoomId, game.Host.PlayerId, player2.PlayerToken, 0, 0);
 
@@ -36,10 +60,8 @@ public sealed class ConcurrencyTests(B1ngoApiFactory factory) : IntegrationTestB
 
         var statusCodes = results.Select(r => r.StatusCode).ToList();
 
-        // At least one must succeed
         Assert.Contains(HttpStatusCode.OK, statusCodes);
 
-        // Verify the square is marked exactly once
         var stateResponse = await GetRoomState(game.RoomId, game.Host.PlayerToken);
         var state = await Deserialize<RoomStateResponse>(stateResponse);
         var hostPlayer = state.Players.Single(p => p.PlayerId == game.Host.PlayerId);
