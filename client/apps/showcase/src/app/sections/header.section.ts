@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { BngHeaderComponent, BngCardComponent } from 'bng-ui';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { BngHeaderComponent, BngCardComponent, ToastService } from 'bng-ui';
 
 @Component({
   selector: 'ds-header-section',
@@ -18,6 +18,7 @@ import { BngHeaderComponent, BngCardComponent } from 'bng-ui';
           joinCode="X4K9M2"
           roomStatus="Active"
           [session]="{ grandPrixShort: 'BHR', sessionType: 'Race' }"
+          (helpClicked)="onHelpClicked()"
         />
       </bng-card>
 
@@ -26,6 +27,7 @@ import { BngHeaderComponent, BngCardComponent } from 'bng-ui';
           joinCode="X4K9M2"
           roomStatus="Lobby"
           [session]="{ grandPrixShort: 'JPN', sessionType: 'Qualifying' }"
+          (helpClicked)="onHelpClicked()"
         />
       </bng-card>
 
@@ -34,10 +36,17 @@ import { BngHeaderComponent, BngCardComponent } from 'bng-ui';
           joinCode="X4K9M2"
           roomStatus="Completed"
           [session]="{ grandPrixShort: 'MON', sessionType: 'Sprint' }"
+          (helpClicked)="onHelpClicked()"
         />
       </bng-card>
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HeaderSection {}
+export class HeaderSection {
+  private readonly toast = inject(ToastService);
+
+  onHelpClicked(): void {
+    this.toast.info('helpClicked fired');
+  }
+}

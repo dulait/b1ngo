@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   ViewEncapsulation,
   input,
+  output,
   computed,
   signal,
   inject,
@@ -10,13 +11,15 @@ import {
 import { BngStatusBadgeComponent } from '../status-badge/status-badge.component';
 import { BngBottomSheetComponent } from '../bottom-sheet/bottom-sheet.component';
 import { BngThemePickerComponent } from '../theme-picker/theme-picker.component';
+import { BngIconComponent } from '../../icons/icon.component';
+import { bngIconHelpCircle } from '../../icons/icons';
 import { ThemeService } from '../../services/theme.service';
 import { SessionDto, ThemeName } from '../../types';
 
 @Component({
   selector: 'bng-header',
   standalone: true,
-  imports: [BngStatusBadgeComponent, BngBottomSheetComponent, BngThemePickerComponent],
+  imports: [BngStatusBadgeComponent, BngBottomSheetComponent, BngThemePickerComponent, BngIconComponent],
   template: `
     <header
       role="banner"
@@ -26,7 +29,15 @@ import { SessionDto, ThemeName } from '../../types';
     >
       <span class="font-mono font-bold text-lg text-accent" data-testid="app-logo">B1NGO</span>
 
-      <div class="flex items-center gap-2.5">
+      <div class="flex items-center gap-3">
+        <button
+          type="button"
+          class="text-text-secondary hover:text-text-primary transition-colors"
+          aria-label="How to play"
+          (click)="helpClicked.emit()"
+        >
+          <bng-icon [icon]="helpCircleIcon" size="lg" />
+        </button>
         <button
           type="button"
           role="button"
@@ -69,6 +80,9 @@ export class BngHeaderComponent {
   roomStatus = input<'Lobby' | 'Active' | 'Completed' | null>(null);
   session = input<SessionDto | null>(null);
 
+  helpClicked = output<void>();
+
+  protected readonly helpCircleIcon = bngIconHelpCircle;
   protected readonly themeService = inject(ThemeService);
   protected themeSheetOpen = signal(false);
 
