@@ -1,3 +1,10 @@
+## [0.2.2](https://github.com/dulait/b1ngo/compare/v0.2.1...v0.2.2) (2026-03-22)
+
+
+### Bug Fixes
+
+* **toast:** clear all toasts on navigation ([9f34425](https://github.com/dulait/b1ngo/commit/9f34425c535d863c9e4052e72ed651d6d95dfbb5))
+
 ## [0.2.1](https://github.com/dulait/b1ngo/compare/v0.2.0...v0.2.1) (2026-03-22)
 
 
