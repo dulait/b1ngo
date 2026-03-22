@@ -1,7 +1,9 @@
-<bng-header />
+<bng-header (helpClicked)="openTutorial()" />
 
 <main class="flex flex-col p-4 space-y-4 max-w-md mx-auto">
   <create-room-form (success)="onRoomCreated($event)" />
 
   <join-room-form (success)="onRoomJoined($event)" />
 </main>
+
+<app-tutorial [open]="tutorialOpen()" (closed)="closeTutorial()" />
