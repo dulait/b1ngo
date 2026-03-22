@@ -1,2 +1,35 @@
+<bng-header [version]="version" copyright="B1NGO">
+  <bng-menu-item
+    [icon]="helpIcon"
+    label="How to play"
+    (clicked)="openTutorial()"
+  />
+  <bng-menu-item
+    label="Theme"
+    (clicked)="themeSheetOpen.set(true)"
+  >
+    <span
+      menuItemIcon
+      class="w-5 h-5 rounded-full"
+      [style.backgroundColor]="themeService.accentColor()"
+    ></span>
+  </bng-menu-item>
+</bng-header>
+
 <router-outlet />
+
+<bng-bottom-sheet
+  title="Theme"
+  [open]="themeSheetOpen()"
+  (closed)="themeSheetOpen.set(false)"
+>
+  <div class="flex justify-center py-2">
+    <bng-theme-picker
+      [currentTheme]="themeService.currentTheme()"
+      (themeChange)="onThemeChange($event)"
+    />
+  </div>
+</bng-bottom-sheet>
+
+<app-tutorial [open]="tutorialOpen()" (closed)="closeTutorial()" />
 <bng-toast-container />
