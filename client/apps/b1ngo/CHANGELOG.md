@@ -1,3 +1,10 @@
+## [0.2.1](https://github.com/dulait/b1ngo/compare/v0.2.0...v0.2.1) (2026-03-22)
+
+
+### Bug Fixes
+
+* **bng-ui:** prevent text selection on square long press ([4a0e8fc](https://github.com/dulait/b1ngo/commit/4a0e8fcf6c92c48e5b747b494f4f05f0920068f9))
+
 # [0.2.0](https://github.com/dulait/b1ngo/compare/v0.1.0...v0.2.0) (2026-03-22)
 
 
