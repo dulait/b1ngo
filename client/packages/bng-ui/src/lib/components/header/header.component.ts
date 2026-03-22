@@ -3,23 +3,19 @@ import {
   ChangeDetectionStrategy,
   ViewEncapsulation,
   input,
-  output,
   computed,
   signal,
-  inject,
 } from '@angular/core';
 import { BngStatusBadgeComponent } from '../status-badge/status-badge.component';
-import { BngBottomSheetComponent } from '../bottom-sheet/bottom-sheet.component';
-import { BngThemePickerComponent } from '../theme-picker/theme-picker.component';
-import { BngIconComponent } from '../../icons/icon.component';
-import { bngIconHelpCircle } from '../../icons/icons';
-import { ThemeService } from '../../services/theme.service';
-import { SessionDto, ThemeName } from '../../types';
+import { BngIconButtonComponent } from '../icon-button/icon-button.component';
+import { BngMenuComponent } from '../menu/menu.component';
+import { bngIconKebab } from '../../icons/icons';
+import { SessionDto } from '../../types';
 
 @Component({
   selector: 'bng-header',
   standalone: true,
-  imports: [BngStatusBadgeComponent, BngBottomSheetComponent, BngThemePickerComponent, BngIconComponent],
+  imports: [BngStatusBadgeComponent, BngIconButtonComponent, BngMenuComponent],
   template: `
     <header
       role="banner"
@@ -29,24 +25,21 @@ import { SessionDto, ThemeName } from '../../types';
     >
       <span class="font-mono font-bold text-lg text-accent" data-testid="app-logo">B1NGO</span>
 
-      <div class="flex items-center gap-3">
-        <button
-          type="button"
-          class="text-text-secondary hover:text-text-primary transition-colors"
-          aria-label="How to play"
-          (click)="helpClicked.emit()"
+      <div class="relative">
+        <bng-icon-button
+          [icon]="kebabIcon"
+          ariaLabel="Menu"
+          [attr.aria-haspopup]="true"
+          [attr.aria-expanded]="menuOpen()"
+          (click)="menuOpen.set(!menuOpen())"
+        />
+        <bng-menu
+          [open]="menuOpen()"
+          [footer]="version()"
+          (closed)="menuOpen.set(false)"
         >
-          <bng-icon [icon]="helpCircleIcon" size="lg" />
-        </button>
-        <button
-          type="button"
-          role="button"
-          data-testid="theme-button"
-          class="w-6 h-6 rounded-full cursor-pointer hover:ring-2 hover:ring-white/30 transition-all"
-          [style.backgroundColor]="themeService.accentColor()"
-          aria-label="Change color theme"
-          (click)="themeSheetOpen.set(true)"
-        ></button>
+          <ng-content />
+        </bng-menu>
       </div>
     </header>
 
@@ -58,19 +51,6 @@ import { SessionDto, ThemeName } from '../../types';
         <bng-status-badge [status]="roomStatus()!" />
       </div>
     }
-
-    <bng-bottom-sheet
-      title="Theme"
-      [open]="themeSheetOpen()"
-      (closed)="themeSheetOpen.set(false)"
-    >
-      <div class="flex justify-center py-2">
-        <bng-theme-picker
-          [currentTheme]="themeService.currentTheme()"
-          (themeChange)="onThemeChange($event)"
-        />
-      </div>
-    </bng-bottom-sheet>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
@@ -79,12 +59,10 @@ export class BngHeaderComponent {
   joinCode = input<string | null>(null);
   roomStatus = input<'Lobby' | 'Active' | 'Completed' | null>(null);
   session = input<SessionDto | null>(null);
+  version = input<string | null>(null);
 
-  helpClicked = output<void>();
-
-  protected readonly helpCircleIcon = bngIconHelpCircle;
-  protected readonly themeService = inject(ThemeService);
-  protected themeSheetOpen = signal(false);
+  protected readonly kebabIcon = bngIconKebab;
+  protected menuOpen = signal(false);
 
   protected ariaLabel = computed(() => {
     const parts: string[] = [];
@@ -100,9 +78,4 @@ export class BngHeaderComponent {
     }
     return parts.join(', ');
   });
-
-  protected onThemeChange(theme: ThemeName): void {
-    this.themeService.setTheme(theme);
-    setTimeout(() => this.themeSheetOpen.set(false), 150);
-  }
 }
