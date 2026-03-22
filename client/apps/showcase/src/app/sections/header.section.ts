@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/cor
 import {
   BngHeaderComponent,
   BngMenuItemComponent,
+  BngStatusBadgeComponent,
   BngBottomSheetComponent,
   BngThemePickerComponent,
   BngCardComponent,
@@ -17,6 +18,7 @@ import type { ThemeName } from 'bng-ui';
   imports: [
     BngHeaderComponent,
     BngMenuItemComponent,
+    BngStatusBadgeComponent,
     BngBottomSheetComponent,
     BngThemePickerComponent,
     BngCardComponent,
@@ -25,17 +27,12 @@ import type { ThemeName } from 'bng-ui';
   template: `
     <h2 class="text-[1.5rem] font-bold text-text-primary mb-2">Header</h2>
     <p class="text-sm text-text-secondary mb-6">
-      App header with kebab menu, room status, and session info across Lobby, Active, and Completed states.
+      App header with kebab menu. Consumer projects a sub-bar for contextual info.
     </p>
 
     <div class="space-y-6">
-      <bng-card header="Active">
-        <bng-header
-          joinCode="X4K9M2"
-          roomStatus="Active"
-          [session]="{ grandPrixShort: 'BHR', sessionType: 'Race' }"
-          version="v0.1.0" copyright="B1NGO"
-        >
+      <bng-card header="With Sub-bar (Active)">
+        <bng-header version="v0.1.0" copyright="B1NGO">
           <bng-menu-item
             [icon]="helpIcon"
             label="How to play"
@@ -51,16 +48,15 @@ import type { ThemeName } from 'bng-ui';
               [style.backgroundColor]="themeService.accentColor()"
             ></span>
           </bng-menu-item>
+          <div headerSubbar class="flex items-center justify-between px-4 py-2 bg-bg-base border-b border-border-default">
+            <span class="text-sm text-text-secondary">BHR / Race</span>
+            <bng-status-badge status="Active" />
+          </div>
         </bng-header>
       </bng-card>
 
-      <bng-card header="Lobby">
-        <bng-header
-          joinCode="X4K9M2"
-          roomStatus="Lobby"
-          [session]="{ grandPrixShort: 'JPN', sessionType: 'Qualifying' }"
-          version="v0.1.0" copyright="B1NGO"
-        >
+      <bng-card header="With Sub-bar (Lobby)">
+        <bng-header version="v0.1.0" copyright="B1NGO">
           <bng-menu-item
             [icon]="helpIcon"
             label="How to play"
@@ -76,16 +72,15 @@ import type { ThemeName } from 'bng-ui';
               [style.backgroundColor]="themeService.accentColor()"
             ></span>
           </bng-menu-item>
+          <div headerSubbar class="flex items-center justify-between px-4 py-2 bg-bg-base border-b border-border-default">
+            <span class="text-sm text-text-secondary">JPN / Qualifying</span>
+            <bng-status-badge status="Lobby" />
+          </div>
         </bng-header>
       </bng-card>
 
-      <bng-card header="Completed">
-        <bng-header
-          joinCode="X4K9M2"
-          roomStatus="Completed"
-          [session]="{ grandPrixShort: 'MON', sessionType: 'Sprint' }"
-          version="v0.1.0" copyright="B1NGO"
-        >
+      <bng-card header="No Sub-bar (Home)">
+        <bng-header version="v0.1.0" copyright="B1NGO">
           <bng-menu-item
             [icon]="helpIcon"
             label="How to play"
