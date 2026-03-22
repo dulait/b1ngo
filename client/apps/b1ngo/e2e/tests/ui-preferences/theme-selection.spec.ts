@@ -3,6 +3,14 @@ import { GamePage } from '../../pages/game.page';
 import { navigateToRoom } from '../../fixtures/base.fixture';
 import { setupActiveGame } from '../../helpers/room.helper';
 
+async function openThemePicker(page: import('@playwright/test').Page) {
+  await page.getByRole('button', { name: 'Menu' }).click();
+  await page.getByText('Theme').click();
+  const themeSheet = page.getByRole('dialog', { name: /theme/i });
+  await expect(themeSheet).toBeVisible();
+  return themeSheet;
+}
+
 test.describe('BNG-016: Theme Selection', () => {
   test('AC-1: default theme uses system preference', async ({ page }) => {
     await page.goto('/');
@@ -14,10 +22,7 @@ test.describe('BNG-016: Theme Selection', () => {
   test('AC-2: selecting a theme applies it immediately and persists', async ({ page }) => {
     await page.goto('/');
 
-    await page.getByTestId('theme-button').click();
-
-    const themeSheet = page.getByRole('dialog', { name: /theme/i });
-    await expect(themeSheet).toBeVisible();
+    const themeSheet = await openThemePicker(page);
 
     const themeOptions = themeSheet.locator('[data-testid^="theme-option-"]');
     await expect(themeOptions.first()).toBeVisible();
@@ -34,9 +39,7 @@ test.describe('BNG-016: Theme Selection', () => {
   test('AC-3: theme is restored on page reload', async ({ page }) => {
     await page.goto('/');
 
-    await page.getByTestId('theme-button').click();
-    const themeSheet = page.getByRole('dialog', { name: /theme/i });
-    await expect(themeSheet).toBeVisible();
+    const themeSheet = await openThemePicker(page);
 
     const themeOptions = themeSheet.locator('[data-testid^="theme-option-"]');
     await expect(themeOptions.first()).toBeVisible();
@@ -60,9 +63,7 @@ test.describe('BNG-016: Theme Selection', () => {
     await game.markSquare(0, 0);
     await game.expectSquareMarked(0, 0);
 
-    await page.getByTestId('theme-button').click();
-    const themeSheet = page.getByRole('dialog', { name: /theme/i });
-    await expect(themeSheet).toBeVisible();
+    const themeSheet = await openThemePicker(page);
     const themeOptions = themeSheet.locator('[data-testid^="theme-option-"]');
     await expect(themeOptions.first()).toBeVisible();
     await themeOptions.nth(1).click();

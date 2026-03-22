@@ -8,6 +8,12 @@ export interface BaseFixtures {
 }
 
 export const test = base.extend<BaseFixtures>({
+  page: async ({ page }, use) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('bng-tutorial-completed', 'true');
+    });
+    await use(page);
+  },
   api: async ({ playwright }, use) => {
     const requestContext = await playwright.request.newContext({
       ignoreHTTPSErrors: true,
@@ -18,6 +24,12 @@ export const test = base.extend<BaseFixtures>({
   },
 });
 
+export async function dismissTutorial(page: Page) {
+  await page.addInitScript(() => {
+    localStorage.setItem('bng-tutorial-completed', 'true');
+  });
+}
+
 export async function navigateToRoom(
   page: Page,
   context: BrowserContext,
@@ -25,6 +37,7 @@ export async function navigateToRoom(
   playerId: string,
   playerToken: string,
 ) {
+  await dismissTutorial(page);
   await context.addCookies([
     {
       name: 'PlayerToken',

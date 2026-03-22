@@ -1,6 +1,7 @@
 import { test, expect } from '../../fixtures/base.fixture';
 import { HomePage } from '../../pages/home.page';
 import { LobbyPage } from '../../pages/lobby.page';
+import { GamePage } from '../../pages/game.page';
 import { navigateToRoom } from '../../fixtures/base.fixture';
 import { setupActiveGame, setupLobbyRoom } from '../../helpers/room.helper';
 
@@ -108,9 +109,12 @@ test.describe('BNG-014: Session Lifecycle', () => {
     const room = await setupActiveGame(api, { matrixSize: 3 });
     await navigateToRoom(page, context, room.roomId, room.host.playerId, room.host.playerToken);
 
+    const game = new GamePage(page);
+    await game.expectVisible();
+
     await api.endGame(room.roomId, room.host.playerToken);
 
-    await page.getByTestId('results-game-over').waitFor({ state: 'visible' });
+    await page.getByTestId('results-game-over').waitFor({ state: 'visible', timeout: 10_000 });
 
     const session = await page.evaluate(() => localStorage.getItem('bng-session'));
     expect(session).not.toBeNull();
