@@ -20,7 +20,7 @@ public sealed record Error(ErrorType Type, string Code, string Message)
     public static Error ValidationMultiple(IReadOnlyList<string> details) =>
         new(ErrorType.Validation, "validation_error", "One or more validation errors occurred.") { Details = details };
 
-    public static Error NotFound(string entity, object id) =>
+    public static Error NotFound(string entity, object _) =>
         new(ErrorType.NotFound, $"{entity}_not_found", $"The requested {entity} was not found.");
 
     public static Error Conflict(string code, string message) => new(ErrorType.Conflict, code, message);

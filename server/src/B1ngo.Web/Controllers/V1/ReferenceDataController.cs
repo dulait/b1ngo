@@ -1,7 +1,6 @@
 using Asp.Versioning;
 using B1ngo.Application.Common.Cqrs;
 using B1ngo.Application.Features.ReferenceData;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace B1ngo.Web.Controllers.V1;

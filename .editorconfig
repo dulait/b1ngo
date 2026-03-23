@@ -17,6 +17,23 @@ csharp_new_line_before_else = true
 csharp_new_line_before_catch = true
 csharp_new_line_before_finally = true
 
+# IDE analyzers
+dotnet_diagnostic.IDE0005.severity = error          # Unused usings
+dotnet_diagnostic.IDE0051.severity = suggestion     # Unused private members (false positives with C# 13 extension members)
+dotnet_diagnostic.IDE0052.severity = warning        # Unread private members
+dotnet_diagnostic.IDE0060.severity = suggestion     # Unused parameters (route params in controllers are false positives)
+
+# CA analyzers
+dotnet_diagnostic.CA1848.severity = suggestion      # Use LoggerMessage delegates for perf (aspirational, not blocking)
+dotnet_diagnostic.CA1873.severity = suggestion      # Avoid expensive log argument evaluation (aspirational, not blocking)
+dotnet_diagnostic.CA1000.severity = none            # Allow static members on generic types (EntityId<T> factory pattern)
+dotnet_diagnostic.CA1716.severity = none            # Allow type names matching reserved keywords in other languages
+dotnet_diagnostic.CA1859.severity = none            # Allow interface return types on private methods for encapsulation
+dotnet_diagnostic.CA1051.severity = none            # Allow protected fields in base classes (primary constructor pattern)
+dotnet_diagnostic.CA1062.severity = none            # Suppress null-check on public params (nullable ref types cover this)
+dotnet_diagnostic.CA1711.severity = none            # Allow "EventHandler" suffix for DDD domain event handlers
+dotnet_diagnostic.CA2007.severity = none            # Suppress ConfigureAwait (ASP.NET handles sync context)
+
 [*.{ts,js}]
 indent_size = 2
 quote_type = single

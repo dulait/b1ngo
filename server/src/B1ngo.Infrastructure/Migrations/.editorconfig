@@ -1,0 +1,3 @@
+[*.cs]
+# Migrations are auto-generated; suppress all style enforcement
+generated_code = true

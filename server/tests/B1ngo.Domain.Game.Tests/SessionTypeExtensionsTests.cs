@@ -1,5 +1,3 @@
-using B1ngo.Domain.Game;
-
 namespace B1ngo.Domain.Game.Tests;
 
 public class SessionTypeExtensionsTests

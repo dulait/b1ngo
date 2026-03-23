@@ -4,7 +4,7 @@ namespace B1ngo.DataSync.Translation;
 
 internal sealed class JolpicaTranslator
 {
-    public IReadOnlyList<GrandPrixSeedEntry> Translate(IReadOnlyList<JolpicaRace> races)
+    public static IReadOnlyList<GrandPrixSeedEntry> Translate(IReadOnlyList<JolpicaRace> races)
     {
         return races.Select(TranslateRace).ToList();
     }
@@ -12,8 +12,8 @@ internal sealed class JolpicaTranslator
     private static GrandPrixSeedEntry TranslateRace(JolpicaRace race) =>
         new(
             Name: race.RaceName,
-            Season: int.Parse(race.Season),
-            Round: int.Parse(race.Round),
+            Season: int.Parse(race.Season, System.Globalization.CultureInfo.InvariantCulture),
+            Round: int.Parse(race.Round, System.Globalization.CultureInfo.InvariantCulture),
             IsSprint: race.Sprint is not null,
             SessionTypes: DeriveSessionTypes(race)
         );

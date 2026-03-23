@@ -1,5 +1,4 @@
 using B1ngo.Domain.Core;
-using B1ngo.Domain.Game;
 using B1ngo.Domain.Game.Tests.Helpers;
 
 namespace B1ngo.Domain.Game.Tests;

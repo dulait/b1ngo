@@ -1,4 +1,3 @@
-using System.Threading.RateLimiting;
 using Asp.Versioning;
 using B1ngo.Application.Common.Cqrs;
 using B1ngo.Application.Features.Rooms.CreateRoom;
@@ -11,7 +10,6 @@ using B1ngo.Application.Features.Rooms.Reconnect;
 using B1ngo.Application.Features.Rooms.StartGame;
 using B1ngo.Application.Features.Rooms.UnmarkSquare;
 using B1ngo.Web.Filters;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 

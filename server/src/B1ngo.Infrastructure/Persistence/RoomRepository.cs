@@ -1,5 +1,4 @@
 using B1ngo.Domain.Game;
-using B1ngo.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace B1ngo.Infrastructure.Persistence;

@@ -47,7 +47,7 @@ for (var year = startYear; year <= endYear; year++)
             continue;
         }
 
-        var entries = translator.Translate(races);
+        var entries = JolpicaTranslator.Translate(races);
         allEntries.AddRange(entries);
         Console.WriteLine($"{entries.Count} races.");
     }

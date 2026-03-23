@@ -1,0 +1,7 @@
+[*.{cs,vb}]
+dotnet_diagnostic.CA1707.severity = none            # Allow underscores in test method names (Method_Condition_Result convention)
+dotnet_diagnostic.CA1822.severity = none            # Test fakes implement interfaces but don't use instance data
+dotnet_diagnostic.CA1861.severity = none            # Inline array arguments are fine in tests (not perf-critical)
+dotnet_diagnostic.IDE0060.severity = none           # Test fakes may have unused parameters from interface contracts
+dotnet_diagnostic.CA1852.severity = none            # Test DTOs don't need to be sealed
+dotnet_diagnostic.CA1869.severity = none            # JsonSerializerOptions caching not needed in tests
