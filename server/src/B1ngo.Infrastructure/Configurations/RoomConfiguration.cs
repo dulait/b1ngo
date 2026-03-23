@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace B1ngo.Infrastructure.Configurations;
 
-internal sealed class RoomEntityConfiguration : IEntityTypeConfiguration<Room>
+internal sealed class RoomConfiguration : IEntityTypeConfiguration<Room>
 {
     public void Configure(EntityTypeBuilder<Room> builder)
     {
