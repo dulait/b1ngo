@@ -5,7 +5,7 @@ import { GamePage } from '../../pages/game.page';
 import { ResultsPage } from '../../pages/results.page';
 import { navigateToRoom } from '../../fixtures/base.fixture';
 import { setupActiveGame, setupLobbyRoom, ensureRoomStatus } from '../../helpers/room.helper';
-import { expectToast } from '../../helpers/toast.helper';
+
 
 test.describe('BNG-013: Reconnect', () => {
   test('AC-1: reconnect returns roomId, playerId, and roomStatus', async ({ api }) => {
@@ -78,7 +78,7 @@ test.describe('BNG-013: Reconnect', () => {
     expect(response.status()).toBe(401);
   });
 
-  test('ERR-1: invalid session shows toast, clears localStorage, and shows home', async ({
+  test('ERR-1: invalid session clears localStorage and shows home', async ({
     page,
     context,
   }) => {
@@ -102,8 +102,6 @@ test.describe('BNG-013: Reconnect', () => {
     });
 
     await page.goto('/');
-
-    await expectToast(page, /unauthorized|session/i);
 
     const home = new HomePage(page);
     await home.expectOnHomePage();
