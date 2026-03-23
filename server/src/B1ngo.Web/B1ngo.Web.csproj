@@ -9,7 +9,10 @@
   </PropertyGroup>
 
   <Target Name="EnsureDevDatabase" BeforeTargets="Build" Condition="'$(CI)' == ''">
-    <Exec Command="docker compose -f &quot;$(MSBuildThisFileDirectory)..\..\docker-compose.yml&quot; up -d db" ContinueOnError="true" />
+    <Exec
+      Command="docker compose -f &quot;$(MSBuildThisFileDirectory)..\..\docker-compose.yml&quot; up -d db"
+      ContinueOnError="true"
+    />
   </Target>
 
   <ItemGroup>
