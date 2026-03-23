@@ -32,7 +32,7 @@ public sealed class DomainEventDispatcher(IServiceProvider serviceProvider, ILog
                 }
                 catch (Exception ex)
                 {
-                    logger.LogWarning(
+                    logger.LogError(
                         ex,
                         "Failed to handle {EventType} in {HandlerType}",
                         domainEvent.GetType().Name,
