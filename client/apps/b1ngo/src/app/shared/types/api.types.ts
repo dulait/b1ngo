@@ -140,12 +140,14 @@ export interface SquareMarkedEvent {
   column: number;
   markedBy: MarkedBySource;
   markedAt: string;
+  correlationId?: string;
 }
 
 export interface SquareUnmarkedEvent {
   playerId: string;
   row: number;
   column: number;
+  correlationId?: string;
 }
 
 export interface BingoAchievedEvent {

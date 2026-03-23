@@ -1,21 +1,31 @@
+using B1ngo.Application.Features.Rooms.GetRoomState;
+
 namespace B1ngo.Web.Hubs;
 
-public sealed record PlayerJoinedHubEvent(Guid PlayerId, string DisplayName);
+public abstract record HubEvent
+{
+    public Guid? CorrelationId { get; init; }
 
-public sealed record GameStartedHubEvent(Guid RoomId);
+    public HubEvent WithCorrelationId(Guid? correlationId) => this with { CorrelationId = correlationId };
+}
 
-public sealed record SquareMarkedHubEvent(Guid PlayerId, int Row, int Column, string MarkedBy, DateTimeOffset MarkedAt);
+public sealed record PlayerJoinedHubEvent(Guid PlayerId, string DisplayName) : HubEvent;
 
-public sealed record SquareUnmarkedHubEvent(Guid PlayerId, int Row, int Column);
+public sealed record GameStartedHubEvent(Guid RoomId) : HubEvent;
+
+public sealed record SquareMarkedHubEvent(Guid PlayerId, int Row, int Column, string MarkedBy, DateTimeOffset MarkedAt)
+    : HubEvent;
+
+public sealed record SquareUnmarkedHubEvent(Guid PlayerId, int Row, int Column) : HubEvent;
 
 public sealed record BingoAchievedHubEvent(
     Guid PlayerId,
     string Pattern,
-    IReadOnlyList<Application.Features.Rooms.GetRoomState.SquarePositionDto> WinningSquares,
+    IReadOnlyList<SquarePositionDto> WinningSquares,
     int Rank,
     DateTimeOffset CompletedAt
-);
+) : HubEvent;
 
-public sealed record BingoRevokedHubEvent(Guid PlayerId);
+public sealed record BingoRevokedHubEvent(Guid PlayerId) : HubEvent;
 
-public sealed record GameCompletedHubEvent(Guid RoomId);
+public sealed record GameCompletedHubEvent(Guid RoomId) : HubEvent;

@@ -46,18 +46,20 @@ export class Game {
 
   async onSquareMark(event: { row: number; column: number }): Promise<void> {
     const playerId = this.store.currentPlayerId();
+    const correlationId = crypto.randomUUID();
 
     this.store.updateSquare(playerId, event.row, event.column, {
       isMarked: true,
       markedBy: 'Player',
     });
-    this.store.recordMarkTimestamp(event.row, event.column);
+    this.store.addPendingCorrelation(correlationId);
 
     const result = await safeAsync(
-      this.roomApi.markSquare(this.store.roomId(), playerId, event.row, event.column),
+      this.roomApi.markSquare(this.store.roomId(), playerId, event.row, event.column, correlationId),
     );
 
     if (!result.ok) {
+      this.store.removePendingCorrelation(correlationId);
       this.store.updateSquare(playerId, event.row, event.column, {
         isMarked: false,
         markedBy: null,
@@ -67,18 +69,20 @@ export class Game {
 
   async onSquareUnmark(event: { row: number; column: number }): Promise<void> {
     const playerId = this.store.currentPlayerId();
+    const correlationId = crypto.randomUUID();
 
     this.store.updateSquare(playerId, event.row, event.column, {
       isMarked: false,
       markedBy: null,
     });
-    this.store.recordMarkTimestamp(event.row, event.column);
+    this.store.addPendingCorrelation(correlationId);
 
     const result = await safeAsync(
-      this.roomApi.unmarkSquare(this.store.roomId(), playerId, event.row, event.column),
+      this.roomApi.unmarkSquare(this.store.roomId(), playerId, event.row, event.column, correlationId),
     );
 
     if (!result.ok) {
+      this.store.removePendingCorrelation(correlationId);
       this.store.updateSquare(playerId, event.row, event.column, {
         isMarked: true,
         markedBy: 'Player',

@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using Asp.Versioning;
+using B1ngo.Application.Common;
 using B1ngo.Application.Common.Ports;
 using B1ngo.Application.Features;
 using B1ngo.Domain.Core;
@@ -23,6 +24,7 @@ internal static class ServiceCollectionExtensions
             services.AddApplication().AddInfrastructure(configuration);
 
             services.AddHttpContextAccessor();
+            services.AddScoped<CorrelationContext>();
             services.AddScoped<ICurrentUserProvider, CurrentUserProvider>();
 
             services.Configure<RouteOptions>(options => options.LowercaseUrls = true);

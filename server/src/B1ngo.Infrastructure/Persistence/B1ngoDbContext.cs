@@ -1,3 +1,4 @@
+using B1ngo.Application.Common;
 using B1ngo.Application.Common.Ports;
 using B1ngo.Domain.Core;
 using B1ngo.Domain.Game;
@@ -42,6 +43,8 @@ public sealed class B1ngoDbContext(
 
     private List<IDomainEvent> CollectDomainEvents()
     {
+        var correlationId = serviceProvider.GetService<CorrelationContext>()?.CorrelationId;
+
         var domainEvents = ChangeTracker
             .Entries<IHasDomainEvents>()
             .SelectMany(entry =>
@@ -51,6 +54,14 @@ public sealed class B1ngoDbContext(
                 return events;
             })
             .ToList();
+
+        if (correlationId.HasValue)
+        {
+            foreach (var domainEvent in domainEvents)
+            {
+                domainEvent.CorrelationId = correlationId.Value;
+            }
+        }
 
         return domainEvents;
     }

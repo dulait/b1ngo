@@ -135,26 +135,21 @@ export class RoomStore {
   }
 
   // --- Deduplication for optimistic updates ---
-  private readonly markTimestamps = new Map<string, number>();
-  private readonly DEDUP_WINDOW_MS = 2000;
+  private readonly pendingCorrelations = new Set<string>();
 
-  recordMarkTimestamp(row: number, col: number): void {
-    this.markTimestamps.set(`${row}:${col}`, Date.now());
+  addPendingCorrelation(id: string): void {
+    this.pendingCorrelations.add(id);
   }
 
-  isRecentOptimisticUpdate(row: number, col: number): boolean {
-    const key = `${row}:${col}`;
-    const timestamp = this.markTimestamps.get(key);
+  removePendingCorrelation(id: string): void {
+    this.pendingCorrelations.delete(id);
+  }
 
-    if (!timestamp) {
+  isPendingCorrelation(id: string | undefined): boolean {
+    if (!id) {
       return false;
     }
 
-    if (Date.now() - timestamp < this.DEDUP_WINDOW_MS) {
-      return true;
-    }
-
-    this.markTimestamps.delete(key);
-    return false;
+    return this.pendingCorrelations.delete(id);
   }
 }
