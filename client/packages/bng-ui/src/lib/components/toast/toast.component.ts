@@ -11,7 +11,6 @@ import { ToastService } from '../../services/toast.service';
 import { ToastVariant } from '../../types';
 
 const SWIPE_DISMISS_THRESHOLD_PX = 80;
-const BORDER_WIDTH_PX = 3;
 const SWIPE_OPACITY_DIVISOR = 200;
 
 @Component({
@@ -20,7 +19,7 @@ const SWIPE_OPACITY_DIVISOR = 200;
   imports: [BngIconComponent],
   template: `
     <div
-      class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 w-full max-w-sm px-4"
+      class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2.5 w-full max-w-sm px-4"
       style="top: calc(16px + env(safe-area-inset-top, 0px))"
     >
       @for (toast of toastService.toasts(); track toast.id) {
@@ -29,8 +28,7 @@ const SWIPE_OPACITY_DIVISOR = 200;
           [attr.aria-live]="
             toast.variant === 'warning' || toast.variant === 'error' ? 'assertive' : 'polite'
           "
-          class="bg-bg-surface-elevated rounded-lg shadow-lg px-4 py-3 flex items-center gap-3 touch-pan-y"
-          [style.borderLeft]="getBorderStyle(toast.variant)"
+          class="bg-bg-surface-elevated rounded-md shadow-[0_4px_16px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col touch-pan-y"
           [style.animation]="
             toast.dismissing
               ? 'toast-exit 200ms cubic-bezier(0.21, 1.02, 0.73, 1) forwards'
@@ -41,19 +39,34 @@ const SWIPE_OPACITY_DIVISOR = 200;
           (pointerup)="onSwipeEnd(toast.id)"
           (pointercancel)="onSwipeReset($event)"
         >
-          <bng-icon
-            [icon]="getIcon(toast.variant)"
-            size="md"
-            [style.color]="getColor(toast.variant)"
-          />
-          <span class="text-sm text-text-primary flex-1">{{ toast.message }}</span>
-          <button
-            class="text-text-secondary hover:text-text-primary shrink-0 p-1"
-            aria-label="Dismiss notification"
-            (click)="toastService.dismiss(toast.id)"
-          >
-            <bng-icon [icon]="xIcon" size="md" />
-          </button>
+          <div class="flex">
+            <div class="w-1.5 shrink-0" [style]="getFlagStyle(toast.variant)"></div>
+
+            <div class="flex-1 flex items-center gap-2.5 px-3 py-2.5">
+              <bng-icon
+                [icon]="getIcon(toast.variant)"
+                size="md"
+                class="shrink-0"
+                [style.color]="getColor(toast.variant)"
+              />
+              <span class="text-[13px] font-medium text-text-primary flex-1 leading-tight">{{ toast.message }}</span>
+              <button
+                class="text-text-disabled hover:text-text-secondary shrink-0 p-0.5"
+                aria-label="Dismiss notification"
+                (click)="toastService.dismiss(toast.id)"
+              >
+                <bng-icon [icon]="xIcon" size="md" />
+              </button>
+            </div>
+          </div>
+
+          @if (toast.duration > 0) {
+            <div
+              class="h-[2px] origin-left"
+              [style.backgroundColor]="getColor(toast.variant)"
+              [style.animation]="'toast-countdown ' + toast.duration + 'ms linear forwards'"
+            ></div>
+          }
         </div>
       }
     </div>
@@ -91,8 +104,15 @@ export class BngToastContainerComponent {
     return this.colors[variant];
   }
 
-  protected getBorderStyle(variant: ToastVariant): string {
-    return `${BORDER_WIDTH_PX}px solid ${this.colors[variant]}`;
+  private readonly flagStyles: Record<ToastVariant, string> = {
+    info: 'background: repeating-conic-gradient(var(--bng-info) 0% 25%, transparent 0% 50%) 0 0 / 6px 6px',
+    success: 'background-color: var(--bng-success)',
+    warning: 'background-color: var(--bng-warning)',
+    error: 'background-color: var(--bng-error)',
+  };
+
+  protected getFlagStyle(variant: ToastVariant): string {
+    return this.flagStyles[variant];
   }
 
   protected onSwipeStart(event: PointerEvent): void {

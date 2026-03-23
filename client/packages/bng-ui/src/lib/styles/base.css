@@ -38,6 +38,11 @@ html {
   }
 }
 
+@keyframes toast-countdown {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+
 @keyframes popover-open {
   from { opacity: 0; transform: scale(0.9); }
   to { opacity: 1; transform: scale(1); }
@@ -145,6 +150,10 @@ html {
 
 .bng-scrollbar::-webkit-scrollbar-thumb:hover {
   background: var(--bng-bg-surface-hover);
+}
+
+[role="alert"]:hover .origin-left {
+  animation-play-state: paused;
 }
 
 @media (prefers-reduced-motion: reduce) {
