@@ -1,5 +1,4 @@
 using B1ngo.Infrastructure.Persistence;
-using B1ngo.Infrastructure.ReferenceData;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,30 +40,7 @@ public sealed class B1ngoApiFactory : WebApplicationFactory<Program>, IAsyncLife
 
         using var scope = Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<B1ngoDbContext>();
-
-        var hasData = db.GrandPrix.Any();
-        if (!hasData)
-        {
-            db.GrandPrix.AddRange(
-                new GrandPrixEntity
-                {
-                    Name = "Test Grand Prix",
-                    Season = 2026,
-                    Round = 1,
-                    IsSprint = false,
-                    SessionTypes = ["FP1", "FP2", "FP3", "Qualifying", "Race"],
-                },
-                new GrandPrixEntity
-                {
-                    Name = "Test Sprint Grand Prix",
-                    Season = 2026,
-                    Round = 2,
-                    IsSprint = true,
-                    SessionTypes = ["FP1", "SprintQualifying", "Sprint", "Qualifying", "Race"],
-                }
-            );
-            await db.SaveChangesAsync();
-        }
+        await TestDataSeeder.SeedTestReferenceDataAsync(db);
 
         _seeded = true;
     }

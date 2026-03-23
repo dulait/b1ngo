@@ -16,8 +16,8 @@ public sealed class B1ngoDbContext(
 ) : DbContext(options)
 {
     public DbSet<Room> Rooms => Set<Room>();
-    public DbSet<GrandPrixEntity> GrandPrix => Set<GrandPrixEntity>();
-    public DbSet<EventPoolEntryEntity> EventPoolEntries => Set<EventPoolEntryEntity>();
+    internal DbSet<GrandPrixEntity> GrandPrix => Set<GrandPrixEntity>();
+    internal DbSet<EventPoolEntryEntity> EventPoolEntries => Set<EventPoolEntryEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

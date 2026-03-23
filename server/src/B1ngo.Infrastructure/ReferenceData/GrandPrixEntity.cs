@@ -1,6 +1,6 @@
 namespace B1ngo.Infrastructure.ReferenceData;
 
-public sealed class GrandPrixEntity
+internal sealed class GrandPrixEntity
 {
     public int Id { get; set; }
     public string Name { get; set; } = null!;

@@ -1,6 +1,6 @@
 namespace B1ngo.Infrastructure.ReferenceData;
 
-public sealed class EventPoolEntryEntity
+internal sealed class EventPoolEntryEntity
 {
     public int Id { get; set; }
     public string SessionType { get; set; } = null!;
