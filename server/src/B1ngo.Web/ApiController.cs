@@ -56,10 +56,10 @@ public abstract class ApiController : ControllerBase
                     error.Details,
                 }
             ),
-            ErrorType.NotFound => NotFound(new { error.Code, error.Message }),
-            ErrorType.Conflict => Conflict(new { error.Code, error.Message }),
-            ErrorType.Unauthorized => Unauthorized(new { error.Code, error.Message }),
-            ErrorType.Forbidden => StatusCode(403, new { error.Code, error.Message }),
-            _ => StatusCode(500, new { error.Code, error.Message }),
+            ErrorType.NotFound => NotFound(new ErrorResponse(error.Code, error.Message)),
+            ErrorType.Conflict => Conflict(new ErrorResponse(error.Code, error.Message)),
+            ErrorType.Unauthorized => Unauthorized(new ErrorResponse(error.Code, error.Message)),
+            ErrorType.Forbidden => StatusCode(403, new ErrorResponse(error.Code, error.Message)),
+            _ => StatusCode(500, new ErrorResponse(error.Code, error.Message)),
         };
 }
