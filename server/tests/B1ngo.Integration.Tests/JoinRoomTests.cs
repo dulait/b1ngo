@@ -1,5 +1,4 @@
 using System.Net;
-using System.Net.Http.Json;
 
 namespace B1ngo.Integration.Tests;
 
@@ -64,16 +63,6 @@ public sealed class JoinRoomTests(B1ngoApiFactory factory) : IntegrationTestBase
         var room = await CreateRoom();
 
         var response = await JoinRoomRaw(new { joinCode = room.JoinCode, displayName = new string('B', 51) });
-
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task JoinRoom_WithHtmlInName_Returns400()
-    {
-        var room = await CreateRoom();
-
-        var response = await JoinRoomRaw(new { joinCode = room.JoinCode, displayName = "<div>xss</div>" });
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }

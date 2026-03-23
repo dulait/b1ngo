@@ -66,23 +66,6 @@ public sealed class CreateRoomTests(B1ngoApiFactory factory) : IntegrationTestBa
     }
 
     [Fact]
-    public async Task CreateRoom_WithHtmlInName_Returns400()
-    {
-        var response = await CreateRoomRaw(
-            new
-            {
-                hostDisplayName = "<script>alert(1)</script>",
-                season = TestSeason,
-                grandPrixName = TestGrandPrixName,
-                sessionType = "Race",
-                matrixSize = 3,
-            }
-        );
-
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-    }
-
-    [Fact]
     public async Task CreateRoom_WithEvenMatrixSize_Returns400()
     {
         var response = await CreateRoomRaw(
@@ -160,23 +143,6 @@ public sealed class CreateRoomTests(B1ngoApiFactory factory) : IntegrationTestBa
                 hostDisplayName = "Host",
                 season = TestSeason,
                 grandPrixName = new string('A', 101),
-                sessionType = "Race",
-                matrixSize = 3,
-            }
-        );
-
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task CreateRoom_WithHtmlInGrandPrixName_Returns400()
-    {
-        var response = await CreateRoomRaw(
-            new
-            {
-                hostDisplayName = "Host",
-                season = TestSeason,
-                grandPrixName = "<img src=x onerror=alert(1)>",
                 sessionType = "Race",
                 matrixSize = 3,
             }

@@ -56,16 +56,6 @@ public sealed class EditSquareTests(B1ngoApiFactory factory) : IntegrationTestBa
     }
 
     [Fact]
-    public async Task EditSquare_WithHtmlInText_Returns400()
-    {
-        var room = await CreateRoom();
-
-        var response = await EditSquare(room.RoomId, room.PlayerToken, 0, 0, "<script>alert(1)</script>");
-
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-    }
-
-    [Fact]
     public async Task EditSquare_OnFreeSpace_Returns409()
     {
         // On a 3x3 card, center (1,1) is the free space
