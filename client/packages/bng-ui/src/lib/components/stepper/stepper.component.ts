@@ -22,7 +22,7 @@ type SlideDirection = 'none' | 'left' | 'right';
       [attr.aria-label]="'Step ' + (currentStep() + 1) + ' of ' + totalSteps()"
     >
       <div
-        class="w-full"
+        class="w-full will-change-transform"
         [style.animation]="contentAnimation()"
         (animationend)="onAnimationEnd()"
       >
@@ -95,6 +95,7 @@ export class BngStepperComponent {
 
   protected readonly slideDirection = signal<SlideDirection>('none');
   protected readonly animatingOut = signal(false);
+  private pendingStep: number | null = null;
 
   protected steps = computed(() => Array.from({ length: this.totalSteps() }));
 
@@ -121,7 +122,7 @@ export class BngStepperComponent {
     if (next < this.totalSteps()) {
       this.slideDirection.set('left');
       this.animatingOut.set(true);
-      this.stepChange.emit(next);
+      this.pendingStep = next;
     }
   }
 
@@ -130,7 +131,7 @@ export class BngStepperComponent {
     if (prev >= 0) {
       this.slideDirection.set('right');
       this.animatingOut.set(true);
-      this.stepChange.emit(prev);
+      this.pendingStep = prev;
     }
   }
 
@@ -140,7 +141,7 @@ export class BngStepperComponent {
     }
     this.slideDirection.set(index > this.currentStep() ? 'left' : 'right');
     this.animatingOut.set(true);
-    this.stepChange.emit(index);
+    this.pendingStep = index;
   }
 
   protected onSkip(): void {
@@ -154,7 +155,10 @@ export class BngStepperComponent {
   protected onAnimationEnd(): void {
     if (this.animatingOut()) {
       this.animatingOut.set(false);
-      // The slide-in animation will play because animatingOut changed
+      if (this.pendingStep !== null) {
+        this.stepChange.emit(this.pendingStep);
+        this.pendingStep = null;
+      }
     } else {
       this.slideDirection.set('none');
     }

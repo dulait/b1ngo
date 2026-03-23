@@ -26,7 +26,7 @@ let nextModalId = 0;
     @if (open()) {
       <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
       <div
-        class="fixed inset-0 z-50 bg-black/50"
+        class="fixed inset-0 z-50 bg-black/50 will-change-[backdrop-filter]"
         [class.backdrop-blur-sm]="blurBackdrop()"
         [style.animation]="backdropAnimation()"
         (click)="close()"
