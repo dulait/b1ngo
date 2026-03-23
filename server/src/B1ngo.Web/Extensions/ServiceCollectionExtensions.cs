@@ -57,7 +57,7 @@ internal static class ServiceCollectionExtensions
             return services;
         }
 
-        private void AddCorsPolicy(IConfiguration configuration)
+        private void AddCorsPolicy(IConfiguration configuration, IHostEnvironment environment)
         {
             var allowedOrigins = configuration
                 .GetValue<string>("AllowedOrigins")
@@ -65,8 +65,7 @@ internal static class ServiceCollectionExtensions
 
             if (allowedOrigins is not { Length: > 0 })
             {
-                var env = services.BuildServiceProvider().GetRequiredService<IHostEnvironment>();
-                if (!env.IsDevelopment() && !env.IsStaging() && !env.IsEnvironment("Testing"))
+                if (!environment.IsDevelopment() && !environment.IsStaging() && !environment.IsEnvironment("Testing"))
                 {
                     throw new InvalidOperationException(
                         "AllowedOrigins must be configured in production environments."

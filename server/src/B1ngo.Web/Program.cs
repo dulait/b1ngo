@@ -8,7 +8,7 @@ if (port is not null)
     builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 }
 
-builder.Services.AddWebServices(builder.Configuration);
+builder.Services.AddWebServices(builder.Configuration, builder.Environment);
 
 var app = builder.Build();
 
