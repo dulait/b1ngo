@@ -1,6 +1,6 @@
 using B1ngo.Domain.Game;
 
-namespace B1ngo.Application.Common;
+namespace B1ngo.Application.Common.Ports;
 
 public interface IEventPoolRepository
 {
@@ -9,3 +9,5 @@ public interface IEventPoolRepository
         CancellationToken cancellationToken = default
     );
 }
+
+public sealed record EventPoolEntry(string EventKey, string DisplayText);

@@ -1,6 +1,6 @@
 using System.Threading.RateLimiting;
 using Asp.Versioning;
-using B1ngo.Application.Common;
+using B1ngo.Application.Common.Cqrs;
 using B1ngo.Application.Features.Rooms.CreateRoom;
 using B1ngo.Application.Features.Rooms.EditSquare;
 using B1ngo.Application.Features.Rooms.EndGame;

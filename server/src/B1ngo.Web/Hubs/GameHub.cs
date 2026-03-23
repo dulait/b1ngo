@@ -1,4 +1,4 @@
-using B1ngo.Application.Common;
+using B1ngo.Application.Common.Ports;
 using Microsoft.AspNetCore.SignalR;
 
 namespace B1ngo.Web.Hubs;

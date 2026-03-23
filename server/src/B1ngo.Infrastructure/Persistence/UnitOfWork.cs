@@ -1,4 +1,5 @@
-using B1ngo.Application.Common;
+using B1ngo.Application.Common.Ports;
+using B1ngo.Application.Common.Results;
 using Microsoft.EntityFrameworkCore;
 
 namespace B1ngo.Infrastructure.Persistence;

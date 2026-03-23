@@ -1,4 +1,4 @@
-using B1ngo.Application.Common;
+using B1ngo.Application.Common.Ports;
 using B1ngo.Domain.Core;
 using B1ngo.Domain.Game;
 using B1ngo.Infrastructure.Extensions;

@@ -1,4 +1,4 @@
-using B1ngo.Application.Common;
+using B1ngo.Application.Common.Cqrs;
 using B1ngo.Application.Features.ReferenceData;
 using B1ngo.Application.Features.Rooms.CreateRoom;
 using B1ngo.Application.Features.Rooms.EditSquare;

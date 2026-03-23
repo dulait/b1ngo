@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using Asp.Versioning;
-using B1ngo.Application.Common;
+using B1ngo.Application.Common.Ports;
 using B1ngo.Application.Features;
 using B1ngo.Domain.Core;
 using B1ngo.Domain.Game.Events;
@@ -18,7 +18,7 @@ internal static class ServiceCollectionExtensions
 {
     extension(IServiceCollection services)
     {
-        public IServiceCollection AddWebServices(IConfiguration configuration)
+        public IServiceCollection AddWebServices(IConfiguration configuration, IHostEnvironment environment)
         {
             services.AddApplication().AddInfrastructure(configuration);
 
@@ -45,10 +45,9 @@ internal static class ServiceCollectionExtensions
                 options.AddOperationTransformer<OperationTransformer>();
                 options.AddSchemaTransformer<SchemaTransformer>();
             });
-            services.AddCorsPolicy(configuration);
+            services.AddCorsPolicy(configuration, environment);
 
-            var env = services.BuildServiceProvider().GetRequiredService<IHostEnvironment>();
-            if (env.IsProduction() || env.IsEnvironment("Staging"))
+            if (environment.IsProduction() || environment.IsEnvironment("Staging"))
             {
                 services.AddRateLimiterPolicies();
             }

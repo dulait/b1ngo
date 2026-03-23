@@ -1,4 +1,4 @@
-namespace B1ngo.Application.Common;
+namespace B1ngo.Application.Common.Ports;
 
 public interface ICurrentUserProvider
 {

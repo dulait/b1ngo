@@ -1,4 +1,4 @@
-using B1ngo.Application.Common;
+using B1ngo.Application.Common.Results;
 using B1ngo.Application.Features.Rooms.Reconnect;
 using B1ngo.Application.Tests.Fakes;
 using B1ngo.Domain.Game;

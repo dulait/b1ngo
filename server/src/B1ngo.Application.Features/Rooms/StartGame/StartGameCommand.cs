@@ -1,4 +1,4 @@
-using B1ngo.Application.Common;
+using B1ngo.Application.Common.Cqrs;
 
 namespace B1ngo.Application.Features.Rooms.StartGame;
 
