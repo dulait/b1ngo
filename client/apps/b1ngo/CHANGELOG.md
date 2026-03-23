@@ -1,3 +1,10 @@
+# [0.3.0](https://github.com/dulait/b1ngo/compare/v0.2.4...v0.3.0) (2026-03-23)
+
+
+### Features
+
+* **toast:** add countdown timer & update toast ui ([#14](https://github.com/dulait/b1ngo/issues/14)) ([5e5e88a](https://github.com/dulait/b1ngo/commit/5e5e88aef9ad4c37c4cc4a55a0884437f0e6bd8d))
+
 ## [0.2.4](https://github.com/dulait/b1ngo/compare/v0.2.3...v0.2.4) (2026-03-23)
 
 
