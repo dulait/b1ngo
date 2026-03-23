@@ -20,6 +20,7 @@ internal static class WebApplicationExtensions
                 }
             );
 
+            app.UseMiddleware<CorrelationIdMiddleware>();
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             if (!app.Environment.IsDevelopment())

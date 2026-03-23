@@ -20,7 +20,7 @@ internal sealed class SquareMarkedEventHandler(IHubContext<GameHub> hubContext)
                     domainEvent.Column,
                     domainEvent.MarkedBy.ToString(),
                     domainEvent.MarkedAt
-                ),
+                ).WithCorrelationId(domainEvent.CorrelationId),
                 cancellationToken
             );
     }

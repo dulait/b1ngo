@@ -231,13 +231,29 @@ describe('RoomStore', () => {
   });
 
   describe('deduplication', () => {
-    it('should detect recent optimistic update', () => {
-      store.recordMarkTimestamp(1, 2);
-      expect(store.isRecentOptimisticUpdate(1, 2)).toBe(true);
+    it('should detect pending correlation', () => {
+      store.addPendingCorrelation('abc-123');
+      expect(store.isPendingCorrelation('abc-123')).toBe(true);
     });
 
-    it('should return false for unrecorded coordinates', () => {
-      expect(store.isRecentOptimisticUpdate(5, 5)).toBe(false);
+    it('should remove correlation after detection', () => {
+      store.addPendingCorrelation('abc-123');
+      store.isPendingCorrelation('abc-123');
+      expect(store.isPendingCorrelation('abc-123')).toBe(false);
+    });
+
+    it('should return false for unknown correlation', () => {
+      expect(store.isPendingCorrelation('unknown')).toBe(false);
+    });
+
+    it('should return false for undefined correlation', () => {
+      expect(store.isPendingCorrelation(undefined)).toBe(false);
+    });
+
+    it('should allow explicit removal of pending correlation', () => {
+      store.addPendingCorrelation('abc-123');
+      store.removePendingCorrelation('abc-123');
+      expect(store.isPendingCorrelation('abc-123')).toBe(false);
     });
   });
 });

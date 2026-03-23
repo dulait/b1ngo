@@ -115,7 +115,7 @@ export class Room implements OnInit, OnDestroy {
 
     effect(() => {
       const event = this.signalr.squareMarked();
-      if (event && !this.store.isRecentOptimisticUpdate(event.row, event.column)) {
+      if (event && !this.store.isPendingCorrelation(event.correlationId)) {
         this.store.updateSquare(event.playerId, event.row, event.column, {
           isMarked: true,
           markedBy: event.markedBy,
@@ -126,7 +126,7 @@ export class Room implements OnInit, OnDestroy {
 
     effect(() => {
       const event = this.signalr.squareUnmarked();
-      if (event && !this.store.isRecentOptimisticUpdate(event.row, event.column)) {
+      if (event && !this.store.isPendingCorrelation(event.correlationId)) {
         this.store.updateSquare(event.playerId, event.row, event.column, {
           isMarked: false,
           markedBy: null,
