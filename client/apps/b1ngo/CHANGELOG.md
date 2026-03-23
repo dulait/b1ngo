@@ -1,3 +1,10 @@
+## [0.3.1](https://github.com/dulait/b1ngo/compare/v0.3.0...v0.3.1) (2026-03-23)
+
+
+### Bug Fixes
+
+* modal, stepper & menu component ux ([#15](https://github.com/dulait/b1ngo/issues/15)) ([76f2597](https://github.com/dulait/b1ngo/commit/76f2597e6bcdb10d1a43c97420915d52e7436eb1))
+
 # [0.3.0](https://github.com/dulait/b1ngo/compare/v0.2.4...v0.3.0) (2026-03-23)
 
 
