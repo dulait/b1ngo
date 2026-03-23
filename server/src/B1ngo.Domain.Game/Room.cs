@@ -166,16 +166,32 @@ public class Room : Entity<RoomId>
             return false;
         }
 
-        var stillHasWin = player.Card.CheckForWin(Configuration.WinningPatterns) is not null;
-        if (stillHasWin)
+        var currentWin = player.Card.CheckForWin(Configuration.WinningPatterns);
+        if (currentWin is null)
         {
-            return false;
+            player.RevokeWin();
+            RemoveFromLeaderboard(playerId);
+            RaiseDomainEvent(new BingoRevokedDomainEvent(Id, playerId));
+            return true;
         }
 
-        player.RevokeWin();
-        RemoveFromLeaderboard(playerId);
-        RaiseDomainEvent(new BingoRevokedDomainEvent(Id, playerId));
-        return true;
+        var entry = _leaderboard.Find(e => e.PlayerId == playerId);
+        if (entry is not null && entry.WinningPattern != currentWin.Pattern)
+        {
+            entry.UpdateWinningPattern(currentWin.Pattern, currentWin.Squares);
+            RaiseDomainEvent(
+                new BingoAchievedDomainEvent(
+                    Id,
+                    playerId,
+                    currentWin.Pattern,
+                    currentWin.Squares,
+                    entry.Rank,
+                    entry.CompletedAt
+                )
+            );
+        }
+
+        return false;
     }
 
     public void EditSquare(PlayerId playerId, int row, int column, string newDisplayText)
