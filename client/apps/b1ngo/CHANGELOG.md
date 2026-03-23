@@ -1,3 +1,10 @@
+## [0.2.4](https://github.com/dulait/b1ngo/compare/v0.2.3...v0.2.4) (2026-03-23)
+
+
+### Bug Fixes
+
+* **game:** winning pattern recalculation after player has already won ([#12](https://github.com/dulait/b1ngo/issues/12)) ([e7b3548](https://github.com/dulait/b1ngo/commit/e7b35484e46a7805e58cde1b085e31fedd2aac49))
+
 ## [0.2.3](https://github.com/dulait/b1ngo/compare/v0.2.2...v0.2.3) (2026-03-22)
 
 
