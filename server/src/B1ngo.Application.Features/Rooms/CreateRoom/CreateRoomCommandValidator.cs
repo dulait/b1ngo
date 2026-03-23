@@ -10,17 +10,13 @@ public sealed class CreateRoomCommandValidator : AbstractValidator<CreateRoomCom
             .NotEmpty()
             .WithMessage("Host display name is required.")
             .MaximumLength(50)
-            .WithMessage("Host display name must not exceed 50 characters.")
-            .Must(x => x is null || (!x.Contains('<') && !x.Contains('>')))
-            .WithMessage("Host display name must not contain HTML characters.");
+            .WithMessage("Host display name must not exceed 50 characters.");
 
         RuleFor(x => x.GrandPrixName)
             .NotEmpty()
             .WithMessage("Grand Prix name is required.")
             .MaximumLength(100)
-            .WithMessage("Grand Prix name must not exceed 100 characters.")
-            .Must(x => x is null || (!x.Contains('<') && !x.Contains('>')))
-            .WithMessage("Grand Prix name must not contain HTML characters.");
+            .WithMessage("Grand Prix name must not exceed 100 characters.");
 
         When(
             x => x.MatrixSize is not null,

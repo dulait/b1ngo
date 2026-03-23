@@ -10,9 +10,7 @@ public sealed class EditSquareCommandValidator : AbstractValidator<EditSquareCom
             .NotEmpty()
             .WithMessage("Display text is required.")
             .MaximumLength(200)
-            .WithMessage("Display text must not exceed 200 characters.")
-            .Must(x => x is null || (!x.Contains('<') && !x.Contains('>')))
-            .WithMessage("Display text must not contain HTML characters.");
+            .WithMessage("Display text must not exceed 200 characters.");
 
         RuleFor(x => x.Row).GreaterThanOrEqualTo(0).WithMessage("Row must be greater than or equal to 0.");
 

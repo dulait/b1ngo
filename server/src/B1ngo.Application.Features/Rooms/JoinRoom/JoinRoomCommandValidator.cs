@@ -16,8 +16,6 @@ public sealed class JoinRoomCommandValidator : AbstractValidator<JoinRoomCommand
             .NotEmpty()
             .WithMessage("Display name is required.")
             .MaximumLength(50)
-            .WithMessage("Display name must not exceed 50 characters.")
-            .Must(x => x is null || (!x.Contains('<') && !x.Contains('>')))
-            .WithMessage("Display name must not contain HTML characters.");
+            .WithMessage("Display name must not exceed 50 characters.");
     }
 }
