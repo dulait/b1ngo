@@ -6,9 +6,11 @@ public sealed record LeaderboardEntry
 
     public PlayerId PlayerId { get; init; } = null!;
     public int Rank { get; internal set; }
-    public WinPatternType WinningPattern { get; init; }
+    public WinPatternType WinningPattern { get; private set; }
     public IReadOnlyList<SquarePosition> WinningSquares => _winningSquares;
     public DateTimeOffset CompletedAt { get; init; }
+
+    private LeaderboardEntry() { }
 
     public LeaderboardEntry(
         PlayerId playerId,
@@ -25,5 +27,10 @@ public sealed record LeaderboardEntry
         CompletedAt = completedAt;
     }
 
-    private LeaderboardEntry() { }
+    internal void UpdateWinningPattern(WinPatternType pattern, IReadOnlyList<SquarePosition> squares)
+    {
+        WinningPattern = pattern;
+        _winningSquares.Clear();
+        _winningSquares.AddRange(squares);
+    }
 }
