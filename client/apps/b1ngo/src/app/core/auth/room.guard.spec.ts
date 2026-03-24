@@ -30,7 +30,7 @@ describe('roomGuard', () => {
   });
 
   it('should allow access when session exists', () => {
-    authService.saveSession('r1', 'p1');
+    authService.saveSession('r1', 'p1', 'tok');
 
     const result = TestBed.runInInjectionContext(() =>
       roomGuard({} as unknown as ActivatedRouteSnapshot, {} as unknown as RouterStateSnapshot),

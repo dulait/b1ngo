@@ -3,10 +3,10 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';
-import { ENVIRONMENT } from './core/environment';
+import { ENVIRONMENT } from './core/environment/environment.token';
 import { credentialsInterceptor } from './core/interceptors/credentials.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
-import { AppErrorHandler } from './core/error/error-handler';
+import { AppErrorHandler } from './core/error/global-error.handler';
 
 export const appConfig: ApplicationConfig = {
   providers: [

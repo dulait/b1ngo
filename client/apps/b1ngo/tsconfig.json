@@ -3,8 +3,12 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": ".",
     "paths": {
-      "bng-ui": ["../../packages/bng-ui/src/public-api.ts"]
+      "bng-ui": ["../../packages/bng-ui/src/public-api.ts"],
+      "@core/*": ["src/app/core/*"],
+      "@features/*": ["src/app/features/*"],
+      "@shell/*": ["src/app/shell/*"]
     },
     "strict": true,
     "noImplicitOverride": true,

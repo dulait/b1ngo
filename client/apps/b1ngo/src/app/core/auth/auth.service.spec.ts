@@ -18,24 +18,25 @@ describe('AuthService', () => {
   });
 
   it('should save and load session', () => {
-    service.saveSession('room-1', 'player-1');
+    service.saveSession('room-1', 'player-1', 'tok-1');
 
     expect(service.hasSession()).toBe(true);
     expect(service.getPlayerId()).toBe('player-1');
     expect(service.getRoomId()).toBe('room-1');
-    expect(service.session()).toEqual({ roomId: 'room-1', playerId: 'player-1' });
+    expect(service.getPlayerToken()).toBe('tok-1');
+    expect(service.session()).toEqual({ roomId: 'room-1', playerId: 'player-1', playerToken: 'tok-1' });
   });
 
   it('should persist session to localStorage', () => {
-    service.saveSession('room-1', 'player-1');
+    service.saveSession('room-1', 'player-1', 'tok-1');
 
     const stored = localStorage.getItem('bng-session');
     expect(stored).toBeTruthy();
-    expect(JSON.parse(stored!)).toEqual({ roomId: 'room-1', playerId: 'player-1' });
+    expect(JSON.parse(stored!)).toEqual({ roomId: 'room-1', playerId: 'player-1', playerToken: 'tok-1' });
   });
 
   it('should clear session', () => {
-    service.saveSession('room-1', 'player-1');
+    service.saveSession('room-1', 'player-1', 'tok-1');
     service.clearSession();
 
     expect(service.hasSession()).toBe(false);
@@ -44,7 +45,7 @@ describe('AuthService', () => {
   });
 
   it('should load session from localStorage on construction', () => {
-    localStorage.setItem('bng-session', JSON.stringify({ roomId: 'r1', playerId: 'p1' }));
+    localStorage.setItem('bng-session', JSON.stringify({ roomId: 'r1', playerId: 'p1', playerToken: 'tok' }));
 
     const freshService = new AuthService();
     expect(freshService.hasSession()).toBe(true);

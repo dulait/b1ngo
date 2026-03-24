@@ -1,10 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-
-interface SessionInfo {
-  roomId: string;
-  playerId: string;
-  playerToken: string;
-}
+import { SessionInfo } from './session-info.interface';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {

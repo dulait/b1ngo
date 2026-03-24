@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, computed, Signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { GrandPrixOption, ReferenceDataResponse } from '../../shared/types/api.types';
-import { ENVIRONMENT } from '../environment';
+import { GrandPrixOption, ReferenceDataResponse } from './models/responses';
+import { ENVIRONMENT } from '../environment/environment.token';
 
 @Injectable({ providedIn: 'root' })
 export class ReferenceDataService {

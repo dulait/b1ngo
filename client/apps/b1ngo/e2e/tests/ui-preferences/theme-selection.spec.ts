@@ -3,7 +3,7 @@ import { GamePage } from '../../pages/game.page';
 import { navigateToRoom } from '../../fixtures/base.fixture';
 import { setupActiveGame } from '../../helpers/room.helper';
 
-async function openThemePicker(page: import('@playwright/test').Page) {
+async function openThemePicker(page: import('@playwright/test').Page): Promise<import('@playwright/test').Locator> {
   await page.getByRole('button', { name: 'Menu' }).click();
   await page.getByText('Theme').click();
   const themeSheet = page.getByRole('dialog', { name: /theme/i });

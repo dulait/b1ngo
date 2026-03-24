@@ -53,8 +53,8 @@ test.describe('BNG-008: Unmark Square', () => {
     try {
       await api.unmarkSquare(room.roomId, room.host.playerId, 0, 0, room.host.playerToken);
       expect(true).toBe(false);
-    } catch (e: any) {
-      expect(e.message).toContain('409');
+    } catch (e: unknown) {
+      expect((e as Error).message).toContain('409');
     }
   });
 });

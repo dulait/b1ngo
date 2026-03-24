@@ -24,7 +24,7 @@ export const test = base.extend<BaseFixtures>({
   },
 });
 
-export async function dismissTutorial(page: Page) {
+export async function dismissTutorial(page: Page): Promise<void> {
   await page.addInitScript(() => {
     localStorage.setItem('bng-tutorial-completed', 'true');
   });
@@ -36,7 +36,7 @@ export async function navigateToRoom(
   roomId: string,
   playerId: string,
   playerToken: string,
-) {
+): Promise<void> {
   await dismissTutorial(page);
   await context.addCookies([
     {

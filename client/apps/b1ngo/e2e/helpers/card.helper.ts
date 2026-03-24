@@ -1,5 +1,6 @@
 import type { ApiHelper } from './api.helper';
 import type { CardDto, SquareDto } from '../../src/app/shared/types/api.types';
+import type { MarkSquareResult } from './types';
 
 export interface Coord {
   row: number;
@@ -87,7 +88,7 @@ export async function completePattern(
   playerToken: string,
   pattern: PatternType,
   index?: number,
-) {
+): Promise<MarkSquareResult | undefined> {
   const state = await api.getRoomState(roomId, playerToken);
   const player = state.players.find((p) => p.playerId === playerId);
   if (!player?.card) {throw new Error(`Player ${playerId} has no card`);}
@@ -95,7 +96,7 @@ export async function completePattern(
   const targets = getTargetSquares(player.card, pattern, index);
   const toMark = getUnmarkedSquares(player.card, targets);
 
-  let lastResult;
+  let lastResult: MarkSquareResult | undefined;
   for (const coord of toMark) {
     lastResult = await api.markSquare(roomId, playerId, coord.row, coord.col, playerToken);
   }

@@ -26,7 +26,7 @@ export const multiPlayerTest = baseTest.extend<MultiPlayerFixtures>({
   createPlayerPage: async ({ browser }, use) => {
     const contexts: BrowserContext[] = [];
 
-    const factory = async (roomId: string, playerId: string, playerToken: string) => {
+    const factory = async (roomId: string, playerId: string, playerToken: string): Promise<{ page: Page; context: BrowserContext }> => {
       const context = await browser.newContext({ ignoreHTTPSErrors: true });
       contexts.push(context);
       const page = await context.newPage();

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { ENVIRONMENT } from '../environment';
+import { ENVIRONMENT } from '../environment/environment.token';
 import {
   CreateRoomCommand,
   CreateRoomResponse,
@@ -9,7 +9,7 @@ import {
   JoinRoomResponse,
   ReconnectResponse,
   GetRoomStateResponse,
-} from '../../shared/types/api.types';
+} from './models';
 
 @Injectable({ providedIn: 'root' })
 export class RoomApiService {
