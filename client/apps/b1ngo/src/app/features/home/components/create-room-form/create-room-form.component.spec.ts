@@ -63,6 +63,9 @@ describe('CreateRoomFormComponent', () => {
     });
 
     component.onNameChange('Max');
+    component.onSeasonChange('2026');
+    component.onGrandPrixChange('Bahrain Grand Prix');
+    component.sessionType.set('Race');
     await component.onSubmit();
 
     expect(createSpy).toHaveBeenCalledWith({
@@ -70,6 +73,8 @@ describe('CreateRoomFormComponent', () => {
       season: 2026,
       grandPrixName: 'Bahrain Grand Prix',
       sessionType: 'Race',
+      matrixSize: 5,
+      winningPatterns: ['Row', 'Column', 'Diagonal'],
     });
   });
 

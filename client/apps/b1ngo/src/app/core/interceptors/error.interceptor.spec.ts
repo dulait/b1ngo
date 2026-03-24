@@ -86,17 +86,15 @@ describe('errorInterceptor', () => {
     http.get('/test').subscribe({ error: () => {} });
     httpMock.expectOne('/test').flush(null, { status: 500, statusText: 'Server Error' });
 
-    expect(errorSpy).toHaveBeenCalledWith('Something went wrong. Try again.');
+    expect(errorSpy).toHaveBeenCalledWith('Something went wrong. Please try again.');
   });
 
-  it('should not show toast on 404', () => {
+  it('should show error toast on 404', () => {
     const errorSpy = vi.spyOn(toastService, 'error');
-    const warnSpy = vi.spyOn(toastService, 'warning');
 
     http.get('/test').subscribe({ error: () => {} });
     httpMock.expectOne('/test').flush(null, { status: 404, statusText: 'Not Found' });
 
-    expect(errorSpy).not.toHaveBeenCalled();
-    expect(warnSpy).not.toHaveBeenCalled();
+    expect(errorSpy).toHaveBeenCalledWith('Not found.');
   });
 });
