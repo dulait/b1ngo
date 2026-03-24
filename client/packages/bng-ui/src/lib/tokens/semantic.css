@@ -1,0 +1,67 @@
+:root {
+  /* Surface & Background */
+  --bng-color-surface-base:     var(--bng-color-gray-950);
+  --bng-color-surface-primary:  var(--bng-color-gray-900);
+  --bng-color-surface-elevated: var(--bng-color-gray-800);
+  --bng-color-surface-hover:    var(--bng-color-gray-700);
+
+  /* Border */
+  --bng-color-border-default: var(--bng-color-gray-600);
+  --bng-color-border-subtle:  var(--bng-color-gray-800);
+
+  /* Text */
+  --bng-color-text-primary:   var(--bng-color-gray-200);
+  --bng-color-text-secondary: var(--bng-color-gray-400);
+  --bng-color-text-disabled:  var(--bng-color-gray-500);
+  --bng-color-text-on-accent: var(--bng-color-white);
+
+  /* Accent (theme-dependent — fallback to crimson) */
+  --bng-color-accent:       var(--bng-theme-accent, var(--bng-color-red-600));
+  --bng-color-accent-hover: var(--bng-theme-accent-hover, var(--bng-color-red-500));
+  --bng-color-accent-muted: var(--bng-theme-accent-muted, var(--bng-color-red-100));
+
+  /* Status — Flag Semantics */
+  /* Green flag: go / success / optimal */
+  --bng-color-flag-green:    var(--bng-color-green-500);
+  --bng-color-flag-green-bg: var(--bng-color-green-100);
+
+  /* Yellow flag: caution / warning */
+  --bng-color-flag-yellow:    var(--bng-color-yellow-500);
+  --bng-color-flag-yellow-bg: var(--bng-color-yellow-100);
+
+  /* Red flag: stop / danger / error */
+  --bng-color-flag-red:    var(--bng-color-red-500);
+  --bng-color-flag-red-bg: var(--bng-color-red-700);
+
+  /* Blue flag: info / neutral */
+  --bng-color-flag-blue:    var(--bng-color-slate-400);
+  --bng-color-flag-blue-bg: var(--bng-color-slate-100);
+
+  /* Convenience aliases matching existing consumer code */
+  --bng-color-success:    var(--bng-color-flag-green);
+  --bng-color-success-bg: var(--bng-color-flag-green-bg);
+  --bng-color-warning:    var(--bng-color-flag-yellow);
+  --bng-color-warning-bg: var(--bng-color-flag-yellow-bg);
+  --bng-color-error:      var(--bng-color-flag-red);
+  --bng-color-error-bg:   var(--bng-color-flag-red-bg);
+  --bng-color-info:       var(--bng-color-flag-blue);
+  --bng-color-info-bg:    var(--bng-color-flag-blue-bg);
+
+  /* Completed state (checkered flag) */
+  --bng-color-completed:    var(--bng-color-slate-400);
+  --bng-color-completed-bg: var(--bng-color-slate-100);
+
+  /* Danger text (lighter red for readability on dark surfaces) */
+  --bng-color-danger-text: var(--bng-color-red-300);
+
+  /* Overlay */
+  --bng-color-overlay: rgba(0, 0, 0, 0.50);
+
+  /* Focus Ring */
+  --bng-focus-ring-width:  2px;
+  --bng-focus-ring-offset: 2px;
+  --bng-focus-ring-color:  var(--bng-color-accent);
+
+  /* Disabled State */
+  --bng-opacity-disabled: 0.40;
+}

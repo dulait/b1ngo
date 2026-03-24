@@ -6,7 +6,7 @@ export const bngIconChevronDown = `<path d="M6 9l6 6 6-6"/>`;
 
 export const bngIconCheck = `<path d="M20 6L9 17l-5-5"/>`;
 
-export const bngIconCheckFilled = `<rect width="14" height="14" rx="2" fill="var(--bng-accent)" stroke="none"/><path d="M3.5 7l2.5 2.5 4.5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`;
+export const bngIconCheckFilled = `<rect width="14" height="14" rx="2" fill="var(--bng-color-accent)" stroke="none"/><path d="M3.5 7l2.5 2.5 4.5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`;
 
 export const bngIconCrown = `<path d="M2 20h20"/><path d="M2 17l2-12 5 5 3-7 3 7 5-5 2 12"/>`;
 

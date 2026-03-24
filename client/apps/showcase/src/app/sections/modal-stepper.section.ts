@@ -165,20 +165,20 @@ import {
     }
 
     @keyframes tutorial-mark {
-      0%   { background-color: var(--bng-border-default); transform: scale(1); }
-      40%  { background-color: var(--bng-accent); transform: scale(1.15); }
-      100% { background-color: var(--bng-accent); transform: scale(1); }
+      0%   { background-color: var(--bng-color-border-default); transform: scale(1); }
+      40%  { background-color: var(--bng-color-accent); transform: scale(1.15); }
+      100% { background-color: var(--bng-color-accent); transform: scale(1); }
     }
 
     @keyframes tutorial-free {
-      0%   { background-color: var(--bng-border-default); }
-      100% { background-color: var(--bng-accent); opacity: 0.5; }
+      0%   { background-color: var(--bng-color-border-default); }
+      100% { background-color: var(--bng-color-accent); opacity: 0.5; }
     }
 
     @keyframes tutorial-glow {
       0%   { box-shadow: 0 0 0 0 transparent; }
-      50%  { box-shadow: 0 0 0 3px var(--bng-accent); }
-      100% { box-shadow: 0 0 0 1px var(--bng-accent); }
+      50%  { box-shadow: 0 0 0 3px var(--bng-color-accent); }
+      100% { box-shadow: 0 0 0 1px var(--bng-color-accent); }
     }
 
     @keyframes tutorial-bingo-text {
@@ -197,7 +197,7 @@ import {
       }
       .tutorial-glow-anim {
         animation: none;
-        box-shadow: 0 0 0 1px var(--bng-accent);
+        box-shadow: 0 0 0 1px var(--bng-color-accent);
       }
       .tutorial-bingo-anim {
         animation: none;

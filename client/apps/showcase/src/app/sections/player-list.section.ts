@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { BngPlayerListComponent, BngCardComponent, PlayerDto } from 'bng-ui';
+import { BngPlayerListComponent, BngCardComponent, PlayerChipItem } from 'bng-ui';
 
 @Component({
   selector: 'ds-player-list',
@@ -13,16 +13,16 @@ import { BngPlayerListComponent, BngCardComponent, PlayerDto } from 'bng-ui';
     </p>
 
     <bng-card header="Lobby Players">
-      <bng-player-list [players]="players" hostPlayerId="p1" currentPlayerId="p2" />
+      <bng-player-list [players]="players" />
     </bng-card>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlayerListSection {
-  readonly players: PlayerDto[] = [
-    { playerId: 'p1', displayName: 'Max Verstappen' },
-    { playerId: 'p2', displayName: 'Lewis Hamilton' },
-    { playerId: 'p3', displayName: 'Lando Norris' },
-    { playerId: 'p4', displayName: 'Charles Leclerc' },
+  readonly players: PlayerChipItem[] = [
+    { id: 'p1', displayName: 'Max Verstappen', isHost: true, isCurrentUser: false },
+    { id: 'p2', displayName: 'Lewis Hamilton', isHost: false, isCurrentUser: true },
+    { id: 'p3', displayName: 'Lando Norris', isHost: false, isCurrentUser: false },
+    { id: 'p4', displayName: 'Charles Leclerc', isHost: false, isCurrentUser: false },
   ];
 }
