@@ -7,8 +7,10 @@ import {
   BngButtonComponent,
   ToastService,
 } from 'bng-ui';
+import type { GridCellData } from 'bng-ui';
 import { ROOM_STORE } from '../../services/room-store.token';
 import { AuthService } from '@core/auth/auth.service';
+import { formatMarkedByLabel, markedByVariant } from '../../utils/format-marked-by.util';
 
 @Component({
   selector: 'app-results',
@@ -21,6 +23,23 @@ export class ResultsComponent {
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
   private readonly toast = inject(ToastService);
+
+  readonly gridCells = computed<GridCellData[]>(() => {
+    const card = this.store.currentCard();
+    if (!card) {
+      return [];
+    }
+    return card.squares.map((s) => ({
+      row: s.row,
+      column: s.column,
+      displayText: s.displayText,
+      isFreeSpace: s.isFreeSpace,
+      isMarked: s.isMarked,
+      markedByLabel: formatMarkedByLabel(s.markedBy),
+      markedByVariant: markedByVariant(s.markedBy),
+      markedAt: s.markedAt ?? null,
+    }));
+  });
 
   readonly currentRank = computed(() => {
     const entry = this.store

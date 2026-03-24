@@ -5,23 +5,22 @@ import {
   input,
   computed,
 } from '@angular/core';
+import { BadgeVariant } from '../../types';
 
-type RoomStatus = 'Lobby' | 'Active' | 'Completed';
-
-interface StatusStyle {
+interface VariantStyle {
   container: string;
   dot: string;
   text: string;
 }
 
-const STATUS_STYLES: Record<RoomStatus, StatusStyle> = {
-  Lobby: { container: 'bg-[rgba(234,179,8,0.15)]', dot: 'bg-yellow-500', text: 'text-yellow-500' },
-  Active: {
+const VARIANT_STYLES: Record<BadgeVariant, VariantStyle> = {
+  warning: { container: 'bg-[rgba(234,179,8,0.15)]', dot: 'bg-yellow-500', text: 'text-yellow-500' },
+  success: {
     container: 'bg-[rgba(34,197,94,0.15)]',
     dot: 'bg-green-500 pulse-dot',
     text: 'text-green-500',
   },
-  Completed: {
+  neutral: {
     container: 'bg-[rgba(148,163,184,0.15)]',
     dot: 'bg-slate-400',
     text: 'text-slate-400',
@@ -32,10 +31,10 @@ const STATUS_STYLES: Record<RoomStatus, StatusStyle> = {
   selector: 'bng-status-badge',
   standalone: true,
   template: `
-    <div role="status" data-testid="status-badge" [attr.aria-label]="'Room status: ' + status()" [class]="containerClasses()">
+    <div role="status" data-testid="status-badge" [attr.aria-label]="label()" [class]="containerClasses()">
       <span [class]="dotClasses()"></span>
       <span class="text-xs font-semibold" [class]="textColorClass()">
-        {{ status() }}
+        {{ label() }}
       </span>
     </div>
   `,
@@ -43,9 +42,10 @@ const STATUS_STYLES: Record<RoomStatus, StatusStyle> = {
   encapsulation: ViewEncapsulation.None,
 })
 export class BngStatusBadgeComponent {
-  status = input.required<RoomStatus>();
+  label = input.required<string>();
+  variant = input.required<BadgeVariant>();
 
-  private readonly style = computed(() => STATUS_STYLES[this.status()]);
+  private readonly style = computed(() => VARIANT_STYLES[this.variant()]);
 
   protected containerClasses = computed(
     () => `flex items-center gap-1.5 rounded-full px-2.5 py-1 shrink-0 ${this.style().container}`,

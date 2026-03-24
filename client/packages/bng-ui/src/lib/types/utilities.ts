@@ -1,18 +1,4 @@
-import { MarkedBySource } from './types';
 import { AVATAR_COLORS } from './constants';
-
-export function formatMarkedByLabel(markedBy: MarkedBySource): string {
-  switch (markedBy) {
-    case 'Player':
-      return 'You';
-    case 'Host':
-      return 'Host';
-    case 'Api':
-      return 'Auto';
-    default:
-      return '';
-  }
-}
 
 export function formatRelativeTime(isoTimestamp: string): string {
   const elapsedMs = Date.now() - new Date(isoTimestamp).getTime();

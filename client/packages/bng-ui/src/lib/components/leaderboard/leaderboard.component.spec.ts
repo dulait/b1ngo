@@ -1,18 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { BngLeaderboardComponent } from './leaderboard.component';
+import { LeaderboardItem } from '../../types';
 
 describe('BngLeaderboardComponent', () => {
   let fixture: ComponentFixture<BngLeaderboardComponent>;
 
-  const players = [
-    { playerId: 'p1', displayName: 'Lewis Hamilton' },
-    { playerId: 'p2', displayName: 'Max Verstappen' },
-  ];
-
-  const entries = [
-    { rank: 1, playerId: 'p1', pattern: 'Row', completedAt: new Date().toISOString() },
-    { rank: 2, playerId: 'p2', pattern: 'Column', completedAt: new Date().toISOString() },
+  const entries: LeaderboardItem[] = [
+    { rank: 1, displayName: 'Lewis Hamilton', badge: 'Row', timestamp: new Date().toISOString(), isCurrentUser: true },
+    { rank: 2, displayName: 'Max Verstappen', badge: 'Column', timestamp: new Date().toISOString(), isCurrentUser: false },
   ];
 
   beforeEach(async () => {
@@ -22,8 +18,6 @@ describe('BngLeaderboardComponent', () => {
 
     fixture = TestBed.createComponent(BngLeaderboardComponent);
     fixture.componentRef.setInput('entries', entries);
-    fixture.componentRef.setInput('players', players);
-    fixture.componentRef.setInput('currentPlayerId', 'p1');
     fixture.detectChanges();
   });
 
@@ -60,19 +54,19 @@ describe('BngLeaderboardComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('No winners.');
   });
 
-  it('should show pattern badge', () => {
+  it('should show badge', () => {
     expect(fixture.nativeElement.textContent).toContain('Row');
     expect(fixture.nativeElement.textContent).toContain('Column');
   });
 
-  it('should highlight current player in full variant', () => {
+  it('should highlight current user in full variant', () => {
     fixture.componentRef.setInput('variant', 'full');
     fixture.detectChanges();
     const highlighted = fixture.nativeElement.querySelector('.bg-accent-muted');
     expect(highlighted).toBeTruthy();
   });
 
-  it('should show (You) for current player', () => {
+  it('should show (You) for current user', () => {
     expect(fixture.nativeElement.textContent).toContain('(You)');
   });
 });

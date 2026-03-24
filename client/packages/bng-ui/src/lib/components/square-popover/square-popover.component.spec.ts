@@ -25,7 +25,7 @@ describe('BngSquarePopoverComponent', () => {
     fixture.componentRef.setInput('displayText', 'Safety Car deployed');
     fixture.componentRef.setInput('isFreeSpace', false);
     fixture.componentRef.setInput('isMarked', false);
-    fixture.componentRef.setInput('markedBy', null);
+    fixture.componentRef.setInput('markedByLabel', null);
     fixture.componentRef.setInput('markedAt', null);
     fixture.componentRef.setInput('anchorElement', anchorEl);
     fixture.detectChanges();
@@ -54,7 +54,7 @@ describe('BngSquarePopoverComponent', () => {
 
   it('should show marked-by section for marked square', () => {
     fixture.componentRef.setInput('isMarked', true);
-    fixture.componentRef.setInput('markedBy', 'Player');
+    fixture.componentRef.setInput('markedByLabel', 'You');
     fixture.componentRef.setInput('markedAt', new Date().toISOString());
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('Marked by You');
@@ -76,7 +76,7 @@ describe('BngSquarePopoverComponent', () => {
 
   it('should show Host label for host-marked', () => {
     fixture.componentRef.setInput('isMarked', true);
-    fixture.componentRef.setInput('markedBy', 'Host');
+    fixture.componentRef.setInput('markedByLabel', 'Host');
     fixture.componentRef.setInput('markedAt', new Date(Date.now() - 120000).toISOString());
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('Marked by Host');

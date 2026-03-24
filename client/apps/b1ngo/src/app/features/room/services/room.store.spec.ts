@@ -124,10 +124,10 @@ describe('RoomStore', () => {
         'p1',
       );
 
-      const uiPlayers = store.uiPlayers();
-      expect(uiPlayers).toHaveLength(2);
-      expect(uiPlayers[0]).toEqual({ playerId: 'p1', displayName: 'Max' });
-      expect(uiPlayers[1]).toEqual({ playerId: 'p2', displayName: 'Lewis' });
+      const items = store.playerChipItems();
+      expect(items).toHaveLength(2);
+      expect(items[0]).toEqual({ id: 'p1', displayName: 'Max', isHost: true, isCurrentUser: true });
+      expect(items[1]).toEqual({ id: 'p2', displayName: 'Lewis', isHost: false, isCurrentUser: false });
     });
 
     it('should map leaderboard to bng-ui format', () => {
@@ -140,24 +140,25 @@ describe('RoomStore', () => {
       };
       store.initialize(mockRoomState({ leaderboard: [entry] }), 'p1');
 
-      const uiEntries = store.uiLeaderboard();
-      expect(uiEntries).toHaveLength(1);
-      expect(uiEntries[0]).toEqual({
+      const items = store.leaderboardItems();
+      expect(items).toHaveLength(1);
+      expect(items[0]).toEqual({
         rank: 1,
-        playerId: 'p1',
-        pattern: 'Row',
-        completedAt: '2026-03-19T00:00:00Z',
+        displayName: 'Player 1',
+        badge: 'Row',
+        timestamp: '2026-03-19T00:00:00Z',
+        isCurrentUser: true,
       });
     });
 
     it('should map session to bng-ui format', () => {
       store.initialize(mockRoomState(), 'p1');
-      const uiSession = store.uiSession();
-      expect(uiSession).toEqual({ grandPrixShort: 'MON', sessionType: 'Race' });
+      const info = store.sessionInfo();
+      expect(info).toEqual({ grandPrixShort: 'MON', sessionType: 'Race' });
     });
 
-    it('should return null uiSession when no session', () => {
-      expect(store.uiSession()).toBeNull();
+    it('should return null sessionInfo when no session', () => {
+      expect(store.sessionInfo()).toBeNull();
     });
   });
 

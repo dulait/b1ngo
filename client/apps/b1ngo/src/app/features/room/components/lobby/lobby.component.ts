@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
 import {
   BngCardComponent,
   BngCodeInputComponent,
@@ -8,9 +8,11 @@ import {
   BngBottomSheetComponent,
   BngInputComponent,
 } from 'bng-ui';
+import type { GridCellData } from 'bng-ui';
 import { ROOM_STORE } from '../../services/room-store.token';
 import { RoomApiService } from '@core/api/room-api.service';
 import { safeAsync } from '@core/utils/safe-async.util';
+import { formatMarkedByLabel, markedByVariant } from '../../utils/format-marked-by.util';
 
 @Component({
   selector: 'app-lobby',
@@ -29,6 +31,23 @@ import { safeAsync } from '@core/utils/safe-async.util';
 export class LobbyComponent {
   readonly store = inject(ROOM_STORE);
   private readonly roomApi = inject(RoomApiService);
+
+  readonly gridCells = computed<GridCellData[]>(() => {
+    const card = this.store.currentCard();
+    if (!card) {
+      return [];
+    }
+    return card.squares.map((s) => ({
+      row: s.row,
+      column: s.column,
+      displayText: s.displayText,
+      isFreeSpace: s.isFreeSpace,
+      isMarked: s.isMarked,
+      markedByLabel: formatMarkedByLabel(s.markedBy),
+      markedByVariant: markedByVariant(s.markedBy),
+      markedAt: s.markedAt ?? null,
+    }));
+  });
 
   readonly emptySet = new Set<string>();
   readonly isStarting = signal(false);

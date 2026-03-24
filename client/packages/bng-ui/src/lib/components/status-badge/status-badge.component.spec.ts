@@ -11,7 +11,8 @@ describe('BngStatusBadgeComponent', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(BngStatusBadgeComponent);
-    fixture.componentRef.setInput('status', 'Active');
+    fixture.componentRef.setInput('label', 'Active');
+    fixture.componentRef.setInput('variant', 'success');
     fixture.detectChanges();
   });
 
@@ -31,21 +32,23 @@ describe('BngStatusBadgeComponent', () => {
     expect(text.textContent.trim()).toBe('Active');
   });
 
-  it('should show pulse-dot animation on Active', () => {
+  it('should show pulse-dot animation on success variant', () => {
     const dot = fixture.nativeElement.querySelector('.pulse-dot');
     expect(dot).toBeTruthy();
   });
 
-  it('should show Lobby with yellow styling', () => {
-    fixture.componentRef.setInput('status', 'Lobby');
+  it('should show warning label with yellow styling', () => {
+    fixture.componentRef.setInput('label', 'Lobby');
+    fixture.componentRef.setInput('variant', 'warning');
     fixture.detectChanges();
     const dot = fixture.nativeElement.querySelector('.bg-yellow-500');
     expect(dot).toBeTruthy();
     expect(fixture.nativeElement.textContent).toContain('Lobby');
   });
 
-  it('should show Completed with slate styling', () => {
-    fixture.componentRef.setInput('status', 'Completed');
+  it('should show neutral label with slate styling', () => {
+    fixture.componentRef.setInput('label', 'Completed');
+    fixture.componentRef.setInput('variant', 'neutral');
     fixture.detectChanges();
     const dot = fixture.nativeElement.querySelector('.bg-slate-400');
     expect(dot).toBeTruthy();
@@ -54,6 +57,6 @@ describe('BngStatusBadgeComponent', () => {
 
   it('should set aria-label', () => {
     const el = fixture.nativeElement.querySelector('[role="status"]');
-    expect(el.getAttribute('aria-label')).toBe('Room status: Active');
+    expect(el.getAttribute('aria-label')).toBe('Active');
   });
 });

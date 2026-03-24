@@ -6,8 +6,7 @@ import {
   computed,
 } from '@angular/core';
 import {
-  PlayerDto,
-  LeaderboardEntryDto,
+  LeaderboardItem,
   getAvatarColor,
   getAvatarInitials,
   formatRelativeTime,
@@ -42,23 +41,23 @@ const AVATAR_FULL = `w-8 h-8 text-xs ${AVATAR_BASE}`;
           </span>
 
           <!-- Avatar -->
-          <div [class]="avatarClasses()" [style.backgroundColor]="getColor(entry.playerId)">
-            {{ getInitials(entry.playerId) }}
+          <div [class]="avatarClasses()" [style.backgroundColor]="getColor(entry)">
+            {{ getInitials(entry) }}
           </div>
 
           <!-- Name -->
           <span class="text-sm text-text-primary font-medium flex-1 truncate">
-            {{ getName(entry.playerId) }}
-            @if (entry.playerId === currentPlayerId()) {
+            {{ entry.displayName }}
+            @if (entry.isCurrentUser) {
               <span class="text-text-secondary font-normal"> (You)</span>
             }
           </span>
 
-          <!-- Pattern badge -->
+          <!-- Badge -->
           <span
             class="text-xs bg-bg-surface-elevated text-text-secondary rounded-full px-2 py-0.5 shrink-0"
           >
-            {{ entry.pattern }}
+            {{ entry.badge }}
           </span>
 
           <!-- Timestamp -->
@@ -66,7 +65,7 @@ const AVATAR_FULL = `w-8 h-8 text-xs ${AVATAR_BASE}`;
             class="text-xs text-text-secondary tabular-nums shrink-0"
             [class.ml-auto]="variant() === 'compact'"
           >
-            {{ formatTime(entry.completedAt) }}
+            {{ formatTime(entry.timestamp) }}
           </span>
         </div>
       }
@@ -76,9 +75,7 @@ const AVATAR_FULL = `w-8 h-8 text-xs ${AVATAR_BASE}`;
   encapsulation: ViewEncapsulation.None,
 })
 export class BngLeaderboardComponent {
-  entries = input<LeaderboardEntryDto[]>([]);
-  players = input<PlayerDto[]>([]);
-  currentPlayerId = input('');
+  entries = input<LeaderboardItem[]>([]);
   variant = input<'compact' | 'full'>('compact');
   emptyText = input('No winners yet.');
 
@@ -86,39 +83,25 @@ export class BngLeaderboardComponent {
     this.variant() === 'compact' ? AVATAR_COMPACT : AVATAR_FULL,
   );
 
-  private playerMap = computed(() => {
-    const map = new Map<string, PlayerDto>();
-    for (const p of this.players()) {
-      map.set(p.playerId, p);
-    }
-    return map;
-  });
-
-  protected getName(playerId: string): string {
-    return this.playerMap().get(playerId)?.displayName ?? 'Unknown';
+  protected getColor(entry: LeaderboardItem): string {
+    return getAvatarColor(entry.displayName);
   }
 
-  protected getColor(playerId: string): string {
-    const name = this.getName(playerId);
-    return getAvatarColor(name);
+  protected getInitials(entry: LeaderboardItem): string {
+    return getAvatarInitials(entry.displayName);
   }
 
-  protected getInitials(playerId: string): string {
-    const name = this.getName(playerId);
-    return getAvatarInitials(name);
-  }
-
-  protected entryClasses(entry: LeaderboardEntryDto): string {
+  protected entryClasses(entry: LeaderboardItem): string {
     const base = 'flex items-center gap-3';
     if (this.variant() === 'compact') {
       return `${base} px-2 py-1.5`;
     }
-    const highlight = entry.playerId === this.currentPlayerId() ? 'bg-accent-muted' : '';
+    const highlight = entry.isCurrentUser ? 'bg-accent-muted' : '';
     return `${base} px-3 py-2.5 rounded-lg ${highlight}`;
   }
 
-  protected entryAriaLabel(entry: LeaderboardEntryDto): string {
-    return `${entry.rank}. ${this.getName(entry.playerId)}, ${entry.pattern}, ${this.formatTime(entry.completedAt)}`;
+  protected entryAriaLabel(entry: LeaderboardItem): string {
+    return `${entry.rank}. ${entry.displayName}, ${entry.badge}, ${this.formatTime(entry.timestamp)}`;
   }
 
   protected formatTime(iso: string): string {

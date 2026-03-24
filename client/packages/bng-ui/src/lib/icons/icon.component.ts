@@ -8,12 +8,6 @@ import {
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
-/**
- * Renders SVG icons from trusted static constants.
- * Icons are tree-shakeable string constants imported from `icons.ts`.
- * We use DomSanitizer.bypassSecurityTrustHtml because icon content is
- * statically defined in our own codebase, never from user input.
- */
 @Component({
   selector: 'bng-icon',
   standalone: true,

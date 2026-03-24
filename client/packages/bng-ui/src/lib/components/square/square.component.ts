@@ -11,7 +11,6 @@ import {
 } from '@angular/core';
 import { BngIconComponent } from '../../icons/icon.component';
 import { bngIconPencil } from '../../icons/icons';
-import { formatMarkedByLabel, MarkedBySource } from '../../types';
 
 const LONG_PRESS_HINT_DELAY_MS = 300;
 const LONG_PRESS_THRESHOLD_MS = 500;
@@ -40,8 +39,8 @@ const SMALL_TEXT_SIZE_THRESHOLD = 7;
     >
       <span [class]="textClasses()">{{ displayText() }}</span>
 
-      @if (isMarked() && markedBy()) {
-        <span [class]="labelClasses()">{{ markedLabel() }}</span>
+      @if (isMarked() && markedByLabel()) {
+        <span [class]="labelClasses()">{{ markedByLabel() }}</span>
       }
 
       @if (isEditable() && !isMarked() && !isFreeSpace()) {
@@ -70,7 +69,8 @@ export class BngSquareComponent {
   displayText = input('');
   isFreeSpace = input(false);
   isMarked = input(false);
-  markedBy = input<MarkedBySource>(null);
+  markedByLabel = input<string | null>(null);
+  markedByVariant = input<'self' | 'other' | null>(null);
   isEditable = input(false);
   isMarkable = input(false);
   isWinning = input(false);
@@ -90,8 +90,6 @@ export class BngSquareComponent {
 
   protected isInteractive = computed(() => true);
 
-  protected markedLabel = computed(() => formatMarkedByLabel(this.markedBy()));
-
   protected ariaLabel = computed(() => {
     const text = this.displayText();
     if (this.isFreeSpace()) {
@@ -100,7 +98,7 @@ export class BngSquareComponent {
     if (!this.isMarked()) {
       return `${text}, unmarked`;
     }
-    const label = this.markedLabel();
+    const label = this.markedByLabel();
     return `${text}, marked by ${label}`;
   });
 
@@ -137,7 +135,7 @@ export class BngSquareComponent {
   });
 
   protected labelClasses = computed(() => {
-    const color = this.markedBy() === 'Player' ? 'text-accent' : 'text-text-secondary';
+    const color = this.markedByVariant() === 'self' ? 'text-accent' : 'text-text-secondary';
     return `absolute bottom-1 text-[9px] font-medium leading-none ${color}`;
   });
 

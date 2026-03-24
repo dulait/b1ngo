@@ -36,9 +36,10 @@ describe('BngSquareComponent', () => {
     expect(div.className).toContain('border-border-default');
   });
 
-  it('should apply marked styling with "You" label when marked by Player', () => {
+  it('should apply marked styling with "You" label when marked by self', () => {
     fixture.componentRef.setInput('isMarked', true);
-    fixture.componentRef.setInput('markedBy', 'Player');
+    fixture.componentRef.setInput('markedByLabel', 'You');
+    fixture.componentRef.setInput('markedByVariant', 'self');
     fixture.detectChanges();
     const div = fixture.nativeElement.querySelector('[role="gridcell"]');
     expect(div.className).toContain('bg-accent-muted');
@@ -46,16 +47,18 @@ describe('BngSquareComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('You');
   });
 
-  it('should show "Host" label when marked by Host', () => {
+  it('should show "Host" label when marked by other (host)', () => {
     fixture.componentRef.setInput('isMarked', true);
-    fixture.componentRef.setInput('markedBy', 'Host');
+    fixture.componentRef.setInput('markedByLabel', 'Host');
+    fixture.componentRef.setInput('markedByVariant', 'other');
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('Host');
   });
 
-  it('should show "Auto" label when marked by Api', () => {
+  it('should show "Auto" label when marked by other (api)', () => {
     fixture.componentRef.setInput('isMarked', true);
-    fixture.componentRef.setInput('markedBy', 'Api');
+    fixture.componentRef.setInput('markedByLabel', 'Auto');
+    fixture.componentRef.setInput('markedByVariant', 'other');
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('Auto');
   });
@@ -70,7 +73,8 @@ describe('BngSquareComponent', () => {
 
   it('should apply winning border', () => {
     fixture.componentRef.setInput('isMarked', true);
-    fixture.componentRef.setInput('markedBy', 'Player');
+    fixture.componentRef.setInput('markedByLabel', 'You');
+    fixture.componentRef.setInput('markedByVariant', 'self');
     fixture.componentRef.setInput('isWinning', true);
     fixture.detectChanges();
     const div = fixture.nativeElement.querySelector('[role="gridcell"]');
@@ -97,7 +101,8 @@ describe('BngSquareComponent', () => {
 
   it('should emit unmark on tap when marked', () => {
     fixture.componentRef.setInput('isMarked', true);
-    fixture.componentRef.setInput('markedBy', 'Player');
+    fixture.componentRef.setInput('markedByLabel', 'You');
+    fixture.componentRef.setInput('markedByVariant', 'self');
     fixture.detectChanges();
     const spy = vi.fn();
     component.unmark.subscribe(spy);
@@ -122,7 +127,8 @@ describe('BngSquareComponent', () => {
 
   it('should set aria-selected when marked', () => {
     fixture.componentRef.setInput('isMarked', true);
-    fixture.componentRef.setInput('markedBy', 'Player');
+    fixture.componentRef.setInput('markedByLabel', 'You');
+    fixture.componentRef.setInput('markedByVariant', 'self');
     fixture.detectChanges();
     const div = fixture.nativeElement.querySelector('[role="gridcell"]');
     expect(div.getAttribute('aria-selected')).toBe('true');

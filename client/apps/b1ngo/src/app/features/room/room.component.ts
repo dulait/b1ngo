@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   inject,
   signal,
+  computed,
   effect,
   untracked,
   OnInit,
@@ -20,6 +21,7 @@ import {
   BngButtonComponent,
   ToastService,
 } from 'bng-ui';
+import type { BadgeVariant } from 'bng-ui';
 import { RoomStore } from './services/room.store';
 import { ROOM_STORE } from './services/room-store.token';
 import { LobbyComponent } from './components/lobby/lobby.component';
@@ -53,9 +55,19 @@ export class RoomComponent implements OnInit, OnDestroy {
   private readonly auth = inject(AuthService);
   private readonly toast = inject(ToastService);
 
+  private static readonly STATUS_VARIANTS: Record<string, BadgeVariant> = {
+    Lobby: 'warning',
+    Active: 'success',
+    Completed: 'neutral',
+  };
+
   readonly store = inject(ROOM_STORE);
   readonly loading = signal(true);
   readonly error = signal(false);
+
+  readonly statusVariant = computed<BadgeVariant>(
+    () => RoomComponent.STATUS_VARIANTS[this.store.status()] ?? 'neutral',
+  );
   private destroyed = false;
 
   constructor() {

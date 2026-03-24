@@ -18,9 +18,9 @@
 } @else {
   <div class="flex items-center justify-between px-4 py-2 bg-bg-base border-b border-border-default">
     <span class="text-sm text-text-secondary">
-      {{ store.uiSession()?.grandPrixShort }} / {{ store.uiSession()?.sessionType }}
+      {{ store.sessionInfo()?.grandPrixShort }} / {{ store.sessionInfo()?.sessionType }}
     </span>
-    <bng-status-badge [status]="store.status()!" />
+    <bng-status-badge [label]="store.status()!" [variant]="statusVariant()" />
   </div>
 
   @switch (store.status()) {

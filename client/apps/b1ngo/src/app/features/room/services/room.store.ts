@@ -8,11 +8,7 @@ import {
   SquareDto,
 } from '@core/api/models/dtos';
 import { GetRoomStateResponse } from '@core/api/models/responses';
-import {
-  PlayerDto as UiPlayerDto,
-  LeaderboardEntryDto as UiLeaderboardEntryDto,
-  SessionDto as UiSessionDto,
-} from 'bng-ui';
+import type { PlayerChipItem, LeaderboardItem } from 'bng-ui';
 
 export class RoomStore {
   readonly roomId = signal('');
@@ -33,25 +29,33 @@ export class RoomStore {
 
   readonly matrixSize = computed(() => this.configuration()?.matrixSize ?? 5);
 
-  readonly uiPlayers = computed<UiPlayerDto[]>(() =>
-    this.players().map((p) => ({ playerId: p.playerId, displayName: p.displayName })),
-  );
-
-  readonly uiLeaderboard = computed<UiLeaderboardEntryDto[]>(() =>
-    this.leaderboard().map((e) => ({
-      rank: e.rank,
-      playerId: e.playerId,
-      pattern: e.winningPattern,
-      completedAt: e.completedAt,
+  readonly playerChipItems = computed<PlayerChipItem[]>(() =>
+    this.players().map((p) => ({
+      id: p.playerId,
+      displayName: p.displayName,
+      isHost: p.playerId === this.hostPlayerId(),
+      isCurrentUser: p.playerId === this.currentPlayerId(),
     })),
   );
 
-  readonly uiSession = computed<UiSessionDto | null>(() => {
+  readonly leaderboardItems = computed<LeaderboardItem[]>(() =>
+    this.leaderboard().map((e) => {
+      const player = this.players().find((p) => p.playerId === e.playerId);
+      return {
+        rank: e.rank,
+        displayName: player?.displayName ?? 'Unknown',
+        badge: e.winningPattern,
+        timestamp: e.completedAt,
+        isCurrentUser: e.playerId === this.currentPlayerId(),
+      };
+    }),
+  );
+
+  readonly sessionInfo = computed<{ grandPrixShort: string; sessionType: string } | null>(() => {
     const session = this.session();
     if (!session) {
       return null;
     }
-    // todo: find a better way to get short names; possibly return from backend
     const words = session.grandPrixName.split(' ');
     const short =
       words.length >= 2

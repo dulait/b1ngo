@@ -1,34 +1,30 @@
-// todo: move this out of the ui package
-export type MarkedBySource = 'Player' | 'Host' | 'Api' | null;
-
-export interface SquareData {
+export interface GridCellData {
   row: number;
   column: number;
   displayText: string;
   isFreeSpace: boolean;
   isMarked: boolean;
-  markedBy: MarkedBySource;
-  markedAt?: string | null;
+  markedByLabel: string | null;
+  markedByVariant: 'self' | 'other' | null;
+  markedAt: string | null;
 }
 
-// todo: move this out of the ui package
-export interface PlayerDto {
-  playerId: string;
+export interface PlayerChipItem {
+  id: string;
   displayName: string;
+  isHost: boolean;
+  isCurrentUser: boolean;
 }
 
-export interface LeaderboardEntryDto {
+export interface LeaderboardItem {
   rank: number;
-  playerId: string;
-  pattern: string;
-  completedAt: string;
+  displayName: string;
+  badge: string;
+  timestamp: string;
+  isCurrentUser: boolean;
 }
 
-// todo: move this out of the ui package
-export interface SessionDto {
-  grandPrixShort: string;
-  sessionType: string;
-}
+export type BadgeVariant = 'warning' | 'success' | 'neutral';
 
 export type ToastVariant = 'info' | 'success' | 'warning' | 'error';
 
