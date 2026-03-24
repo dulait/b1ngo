@@ -47,7 +47,7 @@ describe('errorInterceptor', () => {
   });
 
   it('should clear session and redirect on 401', () => {
-    authService.saveSession('r1', 'p1');
+    authService.saveSession('r1', 'p1', 'tok');
     const warnSpy = vi.spyOn(toastService, 'warning');
     const clearSpy = vi.spyOn(authService, 'clearSession');
 

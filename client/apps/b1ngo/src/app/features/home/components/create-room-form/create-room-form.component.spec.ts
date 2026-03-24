@@ -5,6 +5,7 @@ import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { CreateRoomFormComponent } from './create-room-form.component';
 import { RoomApiService } from '@core/api/room-api.service';
 import { ENVIRONMENT } from '@core/environment/environment.token';
+import { CreateRoomResponse } from '@core/api/models/responses';
 
 describe('CreateRoomFormComponent', () => {
   let component: CreateRoomFormComponent;
@@ -90,7 +91,7 @@ describe('CreateRoomFormComponent', () => {
   });
 
   it('should set loading state during submit', async () => {
-    let resolvePromise: (value: unknown) => void;
+    let resolvePromise: (value: CreateRoomResponse) => void;
     vi.spyOn(roomApi, 'createRoom').mockReturnValue(
       new Promise((resolve) => {
         resolvePromise = resolve;

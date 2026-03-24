@@ -8,9 +8,11 @@ import {
   BngBottomSheetComponent,
   BngCollapsibleComponent,
 } from 'bng-ui';
+import type { GridCellData } from 'bng-ui';
 import { ROOM_STORE } from '../../services/room-store.token';
 import { RoomApiService } from '@core/api/room-api.service';
 import { safeAsync } from '@core/utils/safe-async.util';
+import { formatMarkedByLabel, markedByVariant } from '../../utils/format-marked-by.util';
 
 @Component({
   selector: 'app-game',
@@ -33,6 +35,23 @@ export class GameComponent {
   readonly isEnding = signal(false);
   readonly endGameSheetOpen = signal(false);
   readonly playersExpanded = signal(false);
+
+  readonly gridCells = computed<GridCellData[]>(() => {
+    const card = this.store.currentCard();
+    if (!card) {
+      return [];
+    }
+    return card.squares.map((s) => ({
+      row: s.row,
+      column: s.column,
+      displayText: s.displayText,
+      isFreeSpace: s.isFreeSpace,
+      isMarked: s.isMarked,
+      markedByLabel: formatMarkedByLabel(s.markedBy),
+      markedByVariant: markedByVariant(s.markedBy),
+      markedAt: s.markedAt ?? null,
+    }));
+  });
 
   readonly winningSquares = computed(() => {
     const currentId = this.store.currentPlayerId();

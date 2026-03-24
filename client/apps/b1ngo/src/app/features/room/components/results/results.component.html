@@ -18,9 +18,7 @@
 
   <bng-card header="Final Standings" data-testid="results-leaderboard">
     <bng-leaderboard
-      [entries]="store.uiLeaderboard()"
-      [players]="store.uiPlayers()"
-      [currentPlayerId]="store.currentPlayerId()"
+      [entries]="store.leaderboardItems()"
       variant="full"
       emptyText="No winners."
     />
@@ -29,11 +27,10 @@
   @if (store.currentCard(); as card) {
     <bng-card header="Your Card" data-testid="results-card">
       <bng-matrix
-        [squares]="card.squares"
+        [cells]="gridCells()"
         [matrixSize]="store.matrixSize()"
-        mode="results"
-        [currentPlayerId]="store.currentPlayerId()"
-        [winningSquares]="winningSquares()"
+        mode="readonly"
+        [winningCells]="winningSquares()"
       />
     </bng-card>
   }

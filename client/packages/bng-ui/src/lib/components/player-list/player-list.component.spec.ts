@@ -1,14 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { BngPlayerListComponent } from './player-list.component';
+import { PlayerChipItem } from '../../types';
 
 describe('BngPlayerListComponent', () => {
   let fixture: ComponentFixture<BngPlayerListComponent>;
 
-  const players = [
-    { playerId: 'p1', displayName: 'Lewis Hamilton' },
-    { playerId: 'p2', displayName: 'Max Verstappen' },
-    { playerId: 'p3', displayName: 'Lando Norris' },
+  const players: PlayerChipItem[] = [
+    { id: 'p1', displayName: 'Lewis Hamilton', isHost: false, isCurrentUser: true },
+    { id: 'p2', displayName: 'Max Verstappen', isHost: true, isCurrentUser: false },
+    { id: 'p3', displayName: 'Lando Norris', isHost: false, isCurrentUser: false },
   ];
 
   beforeEach(async () => {
@@ -18,8 +19,6 @@ describe('BngPlayerListComponent', () => {
 
     fixture = TestBed.createComponent(BngPlayerListComponent);
     fixture.componentRef.setInput('players', players);
-    fixture.componentRef.setInput('hostPlayerId', 'p2');
-    fixture.componentRef.setInput('currentPlayerId', 'p1');
     fixture.detectChanges();
   });
 

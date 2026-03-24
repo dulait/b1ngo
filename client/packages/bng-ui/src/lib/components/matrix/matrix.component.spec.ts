@@ -1,24 +1,26 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { BngMatrixComponent } from './matrix.component';
-import { SquareData } from '../../types';
+import { GridCellData } from '../../types';
 
-function createSquares(size: number): SquareData[] {
-  const squares: SquareData[] = [];
+function createCells(size: number): GridCellData[] {
+  const cells: GridCellData[] = [];
   const center = Math.floor(size / 2);
   for (let r = 0; r < size; r++) {
     for (let c = 0; c < size; c++) {
-      squares.push({
+      cells.push({
         row: r,
         column: c,
         displayText: `R${r}C${c}`,
         isFreeSpace: r === center && c === center,
         isMarked: false,
-        markedBy: null,
+        markedByLabel: null,
+        markedByVariant: null,
+        markedAt: null,
       });
     }
   }
-  return squares;
+  return cells;
 }
 
 describe('BngMatrixComponent', () => {
@@ -30,9 +32,9 @@ describe('BngMatrixComponent', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(BngMatrixComponent);
-    fixture.componentRef.setInput('squares', createSquares(5));
+    fixture.componentRef.setInput('cells', createCells(5));
     fixture.componentRef.setInput('matrixSize', 5);
-    fixture.componentRef.setInput('winningSquares', new Set<string>());
+    fixture.componentRef.setInput('winningCells', new Set<string>());
     fixture.detectChanges();
   });
 
@@ -61,7 +63,7 @@ describe('BngMatrixComponent', () => {
   });
 
   it('should emit squareMark when square emits mark', () => {
-    fixture.componentRef.setInput('mode', 'game');
+    fixture.componentRef.setInput('mode', 'interactive');
     fixture.detectChanges();
     const spy = vi.fn();
     fixture.componentInstance.squareMark.subscribe(spy);

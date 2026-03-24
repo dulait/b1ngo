@@ -5,6 +5,7 @@ import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { JoinRoomFormComponent } from './join-room-form.component';
 import { RoomApiService } from '@core/api/room-api.service';
 import { ENVIRONMENT } from '@core/environment/environment.token';
+import { JoinRoomResponse } from '@core/api/models/responses';
 
 describe('JoinRoomFormComponent', () => {
   let component: JoinRoomFormComponent;
@@ -92,7 +93,7 @@ describe('JoinRoomFormComponent', () => {
   });
 
   it('should set and reset loading state', async () => {
-    let resolvePromise: (value: unknown) => void;
+    let resolvePromise: (value: JoinRoomResponse) => void;
     vi.spyOn(roomApi, 'joinRoom').mockReturnValue(
       new Promise((resolve) => {
         resolvePromise = resolve;

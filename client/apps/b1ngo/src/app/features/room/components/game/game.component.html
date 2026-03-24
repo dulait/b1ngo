@@ -1,11 +1,10 @@
 <main class="p-4 space-y-4" [class.pb-24]="store.isHost()">
   @if (store.currentCard(); as card) {
     <bng-matrix
-      [squares]="card.squares"
+      [cells]="gridCells()"
       [matrixSize]="store.matrixSize()"
-      mode="game"
-      [currentPlayerId]="store.currentPlayerId()"
-      [winningSquares]="winningSquares()"
+      mode="interactive"
+      [winningCells]="winningSquares()"
       (squareMark)="onSquareMark($event)"
       (squareUnmark)="onSquareUnmark($event)"
     />
@@ -13,9 +12,7 @@
 
   <bng-card header="Winners" data-testid="game-leaderboard">
     <bng-leaderboard
-      [entries]="store.uiLeaderboard()"
-      [players]="store.uiPlayers()"
-      [currentPlayerId]="store.currentPlayerId()"
+      [entries]="store.leaderboardItems()"
       variant="compact"
     />
   </bng-card>
@@ -28,9 +25,7 @@
   >
     <bng-card>
       <bng-player-list
-        [players]="store.uiPlayers()"
-        [hostPlayerId]="store.hostPlayerId()"
-        [currentPlayerId]="store.currentPlayerId()"
+        [players]="store.playerChipItems()"
       />
     </bng-card>
   </bng-collapsible>

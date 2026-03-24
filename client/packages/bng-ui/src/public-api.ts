@@ -39,15 +39,14 @@ export { ThemeService } from './lib/services/theme.service';
 
 // Types
 export type {
-  SquareData,
-  PlayerDto,
-  LeaderboardEntryDto,
-  SessionDto,
+  GridCellData,
+  PlayerChipItem,
+  LeaderboardItem,
+  BadgeVariant,
   ToastVariant,
   ToastData,
   ThemeName,
   ThemeDefinition,
-  MarkedBySource,
 } from './lib/types';
 
 export {
@@ -56,6 +55,5 @@ export {
   FREE_SPACE_LABEL,
   getAvatarColor,
   getAvatarInitials,
-  formatMarkedByLabel,
   formatRelativeTime,
 } from './lib/types';

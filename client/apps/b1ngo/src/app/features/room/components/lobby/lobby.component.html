@@ -4,11 +4,10 @@
   <bng-card header="Your Card" data-testid="lobby-card">
     @if (store.currentCard(); as card) {
       <bng-matrix
-        [squares]="card.squares"
+        [cells]="gridCells()"
         [matrixSize]="store.matrixSize()"
-        mode="lobby"
-        [currentPlayerId]="store.currentPlayerId()"
-        [winningSquares]="emptySet"
+        mode="edit"
+        [winningCells]="emptySet"
         (squareEdit)="onSquareEdit($event)"
       />
     }
@@ -16,9 +15,7 @@
 
   <bng-card [header]="'Players (' + store.players().length + ')'" data-testid="lobby-player-list">
     <bng-player-list
-      [players]="store.uiPlayers()"
-      [hostPlayerId]="store.hostPlayerId()"
-      [currentPlayerId]="store.currentPlayerId()"
+      [players]="store.playerChipItems()"
     />
   </bng-card>
 </main>

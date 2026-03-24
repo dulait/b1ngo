@@ -13,7 +13,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { formatMarkedByLabel, formatRelativeTime, MarkedBySource } from '../../types';
+import { formatRelativeTime } from '../../types';
 
 const AUTO_CLOSE_DELAY_MS = 5000;
 const DISMISS_LISTENER_DELAY_MS = 50;
@@ -68,7 +68,7 @@ const MIN_SPACE_ABOVE_PX = 80;
         <p class="text-sm text-text-disabled">Free Space</p>
       } @else {
         <p class="text-sm text-text-primary">{{ displayText() }}</p>
-        @if (isMarked() && markedBy()) {
+        @if (isMarked() && markedByLabel()) {
           <div class="border-t border-border-subtle mt-2 pt-2 flex justify-center gap-2">
             <span class="text-xs text-text-secondary">Marked by {{ markedByLabel() }}</span>
             @if (markedAt()) {
@@ -89,7 +89,7 @@ export class BngSquarePopoverComponent implements OnDestroy {
   displayText = input('');
   isFreeSpace = input(false);
   isMarked = input(false);
-  markedBy = input<MarkedBySource>(null);
+  markedByLabel = input<string | null>(null);
   markedAt = input<string | null>(null);
   anchorElement = input.required<HTMLElement>();
 
@@ -110,8 +110,6 @@ export class BngSquarePopoverComponent implements OnDestroy {
       this.close();
     }
   };
-
-  protected markedByLabel = (): string => formatMarkedByLabel(this.markedBy());
 
   protected relativeTime = (): string => {
     const at = this.markedAt();

@@ -6,7 +6,7 @@ import {
   computed,
 } from '@angular/core';
 import { BngPlayerChipComponent } from '../player-chip/player-chip.component';
-import { PlayerDto } from '../../types';
+import { PlayerChipItem } from '../../types';
 
 @Component({
   selector: 'bng-player-list',
@@ -14,12 +14,12 @@ import { PlayerDto } from '../../types';
   imports: [BngPlayerChipComponent],
   template: `
     <div role="list" aria-label="Players in this room" class="space-y-2">
-      @for (player of sortedPlayers(); track player.playerId) {
+      @for (player of sortedPlayers(); track player.id) {
         <div role="listitem" [attr.data-testid]="'player-chip-' + player.displayName">
           <bng-player-chip
             [displayName]="player.displayName"
-            [isHost]="player.playerId === hostPlayerId()"
-            [isCurrentPlayer]="player.playerId === currentPlayerId()"
+            [isHost]="player.isHost"
+            [isCurrentPlayer]="player.isCurrentUser"
           />
         </div>
       }
@@ -29,15 +29,12 @@ import { PlayerDto } from '../../types';
   encapsulation: ViewEncapsulation.None,
 })
 export class BngPlayerListComponent {
-  players = input<PlayerDto[]>([]);
-  hostPlayerId = input('');
-  currentPlayerId = input('');
+  players = input<PlayerChipItem[]>([]);
 
   protected sortedPlayers = computed(() => {
     const all = this.players();
-    const hostId = this.hostPlayerId();
-    const host = all.find((p) => p.playerId === hostId);
-    const others = all.filter((p) => p.playerId !== hostId);
+    const host = all.find((p) => p.isHost);
+    const others = all.filter((p) => !p.isHost);
     return host ? [host, ...others] : [...others];
   });
 }

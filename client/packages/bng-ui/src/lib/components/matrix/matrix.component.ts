@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { BngSquareComponent } from '../square/square.component';
 import { BngSquarePopoverComponent } from '../square-popover/square-popover.component';
-import { SquareData, FREE_SPACE_LABEL } from '../../types';
+import { GridCellData, FREE_SPACE_LABEL } from '../../types';
 
 @Component({
   selector: 'bng-matrix',
@@ -39,10 +39,11 @@ import { SquareData, FREE_SPACE_LABEL } from '../../types';
               [displayText]="square.isFreeSpace ? freeSpaceLabel : square.displayText"
               [isFreeSpace]="square.isFreeSpace"
               [isMarked]="square.isMarked"
-              [markedBy]="square.markedBy"
-              [isEditable]="mode() === 'lobby'"
-              [isMarkable]="mode() === 'game' && !square.isFreeSpace && !square.isMarked"
-              [isWinning]="winningSquares().has(square.row + ',' + square.column)"
+              [markedByLabel]="square.markedByLabel"
+              [markedByVariant]="square.markedByVariant"
+              [isEditable]="mode() === 'edit'"
+              [isMarkable]="mode() === 'interactive' && !square.isFreeSpace && !square.isMarked"
+              [isWinning]="winningCells().has(square.row + ',' + square.column)"
               [matrixSize]="matrixSize()"
               (mark)="squareMark.emit({ row: square.row, column: square.column })"
               (unmark)="squareUnmark.emit({ row: square.row, column: square.column })"
@@ -59,7 +60,7 @@ import { SquareData, FREE_SPACE_LABEL } from '../../types';
         [displayText]="inspectedSquare()!.displayText"
         [isFreeSpace]="inspectedSquare()!.isFreeSpace"
         [isMarked]="inspectedSquare()!.isMarked"
-        [markedBy]="inspectedSquare()!.markedBy"
+        [markedByLabel]="inspectedSquare()!.markedByLabel"
         [markedAt]="inspectedSquare()!.markedAt ?? null"
         [anchorElement]="inspectedAnchor()!"
         (closed)="onPopoverClosed()"
@@ -70,18 +71,17 @@ import { SquareData, FREE_SPACE_LABEL } from '../../types';
   encapsulation: ViewEncapsulation.None,
 })
 export class BngMatrixComponent {
-  squares = input<SquareData[]>([]);
+  cells = input<GridCellData[]>([]);
   matrixSize = input(5);
-  mode = input<'lobby' | 'game' | 'results'>('game');
-  currentPlayerId = input('');
-  winningSquares = input<Set<string>>(new Set());
+  mode = input<'edit' | 'interactive' | 'readonly'>('interactive');
+  winningCells = input<Set<string>>(new Set());
 
   squareMark = output<{ row: number; column: number }>();
   squareUnmark = output<{ row: number; column: number }>();
   squareEdit = output<{ row: number; column: number }>();
 
   protected readonly freeSpaceLabel = FREE_SPACE_LABEL;
-  protected readonly inspectedSquare = signal<SquareData | null>(null);
+  protected readonly inspectedSquare = signal<GridCellData | null>(null);
   protected readonly inspectedAnchor = signal<HTMLElement | null>(null);
 
   private readonly gridEl = viewChild<ElementRef<HTMLElement>>('gridEl');
@@ -90,8 +90,8 @@ export class BngMatrixComponent {
 
   protected rows = computed(() => {
     const size = this.matrixSize();
-    const all = this.squares();
-    const result: SquareData[][] = [];
+    const all = this.cells();
+    const result: GridCellData[][] = [];
     for (let r = 0; r < size; r++) {
       result.push(all.filter((s) => s.row === r).sort((a, b) => a.column - b.column));
     }
@@ -142,7 +142,7 @@ export class BngMatrixComponent {
     this.focusCell(row, col);
   }
 
-  protected onSquareInspect(square: SquareData, anchorEl: HTMLElement): void {
+  protected onSquareInspect(square: GridCellData, anchorEl: HTMLElement): void {
     this.inspectedSquare.set(square);
     this.inspectedAnchor.set(anchorEl);
   }
