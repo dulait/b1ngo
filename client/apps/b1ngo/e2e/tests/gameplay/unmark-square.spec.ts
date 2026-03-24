@@ -18,6 +18,9 @@ test.describe('BNG-008: Unmark Square', () => {
     await game.markSquare(0, 0);
     await game.expectSquareMarked(0, 0);
 
+    const gridcell = game.getSquare(0, 0).getByRole('gridcell');
+    await expect(gridcell).toHaveAttribute('aria-label', /marked by You/);
+
     await game.unmarkSquare(0, 0);
     await game.expectSquareUnmarked(0, 0);
   });

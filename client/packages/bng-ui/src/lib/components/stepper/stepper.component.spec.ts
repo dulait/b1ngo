@@ -61,12 +61,16 @@ describe('BngStepperComponent', () => {
     expect(labels).toContain('Previous step');
   });
 
-  it('should emit stepChange on Next click', () => {
+  it('should emit stepChange on Next click after animation completes', () => {
     const spy = vi.fn();
     component.stepChange.subscribe(spy);
 
     const nextBtn = fixture.nativeElement.querySelector('[aria-label="Next step"]');
     nextBtn?.querySelector('button')?.click();
+    fixture.detectChanges();
+
+    const animatedEl = fixture.nativeElement.querySelector('[role="tabpanel"] > div');
+    animatedEl?.dispatchEvent(new Event('animationend'));
 
     expect(spy).toHaveBeenCalledWith(1);
   });
