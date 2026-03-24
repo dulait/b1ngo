@@ -1,7 +1,8 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { ENVIRONMENT } from '../environment';
+import { ENVIRONMENT } from '../environment/environment.token';
 import { AuthService } from '../auth/auth.service';
+import { ConnectionState } from './connection-state.type';
 import {
   PlayerJoinedEvent,
   GameStartedEvent,
@@ -10,9 +11,7 @@ import {
   BingoAchievedEvent,
   BingoRevokedEvent,
   GameCompletedEvent,
-} from '../../shared/types/api.types';
-
-export type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'reconnecting';
+} from './models';
 
 @Injectable({ providedIn: 'root' })
 export class SignalRService {

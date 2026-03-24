@@ -113,10 +113,10 @@ export async function ensureRoomStatus(
   expectedStatus: RoomStatus,
   maxAttempts = 10,
   delayMs = 200,
-) {
+): Promise<void> {
   for (let i = 0; i < maxAttempts; i++) {
     const state = await api.getRoomState(roomId, playerToken);
-    if (state.status === expectedStatus) return;
+    if (state.status === expectedStatus) { return; }
     await new Promise((r) => setTimeout(r, delayMs));
   }
   throw new Error(`Room did not reach '${expectedStatus}' status within ${maxAttempts * delayMs}ms`);

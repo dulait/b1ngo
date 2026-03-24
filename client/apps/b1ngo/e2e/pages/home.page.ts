@@ -33,7 +33,7 @@ export class HomePage {
     this.joinRoomSubmit = page.getByTestId('join-room-submit');
   }
 
-  async goto() {
+  async goto(): Promise<void> {
     await this.page.goto('/');
   }
 
@@ -42,7 +42,7 @@ export class HomePage {
     season?: string;
     grandPrix?: string;
     sessionType?: string;
-  }) {
+  }): Promise<void> {
     await this.hostNameInput.locator('input').fill(options.hostName);
     if (options.season) {
       await this.selectDropdown(this.seasonSelect, options.season);
@@ -55,12 +55,12 @@ export class HomePage {
     }
   }
 
-  async selectDropdown(selectLocator: Locator, optionText: string) {
+  async selectDropdown(selectLocator: Locator, optionText: string): Promise<void> {
     await selectLocator.locator('button[role="combobox"]').click();
     await selectLocator.locator('div[role="option"]').filter({ hasText: optionText }).click();
   }
 
-  async selectFirstAvailableOptions() {
+  async selectFirstAvailableOptions(): Promise<void> {
     await this.seasonSelect.locator('button[role="combobox"]').click();
     await this.seasonSelect.locator('div[role="option"]').first().click();
 
@@ -73,63 +73,63 @@ export class HomePage {
     await this.sessionTypeSelect.locator('div[role="option"]').first().click();
   }
 
-  async submitCreateRoom() {
+  async submitCreateRoom(): Promise<void> {
     await this.createRoomSubmit.click();
   }
 
-  async createRoom(hostName: string) {
+  async createRoom(hostName: string): Promise<void> {
     await this.hostNameInput.locator('input').fill(hostName);
     await this.selectFirstAvailableOptions();
     await this.submitCreateRoom();
   }
 
-  async toggleMoreOptions() {
+  async toggleMoreOptions(): Promise<void> {
     await this.moreOptionsButton.click();
   }
 
-  async selectMatrixSize(size: number) {
+  async selectMatrixSize(size: number): Promise<void> {
     await this.matrixSizeButtons
       .locator('button')
       .filter({ hasText: String(size) })
       .click();
   }
 
-  async toggleWinPattern(pattern: string) {
+  async toggleWinPattern(pattern: string): Promise<void> {
     await this.winPatternToggles
       .locator('button')
       .filter({ hasText: pattern })
       .click();
   }
 
-  async fillJoinRoomForm(joinCode: string, displayName: string) {
+  async fillJoinRoomForm(joinCode: string, displayName: string): Promise<void> {
     await this.joinCodeInput.click();
     await this.joinCodeInput.locator('input').pressSequentially(joinCode, { delay: 50 });
     await this.joinNameInput.locator('input').fill(displayName);
   }
 
-  async submitJoinRoom() {
+  async submitJoinRoom(): Promise<void> {
     await this.joinRoomSubmit.click();
   }
 
-  async joinRoom(joinCode: string, displayName: string) {
+  async joinRoom(joinCode: string, displayName: string): Promise<void> {
     await this.fillJoinRoomForm(joinCode, displayName);
     await this.submitJoinRoom();
   }
 
-  async expectOnHomePage() {
+  async expectOnHomePage(): Promise<void> {
     await expect(this.createRoomCard).toBeVisible();
     await expect(this.joinRoomCard).toBeVisible();
   }
 
-  async expectGrandPrixDisabled() {
+  async expectGrandPrixDisabled(): Promise<void> {
     await expect(this.grandPrixSelect.locator('button[role="combobox"]')).toBeDisabled();
   }
 
-  async expectSessionTypeDisabled() {
+  async expectSessionTypeDisabled(): Promise<void> {
     await expect(this.sessionTypeSelect.locator('button[role="combobox"]')).toBeDisabled();
   }
 
-  async expectNavigatedToRoom() {
+  async expectNavigatedToRoom(): Promise<void> {
     await this.page.waitForURL(/\/room\//);
   }
 }

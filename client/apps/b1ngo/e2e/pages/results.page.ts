@@ -31,23 +31,23 @@ export class ResultsPage {
     return this.page.getByTestId(`square-${row}-${col}`);
   }
 
-  async clickNewRoom() {
+  async clickNewRoom(): Promise<void> {
     await this.newRoomButton.click();
   }
 
-  async expectVisible() {
+  async expectVisible(): Promise<void> {
     await expect(this.gameOverHeading).toBeVisible();
   }
 
-  async expectRank(rank: number) {
+  async expectRank(rank: number): Promise<void> {
     await expect(this.rankDisplay).toContainText(`#${rank}`);
   }
 
-  async expectNoRank() {
+  async expectNoRank(): Promise<void> {
     await expect(this.rankDisplay).not.toBeVisible();
   }
 
-  async expectLeaderboardEntry(rank: number, displayName: string, pattern?: string) {
+  async expectLeaderboardEntry(rank: number, displayName: string, pattern?: string): Promise<void> {
     const entry = this.getLeaderboardEntry(rank);
     await expect(entry).toBeVisible();
     await expect(entry).toContainText(displayName);
@@ -56,15 +56,15 @@ export class ResultsPage {
     }
   }
 
-  async expectNoWinners() {
+  async expectNoWinners(): Promise<void> {
     await expect(this.leaderboardEmpty).toBeVisible();
   }
 
-  async expectCardVisible() {
+  async expectCardVisible(): Promise<void> {
     await expect(this.cardSection).toBeVisible();
   }
 
-  async expectSquareMarked(row: number, col: number) {
+  async expectSquareMarked(row: number, col: number): Promise<void> {
     const gridcell = this.getSquare(row, col).getByRole('gridcell');
     await expect(gridcell).toHaveAttribute('aria-selected', 'true');
   }

@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideHttpClient } from '@angular/common/http';
 import { describe, it, beforeEach, expect } from 'vitest';
 import { RoomApiService } from './room-api.service';
-import { ENVIRONMENT } from '../environment';
+import { ENVIRONMENT } from '../environment/environment.token';
 
 describe('RoomApiService', () => {
   let service: RoomApiService;

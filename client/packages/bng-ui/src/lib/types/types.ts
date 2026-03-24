@@ -1,3 +1,4 @@
+// todo: move this out of the ui package
 export type MarkedBySource = 'Player' | 'Host' | 'Api' | null;
 
 export interface SquareData {
@@ -10,6 +11,7 @@ export interface SquareData {
   markedAt?: string | null;
 }
 
+// todo: move this out of the ui package
 export interface PlayerDto {
   playerId: string;
   displayName: string;
@@ -22,6 +24,7 @@ export interface LeaderboardEntryDto {
   completedAt: string;
 }
 
+// todo: move this out of the ui package
 export interface SessionDto {
   grandPrixShort: string;
   sessionType: string;

@@ -31,58 +31,58 @@ export class GamePage {
     return this.page.getByTestId(`leaderboard-entry-${rank}`);
   }
 
-  async clickSquare(row: number, col: number) {
+  async clickSquare(row: number, col: number): Promise<void> {
     await this.getSquare(row, col).click();
   }
 
-  async markSquare(row: number, col: number) {
+  async markSquare(row: number, col: number): Promise<void> {
     await this.clickSquare(row, col);
   }
 
-  async unmarkSquare(row: number, col: number) {
+  async unmarkSquare(row: number, col: number): Promise<void> {
     await this.clickSquare(row, col);
   }
 
-  async endGame() {
+  async endGame(): Promise<void> {
     await this.endGameButton.click();
     await expect(this.endGameSheet).toBeVisible();
     await this.endGameConfirm.click();
   }
 
-  async expectVisible() {
+  async expectVisible(): Promise<void> {
     await expect(this.matrix).toBeVisible();
   }
 
-  async expectSquareMarked(row: number, col: number) {
+  async expectSquareMarked(row: number, col: number): Promise<void> {
     const gridcell = this.getSquare(row, col).getByRole('gridcell');
     await expect(gridcell).toHaveAttribute('aria-selected', 'true');
   }
 
-  async expectSquareUnmarked(row: number, col: number) {
+  async expectSquareUnmarked(row: number, col: number): Promise<void> {
     const gridcell = this.getSquare(row, col).getByRole('gridcell');
     await expect(gridcell).not.toHaveAttribute('aria-selected', 'true');
   }
 
-  async expectSquareWinning(row: number, col: number) {
+  async expectSquareWinning(row: number, col: number): Promise<void> {
     const gridcell = this.getSquare(row, col).getByRole('gridcell');
     await expect(gridcell).toHaveClass(/border-success/);
   }
 
-  async expectLeaderboardEntry(rank: number, displayName: string) {
+  async expectLeaderboardEntry(rank: number, displayName: string): Promise<void> {
     const entry = this.getLeaderboardEntry(rank);
     await expect(entry).toBeVisible();
     await expect(entry).toContainText(displayName);
   }
 
-  async expectLeaderboardEmpty() {
+  async expectLeaderboardEmpty(): Promise<void> {
     await expect(this.leaderboardEmpty).toContainText('No winners yet.');
   }
 
-  async expectEndGameVisible() {
+  async expectEndGameVisible(): Promise<void> {
     await expect(this.endGameButton).toBeVisible();
   }
 
-  async expectEndGameNotVisible() {
+  async expectEndGameNotVisible(): Promise<void> {
     await expect(this.endGameButton).not.toBeVisible();
   }
 }

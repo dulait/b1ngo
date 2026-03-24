@@ -1,4 +1,4 @@
-import { APIRequestContext } from '@playwright/test';
+import { APIRequestContext, APIResponse } from '@playwright/test';
 import type {
   ReferenceDataResponse,
   CreateRoomCommand,
@@ -170,20 +170,20 @@ export class ApiHelper {
     row: number,
     col: number,
     playerToken: string,
-  ) {
+  ): Promise<APIResponse> {
     return this.request.post(
       `${this.baseUrl}/api/v1/rooms/${roomId}/players/${playerId}/card/squares/${row}/${col}/mark`,
       { headers: { 'X-Player-Token': playerToken } },
     );
   }
 
-  async endGameRaw(roomId: string, playerToken: string) {
+  async endGameRaw(roomId: string, playerToken: string): Promise<APIResponse> {
     return this.request.post(`${this.baseUrl}/api/v1/rooms/${roomId}/end`, {
       headers: { 'X-Player-Token': playerToken },
     });
   }
 
-  async reconnect(playerToken: string) {
+  async reconnect(playerToken: string): Promise<APIResponse> {
     return this.request.post(`${this.baseUrl}/api/v1/rooms/reconnect`, {
       headers: { 'X-Player-Token': playerToken },
     });

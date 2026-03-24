@@ -33,11 +33,11 @@ export class LobbyPage {
     return this.page.getByTestId(`player-chip-${displayName}`);
   }
 
-  async clickSquare(row: number, col: number) {
+  async clickSquare(row: number, col: number): Promise<void> {
     await this.getSquare(row, col).click();
   }
 
-  async editSquare(row: number, col: number, newText: string) {
+  async editSquare(row: number, col: number, newText: string): Promise<void> {
     await this.clickSquare(row, col);
     await expect(this.editSheetTitle).toBeVisible();
     await this.editSquareInput.locator('input').fill(newText);
@@ -45,40 +45,40 @@ export class LobbyPage {
     await expect(this.editSheetTitle).not.toBeVisible();
   }
 
-  async startGame() {
+  async startGame(): Promise<void> {
     await this.startGameButton.click();
   }
 
-  async expectVisible() {
+  async expectVisible(): Promise<void> {
     await expect(this.joinCodeDisplay).toBeVisible();
     await expect(this.cardSection).toBeVisible();
   }
 
-  async expectJoinCode(code: string) {
+  async expectJoinCode(code: string): Promise<void> {
     await expect(this.joinCodeDisplay).toContainText(code);
   }
 
-  async expectPlayerVisible(displayName: string) {
+  async expectPlayerVisible(displayName: string): Promise<void> {
     await expect(this.getPlayerChip(displayName)).toBeVisible();
   }
 
-  async expectPlayerCount(count: number) {
+  async expectPlayerCount(count: number): Promise<void> {
     await expect(this.playerList).toContainText(`Players (${count})`);
   }
 
-  async expectStartGameVisible() {
+  async expectStartGameVisible(): Promise<void> {
     await expect(this.startGameButton).toBeVisible();
   }
 
-  async expectStartGameNotVisible() {
+  async expectStartGameNotVisible(): Promise<void> {
     await expect(this.startGameButton).not.toBeVisible();
   }
 
-  async expectSquareText(row: number, col: number, text: string) {
+  async expectSquareText(row: number, col: number, text: string): Promise<void> {
     await expect(this.getSquare(row, col)).toContainText(text);
   }
 
-  async expectFreeSpace(row: number, col: number) {
+  async expectFreeSpace(row: number, col: number): Promise<void> {
     await expect(this.getSquare(row, col)).toContainText('FREE');
   }
 }

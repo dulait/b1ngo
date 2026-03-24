@@ -89,8 +89,8 @@ test.describe('BNG-014: Session Lifecycle', () => {
     try {
       await api.joinRoom(room.joinCode, 'TestHost');
       expect(true).toBe(false);
-    } catch (e: any) {
-      expect(e.message).toContain('409');
+    } catch (e: unknown) {
+      expect((e as Error).message).toContain('409');
     }
   });
 
