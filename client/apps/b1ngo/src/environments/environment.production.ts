@@ -2,6 +2,6 @@ import packageJson from '../../package.json';
 
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://b1ngo-api-prod.up.railway.app',
+  apiBaseUrl: 'https://b1ngo.live',
   version: packageJson.version,
 };
