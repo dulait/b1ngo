@@ -37,7 +37,6 @@ export class SignalRService {
     this.connection = new HubConnectionBuilder()
       .withUrl(`${this.baseUrl}/hubs/game?roomId=${roomId}`, {
         withCredentials: true,
-        accessTokenFactory: () => this.auth.getPlayerToken(),
       })
       .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
       .build();
