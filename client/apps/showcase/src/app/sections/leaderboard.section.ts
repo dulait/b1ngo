@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { BngLeaderboardComponent, BngCardComponent, PlayerDto, LeaderboardEntryDto } from 'bng-ui';
+import { BngLeaderboardComponent, BngCardComponent, LeaderboardItem } from 'bng-ui';
 
 @Component({
   selector: 'ds-leaderboard',
@@ -16,8 +16,6 @@ import { BngLeaderboardComponent, BngCardComponent, PlayerDto, LeaderboardEntryD
       <bng-card header="Compact Variant">
         <bng-leaderboard
           [entries]="entries"
-          [players]="players"
-          currentPlayerId="p2"
           variant="compact"
         />
       </bng-card>
@@ -25,45 +23,39 @@ import { BngLeaderboardComponent, BngCardComponent, PlayerDto, LeaderboardEntryD
       <bng-card header="Full Variant">
         <bng-leaderboard
           [entries]="entries"
-          [players]="players"
-          currentPlayerId="p2"
           variant="full"
         />
       </bng-card>
 
       <bng-card header="Empty State">
-        <bng-leaderboard [entries]="[]" [players]="players" currentPlayerId="p2" />
+        <bng-leaderboard [entries]="[]" />
       </bng-card>
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LeaderboardSection {
-  readonly players: PlayerDto[] = [
-    { playerId: 'p1', displayName: 'Max Verstappen' },
-    { playerId: 'p2', displayName: 'Lewis Hamilton' },
-    { playerId: 'p3', displayName: 'Lando Norris' },
-    { playerId: 'p4', displayName: 'Charles Leclerc' },
-  ];
-
-  readonly entries: LeaderboardEntryDto[] = [
+  readonly entries: LeaderboardItem[] = [
     {
       rank: 1,
-      playerId: 'p4',
-      pattern: 'Row',
-      completedAt: new Date(Date.now() - 120000).toISOString(),
+      displayName: 'Charles Leclerc',
+      badge: 'Row',
+      timestamp: new Date(Date.now() - 120000).toISOString(),
+      isCurrentUser: false,
     },
     {
       rank: 2,
-      playerId: 'p2',
-      pattern: 'Diagonal',
-      completedAt: new Date(Date.now() - 60000).toISOString(),
+      displayName: 'Lewis Hamilton',
+      badge: 'Diagonal',
+      timestamp: new Date(Date.now() - 60000).toISOString(),
+      isCurrentUser: true,
     },
     {
       rank: 3,
-      playerId: 'p1',
-      pattern: 'Column',
-      completedAt: new Date(Date.now() - 30000).toISOString(),
+      displayName: 'Max Verstappen',
+      badge: 'Column',
+      timestamp: new Date(Date.now() - 30000).toISOString(),
+      isCurrentUser: false,
     },
   ];
 }

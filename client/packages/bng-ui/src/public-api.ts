@@ -2,35 +2,37 @@
  * Public API Surface of bng-ui
  */
 
-// Components
-export { BngButtonComponent } from './lib/components/button/button.component';
-export { BngInputComponent } from './lib/components/input/input.component';
-export { BngSelectComponent } from './lib/components/select/select.component';
-export { BngCodeInputComponent } from './lib/components/code-input/code-input.component';
-export { BngSquareComponent } from './lib/components/square/square.component';
-export { BngMatrixComponent } from './lib/components/matrix/matrix.component';
-export { BngCardComponent } from './lib/components/card/card.component';
-export { BngPlayerChipComponent } from './lib/components/player-chip/player-chip.component';
-export { BngPlayerListComponent } from './lib/components/player-list/player-list.component';
-export { BngLeaderboardComponent } from './lib/components/leaderboard/leaderboard.component';
-export { BngHeaderComponent } from './lib/components/header/header.component';
-export { BngStatusBadgeComponent } from './lib/components/status-badge/status-badge.component';
-export { BngToastContainerComponent } from './lib/components/toast/toast.component';
-export { BngBottomSheetComponent } from './lib/components/bottom-sheet/bottom-sheet.component';
-export { BngThemePickerComponent } from './lib/components/theme-picker/theme-picker.component';
-export { BngSkeletonComponent } from './lib/components/skeleton/skeleton.component';
-export { BngPillToggleComponent } from './lib/components/pill-toggle/pill-toggle.component';
-export { BngSquarePopoverComponent } from './lib/components/square-popover/square-popover.component';
-export { BngCollapsibleComponent } from './lib/components/collapsible/collapsible.component';
-export { BngModalComponent } from './lib/components/modal/modal.component';
-export { BngStepperComponent } from './lib/components/stepper/stepper.component';
-export { BngIconButtonComponent } from './lib/components/icon-button/icon-button.component';
-export { BngMenuComponent } from './lib/components/menu/menu.component';
-export { BngMenuItemComponent } from './lib/components/menu-item/menu-item.component';
-export type { PillToggleOption } from './lib/components/pill-toggle/pill-toggle.component';
+// Primitives
+export { BngButtonComponent } from './lib/components/primitives/button/button.component';
+export { BngIconComponent } from './lib/components/primitives/icon/icon.component';
+export { BngIconButtonComponent } from './lib/components/primitives/icon-button/icon-button.component';
+export { BngInputComponent } from './lib/components/primitives/input/input.component';
+export { BngSkeletonComponent } from './lib/components/primitives/skeleton/skeleton.component';
+export { BngStatusBadgeComponent } from './lib/components/primitives/status-badge/status-badge.component';
+export { BngSquareComponent } from './lib/components/primitives/square/square.component';
+export { BngPlayerChipComponent } from './lib/components/primitives/player-chip/player-chip.component';
 
-// Icons
-export { BngIconComponent } from './lib/icons/icon.component';
+// Composites
+export { BngCardComponent } from './lib/components/composites/card/card.component';
+export { BngCodeInputComponent } from './lib/components/composites/code-input/code-input.component';
+export { BngCollapsibleComponent } from './lib/components/composites/collapsible/collapsible.component';
+export { BngHeaderComponent } from './lib/components/composites/header/header.component';
+export { BngMenuComponent } from './lib/components/composites/menu/menu.component';
+export { BngMenuItemComponent } from './lib/components/composites/menu-item/menu-item.component';
+export { BngModalComponent } from './lib/components/composites/modal/modal.component';
+export { BngPillToggleComponent } from './lib/components/composites/pill-toggle/pill-toggle.component';
+export type { PillToggleOption } from './lib/components/composites/pill-toggle/pill-toggle.component';
+export { BngSelectComponent } from './lib/components/composites/select/select.component';
+export { BngStepperComponent } from './lib/components/composites/stepper/stepper.component';
+export { BngThemePickerComponent } from './lib/components/composites/theme-picker/theme-picker.component';
+export { BngBottomSheetComponent } from './lib/components/composites/bottom-sheet/bottom-sheet.component';
+export { BngToastContainerComponent } from './lib/components/composites/toast/toast.component';
+export { BngMatrixComponent } from './lib/components/composites/matrix/matrix.component';
+export { BngSquarePopoverComponent } from './lib/components/composites/square-popover/square-popover.component';
+export { BngPlayerListComponent } from './lib/components/composites/player-list/player-list.component';
+export { BngLeaderboardComponent } from './lib/components/composites/leaderboard/leaderboard.component';
+
+// Icons (SVG path data)
 export * from './lib/icons/icons';
 
 // Services

@@ -50,7 +50,7 @@ import type { ThemeName } from 'bng-ui';
           </bng-menu-item>
           <div headerSubbar class="flex items-center justify-between px-4 py-2 bg-bg-base border-b border-border-default">
             <span class="text-sm text-text-secondary">BHR / Race</span>
-            <bng-status-badge status="Active" />
+            <bng-status-badge label="Active" variant="success" />
           </div>
         </bng-header>
       </bng-card>
@@ -74,7 +74,7 @@ import type { ThemeName } from 'bng-ui';
           </bng-menu-item>
           <div headerSubbar class="flex items-center justify-between px-4 py-2 bg-bg-base border-b border-border-default">
             <span class="text-sm text-text-secondary">JPN / Qualifying</span>
-            <bng-status-badge status="Lobby" />
+            <bng-status-badge label="Lobby" variant="warning" />
           </div>
         </bng-header>
       </bng-card>

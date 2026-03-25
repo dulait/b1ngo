@@ -1,0 +1,108 @@
+:root {
+  /* Color Palette */
+
+  /* Grays (dark-first, asphalt-inspired) */
+  --bng-color-gray-950: #0A0A0F;
+  --bng-color-gray-900: #14141F;
+  --bng-color-gray-850: #1A1A2A;
+  --bng-color-gray-800: #1E1E2E;
+  --bng-color-gray-700: #26263A;
+  --bng-color-gray-600: #2A2A3D;
+  --bng-color-gray-500: #55556A;
+  --bng-color-gray-400: #9898B0;
+  --bng-color-gray-200: #E8E8F0;
+  --bng-color-gray-50:  #F8F8FC;
+
+  --bng-color-white: #FFFFFF;
+  --bng-color-black: #000000;
+
+  /* Reds (flag-red / danger) */
+  --bng-color-red-700: #B91C1C;
+  --bng-color-red-600: #DC2626;
+  --bng-color-red-500: #EF4444;
+  --bng-color-red-300: #FCA5A5;
+  --bng-color-red-100: rgba(220, 38, 38, 0.10);
+
+  /* Blues */
+  --bng-color-blue-600: #2563EB;
+  --bng-color-blue-500: #3B82F6;
+  --bng-color-blue-100: rgba(37, 99, 235, 0.10);
+
+  /* Greens (flag-green / go) */
+  --bng-color-green-500: #22C55E;
+  --bng-color-green-400: #34D399;
+  --bng-color-green-100: rgba(34, 197, 94, 0.15);
+
+  /* Yellows (flag-yellow / caution) */
+  --bng-color-yellow-600: #CA8A04;
+  --bng-color-yellow-500: #EAB308;
+  --bng-color-yellow-100: rgba(234, 179, 8, 0.15);
+
+  /* Indigos */
+  --bng-color-indigo-500: #6366F1;
+  --bng-color-indigo-400: #818CF8;
+  --bng-color-indigo-100: rgba(99, 102, 241, 0.10);
+
+  /* Emeralds */
+  --bng-color-emerald-500: #10B981;
+  --bng-color-emerald-400: #34D399;
+  --bng-color-emerald-100: rgba(16, 185, 129, 0.10);
+
+  /* Slates */
+  --bng-color-slate-400: #94A3B8;
+  --bng-color-slate-300: #CBD5E1;
+  --bng-color-slate-100: rgba(148, 163, 184, 0.15);
+
+  /* Cyans */
+  --bng-color-cyan-500: #06B6D4;
+  --bng-color-cyan-400: #22D3EE;
+  --bng-color-cyan-100: rgba(6, 182, 212, 0.10);
+
+  /* Oranges */
+  --bng-color-orange-500: #F97316;
+  --bng-color-orange-400: #FB923C;
+  --bng-color-orange-100: rgba(249, 115, 22, 0.10);
+
+  /* Pinks */
+  --bng-color-pink-500: #EC4899;
+  --bng-color-pink-400: #F472B6;
+  --bng-color-pink-100: rgba(236, 72, 153, 0.10);
+
+  /* Purples */
+  --bng-color-purple-500: #8B5CF6;
+
+  /* Limes */
+  --bng-color-lime-500: #84CC16;
+  --bng-color-lime-400: #A3E635;
+  --bng-color-lime-100: rgba(132, 204, 22, 0.10);
+
+  /* Avatar Palette */
+  --bng-avatar-0: #6366F1;
+  --bng-avatar-1: #8B5CF6;
+  --bng-avatar-2: #EC4899;
+  --bng-avatar-3: #F97316;
+  --bng-avatar-4: #EAB308;
+  --bng-avatar-5: #22C55E;
+  --bng-avatar-6: #06B6D4;
+  --bng-avatar-7: #3B82F6;
+
+  /* Typography (font families only — sizes/weights use Tailwind) */
+  --bng-font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --bng-font-mono: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+
+  /* Shadows (dark-surface optimized) */
+  --bng-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --bng-shadow-md: 0 4px 8px rgba(0, 0, 0, 0.35);
+  --bng-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --bng-shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.5);
+
+  /* Motion */
+  --bng-duration-fast:    150ms;
+  --bng-duration-normal:  250ms;
+  --bng-duration-slow:    400ms;
+
+  --bng-easing-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --bng-easing-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+  --bng-easing-smooth:  cubic-bezier(0.32, 0.72, 0, 1);
+  --bng-easing-bounce:  cubic-bezier(0.21, 1.02, 0.73, 1);
+}

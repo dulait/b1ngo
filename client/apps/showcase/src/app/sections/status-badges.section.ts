@@ -14,9 +14,9 @@ import { BngStatusBadgeComponent, BngCardComponent } from 'bng-ui';
 
     <bng-card header="All Statuses">
       <div class="flex flex-wrap items-center gap-4">
-        <bng-status-badge status="Lobby" />
-        <bng-status-badge status="Active" />
-        <bng-status-badge status="Completed" />
+        <bng-status-badge label="Lobby" variant="warning" />
+        <bng-status-badge label="Active" variant="success" />
+        <bng-status-badge label="Completed" variant="neutral" />
       </div>
     </bng-card>
   `,

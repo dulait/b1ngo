@@ -16,15 +16,16 @@ import { BngSquareComponent, BngCardComponent } from 'bng-ui';
       <bng-card header="All States">
         <div class="grid grid-cols-4 gap-2" style="max-width: 320px">
           <bng-square displayText="Unmarked" />
-          <bng-square displayText="Marked (You)" [isMarked]="true" markedBy="Player" />
-          <bng-square displayText="Marked (Host)" [isMarked]="true" markedBy="Host" />
-          <bng-square displayText="Marked (Auto)" [isMarked]="true" markedBy="Api" />
+          <bng-square displayText="Marked (You)" [isMarked]="true" markedByLabel="You" markedByVariant="self" />
+          <bng-square displayText="Marked (Host)" [isMarked]="true" markedByLabel="Host" markedByVariant="other" />
+          <bng-square displayText="Marked (Auto)" [isMarked]="true" markedByLabel="Auto" markedByVariant="other" />
           <bng-square displayText="FREE" [isFreeSpace]="true" />
           <bng-square displayText="Editable" [isEditable]="true" />
           <bng-square
             displayText="Winning!"
             [isMarked]="true"
-            markedBy="Player"
+            markedByLabel="You"
+            markedByVariant="self"
             [isWinning]="true"
           />
           <bng-square displayText="Markable" [isMarkable]="true" />
@@ -38,7 +39,8 @@ import { BngSquareComponent, BngCardComponent } from 'bng-ui';
             <bng-square
               [displayText]="sq.text"
               [isMarked]="sq.marked"
-              [markedBy]="sq.marked ? 'Player' : null"
+              [markedByLabel]="sq.marked ? 'You' : null"
+              [markedByVariant]="sq.marked ? 'self' : null"
               [isMarkable]="!sq.marked"
               (mark)="toggleSquare($index)"
               (unmark)="toggleSquare($index)"

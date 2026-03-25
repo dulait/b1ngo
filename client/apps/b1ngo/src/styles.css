@@ -2,31 +2,56 @@
 
 @import "tailwindcss";
 @source "../../../packages/bng-ui/src/**/*.ts";
-@import "../../../packages/bng-ui/src/lib/styles/tokens.css";
-@import "../../../packages/bng-ui/src/lib/styles/themes.css";
+@import "../../../packages/bng-ui/src/lib/tokens/index.css";
 @import "../../../packages/bng-ui/src/lib/styles/base.css";
 
 @theme {
-  --color-bg-base: #0A0A0F;
-  --color-bg-surface: #14141F;
-  --color-bg-surface-elevated: #1E1E2E;
-  --color-bg-surface-hover: #26263A;
+  /* ── Surface Colors (from semantic tokens — zero hardcoded hex) ── */
+  --color-bg-base:              var(--bng-color-surface-base);
+  --color-bg-surface:           var(--bng-color-surface-primary);
+  --color-bg-surface-elevated:  var(--bng-color-surface-elevated);
+  --color-bg-surface-hover:     var(--bng-color-surface-hover);
 
-  --color-border-default: #2A2A3D;
-  --color-border-subtle: #1E1E2E;
+  /* ── Border Colors ── */
+  --color-border-default: var(--bng-color-border-default);
+  --color-border-subtle:  var(--bng-color-border-subtle);
 
-  --color-text-primary: #E8E8F0;
-  --color-text-secondary: #9898B0;
-  --color-text-disabled: #55556A;
+  /* ── Text Colors ── */
+  --color-text-primary:   var(--bng-color-text-primary);
+  --color-text-secondary: var(--bng-color-text-secondary);
+  --color-text-disabled:  var(--bng-color-text-disabled);
 
-  --color-accent: var(--bng-accent);
-  --color-accent-hover: var(--bng-accent-hover);
-  --color-accent-muted: var(--bng-accent-muted);
+  /* ── Accent Colors (theme-dependent) ── */
+  --color-accent:       var(--bng-color-accent);
+  --color-accent-hover: var(--bng-color-accent-hover);
+  --color-accent-muted: var(--bng-color-accent-muted);
 
-  --color-success: #22C55E;
-  --color-warning: #EAB308;
-  --color-error: #EF4444;
+  /* ── Status Colors ── */
+  --color-success:    var(--bng-color-success);
+  --color-success-bg: var(--bng-color-success-bg);
+  --color-warning:    var(--bng-color-warning);
+  --color-warning-bg: var(--bng-color-warning-bg);
+  --color-error:      var(--bng-color-error);
+  --color-error-bg:   var(--bng-color-error-bg);
+  --color-info:       var(--bng-color-info);
+  --color-info-bg:    var(--bng-color-info-bg);
+  --color-completed:    var(--bng-color-completed);
+  --color-completed-bg: var(--bng-color-completed-bg);
 
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+  /* ── Danger (button destructive action — darker red than error) ── */
+  --color-danger:       var(--bng-color-red-600);
+  --color-danger-hover: var(--bng-color-red-700);
+
+  /* ── Overlay ── */
+  --color-overlay: var(--bng-color-overlay);
+
+  /* ── Typography ── */
+  --font-sans: var(--bng-font-sans);
+  --font-mono: var(--bng-font-mono);
+
+  /* ── Shadows ── */
+  --shadow-sm: var(--bng-shadow-sm);
+  --shadow-md: var(--bng-shadow-md);
+  --shadow-lg: var(--bng-shadow-lg);
+  --shadow-xl: var(--bng-shadow-xl);
 }

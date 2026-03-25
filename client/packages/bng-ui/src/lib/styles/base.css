@@ -1,9 +1,6 @@
-/* B1ngo Base Styles — Reset, keyframes, reduced-motion */
-/* Font import is in the consuming app's styles.css (must be first) */
-
 html {
-  background-color: var(--bng-bg-base);
-  color: var(--bng-text-primary);
+  background-color: var(--bng-color-surface-base);
+  color: var(--bng-color-text-primary);
 }
 
 @keyframes pulse-dot {
@@ -17,25 +14,13 @@ html {
 }
 
 @keyframes toast-enter {
-  from {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes toast-exit {
-  from {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
+  from { transform: translateY(0); opacity: 1; }
+  to   { transform: translateY(-100%); opacity: 0; }
 }
 
 @keyframes toast-countdown {
@@ -45,77 +30,77 @@ html {
 
 @keyframes popover-open {
   from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
 @keyframes menu-open {
   from { opacity: 0; transform: scale(0.95) translateY(-4px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 @keyframes select-open {
   from { opacity: 0; transform: scaleY(0.95); transform-origin: top; }
-  to { opacity: 1; transform: scaleY(1); transform-origin: top; }
+  to   { opacity: 1; transform: scaleY(1); transform-origin: top; }
 }
 
 @keyframes select-close {
   from { opacity: 1; }
-  to { opacity: 0; }
+  to   { opacity: 0; }
 }
 
 @keyframes sheet-open {
   from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+  to   { transform: translateY(0); }
 }
 
 @keyframes sheet-close {
   from { transform: translateY(0); }
-  to { transform: translateY(100%); }
+  to   { transform: translateY(100%); }
 }
 
 @keyframes spin {
   from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  to   { transform: rotate(360deg); }
 }
 
 @keyframes modal-backdrop-open {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
 }
 
 @keyframes modal-backdrop-close {
   from { opacity: 1; }
-  to { opacity: 0; }
+  to   { opacity: 0; }
 }
 
 @keyframes modal-dialog-open {
   from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
 @keyframes modal-dialog-close {
   from { opacity: 1; transform: scale(1); }
-  to { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 0; transform: scale(0.95); }
 }
 
 @keyframes stepper-slide-out-left {
   from { opacity: 1; transform: translateX(0); }
-  to { opacity: 0; transform: translateX(-100%); }
+  to   { opacity: 0; transform: translateX(-100%); }
 }
 
 @keyframes stepper-slide-in-left {
   from { opacity: 0; transform: translateX(100%); }
-  to { opacity: 1; transform: translateX(0); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes stepper-slide-out-right {
   from { opacity: 1; transform: translateX(0); }
-  to { opacity: 0; transform: translateX(100%); }
+  to   { opacity: 0; transform: translateX(100%); }
 }
 
 @keyframes stepper-slide-in-right {
   from { opacity: 0; transform: translateX(-100%); }
-  to { opacity: 1; transform: translateX(0); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 .pulse-dot {
@@ -132,7 +117,7 @@ html {
 
 .bng-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: var(--bng-border-default) transparent;
+  scrollbar-color: var(--bng-color-border-default) transparent;
 }
 
 .bng-scrollbar::-webkit-scrollbar {
@@ -144,12 +129,12 @@ html {
 }
 
 .bng-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--bng-border-default);
+  background: var(--bng-color-border-default);
   border-radius: 3px;
 }
 
 .bng-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--bng-bg-surface-hover);
+  background: var(--bng-color-surface-hover);
 }
 
 [role="alert"]:hover .origin-left {
