@@ -26,9 +26,9 @@ describe('BngStatusBadgeComponent', () => {
   });
 
   it('should show Active with green styling', () => {
-    const dot = fixture.nativeElement.querySelector('.bg-green-500');
+    const dot = fixture.nativeElement.querySelector('.bg-success');
     expect(dot).toBeTruthy();
-    const text = fixture.nativeElement.querySelector('.text-green-500');
+    const text = fixture.nativeElement.querySelector('.text-success');
     expect(text.textContent.trim()).toBe('Active');
   });
 
@@ -41,7 +41,7 @@ describe('BngStatusBadgeComponent', () => {
     fixture.componentRef.setInput('label', 'Lobby');
     fixture.componentRef.setInput('variant', 'warning');
     fixture.detectChanges();
-    const dot = fixture.nativeElement.querySelector('.bg-yellow-500');
+    const dot = fixture.nativeElement.querySelector('.bg-warning');
     expect(dot).toBeTruthy();
     expect(fixture.nativeElement.textContent).toContain('Lobby');
   });
@@ -50,7 +50,7 @@ describe('BngStatusBadgeComponent', () => {
     fixture.componentRef.setInput('label', 'Completed');
     fixture.componentRef.setInput('variant', 'neutral');
     fixture.detectChanges();
-    const dot = fixture.nativeElement.querySelector('.bg-slate-400');
+    const dot = fixture.nativeElement.querySelector('.bg-completed');
     expect(dot).toBeTruthy();
     expect(fixture.nativeElement.textContent).toContain('Completed');
   });

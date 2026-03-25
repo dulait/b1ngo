@@ -54,7 +54,7 @@ describe('BngThemePickerComponent', () => {
 
 describe('ThemeService', () => {
   it('should be importable', async () => {
-    const { ThemeService } = await import('../../services/theme.service');
+    const { ThemeService } = await import('../../../services/theme.service');
     expect(ThemeService).toBeTruthy();
   });
 });

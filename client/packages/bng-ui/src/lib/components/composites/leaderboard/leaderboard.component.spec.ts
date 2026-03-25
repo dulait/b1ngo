@@ -36,7 +36,7 @@ describe('BngLeaderboardComponent', () => {
   });
 
   it('should show rank #1 in green', () => {
-    const greenRank = fixture.nativeElement.querySelector('.text-green-500');
+    const greenRank = fixture.nativeElement.querySelector('.text-success');
     expect(greenRank).toBeTruthy();
     expect(greenRank.textContent).toContain('#1');
   });
