@@ -207,6 +207,12 @@ jobs:
         run: dotnet build B1ngo.slnx --configuration Release
         working-directory: server
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('client/package-lock.json') }}
+
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
         working-directory: client/apps/b1ngo
