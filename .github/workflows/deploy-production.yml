@@ -29,7 +29,7 @@ jobs:
         working-directory: client
 
       - name: Cache node_modules
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: client/node_modules
           key: node-modules-${{ hashFiles('client/package-lock.json') }}
@@ -49,7 +49,7 @@ jobs:
           node-version: "22"
 
       - name: Restore node_modules
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: client/node_modules
           key: node-modules-${{ hashFiles('client/package-lock.json') }}
@@ -67,7 +67,7 @@ jobs:
         working-directory: client/apps/b1ngo
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: spa-production-build
           path: client/apps/b1ngo/dist/b1ngo/browser
@@ -88,7 +88,7 @@ jobs:
           node-version: "22"
 
       - name: Restore node_modules
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: client/node_modules
           key: node-modules-${{ hashFiles('client/package-lock.json') }}
@@ -111,7 +111,7 @@ jobs:
           dotnet-version: "10.0.x"
 
       - name: NuGet cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.nuget/packages
           key: nuget-${{ hashFiles('server/**/packages.lock.json', 'server/**/*.csproj') }}
@@ -152,7 +152,7 @@ jobs:
     needs: [client-app-tests, design-system-tests]
     steps:
       - name: Download build artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: spa-production-build
           path: dist
