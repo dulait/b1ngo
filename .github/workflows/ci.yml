@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: ["**"]
+    branches: [main]
   pull_request:
     branches: [main]
 
@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  build-and-test:
+  server-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,6 +21,13 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: "10.0.x"
+
+      - name: NuGet cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ hashFiles('server/**/packages.lock.json', 'server/**/*.csproj') }}
+          restore-keys: nuget-
 
       - name: Restore
         run: dotnet restore B1ngo.slnx
@@ -72,9 +79,87 @@ jobs:
           git add docs/openapi.v1.json
           git diff --cached --quiet || (git commit -m "docs: update openapi spec" && git push)
 
+  client-setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: client
+
+      - name: Cache node_modules
+        uses: actions/cache/save@v5
+        with:
+          path: client/node_modules
+          key: node-modules-${{ hashFiles('client/package-lock.json') }}
+
+  client-app-tests:
+    runs-on: ubuntu-latest
+    needs: client-setup
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      - name: Restore node_modules
+        uses: actions/cache/restore@v5
+        with:
+          path: client/node_modules
+          key: node-modules-${{ hashFiles('client/package-lock.json') }}
+
+      - name: Lint
+        run: npm run lint
+        working-directory: client
+
+      - name: Build
+        run: npx ng build
+        working-directory: client/apps/b1ngo
+
+      - name: Test
+        run: npx ng test b1ngo --watch=false
+        working-directory: client/apps/b1ngo
+
+  design-system-tests:
+    runs-on: ubuntu-latest
+    needs: client-setup
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      - name: Restore node_modules
+        uses: actions/cache/restore@v5
+        with:
+          path: client/node_modules
+          key: node-modules-${{ hashFiles('client/package-lock.json') }}
+
+      - name: Test
+        run: npx ng test --watch=false
+        working-directory: client/packages/bng-ui
+
   e2e-tests:
     runs-on: ubuntu-latest
-    needs: build-and-test
+    needs: [server-tests, client-app-tests, design-system-tests]
 
     services:
       postgres:
@@ -100,18 +185,33 @@ jobs:
         with:
           dotnet-version: "10.0.x"
 
+      - name: NuGet cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ hashFiles('server/**/packages.lock.json', 'server/**/*.csproj') }}
+          restore-keys: nuget-
+
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
           node-version: "22"
 
+      - name: Restore node_modules
+        uses: actions/cache/restore@v5
+        with:
+          path: client/node_modules
+          key: node-modules-${{ hashFiles('client/package-lock.json') }}
+
       - name: Build server
         run: dotnet build B1ngo.slnx --configuration Release
         working-directory: server
 
-      - name: Install client dependencies
-        run: npm ci
-        working-directory: client
+      - name: Cache Playwright browsers
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('client/package-lock.json') }}
 
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
@@ -149,7 +249,7 @@ jobs:
           API_BASE_URL: "http://localhost:5141"
 
       - name: Upload Playwright report
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
@@ -157,9 +257,10 @@ jobs:
           retention-days: 14
 
       - name: Upload test results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: ${{ !cancelled() }}
         with:
           name: test-results
           path: client/apps/b1ngo/test-results/
+          if-no-files-found: ignore
           retention-days: 14
