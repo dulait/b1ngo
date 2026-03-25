@@ -2,6 +2,7 @@ using B1ngo.Infrastructure.Persistence;
 using B1ngo.Web.Hubs;
 using B1ngo.Web.Middleware;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -28,7 +29,8 @@ internal static class WebApplicationExtensions
                 app.UseHttpsRedirection();
             }
 
-            app.UseCors();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             if (app.Environment.IsProduction() || app.Environment.IsEnvironment("Staging"))
             {
@@ -51,6 +53,8 @@ internal static class WebApplicationExtensions
             {
                 await app.ApplyMigrationsAsync();
             }
+
+            await app.SeedRolesAsync();
 
             if (app.Environment.IsEnvironment("Testing"))
             {
@@ -75,6 +79,17 @@ internal static class WebApplicationExtensions
             }
 
             await db.Database.MigrateAsync();
+        }
+
+        private async Task SeedRolesAsync()
+        {
+            using var scope = app.Services.CreateScope();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+
+            if (!await roleManager.RoleExistsAsync("Admin"))
+            {
+                await roleManager.CreateAsync(new IdentityRole<Guid>("Admin"));
+            }
         }
 
         private async Task SeedTestReferenceDataAsync()

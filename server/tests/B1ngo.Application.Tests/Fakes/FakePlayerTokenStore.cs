@@ -9,7 +9,7 @@ public sealed class FakePlayerTokenStore : IPlayerTokenStore
     public Guid LastCreatedToken { get; private set; }
     public int CreateCallCount { get; private set; }
 
-    public Guid Create(Guid playerId, Guid roomId, bool isHost)
+    public Guid Create(Guid playerId, Guid roomId, bool isHost, Guid? userId = null)
     {
         var token = Guid.NewGuid();
         _tokens[token] = new PlayerIdentity(roomId, playerId, isHost);

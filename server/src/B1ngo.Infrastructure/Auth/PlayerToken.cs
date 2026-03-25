@@ -1,3 +1,5 @@
+using B1ngo.Infrastructure.Identity;
+
 namespace B1ngo.Infrastructure.Auth;
 
 public sealed class PlayerToken
@@ -6,11 +8,14 @@ public sealed class PlayerToken
     public Guid PlayerId { get; private set; }
     public Guid RoomId { get; private set; }
     public bool IsHost { get; private set; }
+    public Guid? UserId { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
+
+    public ApplicationUser? User { get; private set; }
 
     private PlayerToken() { }
 
-    public static PlayerToken Create(Guid playerId, Guid roomId, bool isHost)
+    public static PlayerToken Create(Guid playerId, Guid roomId, bool isHost, Guid? userId = null)
     {
         return new PlayerToken
         {
@@ -18,6 +23,7 @@ public sealed class PlayerToken
             PlayerId = playerId,
             RoomId = roomId,
             IsHost = isHost,
+            UserId = userId,
             CreatedAt = DateTimeOffset.UtcNow,
         };
     }

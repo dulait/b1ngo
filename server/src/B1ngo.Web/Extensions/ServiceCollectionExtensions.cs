@@ -7,10 +7,13 @@ using B1ngo.Application.Features;
 using B1ngo.Domain.Core;
 using B1ngo.Domain.Game.Events;
 using B1ngo.Infrastructure;
+using B1ngo.Infrastructure.Identity;
+using B1ngo.Infrastructure.Persistence;
 using B1ngo.Web.EventHandlers;
 using B1ngo.Web.Filters;
 using B1ngo.Web.OpenApi;
 using B1ngo.Web.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace B1ngo.Web.Extensions;
@@ -19,6 +22,7 @@ internal static class ServiceCollectionExtensions
 {
     extension(IServiceCollection services)
     {
+        // todo: clean this up
         public IServiceCollection AddWebServices(IConfiguration configuration, IHostEnvironment environment)
         {
             services.AddApplication().AddInfrastructure(configuration);
@@ -47,46 +51,85 @@ internal static class ServiceCollectionExtensions
                 options.AddOperationTransformer<OperationTransformer>();
                 options.AddSchemaTransformer<SchemaTransformer>();
             });
-            services.AddCorsPolicy(configuration, environment);
 
             if (environment.IsProduction() || environment.IsEnvironment("Staging"))
             {
                 services.AddRateLimiterPolicies();
             }
 
+            services
+                .AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
+                {
+                    options.Password.RequireDigit = true;
+                    options.Password.RequiredLength = 8;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.User.RequireUniqueEmail = true;
+                })
+                .AddEntityFrameworkStores<B1ngoDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.AddExternalAuthProviders(configuration);
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy =
+                    environment.IsDevelopment() || environment.IsEnvironment("Testing")
+                        ? CookieSecurePolicy.SameAsRequest
+                        : CookieSecurePolicy.Always;
+                options.Cookie.SameSite = SameSiteMode.Lax;
+                options.Cookie.Name = "B1ngo.Auth";
+                options.ExpireTimeSpan = TimeSpan.FromDays(30);
+                options.SlidingExpiration = true;
+                options.Events.OnRedirectToLogin = ctx =>
+                {
+                    ctx.Response.StatusCode = 401;
+                    return Task.CompletedTask;
+                };
+                options.Events.OnRedirectToAccessDenied = ctx =>
+                {
+                    ctx.Response.StatusCode = 403;
+                    return Task.CompletedTask;
+                };
+            });
+
             services.AddHealthChecks();
 
             return services;
         }
 
-        private void AddCorsPolicy(IConfiguration configuration, IHostEnvironment environment)
+        private void AddExternalAuthProviders(IConfiguration configuration)
         {
-            var allowedOrigins = configuration
-                .GetValue<string>("AllowedOrigins")
-                ?.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            var auth = services.AddAuthentication();
 
-            if (allowedOrigins is not { Length: > 0 })
+            if (configuration["Auth:Google:ClientId"] is { Length: > 0 })
             {
-                if (!environment.IsDevelopment() && !environment.IsStaging() && !environment.IsEnvironment("Testing"))
+                auth.AddGoogle(options =>
                 {
-                    throw new InvalidOperationException(
-                        "AllowedOrigins must be configured in production environments."
-                    );
-                }
+                    options.ClientId = configuration["Auth:Google:ClientId"]!;
+                    options.ClientSecret = configuration["Auth:Google:ClientSecret"]!;
+                });
             }
 
-            services.AddCors(options =>
+            if (configuration["Auth:Microsoft:ClientId"] is { Length: > 0 })
             {
-                options.AddDefaultPolicy(policy =>
+                auth.AddMicrosoftAccount(options =>
                 {
-                    if (allowedOrigins is { Length: > 0 })
-                    {
-                        policy.WithOrigins(allowedOrigins);
-                    }
-
-                    policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+                    options.ClientId = configuration["Auth:Microsoft:ClientId"]!;
+                    options.ClientSecret = configuration["Auth:Microsoft:ClientSecret"]!;
                 });
-            });
+            }
+
+            if (configuration["Auth:Apple:ClientId"] is { Length: > 0 })
+            {
+                auth.AddApple(options =>
+                {
+                    options.ClientId = configuration["Auth:Apple:ClientId"]!;
+                    options.TeamId = configuration["Auth:Apple:TeamId"]!;
+                    options.KeyId = configuration["Auth:Apple:KeyId"]!;
+                    options.GenerateClientSecret = true;
+                });
+            }
         }
 
         private void AddRateLimiterPolicies()

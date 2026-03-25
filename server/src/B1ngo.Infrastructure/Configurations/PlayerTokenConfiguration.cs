@@ -1,4 +1,5 @@
 using B1ngo.Infrastructure.Auth;
+using B1ngo.Infrastructure.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -19,8 +20,18 @@ internal sealed class PlayerTokenConfiguration : IEntityTypeConfiguration<Player
 
         builder.Property(x => x.IsHost).HasColumnName("is_host").IsRequired();
 
+        builder.Property(x => x.UserId).HasColumnName("user_id");
+
+        builder
+            .HasOne<ApplicationUser>(x => x.User)
+            .WithMany()
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.SetNull);
+
         builder.Property(x => x.CreatedAt).HasColumnName("created_at").IsRequired();
 
         builder.HasIndex(x => x.PlayerId).HasDatabaseName("ix_player_tokens_player_id");
+
+        builder.HasIndex(x => x.UserId).HasDatabaseName("ix_player_tokens_user_id");
     }
 }

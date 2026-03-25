@@ -180,7 +180,7 @@ public class RoomsController(
             {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.None,
+                SameSite = SameSiteMode.Lax,
                 Path = "/",
                 Expires = DateTimeOffset.UtcNow.AddHours(24),
             }
