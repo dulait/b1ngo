@@ -14,16 +14,16 @@ interface VariantStyle {
 }
 
 const VARIANT_STYLES: Record<BadgeVariant, VariantStyle> = {
-  warning: { container: 'bg-[var(--bng-color-warning-bg)]', dot: 'bg-yellow-500', text: 'text-yellow-500' },
+  warning: { container: 'bg-warning-bg', dot: 'bg-warning', text: 'text-warning' },
   success: {
-    container: 'bg-[var(--bng-color-success-bg)]',
-    dot: 'bg-green-500 pulse-dot',
-    text: 'text-green-500',
+    container: 'bg-success-bg',
+    dot: 'bg-success pulse-dot',
+    text: 'text-success',
   },
   neutral: {
-    container: 'bg-[var(--bng-color-completed-bg)]',
-    dot: 'bg-slate-400',
-    text: 'text-slate-400',
+    container: 'bg-completed-bg',
+    dot: 'bg-completed',
+    text: 'text-completed',
   },
 };
 

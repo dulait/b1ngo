@@ -11,14 +11,14 @@ import { Component, ChangeDetectionStrategy, ViewEncapsulation, input, output } 
       <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
       <div
         role="menu"
-        class="absolute top-[calc(100%+var(--bng-menu-offset-y))] right-0 min-w-[var(--bng-menu-min-width)] z-50 bg-bg-surface-elevated border border-border-default rounded-[var(--bng-menu-radius)] p-1 shadow-lg"
+        class="absolute top-[calc(100%+6px)] right-0 min-w-[200px] z-50 bg-bg-surface-elevated border border-border-default rounded-xl p-1 shadow-lg"
         style="animation: menu-open 150ms ease; transform-origin: top right"
         (keydown.escape)="closed.emit()"
         (click)="onMenuClick($event)"
       >
         <ng-content />
         @if (footer() || copyright()) {
-          <div class="mt-1 pt-1.5 pb-1 px-3 border-t border-border-default text-[length:var(--bng-menu-footer-text-size)] text-text-secondary opacity-60 flex items-center justify-between">
+          <div class="mt-1 pt-1.5 pb-1 px-3 border-t border-border-default text-[0.7rem] text-text-secondary opacity-60 flex items-center justify-between">
             <span>{{ copyright() ? '\u00A9 ' + currentYear + ' ' + copyright() : '' }}</span>
             <span>{{ footer() ?? '' }}</span>
           </div>

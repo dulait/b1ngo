@@ -134,15 +134,15 @@ describe('BngSquareComponent', () => {
     expect(div.getAttribute('aria-selected')).toBe('true');
   });
 
-  it('should use text-[length:var(--bng-square-text-sm)] for matrix size >= 7', () => {
+  it('should use text-[9px] for matrix size >= 7', () => {
     fixture.componentRef.setInput('matrixSize', 7);
     fixture.detectChanges();
     const text = fixture.nativeElement.querySelector('.square-text-clamp');
-    expect(text.className).toContain('text-[length:var(--bng-square-text-sm)]');
+    expect(text.className).toContain('text-[9px]');
   });
 
-  it('should use text-[length:var(--bng-square-text-default)] for matrix size 5', () => {
+  it('should use text-[11px] for matrix size 5', () => {
     const text = fixture.nativeElement.querySelector('.square-text-clamp');
-    expect(text.className).toContain('text-[length:var(--bng-square-text-default)]');
+    expect(text.className).toContain('text-[11px]');
   });
 });

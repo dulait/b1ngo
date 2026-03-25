@@ -28,7 +28,7 @@ const SWIPE_OPACITY_DIVISOR = 200;
           [attr.aria-live]="
             toast.variant === 'warning' || toast.variant === 'error' ? 'assertive' : 'polite'
           "
-          class="bg-bg-surface-elevated rounded-md shadow-[var(--bng-toast-shadow)] overflow-hidden flex flex-col touch-pan-y"
+          class="bg-bg-surface-elevated rounded-md shadow-lg overflow-hidden flex flex-col touch-pan-y"
           [style.animation]="
             toast.dismissing
               ? 'toast-exit 200ms cubic-bezier(0.21, 1.02, 0.73, 1) forwards'
@@ -49,7 +49,7 @@ const SWIPE_OPACITY_DIVISOR = 200;
                 class="shrink-0"
                 [style.color]="getColor(toast.variant)"
               />
-              <span class="text-[length:var(--bng-toast-text-size)] font-medium text-text-primary flex-1 leading-tight">{{ toast.message }}</span>
+              <span class="text-[13px] font-medium text-text-primary flex-1 leading-tight">{{ toast.message }}</span>
               <button
                 class="text-text-disabled hover:text-text-secondary shrink-0 p-0.5"
                 aria-label="Dismiss notification"

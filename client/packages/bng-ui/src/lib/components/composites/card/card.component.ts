@@ -12,7 +12,7 @@ import { Component, ChangeDetectionStrategy, ViewEncapsulation, input } from '@a
     >
       @if (header()) {
         <div
-          class="text-[length:var(--bng-text-xl)] font-semibold leading-[var(--bng-leading-snug)] pb-3 border-b border-border-subtle mb-3"
+          class="text-[1.125rem] font-semibold leading-[1.33] pb-3 border-b border-border-subtle mb-3"
         >
           {{ header() }}
         </div>

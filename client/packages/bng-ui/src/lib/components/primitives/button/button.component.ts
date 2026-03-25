@@ -55,17 +55,17 @@ export class BngButtonComponent {
       'inline-flex items-center justify-center font-semibold transition-all duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-bg-base focus:ring-accent';
 
     const sizeClasses: Record<string, string> = {
-      sm: 'h-[var(--bng-button-height-sm)] text-sm font-medium px-3 py-2 rounded-[var(--bng-button-radius)]',
-      default: 'h-[var(--bng-button-height-default)] text-base px-4 py-3 rounded-[var(--bng-button-radius)]',
-      lg: 'h-[var(--bng-button-height-lg)] text-base px-6 py-3.5 rounded-[var(--bng-button-radius)]',
+      sm: 'h-[36px] text-sm font-medium px-3 py-2 rounded-lg',
+      default: 'h-[44px] text-base px-4 py-3 rounded-lg',
+      lg: 'h-[52px] text-base px-6 py-3.5 rounded-lg',
     };
 
     const variantClasses: Record<string, string> = {
-      primary: 'bg-accent text-white hover:bg-accent-hover active:scale-[var(--bng-scale-press)]',
+      primary: 'bg-accent text-white hover:bg-accent-hover active:scale-[0.97]',
       secondary:
-        'bg-transparent border border-border-default text-text-primary hover:bg-bg-surface-hover active:scale-[var(--bng-scale-press)]',
-      ghost: 'bg-transparent text-accent hover:bg-accent-muted active:scale-[var(--bng-scale-press)]',
-      danger: 'bg-[var(--bng-button-bg-danger)] text-white hover:bg-[var(--bng-button-bg-danger-hover)] active:scale-[var(--bng-scale-press)]',
+        'bg-transparent border border-border-default text-text-primary hover:bg-bg-surface-hover active:scale-[0.97]',
+      ghost: 'bg-transparent text-accent hover:bg-accent-muted active:scale-[0.97]',
+      danger: 'bg-danger text-white hover:bg-danger-hover active:scale-[0.97]',
     };
 
     const width = this.fullWidth() ? 'w-full' : '';

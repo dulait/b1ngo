@@ -32,7 +32,7 @@ const MIN_SPACE_ABOVE_PX = 80;
     <div
       #popoverEl
       role="tooltip"
-      class="fixed z-50 max-w-[var(--bng-popover-max-width)] bg-bg-surface-elevated border border-border-default rounded-lg px-3 py-2.5 shadow-lg text-center"
+      class="fixed z-50 max-w-[200px] bg-bg-surface-elevated border border-border-default rounded-lg px-3 py-2.5 shadow-lg text-center"
       [style.left.px]="posX()"
       [style.top.px]="posY()"
       [style.animation]="'popover-open 150ms cubic-bezier(0.21, 1.02, 0.73, 1)'"

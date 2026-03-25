@@ -24,7 +24,7 @@ import { GridCellData, FREE_SPACE_LABEL } from '../../../types';
       #gridEl
       role="grid"
       [attr.aria-label]="'Bingo card, ' + matrixSize() + ' by ' + matrixSize()"
-      class="aspect-square w-full max-w-[var(--bng-matrix-max-width)] mx-auto relative"
+      class="aspect-square w-full max-w-[420px] mx-auto relative"
       [style.display]="'grid'"
       [style.gridTemplateColumns]="'repeat(' + matrixSize() + ', 1fr)'"
       [class.gap-1]="matrixSize() <= 5"

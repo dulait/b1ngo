@@ -1,4 +1,6 @@
 :root {
+  /* Color Palette */
+
   /* Grays (dark-first, asphalt-inspired) */
   --bng-color-gray-950: #0A0A0F;
   --bng-color-gray-900: #14141F;
@@ -74,97 +76,6 @@
   --bng-color-lime-400: #A3E635;
   --bng-color-lime-100: rgba(132, 204, 22, 0.10);
 
-  /* Spacing Scale (4px base unit) */
-  --bng-spacing-0:   0px;
-  --bng-spacing-px:  1px;
-  --bng-spacing-0-5: 2px;
-  --bng-spacing-1:   4px;
-  --bng-spacing-1-5: 6px;
-  --bng-spacing-2:   8px;
-  --bng-spacing-2-5: 10px;
-  --bng-spacing-3:   12px;
-  --bng-spacing-3-5: 14px;
-  --bng-spacing-4:   16px;
-  --bng-spacing-5:   20px;
-  --bng-spacing-6:   24px;
-  --bng-spacing-8:   32px;
-  --bng-spacing-10:  40px;
-  --bng-spacing-12:  48px;
-  --bng-spacing-16:  64px;
-
-  /* Sizing Scale */
-  --bng-size-5:  20px;
-  --bng-size-6:  24px;
-  --bng-size-7:  28px;
-  --bng-size-8:  32px;
-  --bng-size-9:  36px;
-  --bng-size-10: 40px;
-  --bng-size-11: 44px;
-  --bng-size-12: 48px;
-  --bng-size-13: 52px;
-  --bng-size-14: 56px;
-
-  /* Border Radius */
-  --bng-radius-xs:   2px;
-  --bng-radius-sm:   4px;
-  --bng-radius-md:   6px;
-  --bng-radius-lg:   8px;
-  --bng-radius-xl:   12px;
-  --bng-radius-2xl:  16px;
-  --bng-radius-full: 9999px;
-
-  /* Typography */
-  --bng-font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --bng-font-mono: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
-
-  --bng-text-2xs:  0.5625rem;  /* 9px */
-  --bng-text-xs:   0.625rem;   /* 10px */
-  --bng-text-sm:   0.6875rem;  /* 11px */
-  --bng-text-base: 0.8125rem;  /* 13px */
-  --bng-text-md:   0.875rem;   /* 14px */
-  --bng-text-lg:   1rem;       /* 16px */
-  --bng-text-xl:   1.125rem;   /* 18px */
-  --bng-text-2xl:  1.25rem;    /* 20px */
-  --bng-text-3xl:  1.5rem;     /* 24px */
-  --bng-text-4xl:  1.75rem;    /* 28px */
-
-  --bng-leading-none:   1;
-  --bng-leading-tight:  1.25;
-  --bng-leading-snug:   1.33;
-  --bng-leading-normal: 1.5;
-
-  --bng-font-normal:   400;
-  --bng-font-medium:   500;
-  --bng-font-semibold: 600;
-  --bng-font-bold:     700;
-
-  /* Shadows (dark-surface optimized) */
-  --bng-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --bng-shadow-md: 0 4px 8px rgba(0, 0, 0, 0.35);
-  --bng-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.4);
-  --bng-shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.5);
-
-  /* Z-Index Scale */
-  --bng-z-dropdown: 40;
-  --bng-z-sticky:   45;
-  --bng-z-overlay:  50;
-  --bng-z-modal:    50;
-  --bng-z-toast:    60;
-
-  /* Motion */
-  --bng-duration-instant: 0ms;
-  --bng-duration-fast:    150ms;
-  --bng-duration-normal:  250ms;
-  --bng-duration-slow:    300ms;
-  --bng-duration-slower:  400ms;
-
-  --bng-easing-default: cubic-bezier(0.4, 0, 0.2, 1);
-  --bng-easing-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
-  --bng-easing-smooth:  cubic-bezier(0.32, 0.72, 0, 1);
-  --bng-easing-bounce:  cubic-bezier(0.21, 1.02, 0.73, 1);
-  --bng-easing-in:      ease-in;
-  --bng-easing-out:     ease-out;
-
   /* Avatar Palette */
   --bng-avatar-0: #6366F1;
   --bng-avatar-1: #8B5CF6;
@@ -175,12 +86,23 @@
   --bng-avatar-6: #06B6D4;
   --bng-avatar-7: #3B82F6;
 
-  /* Breakpoints */
-  --bng-breakpoint-sm:  640px;
-  --bng-breakpoint-md:  768px;
-  --bng-breakpoint-lg:  1024px;
-  --bng-breakpoint-xl:  1280px;
+  /* Typography (font families only — sizes/weights use Tailwind) */
+  --bng-font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --bng-font-mono: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
 
-  /* Misc Scales */
-  --bng-scale-press: 0.97;
+  /* Shadows (dark-surface optimized) */
+  --bng-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --bng-shadow-md: 0 4px 8px rgba(0, 0, 0, 0.35);
+  --bng-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --bng-shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.5);
+
+  /* Motion */
+  --bng-duration-fast:    150ms;
+  --bng-duration-normal:  250ms;
+  --bng-duration-slow:    400ms;
+
+  --bng-easing-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --bng-easing-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+  --bng-easing-smooth:  cubic-bezier(0.32, 0.72, 0, 1);
+  --bng-easing-bounce:  cubic-bezier(0.21, 1.02, 0.73, 1);
 }

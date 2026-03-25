@@ -65,7 +65,7 @@ describe('BngModalComponent', () => {
     fixture.componentRef.setInput('maxWidth', 'sm');
     fixture.detectChanges();
     const dialog = fixture.nativeElement.querySelector('[role="dialog"]');
-    expect(dialog.classList.contains('max-w-[var(--bng-modal-max-width-sm)]')).toBe(true);
+    expect(dialog.classList.contains('max-w-[384px]')).toBe(true);
   });
 
   it('should apply large max-width', () => {

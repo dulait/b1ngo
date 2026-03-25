@@ -51,7 +51,7 @@ describe('BngButtonComponent', () => {
     fixture.componentRef.setInput('variant', 'danger');
     fixture.detectChanges();
     const btn = fixture.nativeElement.querySelector('button');
-    expect(btn.className).toContain('bg-[var(--bng-button-bg-danger)]');
+    expect(btn.className).toContain('bg-danger');
     expect(btn.className).toContain('text-white');
   });
 
@@ -59,19 +59,19 @@ describe('BngButtonComponent', () => {
     fixture.componentRef.setInput('size', 'lg');
     fixture.detectChanges();
     const btn = fixture.nativeElement.querySelector('button');
-    expect(btn.className).toContain('h-[var(--bng-button-height-lg)]');
+    expect(btn.className).toContain('h-[52px]');
   });
 
   it('should apply size default height', () => {
     const btn = fixture.nativeElement.querySelector('button');
-    expect(btn.className).toContain('h-[var(--bng-button-height-default)]');
+    expect(btn.className).toContain('h-[44px]');
   });
 
   it('should apply size sm height', () => {
     fixture.componentRef.setInput('size', 'sm');
     fixture.detectChanges();
     const btn = fixture.nativeElement.querySelector('button');
-    expect(btn.className).toContain('h-[var(--bng-button-height-sm)]');
+    expect(btn.className).toContain('h-[36px]');
   });
 
   it('should set aria-disabled when disabled', () => {

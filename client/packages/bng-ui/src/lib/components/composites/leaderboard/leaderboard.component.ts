@@ -13,7 +13,7 @@ import {
 } from '../../../types';
 
 const AVATAR_BASE = 'rounded-full flex items-center justify-center text-white font-medium shrink-0';
-const AVATAR_COMPACT = `w-7 h-7 text-[length:var(--bng-leaderboard-avatar-text-compact)] ${AVATAR_BASE}`;
+const AVATAR_COMPACT = `w-7 h-7 text-[10px] ${AVATAR_BASE}`;
 const AVATAR_FULL = `w-8 h-8 text-xs ${AVATAR_BASE}`;
 
 @Component({
@@ -34,7 +34,7 @@ const AVATAR_FULL = `w-8 h-8 text-xs ${AVATAR_BASE}`;
           <!-- Rank -->
           <span
             class="w-7 text-center font-bold text-sm"
-            [class.text-green-500]="entry.rank === 1"
+            [class.text-success]="entry.rank === 1"
             [class.text-text-secondary]="entry.rank !== 1"
           >
             #{{ entry.rank }}

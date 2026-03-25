@@ -38,6 +38,10 @@
   --color-completed:    var(--bng-color-completed);
   --color-completed-bg: var(--bng-color-completed-bg);
 
+  /* ── Danger (button destructive action — darker red than error) ── */
+  --color-danger:       var(--bng-color-red-600);
+  --color-danger-hover: var(--bng-color-red-700);
+
   /* ── Overlay ── */
   --color-overlay: var(--bng-color-overlay);
 

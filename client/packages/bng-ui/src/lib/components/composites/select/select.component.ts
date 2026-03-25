@@ -87,7 +87,7 @@ let nextSelectId = 0;
           role="listbox"
           [id]="listboxId"
           [attr.aria-labelledby]="labelId"
-          class="absolute top-full left-0 right-0 mt-1 z-50 bg-bg-surface-elevated border border-border-default rounded-lg max-h-[var(--bng-select-max-height)] overflow-y-auto py-1 shadow-lg bng-scrollbar"
+          class="absolute top-full left-0 right-0 mt-1 z-50 bg-bg-surface-elevated border border-border-default rounded-lg max-h-[240px] overflow-y-auto py-1 shadow-lg bng-scrollbar"
           style="animation: select-open 150ms cubic-bezier(0.21, 1.02, 0.73, 1)"
         >
           @for (opt of options(); track opt.value; let i = $index) {
@@ -96,7 +96,7 @@ let nextSelectId = 0;
               role="option"
               [id]="optionId(i)"
               [attr.aria-selected]="opt.value === value()"
-              class="px-4 py-2.5 text-sm cursor-pointer border-l-[var(--bng-select-indicator-width)] transition-colors"
+              class="px-4 py-2.5 text-sm cursor-pointer border-l-[3px] transition-colors"
               [class.border-l-transparent]="opt.value !== value()"
               [class.border-l-accent]="opt.value === value()"
               [class.bg-accent-muted]="opt.value === value()"

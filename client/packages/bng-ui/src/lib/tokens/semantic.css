@@ -62,6 +62,4 @@
   --bng-focus-ring-offset: 2px;
   --bng-focus-ring-color:  var(--bng-color-accent);
 
-  /* Disabled State */
-  --bng-opacity-disabled: 0.40;
 }

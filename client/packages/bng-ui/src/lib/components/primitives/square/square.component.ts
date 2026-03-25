@@ -129,14 +129,14 @@ export class BngSquareComponent {
   });
 
   protected textClasses = computed(() => {
-    const sizeClass = this.matrixSize() >= SMALL_TEXT_SIZE_THRESHOLD ? 'text-[length:var(--bng-square-text-sm)]' : 'text-[length:var(--bng-square-text-default)]';
+    const sizeClass = this.matrixSize() >= SMALL_TEXT_SIZE_THRESHOLD ? 'text-[9px]' : 'text-[11px]';
     const color = this.isFreeSpace() ? 'text-text-disabled' : 'text-text-primary';
     return `${sizeClass} font-medium leading-tight text-center square-text-clamp ${color}`;
   });
 
   protected labelClasses = computed(() => {
     const color = this.markedByVariant() === 'self' ? 'text-accent' : 'text-text-secondary';
-    return `absolute bottom-1 text-[length:var(--bng-square-text-sm)] font-medium leading-none ${color}`;
+    return `absolute bottom-1 text-[9px] font-medium leading-none ${color}`;
   });
 
   /** Tap: toggle mark/unmark, or edit in lobby */

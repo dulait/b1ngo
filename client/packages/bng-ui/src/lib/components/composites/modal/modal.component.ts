@@ -75,9 +75,9 @@ export class BngModalComponent {
   private previouslyFocusedElement: HTMLElement | null = null;
 
   protected readonly maxWidthClasses: Record<string, string> = {
-    sm: 'max-w-[var(--bng-modal-max-width-sm)]',
-    md: 'max-w-[var(--bng-modal-max-width-md)]',
-    lg: 'max-w-[var(--bng-modal-max-width-lg)]',
+    sm: 'max-w-[384px]',
+    md: 'max-w-[448px]',
+    lg: 'max-w-[512px]',
   };
 
   protected dialogClasses = computed(() => {
@@ -87,20 +87,20 @@ export class BngModalComponent {
 
   protected backdropAnimation = computed(() => {
     if (this.closing()) {
-      return 'modal-backdrop-close var(--bng-modal-duration-close) ease-in forwards';
+      return 'modal-backdrop-close 150ms ease-in forwards';
     }
     if (this.animating()) {
-      return 'modal-backdrop-open var(--bng-modal-duration-open) ease-out';
+      return 'modal-backdrop-open 250ms ease-out';
     }
     return 'none';
   });
 
   protected dialogAnimation = computed(() => {
     if (this.closing()) {
-      return 'modal-dialog-close var(--bng-modal-duration-close) ease-in forwards';
+      return 'modal-dialog-close 150ms ease-in forwards';
     }
     if (this.animating()) {
-      return 'modal-dialog-open var(--bng-modal-duration-open) ease-out';
+      return 'modal-dialog-open 250ms ease-out';
     }
     return 'none';
   });

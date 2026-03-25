@@ -26,7 +26,7 @@ const COPY_FEEDBACK_DURATION_MS = 2000;
           @for (i of boxIndices(); track i) {
             <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
             <div
-              class="w-12 h-14 bg-bg-surface border rounded-lg flex items-center justify-center font-mono font-bold text-[length:var(--bng-code-box-font-size)] text-text-primary cursor-text"
+              class="w-12 h-14 bg-bg-surface border rounded-lg flex items-center justify-center font-mono font-bold text-[1.75rem] text-text-primary cursor-text"
               [class.border-accent]="i === currentValue().length && !error()"
               [class.border-border-default]="i !== currentValue().length && !error()"
               [class.border-error]="!!error()"
