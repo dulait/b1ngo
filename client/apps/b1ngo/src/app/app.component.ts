@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject, OnInit, signal } from '@angular/core';
-import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import {
   BngHeaderComponent,
@@ -35,6 +35,7 @@ import { TutorialComponent } from '@shell/index';
 })
 export class AppComponent implements OnInit {
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly toast = inject(ToastService);
   readonly auth = inject(AuthService);
   readonly themeService = inject(ThemeService);
@@ -56,9 +57,9 @@ export class AppComponent implements OnInit {
 
     this.router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
-      .subscribe((e) => {
-        const url = e.urlAfterRedirects;
-        this.showHeader.set(!url.startsWith('/auth'));
+      .subscribe(() => {
+        const route = this.getDeepestChild(this.route);
+        this.showHeader.set(!route.snapshot.data['hideHeader']);
       });
   }
 
@@ -84,5 +85,12 @@ export class AppComponent implements OnInit {
   onThemeChange(theme: ThemeName): void {
     this.themeService.setTheme(theme);
     setTimeout(() => this.themeSheetOpen.set(false), 150);
+  }
+
+  private getDeepestChild(route: ActivatedRoute): ActivatedRoute {
+    while (route.firstChild) {
+      route = route.firstChild;
+    }
+    return route;
   }
 }

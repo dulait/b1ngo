@@ -8,10 +8,12 @@ export const routes: Routes = [
   },
   {
     path: 'auth',
+    data: { hideHeader: true },
     loadChildren: () => import('./features/auth/auth.routes').then((m) => m.AUTH_ROUTES),
   },
   {
     path: 'profile',
+    data: { hideHeader: true },
     canActivate: [authGuard],
     loadComponent: () =>
       import('./features/profile/profile.component').then((m) => m.ProfileComponent),
