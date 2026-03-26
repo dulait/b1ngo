@@ -112,7 +112,9 @@ public class RoomsController(
         }
 
         var rooms = await playerTokenStore.GetActiveTokensForUserAsync(userId, ct);
-        return Ok(new ReconnectRoomsResponse(rooms));
+        return Ok(
+            new ReconnectRoomsResponse(rooms.Select(r => new ReconnectRoomSummary(r.RoomId, r.RoomStatus)).ToList())
+        );
     }
 
     [HttpPost("{roomId:guid}/start")]
