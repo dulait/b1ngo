@@ -1,3 +1,4 @@
+using B1ngo.Web.Contracts.V1;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -32,12 +33,7 @@ internal sealed class ValidationFilter(IServiceProvider serviceProvider) : IAsyn
                 var details = failures.Select(f => $"{f.PropertyName}: {f.ErrorMessage}").ToList();
 
                 context.Result = new BadRequestObjectResult(
-                    new
-                    {
-                        code = "validation_error",
-                        message = failures[0].ErrorMessage,
-                        details,
-                    }
+                    new ErrorResponse("validation_error", failures[0].ErrorMessage, details)
                 );
                 return;
             }
