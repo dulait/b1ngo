@@ -42,12 +42,13 @@ public class AuthController(
 
         if (!result.Succeeded)
         {
+            if (result.Errors.Any(e => e.Code is "DuplicateEmail" or "DuplicateUserName"))
+            {
+                return Conflict(new ErrorResponse("RegistrationFailed", "An account with this email already exists."));
+            }
+
             return BadRequest(
-                new ErrorResponse(
-                    "RegistrationFailed",
-                    "Registration failed. Check your input and try again.",
-                    result.Errors.Select(e => e.Description).ToList()
-                )
+                new ErrorResponse("RegistrationFailed", "Registration failed. Check your input and try again.")
             );
         }
 
