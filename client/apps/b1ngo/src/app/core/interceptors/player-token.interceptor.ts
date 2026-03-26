@@ -3,8 +3,8 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { SessionService } from '../auth/session.service';
 
 export const playerTokenInterceptor: HttpInterceptorFn = (req, next) => {
-  const auth = inject(SessionService);
-  const token = auth.getPlayerToken();
+  const session = inject(SessionService);
+  const token = session.getPlayerToken();
 
   if (token) {
     return next(req.clone({ setHeaders: { 'X-Player-Token': token } }));

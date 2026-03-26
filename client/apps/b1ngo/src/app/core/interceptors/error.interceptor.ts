@@ -4,10 +4,12 @@ import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { ToastService } from 'bng-ui';
 import { SessionService } from '../auth/session.service';
+import { AuthService } from '../auth/auth.service';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const toast = inject(ToastService);
-  const auth = inject(SessionService);
+  const session = inject(SessionService);
+  const auth = inject(AuthService);
   const router = inject(Router);
 
   return next(req).pipe(
@@ -16,14 +18,19 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         case 0:
           toast.error('Network error. Check your connection.');
           break;
-        case 401:
+        case 401: {
           if (req.url.includes('/api/v1/auth/me')) {
             break;
           }
-          auth.clearSession();
+          if (req.url.includes('/api/v1/auth/')) {
+            auth.currentUser.set(null);
+            break;
+          }
+          session.clearSession();
           router.navigate(['/']);
           toast.warning(err.error?.message ?? 'Your session has expired.');
           break;
+        }
         case 403:
           router.navigate(['/']);
           toast.warning("You're not a member of this room.");
