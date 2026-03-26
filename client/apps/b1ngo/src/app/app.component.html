@@ -1,4 +1,8 @@
+@if (showHeader()) {
 <bng-header [version]="version" copyright="B1NGO">
+  @if (auth.isAuthenticated()) {
+    <bng-menu-item [icon]="userIcon" label="My Profile" (clicked)="navigateTo('/profile')" />
+  }
   <bng-menu-item
     [icon]="helpIcon"
     label="How to play"
@@ -14,7 +18,13 @@
       [style.backgroundColor]="themeService.accentColor()"
     ></span>
   </bng-menu-item>
+  @if (auth.isAuthenticated()) {
+    <bng-menu-item [icon]="signOutIcon" label="Sign out" (clicked)="onSignOut()" />
+  } @else {
+    <bng-menu-item [icon]="logInIcon" label="Log in" (clicked)="navigateTo('/auth/login')" />
+  }
 </bng-header>
+}
 
 <router-outlet />
 

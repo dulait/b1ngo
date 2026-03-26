@@ -1,11 +1,20 @@
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { BngCardComponent, BngInputComponent, BngButtonComponent, ToastService } from 'bng-ui';
+import {
+  BngCardComponent,
+  BngInputComponent,
+  BngButtonComponent,
+  BngIconComponent,
+  ToastService,
+  bngIconGoogle,
+  bngIconMicrosoft,
+  bngIconSocialViewBox,
+} from 'bng-ui';
 import { AuthService } from '@core/auth/auth.service';
 
 @Component({
   selector: 'app-login',
-  imports: [BngCardComponent, BngInputComponent, BngButtonComponent, RouterLink],
+  imports: [BngCardComponent, BngInputComponent, BngButtonComponent, BngIconComponent, RouterLink],
   templateUrl: './login.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -13,6 +22,10 @@ export class LoginComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
+
+  readonly googleIcon = bngIconGoogle;
+  readonly microsoftIcon = bngIconMicrosoft;
+  readonly socialViewBox = bngIconSocialViewBox;
 
   readonly email = signal('');
   readonly password = signal('');
@@ -22,14 +35,14 @@ export class LoginComponent {
 
   onEmailChange(value: string): void {
     this.email.set(value);
-    if (this.emailError()) {
+    if (this.emailError() && value.trim()) {
       this.emailError.set(null);
     }
   }
 
   onPasswordChange(value: string): void {
     this.password.set(value);
-    if (this.passwordError()) {
+    if (this.passwordError() && value) {
       this.passwordError.set(null);
     }
   }
@@ -39,16 +52,7 @@ export class LoginComponent {
       return;
     }
 
-    let valid = true;
-    if (!this.email().trim()) {
-      this.emailError.set('Required.');
-      valid = false;
-    }
-    if (!this.password()) {
-      this.passwordError.set('Required.');
-      valid = false;
-    }
-    if (!valid) {
+    if (!this.validate()) {
       return;
     }
 
@@ -66,5 +70,25 @@ export class LoginComponent {
 
   onExternalLogin(provider: 'Google' | 'Microsoft'): void {
     this.authService.externalLogin(provider);
+  }
+
+  private validate(): boolean {
+    let valid = true;
+
+    const email = this.email().trim();
+    if (!email) {
+      this.emailError.set('Email is required.');
+      valid = false;
+    } else if (!email.includes('@')) {
+      this.emailError.set('Enter a valid email address.');
+      valid = false;
+    }
+
+    if (!this.password()) {
+      this.passwordError.set('Password is required.');
+      valid = false;
+    }
+
+    return valid;
   }
 }

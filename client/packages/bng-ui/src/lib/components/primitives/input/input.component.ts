@@ -21,7 +21,7 @@ let nextInputId = 0;
 
       <input
         [id]="inputId"
-        [type]="'text'"
+        [type]="type()"
         [value]="value()"
         [placeholder]="placeholder()"
         [attr.maxlength]="maxlength()"
@@ -47,6 +47,7 @@ let nextInputId = 0;
 })
 export class BngInputComponent {
   label = input.required<string>();
+  type = input<'text' | 'email' | 'password'>('text');
   placeholder = input('');
   error = input<string | null>(null);
   hint = input<string | null>(null);

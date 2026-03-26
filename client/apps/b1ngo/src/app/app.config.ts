@@ -1,4 +1,4 @@
-import { ApplicationConfig, ErrorHandler } from '@angular/core';
+import { ApplicationConfig, ErrorHandler, inject, provideAppInitializer } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
@@ -8,6 +8,7 @@ import { playerTokenInterceptor } from './core/interceptors/player-token.interce
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { xhrInterceptor } from './core/interceptors/xhr.interceptor';
 import { AppErrorHandler } from './core/error/global-error.handler';
+import { AuthService } from './core/auth/auth.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,5 +16,6 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([xhrInterceptor, playerTokenInterceptor, errorInterceptor])),
     { provide: ENVIRONMENT, useValue: environment },
     { provide: ErrorHandler, useClass: AppErrorHandler },
+    provideAppInitializer(() => inject(AuthService).checkAuth()),
   ],
 };

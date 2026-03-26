@@ -1,40 +1,56 @@
-<main class="flex flex-col p-4 space-y-4 max-w-md mx-auto">
-  <bng-card title="Log In">
-    <form (ngSubmit)="onSubmit()" class="space-y-4">
-      <bng-input
-        label="Email"
-        type="email"
-        [value]="email()"
-        [error]="emailError()"
-        (valueChange)="onEmailChange($event)"
-      />
+<bng-card header="Log In">
+  <form (ngSubmit)="onSubmit()" class="space-y-4">
+    <bng-input
+      label="Email"
+      type="email"
+      autocomplete="email"
+      [value]="email()"
+      [error]="emailError()"
+      (valueChange)="onEmailChange($event)"
+    />
+    <div>
       <bng-input
         label="Password"
         type="password"
+        autocomplete="current-password"
         [value]="password()"
         [error]="passwordError()"
         (valueChange)="onPasswordChange($event)"
       />
-      <bng-button type="submit" [loading]="loading()" [fullWidth]="true">
-        Log In
-      </bng-button>
-    </form>
-
-    <div class="mt-4 space-y-2">
-      <p class="text-sm text-center text-zinc-400">Or continue with</p>
-      <div class="flex gap-2">
-        <bng-button variant="secondary" [fullWidth]="true" (clicked)="onExternalLogin('Google')">
-          Google
-        </bng-button>
-        <bng-button variant="secondary" [fullWidth]="true" (clicked)="onExternalLogin('Microsoft')">
-          Microsoft
-        </bng-button>
+      <div class="flex justify-end mt-1.5">
+        <a routerLink="/auth/forgot-password" class="text-sm text-accent hover:underline">
+          Forgot password?
+        </a>
       </div>
     </div>
+    <bng-button type="submit" variant="primary" [loading]="loading()" [fullWidth]="true">
+      Log In
+    </bng-button>
+  </form>
 
-    <p class="mt-4 text-sm text-center text-zinc-400">
-      Don't have an account?
-      <a routerLink="/auth/register" class="text-amber-400 hover:underline">Register</a>
-    </p>
-  </bng-card>
-</main>
+  <div class="mt-5 flex items-center gap-3">
+    <hr class="flex-1 border-border-default" />
+    <span class="text-xs text-text-secondary uppercase tracking-wider">Or continue with</span>
+    <hr class="flex-1 border-border-default" />
+  </div>
+
+  <div class="mt-4 flex justify-center gap-3">
+    <bng-button variant="secondary" (clicked)="onExternalLogin('Google')">
+      <span class="flex items-center gap-2">
+        <bng-icon [icon]="googleIcon" [viewBox]="socialViewBox" size="sm" />
+        Google
+      </span>
+    </bng-button>
+    <bng-button variant="secondary" (clicked)="onExternalLogin('Microsoft')">
+      <span class="flex items-center gap-2">
+        <bng-icon [icon]="microsoftIcon" [viewBox]="socialViewBox" size="sm" />
+        Microsoft
+      </span>
+    </bng-button>
+  </div>
+
+  <p class="mt-4 text-sm text-center text-text-secondary">
+    Don't have an account?
+    <a routerLink="/auth/register" class="text-accent hover:underline">Register</a>
+  </p>
+</bng-card>

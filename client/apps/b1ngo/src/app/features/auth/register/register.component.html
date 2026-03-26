@@ -1,46 +1,56 @@
-<main class="flex flex-col p-4 space-y-4 max-w-md mx-auto">
-  <bng-card title="Create Account">
-    <form (ngSubmit)="onSubmit()" class="space-y-4">
-      <bng-input
-        label="Display Name"
-        [value]="displayName()"
-        [error]="displayNameError()"
-        (valueChange)="onDisplayNameChange($event)"
-      />
-      <bng-input
-        label="Email"
-        type="email"
-        [value]="email()"
-        [error]="emailError()"
-        (valueChange)="onEmailChange($event)"
-      />
-      <bng-input
-        label="Password"
-        type="password"
-        [value]="password()"
-        [error]="passwordError()"
-        (valueChange)="onPasswordChange($event)"
-      />
-      <bng-button type="submit" [loading]="loading()" [fullWidth]="true">
-        Register
-      </bng-button>
-    </form>
+<bng-card header="Create Account">
+  <form (ngSubmit)="onSubmit()" class="space-y-4">
+    <bng-input
+      label="Display Name"
+      [value]="displayName()"
+      [maxlength]="50"
+      [error]="displayNameError()"
+      (valueChange)="onDisplayNameChange($event)"
+    />
+    <bng-input
+      label="Email"
+      type="email"
+      autocomplete="email"
+      [value]="email()"
+      [error]="emailError()"
+      (valueChange)="onEmailChange($event)"
+    />
+    <bng-input
+      label="Password"
+      type="password"
+      autocomplete="new-password"
+      [value]="password()"
+      [error]="passwordError()"
+      (valueChange)="onPasswordChange($event)"
+    />
+    <bng-button type="submit" variant="primary" [loading]="loading()" [fullWidth]="true">
+      Register
+    </bng-button>
+  </form>
 
-    <div class="mt-4 space-y-2">
-      <p class="text-sm text-center text-zinc-400">Or continue with</p>
-      <div class="flex gap-2">
-        <bng-button variant="secondary" [fullWidth]="true" (clicked)="onExternalLogin('Google')">
-          Google
-        </bng-button>
-        <bng-button variant="secondary" [fullWidth]="true" (clicked)="onExternalLogin('Microsoft')">
-          Microsoft
-        </bng-button>
-      </div>
-    </div>
+  <div class="mt-5 flex items-center gap-3">
+    <hr class="flex-1 border-border-default" />
+    <span class="text-xs text-text-secondary uppercase tracking-wider">Or continue with</span>
+    <hr class="flex-1 border-border-default" />
+  </div>
 
-    <p class="mt-4 text-sm text-center text-zinc-400">
-      Already have an account?
-      <a routerLink="/auth/login" class="text-amber-400 hover:underline">Log in</a>
-    </p>
-  </bng-card>
-</main>
+  <div class="mt-4 flex justify-center gap-3">
+    <bng-button variant="secondary" (clicked)="onExternalLogin('Google')">
+      <span class="flex items-center gap-2">
+        <bng-icon [icon]="googleIcon" [viewBox]="socialViewBox" size="sm" />
+        Google
+      </span>
+    </bng-button>
+    <bng-button variant="secondary" (clicked)="onExternalLogin('Microsoft')">
+      <span class="flex items-center gap-2">
+        <bng-icon [icon]="microsoftIcon" [viewBox]="socialViewBox" size="sm" />
+        Microsoft
+      </span>
+    </bng-button>
+  </div>
+
+  <p class="mt-4 text-sm text-center text-text-secondary">
+    Already have an account?
+    <a routerLink="/auth/login" class="text-accent hover:underline">Log in</a>
+  </p>
+</bng-card>

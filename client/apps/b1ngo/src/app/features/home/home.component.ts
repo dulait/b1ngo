@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RoomApiService } from '@core/api/room-api.service';
 import { AuthService } from '@core/auth/auth.service';
 import { SessionService } from '@core/auth/session.service';
@@ -10,7 +10,7 @@ import { JoinRoomFormComponent } from './components/join-room-form/join-room-for
 
 @Component({
   selector: 'app-home',
-  imports: [CreateRoomFormComponent, JoinRoomFormComponent, RouterLink],
+  imports: [CreateRoomFormComponent, JoinRoomFormComponent],
   templateUrl: './home.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -20,7 +20,7 @@ export class HomeComponent implements OnInit {
   private readonly roomApi = inject(RoomApiService);
   private readonly session = inject(SessionService);
   private readonly toast = inject(ToastService);
-  readonly auth = inject(AuthService);
+  private readonly auth = inject(AuthService);
 
   async ngOnInit(): Promise<void> {
     await this.handleOAuthCallback();
@@ -48,11 +48,6 @@ export class HomeComponent implements OnInit {
 
   onRoomJoined(event: { roomId: string; playerId: string; playerToken: string }): void {
     this.enterRoom(event);
-  }
-
-  async onLogout(): Promise<void> {
-    await this.auth.logout();
-    this.toast.success('Logged out.');
   }
 
   private enterRoom(event: { roomId: string; playerId: string; playerToken: string }): void {
