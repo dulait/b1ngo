@@ -4,14 +4,14 @@ import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common
 import { Router } from '@angular/router';
 import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { errorInterceptor } from './error.interceptor';
-import { AuthService } from '../auth/auth.service';
+import { SessionService } from '../auth/session.service';
 import { ToastService } from 'bng-ui';
 
 describe('errorInterceptor', () => {
   let http: HttpClient;
   let httpMock: HttpTestingController;
   let toastService: ToastService;
-  let authService: AuthService;
+  let authService: SessionService;
   let router: Router;
 
   beforeEach(() => {
@@ -21,7 +21,7 @@ describe('errorInterceptor', () => {
       providers: [
         provideHttpClient(withInterceptors([errorInterceptor])),
         provideHttpClientTesting(),
-        AuthService,
+        SessionService,
         ToastService,
         {
           provide: Router,
@@ -33,7 +33,7 @@ describe('errorInterceptor', () => {
     http = TestBed.inject(HttpClient);
     httpMock = TestBed.inject(HttpTestingController);
     toastService = TestBed.inject(ToastService);
-    authService = TestBed.inject(AuthService);
+    authService = TestBed.inject(SessionService);
     router = TestBed.inject(Router);
   });
 
@@ -57,6 +57,19 @@ describe('errorInterceptor', () => {
     expect(clearSpy).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['/']);
     expect(warnSpy).toHaveBeenCalledWith('Your session has expired.');
+  });
+
+  it('should not clear session or toast on 401 from auth/me', () => {
+    authService.saveSession('r1', 'p1', 'tok');
+    const warnSpy = vi.spyOn(toastService, 'warning');
+    const clearSpy = vi.spyOn(authService, 'clearSession');
+
+    http.get('/api/v1/auth/me').subscribe({ error: () => {} });
+    httpMock.expectOne('/api/v1/auth/me').flush(null, { status: 401, statusText: 'Unauthorized' });
+
+    expect(clearSpy).not.toHaveBeenCalled();
+    expect(router.navigate).not.toHaveBeenCalled();
+    expect(warnSpy).not.toHaveBeenCalled();
   });
 
   it('should redirect and warn on 403', () => {

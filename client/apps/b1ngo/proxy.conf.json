@@ -7,5 +7,9 @@
     "target": "http://localhost:5141",
     "secure": false,
     "ws": true
+  },
+  "/signin-*": {
+    "target": "http://localhost:5141",
+    "secure": false
   }
 }

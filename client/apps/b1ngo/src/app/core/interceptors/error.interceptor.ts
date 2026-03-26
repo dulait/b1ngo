@@ -3,11 +3,11 @@ import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { ToastService } from 'bng-ui';
-import { AuthService } from '../auth/auth.service';
+import { SessionService } from '../auth/session.service';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const toast = inject(ToastService);
-  const auth = inject(AuthService);
+  const auth = inject(SessionService);
   const router = inject(Router);
 
   return next(req).pipe(
@@ -17,9 +17,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           toast.error('Network error. Check your connection.');
           break;
         case 401:
+          if (req.url.includes('/api/v1/auth/me')) {
+            break;
+          }
           auth.clearSession();
           router.navigate(['/']);
-          toast.warning('Your session has expired.');
+          toast.warning(err.error?.message ?? 'Your session has expired.');
           break;
         case 403:
           router.navigate(['/']);

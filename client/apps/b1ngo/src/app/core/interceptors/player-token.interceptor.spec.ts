@@ -3,12 +3,12 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { describe, it, beforeEach, expect } from 'vitest';
 import { playerTokenInterceptor } from './player-token.interceptor';
-import { AuthService } from '../auth/auth.service';
+import { SessionService } from '../auth/session.service';
 
 describe('playerTokenInterceptor', () => {
   let http: HttpClient;
   let httpMock: HttpTestingController;
-  let authService: AuthService;
+  let authService: SessionService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -19,7 +19,7 @@ describe('playerTokenInterceptor', () => {
     });
     http = TestBed.inject(HttpClient);
     httpMock = TestBed.inject(HttpTestingController);
-    authService = TestBed.inject(AuthService);
+    authService = TestBed.inject(SessionService);
   });
 
   it('should not set withCredentials on requests', () => {

@@ -1,0 +1,40 @@
+<main class="flex flex-col p-4 space-y-4 max-w-md mx-auto">
+  <bng-card title="Log In">
+    <form (ngSubmit)="onSubmit()" class="space-y-4">
+      <bng-input
+        label="Email"
+        type="email"
+        [value]="email()"
+        [error]="emailError()"
+        (valueChange)="onEmailChange($event)"
+      />
+      <bng-input
+        label="Password"
+        type="password"
+        [value]="password()"
+        [error]="passwordError()"
+        (valueChange)="onPasswordChange($event)"
+      />
+      <bng-button type="submit" [loading]="loading()" [fullWidth]="true">
+        Log In
+      </bng-button>
+    </form>
+
+    <div class="mt-4 space-y-2">
+      <p class="text-sm text-center text-zinc-400">Or continue with</p>
+      <div class="flex gap-2">
+        <bng-button variant="secondary" [fullWidth]="true" (clicked)="onExternalLogin('Google')">
+          Google
+        </bng-button>
+        <bng-button variant="secondary" [fullWidth]="true" (clicked)="onExternalLogin('Microsoft')">
+          Microsoft
+        </bng-button>
+      </div>
+    </div>
+
+    <p class="mt-4 text-sm text-center text-zinc-400">
+      Don't have an account?
+      <a routerLink="/auth/register" class="text-amber-400 hover:underline">Register</a>
+    </p>
+  </bng-card>
+</main>

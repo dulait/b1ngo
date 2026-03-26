@@ -5,6 +5,7 @@
   "workspaces": [
     "apps/b1ngo",
     "apps/showcase",
+    "apps/mocks",
     "packages/*"
   ],
   "scripts": {

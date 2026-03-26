@@ -1,61 +1,130 @@
+import { TestBed } from '@angular/core/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 import { describe, it, beforeEach, expect } from 'vitest';
 import { AuthService } from './auth.service';
+import { ENVIRONMENT } from '../environment/environment.token';
 
 describe('AuthService', () => {
   let service: AuthService;
+  let httpMock: HttpTestingController;
+  const baseUrl = 'https://test-api.example.com';
 
   beforeEach(() => {
-    localStorage.clear();
-    service = new AuthService();
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: ENVIRONMENT, useValue: { production: false, apiBaseUrl: baseUrl } },
+      ],
+    });
+    service = TestBed.inject(AuthService);
+    httpMock = TestBed.inject(HttpTestingController);
   });
 
-  it('should return false for hasSession when no session exists', () => {
-    expect(service.hasSession()).toBe(false);
+  it('should start with null currentUser', () => {
+    expect(service.currentUser()).toBeNull();
+    expect(service.isAuthenticated()).toBe(false);
+    expect(service.isAdmin()).toBe(false);
   });
 
-  it('should return empty string for getPlayerId when no session', () => {
-    expect(service.getPlayerId()).toBe('');
+  it('should populate currentUser on successful checkAuth', async () => {
+    const meResponse = { userId: 'u1', email: 'me@example.com', displayName: 'Me', roles: ['Admin'] };
+
+    const promise = service.checkAuth();
+    const req = httpMock.expectOne(`${baseUrl}/api/v1/auth/me`);
+    expect(req.request.method).toBe('GET');
+    req.flush(meResponse);
+
+    await promise;
+
+    expect(service.currentUser()).toEqual(meResponse);
+    expect(service.isAuthenticated()).toBe(true);
+    expect(service.isAdmin()).toBe(true);
   });
 
-  it('should save and load session', () => {
-    service.saveSession('room-1', 'player-1', 'tok-1');
+  it('should set currentUser to null when checkAuth returns 204 (anonymous)', async () => {
+    const promise = service.checkAuth();
+    const req = httpMock.expectOne(`${baseUrl}/api/v1/auth/me`);
+    req.flush(null, { status: 204, statusText: 'No Content' });
 
-    expect(service.hasSession()).toBe(true);
-    expect(service.getPlayerId()).toBe('player-1');
-    expect(service.getRoomId()).toBe('room-1');
-    expect(service.getPlayerToken()).toBe('tok-1');
-    expect(service.session()).toEqual({ roomId: 'room-1', playerId: 'player-1', playerToken: 'tok-1' });
+    await promise;
+
+    expect(service.currentUser()).toBeNull();
+    expect(service.isAuthenticated()).toBe(false);
   });
 
-  it('should persist session to localStorage', () => {
-    service.saveSession('room-1', 'player-1', 'tok-1');
+  it('should POST login and then call checkAuth', async () => {
+    const authResponse = { userId: 'u1', email: 'test@example.com', displayName: 'Test' };
+    const meResponse = { userId: 'u1', email: 'test@example.com', displayName: 'Test', roles: [] };
 
-    const stored = localStorage.getItem('bng-session');
-    expect(stored).toBeTruthy();
-    expect(JSON.parse(stored!)).toEqual({ roomId: 'room-1', playerId: 'player-1', playerToken: 'tok-1' });
+    const promise = service.login('test@example.com', 'Password1');
+
+    const loginReq = httpMock.expectOne(`${baseUrl}/api/v1/auth/login`);
+    expect(loginReq.request.method).toBe('POST');
+    expect(loginReq.request.body).toEqual({ email: 'test@example.com', password: 'Password1' });
+    loginReq.flush(authResponse);
+
+    // After login resolves, checkAuth fires a /me request
+    await new Promise((r) => setTimeout(r, 0));
+    const meReq = httpMock.expectOne(`${baseUrl}/api/v1/auth/me`);
+    meReq.flush(meResponse);
+
+    const result = await promise;
+
+    expect(result).toEqual(authResponse);
+    expect(service.isAuthenticated()).toBe(true);
   });
 
-  it('should clear session', () => {
-    service.saveSession('room-1', 'player-1', 'tok-1');
-    service.clearSession();
+  it('should POST register and then call checkAuth', async () => {
+    const authResponse = { userId: 'u1', email: 'new@example.com', displayName: 'New' };
+    const meResponse = { userId: 'u1', email: 'new@example.com', displayName: 'New', roles: [] };
 
-    expect(service.hasSession()).toBe(false);
-    expect(service.session()).toBeNull();
-    expect(localStorage.getItem('bng-session')).toBeNull();
+    const promise = service.register('new@example.com', 'Password1', 'New');
+
+    const registerReq = httpMock.expectOne(`${baseUrl}/api/v1/auth/register`);
+    expect(registerReq.request.method).toBe('POST');
+    expect(registerReq.request.body).toEqual({ email: 'new@example.com', password: 'Password1', displayName: 'New' });
+    registerReq.flush(authResponse);
+
+    // After register resolves, checkAuth fires a /me request
+    await new Promise((r) => setTimeout(r, 0));
+    const meReq = httpMock.expectOne(`${baseUrl}/api/v1/auth/me`);
+    meReq.flush(meResponse);
+
+    const result = await promise;
+
+    expect(result).toEqual(authResponse);
+    expect(service.isAuthenticated()).toBe(true);
   });
 
-  it('should load session from localStorage on construction', () => {
-    localStorage.setItem('bng-session', JSON.stringify({ roomId: 'r1', playerId: 'p1', playerToken: 'tok' }));
+  it('should POST logout and clear currentUser', async () => {
+    // Seed authenticated state
+    const checkPromise = service.checkAuth();
+    httpMock.expectOne(`${baseUrl}/api/v1/auth/me`).flush({
+      userId: 'u1', email: 'me@example.com', displayName: 'Me', roles: [],
+    });
+    await checkPromise;
+    expect(service.isAuthenticated()).toBe(true);
 
-    const freshService = new AuthService();
-    expect(freshService.hasSession()).toBe(true);
-    expect(freshService.getPlayerId()).toBe('p1');
+    const logoutPromise = service.logout();
+    const logoutReq = httpMock.expectOne(`${baseUrl}/api/v1/auth/logout`);
+    expect(logoutReq.request.method).toBe('POST');
+    logoutReq.flush(null, { status: 204, statusText: 'No Content' });
+
+    await logoutPromise;
+
+    expect(service.currentUser()).toBeNull();
+    expect(service.isAuthenticated()).toBe(false);
   });
 
-  it('should handle corrupted localStorage gracefully', () => {
-    localStorage.setItem('bng-session', 'not-json');
+  it('should report isAdmin false when user has no Admin role', async () => {
+    const promise = service.checkAuth();
+    httpMock.expectOne(`${baseUrl}/api/v1/auth/me`).flush({
+      userId: 'u1', email: 'me@example.com', displayName: 'Me', roles: ['Player'],
+    });
+    await promise;
 
-    const freshService = new AuthService();
-    expect(freshService.hasSession()).toBe(false);
+    expect(service.isAdmin()).toBe(false);
   });
 });

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { HomeComponent } from './home.component';
 import { RoomApiService } from '@core/api/room-api.service';
-import { AuthService } from '@core/auth/auth.service';
+import { SessionService } from '@core/auth/session.service';
 import { ENVIRONMENT } from '@core/environment/environment.token';
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
   let roomApi: RoomApiService;
-  let authService: AuthService;
+  let authService: SessionService;
   let router: Router;
 
   beforeEach(async () => {
@@ -31,13 +31,17 @@ describe('HomeComponent', () => {
           provide: Router,
           useValue: { navigate: vi.fn() },
         },
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { queryParamMap: { get: () => null } } },
+        },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HomeComponent);
     component = fixture.componentInstance;
     roomApi = TestBed.inject(RoomApiService);
-    authService = TestBed.inject(AuthService);
+    authService = TestBed.inject(SessionService);
     router = TestBed.inject(Router);
   });
 

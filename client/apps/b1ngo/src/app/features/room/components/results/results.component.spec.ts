@@ -7,7 +7,7 @@ import { ToastService } from 'bng-ui';
 import { ResultsComponent } from './results.component';
 import { ROOM_STORE } from '../../services/room-store.token';
 import { RoomStore } from '../../services/room.store';
-import { AuthService } from '@core/auth/auth.service';
+import { SessionService } from '@core/auth/session.service';
 import { ENVIRONMENT } from '@core/environment/environment.token';
 import { GetRoomStateResponse } from '@core/api/models/responses';
 
@@ -62,7 +62,7 @@ describe('ResultsComponent', () => {
   let fixture: ComponentFixture<ResultsComponent>;
   let store: RoomStore;
   let router: Router;
-  let authService: AuthService;
+  let authService: SessionService;
   let toastService: ToastService;
 
   beforeEach(async () => {
@@ -87,7 +87,7 @@ describe('ResultsComponent', () => {
     fixture = TestBed.createComponent(ResultsComponent);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
-    authService = TestBed.inject(AuthService);
+    authService = TestBed.inject(SessionService);
     toastService = TestBed.inject(ToastService);
     authService.saveSession('r1', 'p1', 'tok');
   });

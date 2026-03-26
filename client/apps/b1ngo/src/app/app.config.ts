@@ -6,12 +6,13 @@ import { environment } from '../environments/environment';
 import { ENVIRONMENT } from './core/environment/environment.token';
 import { playerTokenInterceptor } from './core/interceptors/player-token.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
+import { xhrInterceptor } from './core/interceptors/xhr.interceptor';
 import { AppErrorHandler } from './core/error/global-error.handler';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideHttpClient(withInterceptors([playerTokenInterceptor, errorInterceptor])),
+    provideHttpClient(withInterceptors([xhrInterceptor, playerTokenInterceptor, errorInterceptor])),
     { provide: ENVIRONMENT, useValue: environment },
     { provide: ErrorHandler, useClass: AppErrorHandler },
   ],
