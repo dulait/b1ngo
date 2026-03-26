@@ -10,7 +10,8 @@ public sealed class CreateRoomHandler(
     IUnitOfWork unitOfWork,
     IBingoCardGenerator cardGenerator,
     IPlayerTokenStore playerTokenStore,
-    IReferenceDataRepository referenceDataRepository
+    IReferenceDataRepository referenceDataRepository,
+    ICurrentUserContext currentUserContext
 ) : ICommandHandler<CreateRoomCommand, CreateRoomResponse>
 {
     public async Task<Result<CreateRoomResponse>> HandleAsync(
@@ -37,7 +38,8 @@ public sealed class CreateRoomHandler(
         );
         host.AssignCard(card);
 
-        var playerToken = playerTokenStore.Create(host.Id.Value, room.Id.Value, isHost: true);
+        var userId = currentUserContext.GetAuthenticatedUserId();
+        var playerToken = playerTokenStore.Create(host.Id.Value, room.Id.Value, isHost: true, userId);
 
         await roomRepository.AddAsync(room, cancellationToken);
 

@@ -219,6 +219,9 @@ node_modules/
 client/apps/*/dist/
 client/node_modules/
 
+# Mocks app (temporary, not tracked)
+client/apps/mocks/
+
 .DS_STORE
 
 /dist/

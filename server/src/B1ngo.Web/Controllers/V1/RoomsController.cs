@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using B1ngo.Application.Common.Cqrs;
+using B1ngo.Application.Common.Ports;
 using B1ngo.Application.Features.Rooms.CreateRoom;
 using B1ngo.Application.Features.Rooms.EditSquare;
 using B1ngo.Application.Features.Rooms.EndGame;
@@ -9,6 +10,7 @@ using B1ngo.Application.Features.Rooms.MarkSquare;
 using B1ngo.Application.Features.Rooms.Reconnect;
 using B1ngo.Application.Features.Rooms.StartGame;
 using B1ngo.Application.Features.Rooms.UnmarkSquare;
+using B1ngo.Web.Contracts.V1;
 using B1ngo.Web.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -27,7 +29,9 @@ public class RoomsController(
     ICommandHandler<MarkSquareCommand, MarkSquareResponse> markSquareHandler,
     ICommandHandler<UnmarkSquareCommand, UnmarkSquareResponse> unmarkSquareHandler,
     ICommandHandler<EndGameCommand, EndGameResponse> endGameHandler,
-    IQueryHandler<GetRoomStateQuery, GetRoomStateResponse> getRoomStateHandler
+    IQueryHandler<GetRoomStateQuery, GetRoomStateResponse> getRoomStateHandler,
+    ICurrentUserContext currentUserContext,
+    IPlayerTokenStore playerTokenStore
 ) : ApiController
 {
     [HttpPost]
@@ -57,13 +61,59 @@ public class RoomsController(
     [HttpPost("reconnect")]
     [EndpointName("Reconnect")]
     [EndpointSummary("Reconnect to a room")]
-    [EndpointDescription("Re-establishes a player's session with a room using the PlayerToken cookie.")]
+    [EndpointDescription(
+        "Re-establishes a player's session. Anonymous users use the PlayerToken cookie. "
+            + "Registered users can pass a roomId to reconnect to a specific room, or omit it to get all active rooms."
+    )]
     [ProducesResponseType<ReconnectResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
-    [RequirePlayerToken]
-    public async Task<IActionResult> Reconnect(CancellationToken ct) =>
-        await Send(reconnectHandler, new ReconnectQuery(Identity.RoomId, Identity.PlayerId), ct);
+    public async Task<IActionResult> Reconnect([FromBody] ReconnectRequest? request, CancellationToken ct)
+    {
+        var userId = currentUserContext.GetAuthenticatedUserId();
+
+        if (userId is not null)
+        {
+            return await ReconnectRegisteredUser(userId.Value, request?.RoomId, ct);
+        }
+
+        if (
+            !Request.Headers.TryGetValue("X-Player-Token", out var tokenValue)
+            || !Guid.TryParse(tokenValue.FirstOrDefault(), out var token)
+        )
+        {
+            return Unauthorized(new ErrorResponse("Unauthorized", "No active session found."));
+        }
+
+        var anonymousIdentity = await playerTokenStore.ResolveAsync(token, ct);
+        if (anonymousIdentity is null)
+        {
+            return Unauthorized(new ErrorResponse("Unauthorized", "No active session found."));
+        }
+
+        return await Send(
+            reconnectHandler,
+            new ReconnectQuery(anonymousIdentity.RoomId, anonymousIdentity.PlayerId),
+            ct
+        );
+    }
+
+    private async Task<IActionResult> ReconnectRegisteredUser(Guid userId, Guid? roomId, CancellationToken ct)
+    {
+        if (roomId is not null)
+        {
+            var identity = await playerTokenStore.ResolveByUserAndRoomAsync(userId, roomId.Value, ct);
+            if (identity is null)
+            {
+                return NotFound(new ErrorResponse("NotFound", "No session found for this room."));
+            }
+
+            return await Send(reconnectHandler, new ReconnectQuery(identity.RoomId, identity.PlayerId), ct);
+        }
+
+        var rooms = await playerTokenStore.GetActiveTokensForUserAsync(userId, ct);
+        return Ok(new ReconnectRoomsResponse(rooms));
+    }
 
     [HttpPost("{roomId:guid}/start")]
     [EndpointName("StartGame")]

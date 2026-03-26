@@ -13,6 +13,8 @@ using B1ngo.Web.EventHandlers;
 using B1ngo.Web.Filters;
 using B1ngo.Web.OpenApi;
 using B1ngo.Web.Services;
+using B1ngo.Web.Validators;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
 
@@ -26,10 +28,12 @@ internal static class ServiceCollectionExtensions
         public IServiceCollection AddWebServices(IConfiguration configuration, IHostEnvironment environment)
         {
             services.AddApplication().AddInfrastructure(configuration);
+            services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
 
             services.AddHttpContextAccessor();
             services.AddScoped<CorrelationContext>();
             services.AddScoped<ICurrentUserProvider, CurrentUserProvider>();
+            services.AddScoped<ICurrentUserContext, CurrentUserContext>();
 
             services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
             services
@@ -117,17 +121,6 @@ internal static class ServiceCollectionExtensions
                 {
                     options.ClientId = configuration["Auth:Microsoft:ClientId"]!;
                     options.ClientSecret = configuration["Auth:Microsoft:ClientSecret"]!;
-                });
-            }
-
-            if (configuration["Auth:Apple:ClientId"] is { Length: > 0 })
-            {
-                auth.AddApple(options =>
-                {
-                    options.ClientId = configuration["Auth:Apple:ClientId"]!;
-                    options.TeamId = configuration["Auth:Apple:TeamId"]!;
-                    options.KeyId = configuration["Auth:Apple:KeyId"]!;
-                    options.GenerateClientSecret = true;
                 });
             }
         }

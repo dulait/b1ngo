@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using Asp.Versioning;
+using B1ngo.Application.Common.Ports;
 using B1ngo.Infrastructure.Identity;
+using B1ngo.Web.Contracts.V1;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,8 +15,11 @@ namespace B1ngo.Web.Controllers.V1;
 [Produces("application/json")]
 [Tags("Auth")]
 [ApiController]
-public class AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
-    : ControllerBase
+public class AuthController(
+    UserManager<ApplicationUser> userManager,
+    SignInManager<ApplicationUser> signInManager,
+    IPlayerTokenStore playerTokenStore
+) : ControllerBase
 {
     [HttpPost("register")]
     [EndpointName("Register")]
@@ -50,6 +55,7 @@ public class AuthController(UserManager<ApplicationUser> userManager, SignInMana
         }
 
         await signInManager.SignInAsync(user, isPersistent: true);
+        await LinkPlayerTokenIfPresent(user.Id);
 
         return Ok(new AuthResponse(user.Id, user.Email, user.DisplayName));
     }
@@ -80,8 +86,9 @@ public class AuthController(UserManager<ApplicationUser> userManager, SignInMana
         }
 
         var user = await userManager.FindByEmailAsync(request.Email);
+        await LinkPlayerTokenIfPresent(user!.Id);
 
-        return Ok(new AuthResponse(user!.Id, user.Email!, user.DisplayName));
+        return Ok(new AuthResponse(user.Id, user.Email!, user.DisplayName));
     }
 
     [HttpPost("logout")]
@@ -96,18 +103,26 @@ public class AuthController(UserManager<ApplicationUser> userManager, SignInMana
     }
 
     [HttpGet("me")]
-    [Authorize]
     [EndpointName("GetCurrentUser")]
     [EndpointSummary("Get current authenticated user info")]
+    [EndpointDescription(
+        "Returns the current user's profile if authenticated, or 204 No Content if anonymous. "
+            + "Used as a session probe on app startup."
+    )]
     [ProducesResponseType<MeResponse>(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Me()
     {
+        if (User.Identity?.IsAuthenticated != true)
+        {
+            return NoContent();
+        }
+
         var user = await userManager.GetUserAsync(User);
 
         if (user is null)
         {
-            return Unauthorized();
+            return NoContent();
         }
 
         var roles = await userManager.GetRolesAsync(user);
@@ -148,6 +163,12 @@ public class AuthController(UserManager<ApplicationUser> userManager, SignInMana
 
         if (signInResult.Succeeded)
         {
+            var existingExternalUser = await userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+            if (existingExternalUser is not null)
+            {
+                await LinkPlayerTokenIfPresent(existingExternalUser.Id);
+            }
+
             return Redirect("/?auth=success");
         }
 
@@ -168,6 +189,7 @@ public class AuthController(UserManager<ApplicationUser> userManager, SignInMana
         {
             await userManager.AddLoginAsync(existingUser, info);
             await signInManager.SignInAsync(existingUser, isPersistent: true);
+            await LinkPlayerTokenIfPresent(existingUser.Id);
             return Redirect("/?auth=success");
         }
 
@@ -188,18 +210,21 @@ public class AuthController(UserManager<ApplicationUser> userManager, SignInMana
 
         await userManager.AddLoginAsync(newUser, info);
         await signInManager.SignInAsync(newUser, isPersistent: true);
+        await LinkPlayerTokenIfPresent(newUser.Id);
 
         return Redirect("/?auth=success");
+    }
+
+    private async Task LinkPlayerTokenIfPresent(Guid userId)
+    {
+        if (
+            Request.Cookies.TryGetValue("PlayerToken", out var tokenStr) && Guid.TryParse(tokenStr, out var playerToken)
+        )
+        {
+            await playerTokenStore.LinkTokenToUserAsync(playerToken, userId);
+        }
     }
 
     private bool HasXhrHeader() =>
         Request.Headers.TryGetValue("X-Requested-With", out var value) && value == "XMLHttpRequest";
 }
-
-public sealed record RegisterRequest(string Email, string Password, string DisplayName);
-
-public sealed record LoginRequest(string Email, string Password);
-
-public sealed record AuthResponse(Guid UserId, string Email, string DisplayName);
-
-public sealed record MeResponse(Guid UserId, string Email, string DisplayName, string[] Roles);

@@ -1,4 +1,6 @@
+using B1ngo.Application.Common.Ports;
 using B1ngo.Infrastructure.Identity;
+using B1ngo.Web.Contracts.V1;
 using B1ngo.Web.Controllers.V1;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -11,13 +13,15 @@ public class AuthControllerTests
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly IPlayerTokenStore _playerTokenStore;
     private readonly AuthController _sut;
 
     public AuthControllerTests()
     {
         _userManager = MockUserManager();
         _signInManager = MockSignInManager(_userManager);
-        _sut = new AuthController(_userManager, _signInManager);
+        _playerTokenStore = Substitute.For<IPlayerTokenStore>();
+        _sut = new AuthController(_userManager, _signInManager, _playerTokenStore);
         SetupHttpContext(withXhrHeader: true);
     }
 
@@ -155,6 +159,7 @@ public class AuthControllerTests
             DisplayName = "MeUser",
         };
 
+        SetupAuthenticatedUser();
         _userManager.GetUserAsync(Arg.Any<System.Security.Claims.ClaimsPrincipal>()).Returns(user);
         _userManager.GetRolesAsync(user).Returns(new List<string> { "Admin" });
 
@@ -168,16 +173,38 @@ public class AuthControllerTests
     }
 
     [Fact]
-    public async Task Me_UserNotFound_Returns401()
+    public async Task Me_Anonymous_Returns204()
     {
+        var result = await _sut.Me();
+
+        Assert.IsType<NoContentResult>(result);
+    }
+
+    [Fact]
+    public async Task Me_AuthenticatedButUserNotFound_Returns204()
+    {
+        SetupAuthenticatedUser();
         _userManager.GetUserAsync(Arg.Any<System.Security.Claims.ClaimsPrincipal>()).Returns((ApplicationUser?)null);
 
         var result = await _sut.Me();
 
-        Assert.IsType<UnauthorizedResult>(result);
+        Assert.IsType<NoContentResult>(result);
     }
 
     // --- Helpers ---
+
+    private void SetupAuthenticatedUser()
+    {
+        var claims = new[]
+        {
+            new System.Security.Claims.Claim(
+                System.Security.Claims.ClaimTypes.NameIdentifier,
+                Guid.NewGuid().ToString()
+            ),
+        };
+        var identity = new System.Security.Claims.ClaimsIdentity(claims, "TestAuth");
+        _sut.ControllerContext.HttpContext.User = new System.Security.Claims.ClaimsPrincipal(identity);
+    }
 
     private void SetupHttpContext(bool withXhrHeader)
     {

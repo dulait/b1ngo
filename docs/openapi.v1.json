@@ -164,6 +164,7 @@
           "Auth"
         ],
         "summary": "Get current authenticated user info",
+        "description": "Returns the current user\u0027s profile if authenticated, or 204 No Content if anonymous. Used as a session probe on app startup.",
         "operationId": "GetCurrentUser",
         "responses": {
           "200": {
@@ -176,14 +177,10 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "204": {
+            "description": "No Content",
             "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+              "application/json": {}
             }
           }
         },
@@ -460,6 +457,46 @@
         "summary": "Reconnect to a room",
         "description": "Re-establishes a player\u0027s session with a room using the X-Player-Token header. Use this when a player returns to the app after closing it. Returns the room ID, player ID, and current room status so the client can fetch full state and re-establish the WebSocket connection.",
         "operationId": "Reconnect",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ReconnectRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ReconnectRequest"
+                  }
+                ]
+              }
+            },
+            "application/*\u002Bjson": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ReconnectRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Reconnected successfully.",
@@ -1982,41 +2019,15 @@
           }
         }
       },
-      "ProblemDetails": {
+      "ReconnectRequest": {
         "type": "object",
         "properties": {
-          "type": {
+          "roomId": {
             "type": [
               "null",
-              "string"
-            ]
-          },
-          "title": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "status": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "null",
-              "integer",
               "string"
             ],
-            "format": "int32"
-          },
-          "detail": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "instance": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "format": "uuid"
           }
         }
       },

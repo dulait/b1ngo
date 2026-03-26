@@ -13,11 +13,18 @@ public class JoinRoomHandlerTests
     private readonly FakeUnitOfWork _unitOfWork = new();
     private readonly FakeBingoCardGenerator _cardGenerator = new();
     private readonly FakePlayerTokenStore _playerTokenStore = new();
+    private readonly FakeCurrentUserContext _currentUserContext = new();
     private readonly JoinRoomHandler _sut;
 
     public JoinRoomHandlerTests()
     {
-        _sut = new JoinRoomHandler(_roomRepository, _unitOfWork, _cardGenerator, _playerTokenStore);
+        _sut = new JoinRoomHandler(
+            _roomRepository,
+            _unitOfWork,
+            _cardGenerator,
+            _playerTokenStore,
+            _currentUserContext
+        );
     }
 
     private Room SeedRoom()
@@ -93,6 +100,29 @@ public class JoinRoomHandlerTests
         await _sut.HandleAsync(command);
 
         Assert.Equal(0, _unitOfWork.SaveChangesCallCount);
+    }
+
+    [Fact]
+    public async Task HandleAsync_WhenAuthenticated_StampsUserId()
+    {
+        var room = SeedRoom();
+        var userId = Guid.NewGuid();
+        _currentUserContext.AuthenticatedUserId = userId;
+
+        await _sut.HandleAsync(new JoinRoomCommand(room.JoinCode, "Alice"));
+
+        Assert.Equal(userId, _playerTokenStore.LastCreatedUserId);
+    }
+
+    [Fact]
+    public async Task HandleAsync_WhenAnonymous_PassesNullUserId()
+    {
+        var room = SeedRoom();
+        _currentUserContext.AuthenticatedUserId = null;
+
+        await _sut.HandleAsync(new JoinRoomCommand(room.JoinCode, "Alice"));
+
+        Assert.Null(_playerTokenStore.LastCreatedUserId);
     }
 
     [Fact]
