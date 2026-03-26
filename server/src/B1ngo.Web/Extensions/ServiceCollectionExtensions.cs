@@ -41,6 +41,7 @@ internal static class ServiceCollectionExtensions
                 {
                     options.Filters.Add<ValidationFilter>();
                     options.Filters.Add<PlayerTokenAuthFilter>();
+                    options.Filters.Add<XhrFilter>();
                 })
                 .AddJsonOptions(options =>
                 {

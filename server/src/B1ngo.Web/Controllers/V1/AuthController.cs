@@ -3,6 +3,7 @@ using Asp.Versioning;
 using B1ngo.Application.Common.Ports;
 using B1ngo.Infrastructure.Identity;
 using B1ngo.Web.Contracts.V1;
+using B1ngo.Web.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,7 @@ public class AuthController(
 ) : ControllerBase
 {
     [HttpPost("register")]
+    [RequireXhr]
     [EndpointName("Register")]
     [EndpointSummary("Register a new account")]
     [ProducesResponseType<AuthResponse>(StatusCodes.Status200OK)]
@@ -29,11 +31,6 @@ public class AuthController(
     [EnableRateLimiting("auth")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
-        if (!HasXhrHeader())
-        {
-            return BadRequest(new ErrorResponse("InvalidRequest", "Missing required header."));
-        }
-
         var user = new ApplicationUser
         {
             UserName = request.Email,
@@ -61,6 +58,7 @@ public class AuthController(
     }
 
     [HttpPost("login")]
+    [RequireXhr]
     [EndpointName("Login")]
     [EndpointSummary("Login with email and password")]
     [ProducesResponseType<AuthResponse>(StatusCodes.Status200OK)]
@@ -68,11 +66,6 @@ public class AuthController(
     [EnableRateLimiting("auth")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        if (!HasXhrHeader())
-        {
-            return BadRequest(new ErrorResponse("InvalidRequest", "Missing required header."));
-        }
-
         var result = await signInManager.PasswordSignInAsync(
             request.Email,
             request.Password,
@@ -92,6 +85,7 @@ public class AuthController(
     }
 
     [HttpPost("logout")]
+    [RequireXhr]
     [Authorize]
     [EndpointName("Logout")]
     [EndpointSummary("Logout and clear auth cookie")]
@@ -224,7 +218,4 @@ public class AuthController(
             await playerTokenStore.LinkTokenToUserAsync(playerToken, userId);
         }
     }
-
-    private bool HasXhrHeader() =>
-        Request.Headers.TryGetValue("X-Requested-With", out var value) && value == "XMLHttpRequest";
 }
