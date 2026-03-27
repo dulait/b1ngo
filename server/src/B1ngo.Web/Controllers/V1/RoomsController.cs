@@ -13,7 +13,6 @@ using B1ngo.Application.Features.Rooms.UnmarkSquare;
 using B1ngo.Web.Contracts.V1;
 using B1ngo.Web.Filters;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
 
 namespace B1ngo.Web.Controllers.V1;
 
@@ -42,7 +41,6 @@ public class RoomsController(
     )]
     [ProducesResponseType<CreateRoomResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
-    [EnableRateLimiting("auth")]
     public async Task<IActionResult> CreateRoom([FromBody] CreateRoomCommand command, CancellationToken ct) =>
         await Send(createRoomHandler, command, ct, response => SetPlayerTokenCookie(response.PlayerToken));
 
@@ -54,7 +52,6 @@ public class RoomsController(
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
-    [EnableRateLimiting("auth")]
     public async Task<IActionResult> JoinRoom([FromBody] JoinRoomCommand command, CancellationToken ct) =>
         await Send(joinRoomHandler, command, ct, response => SetPlayerTokenCookie(response.PlayerToken));
 
