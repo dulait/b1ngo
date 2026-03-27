@@ -9,6 +9,7 @@ using B1ngo.Domain.Game.Events;
 using B1ngo.Infrastructure;
 using B1ngo.Infrastructure.Identity;
 using B1ngo.Infrastructure.Persistence;
+using B1ngo.Web.Constants;
 using B1ngo.Web.EventHandlers;
 using B1ngo.Web.Filters;
 using B1ngo.Web.OpenApi;
@@ -65,8 +66,8 @@ internal static class ServiceCollectionExtensions
             services
                 .AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
                 {
-                    options.Password.RequireDigit = true;
-                    options.Password.RequiredLength = 8;
+                    options.Password.RequireDigit = PasswordRequirements.RequireDigit;
+                    options.Password.RequiredLength = PasswordRequirements.MinimumLength;
                     options.Password.RequireUppercase = false;
                     options.Password.RequireLowercase = false;
                     options.Password.RequireNonAlphanumeric = false;
