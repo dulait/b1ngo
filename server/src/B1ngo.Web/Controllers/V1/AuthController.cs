@@ -98,6 +98,7 @@ public class AuthController(
     }
 
     [HttpGet("me")]
+    [AllowAnonymous]
     [EndpointName("GetCurrentUser")]
     [EndpointSummary("Get current authenticated user info")]
     [EndpointDescription(
