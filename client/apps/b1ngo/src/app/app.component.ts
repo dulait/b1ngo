@@ -58,8 +58,7 @@ export class AppComponent implements OnInit {
     this.router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
       .subscribe(() => {
-        const route = this.getDeepestChild(this.route);
-        this.showHeader.set(!route.snapshot.data['hideHeader']);
+        this.showHeader.set(!this.hasRouteData(this.route, 'hideHeader'));
       });
   }
 
@@ -89,10 +88,14 @@ export class AppComponent implements OnInit {
     setTimeout(() => this.themeSheetOpen.set(false), 150);
   }
 
-  private getDeepestChild(route: ActivatedRoute): ActivatedRoute {
-    while (route.firstChild) {
-      route = route.firstChild;
+  private hasRouteData(route: ActivatedRoute, key: string): boolean {
+    let current: ActivatedRoute | null = route;
+    while (current) {
+      if (current.snapshot.data[key]) {
+        return true;
+      }
+      current = current.firstChild;
     }
-    return route;
+    return false;
   }
 }
