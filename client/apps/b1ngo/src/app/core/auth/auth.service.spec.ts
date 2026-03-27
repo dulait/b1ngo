@@ -72,12 +72,11 @@ describe('AuthService', () => {
 
     const result = await promise;
 
-    expect(result).toEqual(authResponse);
+    expect(result).toBe(true);
     expect(service.isAuthenticated()).toBe(true);
   });
 
   it('should POST register and then call checkAuth', async () => {
-    const authResponse = { userId: 'u1', email: 'new@example.com', displayName: 'New' };
     const meResponse = { userId: 'u1', email: 'new@example.com', displayName: 'New', roles: [] };
 
     const promise = service.register('new@example.com', 'Password1', 'New');
@@ -85,7 +84,7 @@ describe('AuthService', () => {
     const registerReq = httpMock.expectOne(`${baseUrl}/api/v1/auth/register`);
     expect(registerReq.request.method).toBe('POST');
     expect(registerReq.request.body).toEqual({ email: 'new@example.com', password: 'Password1', displayName: 'New' });
-    registerReq.flush(authResponse);
+    registerReq.flush({ userId: 'u1', email: 'new@example.com', displayName: 'New' });
 
     // After register resolves, checkAuth fires a /me request
     await new Promise((r) => setTimeout(r, 0));
@@ -94,7 +93,7 @@ describe('AuthService', () => {
 
     const result = await promise;
 
-    expect(result).toEqual(authResponse);
+    expect(result).toBe(true);
     expect(service.isAuthenticated()).toBe(true);
   });
 
@@ -112,8 +111,9 @@ describe('AuthService', () => {
     expect(logoutReq.request.method).toBe('POST');
     logoutReq.flush(null, { status: 204, statusText: 'No Content' });
 
-    await logoutPromise;
+    const result = await logoutPromise;
 
+    expect(result).toBe(true);
     expect(service.currentUser()).toBeNull();
     expect(service.isAuthenticated()).toBe(false);
   });

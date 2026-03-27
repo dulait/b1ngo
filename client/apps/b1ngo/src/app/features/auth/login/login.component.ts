@@ -42,14 +42,12 @@ export class LoginComponent {
     }
 
     this.loading.set(true);
-    try {
-      await this.authService.login(this.email.value().trim(), this.password.value());
+    const success = await this.authService.login(this.email.value().trim(), this.password.value());
+    this.loading.set(false);
+
+    if (success) {
       this.toast.success('Logged in successfully.');
       this.router.navigate(['/']);
-    } catch {
-      // Error interceptor handles toast display
-    } finally {
-      this.loading.set(false);
     }
   }
 

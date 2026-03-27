@@ -73,9 +73,11 @@ export class AppComponent implements OnInit {
   }
 
   async onSignOut(): Promise<void> {
-    await this.auth.logout();
-    this.toast.info('Signed out.');
-    this.router.navigate(['/']);
+    const success = await this.auth.logout();
+    if (success) {
+      this.toast.info('Signed out.');
+      this.router.navigate(['/']);
+    }
   }
 
   navigateTo(path: string): void {

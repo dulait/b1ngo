@@ -56,7 +56,7 @@ describe('RegisterComponent', () => {
   });
 
   it('calls AuthService.register() with correct arguments on valid submit', async () => {
-    const registerSpy = vi.spyOn(authService, 'register').mockResolvedValue({ userId: 'u1', email: 'user@example.com', displayName: 'User' } as never);
+    const registerSpy = vi.spyOn(authService, 'register').mockResolvedValue(true);
 
     component.displayName.set('User');
     component.email.set('user@example.com');
@@ -67,7 +67,7 @@ describe('RegisterComponent', () => {
   });
 
   it('navigates to / on successful registration', async () => {
-    vi.spyOn(authService, 'register').mockResolvedValue({ userId: 'u1', email: 'user@example.com', displayName: 'User' } as never);
+    vi.spyOn(authService, 'register').mockResolvedValue(true);
 
     component.displayName.set('User');
     component.email.set('user@example.com');

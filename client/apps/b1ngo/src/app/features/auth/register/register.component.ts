@@ -43,18 +43,16 @@ export class RegisterComponent {
     }
 
     this.loading.set(true);
-    try {
-      await this.authService.register(
-        this.email.value().trim(),
-        this.password.value(),
-        this.displayName.value().trim(),
-      );
+    const success = await this.authService.register(
+      this.email.value().trim(),
+      this.password.value(),
+      this.displayName.value().trim(),
+    );
+    this.loading.set(false);
+
+    if (success) {
       this.toast.success('Account created successfully.');
       this.router.navigate(['/']);
-    } catch {
-      // Error interceptor handles toast display
-    } finally {
-      this.loading.set(false);
     }
   }
 

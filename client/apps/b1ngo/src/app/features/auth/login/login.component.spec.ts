@@ -54,7 +54,7 @@ describe('LoginComponent', () => {
   });
 
   it('calls AuthService.login() with trimmed email and password on valid submit', async () => {
-    const loginSpy = vi.spyOn(authService, 'login').mockResolvedValue({ userId: 'u1', email: 'user@example.com', displayName: 'User' } as never);
+    const loginSpy = vi.spyOn(authService, 'login').mockResolvedValue(true);
 
     component.email.set('user@example.com');
     component.password.set('Password1');
@@ -67,7 +67,7 @@ describe('LoginComponent', () => {
     let capturedLoading = false;
     vi.spyOn(authService, 'login').mockImplementation(async () => {
       capturedLoading = component.loading();
-      return { userId: 'u1', email: 'user@example.com', displayName: 'User' } as never;
+      return true;
     });
 
     component.email.set('user@example.com');
@@ -79,7 +79,7 @@ describe('LoginComponent', () => {
   });
 
   it('navigates to / on successful login', async () => {
-    vi.spyOn(authService, 'login').mockResolvedValue({ userId: 'u1', email: 'user@example.com', displayName: 'User' } as never);
+    vi.spyOn(authService, 'login').mockResolvedValue(true);
 
     component.email.set('user@example.com');
     component.password.set('Password1');
@@ -88,13 +88,14 @@ describe('LoginComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/']);
   });
 
-  it('does not clear fields when login throws an error', async () => {
-    vi.spyOn(authService, 'login').mockRejectedValue(new Error('Unauthorized'));
+  it('does not navigate on failed login', async () => {
+    vi.spyOn(authService, 'login').mockResolvedValue(false);
 
     component.email.set('user@example.com');
     component.password.set('Password1');
     await component.onSubmit();
 
+    expect(router.navigate).not.toHaveBeenCalled();
     expect(component.email.value()).toBe('user@example.com');
     expect(component.password.value()).toBe('Password1');
   });

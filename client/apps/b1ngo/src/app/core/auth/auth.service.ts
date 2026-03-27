@@ -27,27 +27,40 @@ export class AuthService {
     }
   }
 
-  async login(email: string, password: string): Promise<AuthResponse> {
-    const response = await firstValueFrom(
-      this.http.post<AuthResponse>(`${this.baseUrl}/api/v1/auth/login`, { email, password }),
-    );
-    await this.checkAuth();
-    return response;
+  async login(email: string, password: string): Promise<boolean> {
+    try {
+      await firstValueFrom(
+        this.http.post<AuthResponse>(`${this.baseUrl}/api/v1/auth/login`, { email, password }),
+      );
+      await this.checkAuth();
+      return true;
+    } catch {
+      return false;
+    }
   }
 
-  async register(email: string, password: string, displayName: string): Promise<AuthResponse> {
-    const response = await firstValueFrom(
-      this.http.post<AuthResponse>(`${this.baseUrl}/api/v1/auth/register`, { email, password, displayName }),
-    );
-    await this.checkAuth();
-    return response;
+  async register(email: string, password: string, displayName: string): Promise<boolean> {
+    try {
+      await firstValueFrom(
+        this.http.post<AuthResponse>(`${this.baseUrl}/api/v1/auth/register`, { email, password, displayName }),
+      );
+      await this.checkAuth();
+      return true;
+    } catch {
+      return false;
+    }
   }
 
-  async logout(): Promise<void> {
-    await firstValueFrom(
-      this.http.post(`${this.baseUrl}/api/v1/auth/logout`, {}),
-    );
-    this.currentUser.set(null);
+  async logout(): Promise<boolean> {
+    try {
+      await firstValueFrom(
+        this.http.post(`${this.baseUrl}/api/v1/auth/logout`, {}),
+      );
+      this.currentUser.set(null);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   externalLogin(provider: 'Google' | 'Microsoft'): void {
