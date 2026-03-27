@@ -67,6 +67,8 @@ internal static class ServiceCollectionExtensions
                 {
                     options.Password.RequireDigit = true;
                     options.Password.RequiredLength = 8;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireLowercase = false;
                     options.Password.RequireNonAlphanumeric = false;
                     options.User.RequireUniqueEmail = true;
                 })

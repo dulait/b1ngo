@@ -44,12 +44,11 @@ public class AuthController(
         {
             if (result.Errors.Any(e => e.Code is "DuplicateEmail" or "DuplicateUserName"))
             {
-                return Conflict(new ErrorResponse("RegistrationFailed", "An account with this email already exists."));
+                return Conflict(new ErrorResponse("DuplicateEmail", "An account with this email already exists."));
             }
 
-            return BadRequest(
-                new ErrorResponse("RegistrationFailed", "Registration failed. Check your input and try again.")
-            );
+            var details = result.Errors.Select(e => e.Description).ToList();
+            return BadRequest(new ErrorResponse("RegistrationFailed", string.Join(" ", details), details));
         }
 
         await signInManager.SignInAsync(user, isPersistent: true);
