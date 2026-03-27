@@ -87,6 +87,9 @@ export class RegisterComponent {
     } else if (this.password.value().length < 8) {
       this.password.error.set('Password must be at least 8 characters.');
       valid = false;
+    } else if (!/\d/.test(this.password.value())) {
+      this.password.error.set('Password must contain at least one digit.');
+      valid = false;
     }
 
     return valid;
