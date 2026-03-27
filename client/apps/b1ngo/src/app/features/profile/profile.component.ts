@@ -12,6 +12,7 @@ import {
   bngIconChevronLeft,
 } from 'bng-ui';
 import { AuthService } from '@core/auth/auth.service';
+import { formField } from '@core/utils/form-field';
 
 @Component({
   selector: 'app-profile',
@@ -34,17 +35,13 @@ export class ProfileComponent {
   protected readonly chevronLeftIcon = bngIconChevronLeft;
 
   // Profile form
-  readonly displayName = signal(this.auth.currentUser()?.displayName ?? '');
-  readonly displayNameError = signal<string | null>(null);
+  readonly displayName = formField(this.auth.currentUser()?.displayName ?? '');
   readonly savingProfile = signal(false);
 
   // Change password form
-  readonly currentPassword = signal('');
-  readonly newPassword = signal('');
-  readonly confirmPassword = signal('');
-  readonly currentPasswordError = signal<string | null>(null);
-  readonly newPasswordError = signal<string | null>(null);
-  readonly confirmPasswordError = signal<string | null>(null);
+  readonly currentPassword = formField();
+  readonly newPassword = formField();
+  readonly confirmPassword = formField();
   readonly savingPassword = signal(false);
 
   // Danger zone
@@ -53,30 +50,23 @@ export class ProfileComponent {
   readonly deletingAccount = signal(false);
 
   readonly email = computed(() => this.auth.currentUser()?.email ?? '');
-  readonly avatarColor = computed(() => getAvatarColor(this.displayName()));
-  readonly avatarInitials = computed(() => getAvatarInitials(this.displayName()));
+  readonly avatarColor = computed(() => getAvatarColor(this.displayName.value()));
+  readonly avatarInitials = computed(() => getAvatarInitials(this.displayName.value()));
   readonly canDelete = computed(() => this.deleteConfirmEmail() === this.email());
 
   // Profile
-  onDisplayNameChange(value: string): void {
-    this.displayName.set(value);
-    if (this.displayNameError() && value.trim()) {
-      this.displayNameError.set(null);
-    }
-  }
-
   async onSaveProfile(): Promise<void> {
     if (this.savingProfile()) {
       return;
     }
 
-    const name = this.displayName().trim();
+    const name = this.displayName.value().trim();
     if (!name) {
-      this.displayNameError.set('Display name is required.');
+      this.displayName.error.set('Display name is required.');
       return;
     }
     if (name.length > 50) {
-      this.displayNameError.set('Display name must be 50 characters or less.');
+      this.displayName.error.set('Display name must be 50 characters or less.');
       return;
     }
 
@@ -91,27 +81,6 @@ export class ProfileComponent {
   }
 
   // Change password
-  onCurrentPasswordChange(value: string): void {
-    this.currentPassword.set(value);
-    if (this.currentPasswordError() && value) {
-      this.currentPasswordError.set(null);
-    }
-  }
-
-  onNewPasswordChange(value: string): void {
-    this.newPassword.set(value);
-    if (this.newPasswordError() && value) {
-      this.newPasswordError.set(null);
-    }
-  }
-
-  onConfirmPasswordChange(value: string): void {
-    this.confirmPassword.set(value);
-    if (this.confirmPasswordError() && value) {
-      this.confirmPasswordError.set(null);
-    }
-  }
-
   async onChangePassword(): Promise<void> {
     if (this.savingPassword()) {
       return;
@@ -125,9 +94,9 @@ export class ProfileComponent {
     try {
       // Backend endpoint does not exist yet; simulate success
       await new Promise((r) => setTimeout(r, 500));
-      this.currentPassword.set('');
-      this.newPassword.set('');
-      this.confirmPassword.set('');
+      this.currentPassword.reset();
+      this.newPassword.reset();
+      this.confirmPassword.reset();
       this.toast.success('Password updated.');
     } finally {
       this.savingPassword.set(false);
@@ -168,24 +137,24 @@ export class ProfileComponent {
   private validatePassword(): boolean {
     let valid = true;
 
-    if (!this.currentPassword()) {
-      this.currentPasswordError.set('Current password is required.');
+    if (!this.currentPassword.value()) {
+      this.currentPassword.error.set('Current password is required.');
       valid = false;
     }
 
-    if (!this.newPassword()) {
-      this.newPasswordError.set('New password is required.');
+    if (!this.newPassword.value()) {
+      this.newPassword.error.set('New password is required.');
       valid = false;
-    } else if (this.newPassword().length < 8) {
-      this.newPasswordError.set('Password must be at least 8 characters.');
+    } else if (this.newPassword.value().length < 8) {
+      this.newPassword.error.set('Password must be at least 8 characters.');
       valid = false;
     }
 
-    if (!this.confirmPassword()) {
-      this.confirmPasswordError.set('Please confirm your password.');
+    if (!this.confirmPassword.value()) {
+      this.confirmPassword.error.set('Please confirm your password.');
       valid = false;
-    } else if (this.confirmPassword() !== this.newPassword()) {
-      this.confirmPasswordError.set('Passwords do not match.');
+    } else if (this.confirmPassword.value() !== this.newPassword.value()) {
+      this.confirmPassword.error.set('Passwords do not match.');
       valid = false;
     }
 

@@ -2,26 +2,26 @@
   <form (ngSubmit)="onSubmit()" class="space-y-4">
     <bng-input
       label="Display Name"
-      [value]="displayName()"
+      [value]="displayName.value()"
       [maxlength]="50"
-      [error]="displayNameError()"
-      (valueChange)="onDisplayNameChange($event)"
+      [error]="displayName.error()"
+      (valueChange)="displayName.set($event)"
     />
     <bng-input
       label="Email"
       type="email"
       autocomplete="email"
-      [value]="email()"
-      [error]="emailError()"
-      (valueChange)="onEmailChange($event)"
+      [value]="email.value()"
+      [error]="email.error()"
+      (valueChange)="email.set($event)"
     />
     <bng-input
       label="Password"
       type="password"
       autocomplete="new-password"
-      [value]="password()"
-      [error]="passwordError()"
-      (valueChange)="onPasswordChange($event)"
+      [value]="password.value()"
+      [error]="password.error()"
+      (valueChange)="password.set($event)"
     />
     <bng-button type="submit" variant="primary" [loading]="loading()" [fullWidth]="true">
       Register

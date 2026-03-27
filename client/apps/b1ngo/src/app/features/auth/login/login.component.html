@@ -4,18 +4,18 @@
       label="Email"
       type="email"
       autocomplete="email"
-      [value]="email()"
-      [error]="emailError()"
-      (valueChange)="onEmailChange($event)"
+      [value]="email.value()"
+      [error]="email.error()"
+      (valueChange)="email.set($event)"
     />
     <div>
       <bng-input
         label="Password"
         type="password"
         autocomplete="current-password"
-        [value]="password()"
-        [error]="passwordError()"
-        (valueChange)="onPasswordChange($event)"
+        [value]="password.value()"
+        [error]="password.error()"
+        (valueChange)="password.set($event)"
       />
       <div class="flex justify-end mt-1.5">
         <a routerLink="/auth/forgot-password" class="text-sm text-accent hover:underline">

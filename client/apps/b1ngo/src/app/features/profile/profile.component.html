@@ -12,7 +12,7 @@
     >
       {{ avatarInitials() }}
     </div>
-    <h1 class="text-xl font-semibold text-text-primary">{{ displayName() }}</h1>
+    <h1 class="text-xl font-semibold text-text-primary">{{ displayName.value() }}</h1>
     <p class="text-sm text-text-secondary">{{ email() }}</p>
   </div>
 
@@ -21,10 +21,10 @@
     <form (ngSubmit)="onSaveProfile()" class="space-y-4">
       <bng-input
         label="Display Name"
-        [value]="displayName()"
+        [value]="displayName.value()"
         [maxlength]="50"
-        [error]="displayNameError()"
-        (valueChange)="onDisplayNameChange($event)"
+        [error]="displayName.error()"
+        (valueChange)="displayName.set($event)"
       />
       <bng-input
         label="Email"
@@ -45,25 +45,25 @@
         label="Current Password"
         type="password"
         autocomplete="current-password"
-        [value]="currentPassword()"
-        [error]="currentPasswordError()"
-        (valueChange)="onCurrentPasswordChange($event)"
+        [value]="currentPassword.value()"
+        [error]="currentPassword.error()"
+        (valueChange)="currentPassword.set($event)"
       />
       <bng-input
         label="New Password"
         type="password"
         autocomplete="new-password"
-        [value]="newPassword()"
-        [error]="newPasswordError()"
-        (valueChange)="onNewPasswordChange($event)"
+        [value]="newPassword.value()"
+        [error]="newPassword.error()"
+        (valueChange)="newPassword.set($event)"
       />
       <bng-input
         label="Confirm New Password"
         type="password"
         autocomplete="new-password"
-        [value]="confirmPassword()"
-        [error]="confirmPasswordError()"
-        (valueChange)="onConfirmPasswordChange($event)"
+        [value]="confirmPassword.value()"
+        [error]="confirmPassword.error()"
+        (valueChange)="confirmPassword.set($event)"
       />
       <bng-button type="submit" variant="primary" [loading]="savingPassword()" [fullWidth]="true">
         Update Password

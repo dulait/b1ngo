@@ -8,6 +8,7 @@ import {
   ToastService,
   bngIconCheckCircle,
 } from 'bng-ui';
+import { formField } from '@core/utils/form-field';
 
 @Component({
   selector: 'app-reset-password',
@@ -22,11 +23,9 @@ export class ResetPasswordComponent implements OnInit {
 
   readonly checkIcon = bngIconCheckCircle;
 
-  readonly newPassword = signal('');
-  readonly confirmPassword = signal('');
+  readonly newPassword = formField();
+  readonly confirmPassword = formField();
   readonly loading = signal(false);
-  readonly newPasswordError = signal<string | null>(null);
-  readonly confirmPasswordError = signal<string | null>(null);
   readonly success = signal(false);
 
   private token = '';
@@ -40,20 +39,6 @@ export class ResetPasswordComponent implements OnInit {
     if (!this.token || !this.email) {
       this.toast.info('Invalid reset link. Please request a new one.');
       this.router.navigate(['/auth/forgot-password'], { replaceUrl: true });
-    }
-  }
-
-  onNewPasswordChange(value: string): void {
-    this.newPassword.set(value);
-    if (this.newPasswordError() && value) {
-      this.newPasswordError.set(null);
-    }
-  }
-
-  onConfirmPasswordChange(value: string): void {
-    this.confirmPassword.set(value);
-    if (this.confirmPasswordError() && value) {
-      this.confirmPasswordError.set(null);
     }
   }
 
@@ -79,19 +64,19 @@ export class ResetPasswordComponent implements OnInit {
   private validate(): boolean {
     let valid = true;
 
-    if (!this.newPassword()) {
-      this.newPasswordError.set('Password is required.');
+    if (!this.newPassword.value()) {
+      this.newPassword.error.set('Password is required.');
       valid = false;
-    } else if (this.newPassword().length < 8) {
-      this.newPasswordError.set('Password must be at least 8 characters.');
+    } else if (this.newPassword.value().length < 8) {
+      this.newPassword.error.set('Password must be at least 8 characters.');
       valid = false;
     }
 
-    if (!this.confirmPassword()) {
-      this.confirmPasswordError.set('Please confirm your password.');
+    if (!this.confirmPassword.value()) {
+      this.confirmPassword.error.set('Please confirm your password.');
       valid = false;
-    } else if (this.confirmPassword() !== this.newPassword()) {
-      this.confirmPasswordError.set('Passwords do not match.');
+    } else if (this.confirmPassword.value() !== this.newPassword.value()) {
+      this.confirmPassword.error.set('Passwords do not match.');
       valid = false;
     }
 

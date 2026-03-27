@@ -11,6 +11,7 @@ import {
   bngIconSocialViewBox,
 } from 'bng-ui';
 import { AuthService } from '@core/auth/auth.service';
+import { formField } from '@core/utils/form-field';
 
 @Component({
   selector: 'app-register',
@@ -27,34 +28,10 @@ export class RegisterComponent {
   readonly microsoftIcon = bngIconMicrosoft;
   readonly socialViewBox = bngIconSocialViewBox;
 
-  readonly displayName = signal('');
-  readonly email = signal('');
-  readonly password = signal('');
+  readonly displayName = formField();
+  readonly email = formField();
+  readonly password = formField();
   readonly loading = signal(false);
-  readonly displayNameError = signal<string | null>(null);
-  readonly emailError = signal<string | null>(null);
-  readonly passwordError = signal<string | null>(null);
-
-  onDisplayNameChange(value: string): void {
-    this.displayName.set(value);
-    if (this.displayNameError() && value.trim()) {
-      this.displayNameError.set(null);
-    }
-  }
-
-  onEmailChange(value: string): void {
-    this.email.set(value);
-    if (this.emailError() && value.trim()) {
-      this.emailError.set(null);
-    }
-  }
-
-  onPasswordChange(value: string): void {
-    this.password.set(value);
-    if (this.passwordError() && value) {
-      this.passwordError.set(null);
-    }
-  }
 
   async onSubmit(): Promise<void> {
     if (this.loading()) {
@@ -68,9 +45,9 @@ export class RegisterComponent {
     this.loading.set(true);
     try {
       await this.authService.register(
-        this.email().trim(),
-        this.password(),
-        this.displayName().trim(),
+        this.email.value().trim(),
+        this.password.value(),
+        this.displayName.value().trim(),
       );
       this.toast.success('Account created successfully.');
       this.router.navigate(['/']);
@@ -88,29 +65,29 @@ export class RegisterComponent {
   private validate(): boolean {
     let valid = true;
 
-    const name = this.displayName().trim();
+    const name = this.displayName.value().trim();
     if (!name) {
-      this.displayNameError.set('Display name is required.');
+      this.displayName.error.set('Display name is required.');
       valid = false;
     } else if (name.length > 50) {
-      this.displayNameError.set('Display name must be 50 characters or less.');
+      this.displayName.error.set('Display name must be 50 characters or less.');
       valid = false;
     }
 
-    const email = this.email().trim();
+    const email = this.email.value().trim();
     if (!email) {
-      this.emailError.set('Email is required.');
+      this.email.error.set('Email is required.');
       valid = false;
     } else if (!email.includes('@')) {
-      this.emailError.set('Enter a valid email address.');
+      this.email.error.set('Enter a valid email address.');
       valid = false;
     }
 
-    if (!this.password()) {
-      this.passwordError.set('Password is required.');
+    if (!this.password.value()) {
+      this.password.error.set('Password is required.');
       valid = false;
-    } else if (this.password().length < 8) {
-      this.passwordError.set('Password must be at least 8 characters.');
+    } else if (this.password.value().length < 8) {
+      this.password.error.set('Password must be at least 8 characters.');
       valid = false;
     }
 

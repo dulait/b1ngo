@@ -11,6 +11,7 @@ import {
   bngIconSocialViewBox,
 } from 'bng-ui';
 import { AuthService } from '@core/auth/auth.service';
+import { formField } from '@core/utils/form-field';
 
 @Component({
   selector: 'app-login',
@@ -27,25 +28,9 @@ export class LoginComponent {
   readonly microsoftIcon = bngIconMicrosoft;
   readonly socialViewBox = bngIconSocialViewBox;
 
-  readonly email = signal('');
-  readonly password = signal('');
+  readonly email = formField();
+  readonly password = formField();
   readonly loading = signal(false);
-  readonly emailError = signal<string | null>(null);
-  readonly passwordError = signal<string | null>(null);
-
-  onEmailChange(value: string): void {
-    this.email.set(value);
-    if (this.emailError() && value.trim()) {
-      this.emailError.set(null);
-    }
-  }
-
-  onPasswordChange(value: string): void {
-    this.password.set(value);
-    if (this.passwordError() && value) {
-      this.passwordError.set(null);
-    }
-  }
 
   async onSubmit(): Promise<void> {
     if (this.loading()) {
@@ -58,7 +43,7 @@ export class LoginComponent {
 
     this.loading.set(true);
     try {
-      await this.authService.login(this.email().trim(), this.password());
+      await this.authService.login(this.email.value().trim(), this.password.value());
       this.toast.success('Logged in successfully.');
       this.router.navigate(['/']);
     } catch {
@@ -75,17 +60,17 @@ export class LoginComponent {
   private validate(): boolean {
     let valid = true;
 
-    const email = this.email().trim();
+    const email = this.email.value().trim();
     if (!email) {
-      this.emailError.set('Email is required.');
+      this.email.error.set('Email is required.');
       valid = false;
     } else if (!email.includes('@')) {
-      this.emailError.set('Enter a valid email address.');
+      this.email.error.set('Enter a valid email address.');
       valid = false;
     }
 
-    if (!this.password()) {
-      this.passwordError.set('Password is required.');
+    if (!this.password.value()) {
+      this.password.error.set('Password is required.');
       valid = false;
     }
 

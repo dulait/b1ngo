@@ -7,6 +7,7 @@ import {
   BngIconComponent,
   bngIconCheckCircle,
 } from 'bng-ui';
+import { formField } from '@core/utils/form-field';
 
 @Component({
   selector: 'app-forgot-password',
@@ -17,17 +18,9 @@ import {
 export class ForgotPasswordComponent {
   readonly checkIcon = bngIconCheckCircle;
 
-  readonly email = signal('');
+  readonly email = formField();
   readonly loading = signal(false);
-  readonly emailError = signal<string | null>(null);
   readonly sent = signal(false);
-
-  onEmailChange(value: string): void {
-    this.email.set(value);
-    if (this.emailError() && value.trim()) {
-      this.emailError.set(null);
-    }
-  }
 
   async onSubmit(): Promise<void> {
     if (this.loading()) {
@@ -49,13 +42,13 @@ export class ForgotPasswordComponent {
   }
 
   private validate(): boolean {
-    const email = this.email().trim();
+    const email = this.email.value().trim();
     if (!email) {
-      this.emailError.set('Email is required.');
+      this.email.error.set('Email is required.');
       return false;
     }
     if (!email.includes('@')) {
-      this.emailError.set('Enter a valid email address.');
+      this.email.error.set('Enter a valid email address.');
       return false;
     }
     return true;
