@@ -12,6 +12,7 @@ export class AuthService {
   readonly currentUser = signal<UserInfo | null>(null);
   readonly isAuthenticated = computed(() => this.currentUser() !== null);
   readonly isAdmin = computed(() => this.currentUser()?.roles.includes('Admin') ?? false);
+  readonly ready = signal(false);
 
   async checkAuth(): Promise<void> {
     try {
@@ -21,6 +22,8 @@ export class AuthService {
       this.currentUser.set(res.status === 200 && res.body ? res.body : null);
     } catch {
       this.currentUser.set(null);
+    } finally {
+      this.ready.set(true);
     }
   }
 
