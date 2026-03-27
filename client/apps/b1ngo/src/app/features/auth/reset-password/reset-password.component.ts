@@ -8,6 +8,7 @@ import {
   ToastService,
   bngIconCheckCircle,
 } from 'bng-ui';
+import { AuthService } from '@core/auth/auth.service';
 import { formField } from '@core/utils/form-field';
 
 @Component({
@@ -20,6 +21,7 @@ export class ResetPasswordComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
+  private readonly auth = inject(AuthService);
 
   readonly checkIcon = bngIconCheckCircle;
 
@@ -53,9 +55,13 @@ export class ResetPasswordComponent implements OnInit {
 
     this.loading.set(true);
     try {
-      // Backend endpoint does not exist yet; simulate success
-      await new Promise((r) => setTimeout(r, 500));
-      this.success.set(true);
+      const ok = await this.auth.resetPassword(this.email, this.token, this.newPassword.value());
+      if (ok) {
+        this.success.set(true);
+      } else {
+        this.toast.error('Unable to reset password. Please request a new link.');
+        this.router.navigate(['/auth/forgot-password'], { replaceUrl: true });
+      }
     } finally {
       this.loading.set(false);
     }
@@ -69,6 +75,9 @@ export class ResetPasswordComponent implements OnInit {
       valid = false;
     } else if (this.newPassword.value().length < 8) {
       this.newPassword.error.set('Password must be at least 8 characters.');
+      valid = false;
+    } else if (!/\d/.test(this.newPassword.value())) {
+      this.newPassword.error.set('Password must contain at least one digit.');
       valid = false;
     }
 

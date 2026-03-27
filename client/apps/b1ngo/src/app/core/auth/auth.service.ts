@@ -63,6 +63,28 @@ export class AuthService {
     }
   }
 
+  async forgotPassword(email: string): Promise<boolean> {
+    try {
+      await firstValueFrom(
+        this.http.post(`${this.baseUrl}/api/v1/auth/forgot-password`, { email }),
+      );
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async resetPassword(email: string, token: string, newPassword: string): Promise<boolean> {
+    try {
+      await firstValueFrom(
+        this.http.post(`${this.baseUrl}/api/v1/auth/reset-password`, { email, token, newPassword }),
+      );
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   externalLogin(provider: 'Google' | 'Microsoft'): void {
     window.location.href = `${this.baseUrl}/api/v1/auth/external-login/${provider}`;
   }

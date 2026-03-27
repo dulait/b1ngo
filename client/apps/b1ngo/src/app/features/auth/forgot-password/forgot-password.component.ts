@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   BngCardComponent,
@@ -7,6 +7,7 @@ import {
   BngIconComponent,
   bngIconCheckCircle,
 } from 'bng-ui';
+import { AuthService } from '@core/auth/auth.service';
 import { formField } from '@core/utils/form-field';
 
 @Component({
@@ -16,6 +17,8 @@ import { formField } from '@core/utils/form-field';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ForgotPasswordComponent {
+  private readonly auth = inject(AuthService);
+
   readonly checkIcon = bngIconCheckCircle;
 
   readonly email = formField();
@@ -33,8 +36,7 @@ export class ForgotPasswordComponent {
 
     this.loading.set(true);
     try {
-      // Backend endpoint does not exist yet; simulate success
-      await new Promise((r) => setTimeout(r, 500));
+      await this.auth.forgotPassword(this.email.value().trim());
       this.sent.set(true);
     } finally {
       this.loading.set(false);
