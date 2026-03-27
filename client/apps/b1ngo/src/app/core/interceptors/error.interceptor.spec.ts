@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { errorInterceptor } from './error.interceptor';
 import { SessionService } from '../auth/session.service';
+import { AuthService } from '../auth/auth.service';
+import { ENVIRONMENT } from '../environment/environment.token';
 import { ToastService } from 'bng-ui';
 
 describe('errorInterceptor', () => {
@@ -12,6 +14,7 @@ describe('errorInterceptor', () => {
   let httpMock: HttpTestingController;
   let toastService: ToastService;
   let authService: SessionService;
+  let identityAuth: AuthService;
   let router: Router;
 
   beforeEach(() => {
@@ -22,7 +25,9 @@ describe('errorInterceptor', () => {
         provideHttpClient(withInterceptors([errorInterceptor])),
         provideHttpClientTesting(),
         SessionService,
+        AuthService,
         ToastService,
+        { provide: ENVIRONMENT, useValue: { production: false, apiBaseUrl: '' } },
         {
           provide: Router,
           useValue: { navigate: vi.fn() },
@@ -34,6 +39,7 @@ describe('errorInterceptor', () => {
     httpMock = TestBed.inject(HttpTestingController);
     toastService = TestBed.inject(ToastService);
     authService = TestBed.inject(SessionService);
+    identityAuth = TestBed.inject(AuthService);
     router = TestBed.inject(Router);
   });
 
@@ -70,6 +76,67 @@ describe('errorInterceptor', () => {
     expect(clearSpy).not.toHaveBeenCalled();
     expect(router.navigate).not.toHaveBeenCalled();
     expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it('should not have any side effects on 401 from /api/v1/auth/me', () => {
+    authService.saveSession('r1', 'p1', 'tok');
+    identityAuth.currentUser.set({ userId: '1', email: 'test@test.com', displayName: 'Test', roles: [] });
+    const warnSpy = vi.spyOn(toastService, 'warning');
+    const clearSpy = vi.spyOn(authService, 'clearSession');
+    const currentUserSpy = vi.spyOn(identityAuth.currentUser, 'set');
+
+    http.get('/api/v1/auth/me').subscribe({ error: () => {} });
+    httpMock.expectOne('/api/v1/auth/me').flush(null, { status: 401, statusText: 'Unauthorized' });
+
+    expect(clearSpy).not.toHaveBeenCalled();
+    expect(router.navigate).not.toHaveBeenCalled();
+    expect(warnSpy).not.toHaveBeenCalled();
+    expect(currentUserSpy).not.toHaveBeenCalled();
+  });
+
+  it('should clear AuthService.currentUser on 401 from /api/v1/auth/login', () => {
+    authService.saveSession('r1', 'p1', 'tok');
+    identityAuth.currentUser.set({ userId: '1', email: 'test@test.com', displayName: 'Test', roles: [] });
+    const warnSpy = vi.spyOn(toastService, 'warning');
+    const clearSpy = vi.spyOn(authService, 'clearSession');
+    const currentUserSpy = vi.spyOn(identityAuth.currentUser, 'set');
+
+    http.post('/api/v1/auth/login', {}).subscribe({ error: () => {} });
+    httpMock.expectOne('/api/v1/auth/login').flush(null, { status: 401, statusText: 'Unauthorized' });
+
+    expect(currentUserSpy).toHaveBeenCalledWith(null);
+    expect(clearSpy).not.toHaveBeenCalled();
+    expect(router.navigate).not.toHaveBeenCalled();
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it('should clear AuthService.currentUser on 401 from /api/v1/auth/logout', () => {
+    authService.saveSession('r1', 'p1', 'tok');
+    identityAuth.currentUser.set({ userId: '1', email: 'test@test.com', displayName: 'Test', roles: [] });
+    const warnSpy = vi.spyOn(toastService, 'warning');
+    const clearSpy = vi.spyOn(authService, 'clearSession');
+    const currentUserSpy = vi.spyOn(identityAuth.currentUser, 'set');
+
+    http.post('/api/v1/auth/logout', {}).subscribe({ error: () => {} });
+    httpMock.expectOne('/api/v1/auth/logout').flush(null, { status: 401, statusText: 'Unauthorized' });
+
+    expect(currentUserSpy).toHaveBeenCalledWith(null);
+    expect(clearSpy).not.toHaveBeenCalled();
+    expect(router.navigate).not.toHaveBeenCalled();
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it('should clear session and navigate on 401 from game endpoint', () => {
+    authService.saveSession('r1', 'p1', 'tok');
+    const warnSpy = vi.spyOn(toastService, 'warning');
+    const clearSpy = vi.spyOn(authService, 'clearSession');
+
+    http.get('/api/v1/rooms/123').subscribe({ error: () => {} });
+    httpMock.expectOne('/api/v1/rooms/123').flush(null, { status: 401, statusText: 'Unauthorized' });
+
+    expect(clearSpy).toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith(['/']);
+    expect(warnSpy).toHaveBeenCalledWith('Your session has expired.');
   });
 
   it('should redirect and warn on 403', () => {

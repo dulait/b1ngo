@@ -19,11 +19,11 @@ describe('xhrInterceptor', () => {
     httpMock = TestBed.inject(HttpTestingController);
   });
 
-  it('should add X-Requested-With header to auth requests', () => {
+  it('should not add X-Requested-With header to GET auth requests', () => {
     http.get('/api/v1/auth/me').subscribe();
 
     const req = httpMock.expectOne('/api/v1/auth/me');
-    expect(req.request.headers.get('X-Requested-With')).toBe('XMLHttpRequest');
+    expect(req.request.headers.has('X-Requested-With')).toBe(false);
     req.flush({});
   });
 
