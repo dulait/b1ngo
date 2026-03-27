@@ -10,6 +10,7 @@ import {
 } from 'bng-ui';
 import { AuthService } from '@core/auth/auth.service';
 import { formField } from '@core/utils/form-field';
+import { validatePassword } from '@core/utils/validate-password';
 
 @Component({
   selector: 'app-reset-password',
@@ -70,14 +71,7 @@ export class ResetPasswordComponent implements OnInit {
   private validate(): boolean {
     let valid = true;
 
-    if (!this.newPassword.value()) {
-      this.newPassword.error.set('Password is required.');
-      valid = false;
-    } else if (this.newPassword.value().length < 8) {
-      this.newPassword.error.set('Password must be at least 8 characters.');
-      valid = false;
-    } else if (!/\d/.test(this.newPassword.value())) {
-      this.newPassword.error.set('Password must contain at least one digit.');
+    if (!validatePassword(this.newPassword.value(), this.newPassword.error)) {
       valid = false;
     }
 

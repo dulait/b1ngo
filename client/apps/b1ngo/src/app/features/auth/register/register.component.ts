@@ -12,6 +12,7 @@ import {
 } from 'bng-ui';
 import { AuthService } from '@core/auth/auth.service';
 import { formField } from '@core/utils/form-field';
+import { validatePassword } from '@core/utils/validate-password';
 
 @Component({
   selector: 'app-register',
@@ -83,14 +84,7 @@ export class RegisterComponent {
       valid = false;
     }
 
-    if (!this.password.value()) {
-      this.password.error.set('Password is required.');
-      valid = false;
-    } else if (this.password.value().length < 8) {
-      this.password.error.set('Password must be at least 8 characters.');
-      valid = false;
-    } else if (!/\d/.test(this.password.value())) {
-      this.password.error.set('Password must contain at least one digit.');
+    if (!validatePassword(this.password.value(), this.password.error)) {
       valid = false;
     }
 
