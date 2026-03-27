@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, effect } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import {
   BngCardComponent,
@@ -36,6 +36,15 @@ export class ProfileComponent {
 
   // Profile form
   readonly displayName = formField(this.auth.currentUser()?.displayName ?? '');
+
+  constructor() {
+    effect(() => {
+      const user = this.auth.currentUser();
+      if (user) {
+        this.displayName.reset(user.displayName);
+      }
+    });
+  }
   readonly savingProfile = signal(false);
 
   // Change password form
