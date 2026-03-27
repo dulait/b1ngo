@@ -48,6 +48,8 @@ export class LoginComponent {
     if (success) {
       this.toast.success('Logged in successfully.');
       this.router.navigate(['/']);
+    } else {
+      this.toast.error('Invalid email or password.');
     }
   }
 

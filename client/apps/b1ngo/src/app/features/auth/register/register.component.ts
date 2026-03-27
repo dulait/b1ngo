@@ -53,6 +53,8 @@ export class RegisterComponent {
     if (success) {
       this.toast.success('Account created successfully.');
       this.router.navigate(['/']);
+    } else {
+      this.toast.error('Registration failed. Please try again.');
     }
   }
 
