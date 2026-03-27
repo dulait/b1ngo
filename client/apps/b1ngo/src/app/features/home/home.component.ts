@@ -1,7 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RoomApiService } from '@core/api/room-api.service';
-import { AuthService } from '@core/auth/auth.service';
 import { SessionService } from '@core/auth/session.service';
 import { safeAsync } from '@core/utils/safe-async.util';
 import { ToastService } from 'bng-ui';
@@ -20,7 +19,6 @@ export class HomeComponent implements OnInit {
   private readonly roomApi = inject(RoomApiService);
   private readonly session = inject(SessionService);
   private readonly toast = inject(ToastService);
-  private readonly auth = inject(AuthService);
 
   async ngOnInit(): Promise<void> {
     await this.handleOAuthCallback();
@@ -58,7 +56,6 @@ export class HomeComponent implements OnInit {
     }
 
     if (authParam === 'success') {
-      await this.auth.checkAuth();
       this.toast.success('Logged in successfully.');
     } else if (authParam === 'error') {
       this.toast.error('External login failed. Please try again.');
