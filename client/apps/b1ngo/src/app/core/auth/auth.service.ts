@@ -15,10 +15,10 @@ export class AuthService {
 
   async checkAuth(): Promise<void> {
     try {
-      const me = await firstValueFrom(
-        this.http.get<UserInfo | null>(`${this.baseUrl}/api/v1/auth/me`),
+      const res = await firstValueFrom(
+        this.http.get<UserInfo>(`${this.baseUrl}/api/v1/auth/me`, { observe: 'response' }),
       );
-      this.currentUser.set(me);
+      this.currentUser.set(res.status === 200 && res.body ? res.body : null);
     } catch {
       this.currentUser.set(null);
     }
