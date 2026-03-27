@@ -27,7 +27,7 @@ internal static class ServiceCollectionExtensions
         // todo: clean this up
         public IServiceCollection AddWebServices(IConfiguration configuration, IHostEnvironment environment)
         {
-            services.AddApplication().AddInfrastructure(configuration);
+            services.AddApplication().AddInfrastructure(configuration, environment);
             services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
 
             services.AddHttpContextAccessor();
@@ -74,6 +74,11 @@ internal static class ServiceCollectionExtensions
                 })
                 .AddEntityFrameworkStores<B1ngoDbContext>()
                 .AddDefaultTokenProviders();
+
+            services.Configure<DataProtectionTokenProviderOptions>(options =>
+            {
+                options.TokenLifespan = TimeSpan.FromHours(1);
+            });
 
             services.AddExternalAuthProviders(configuration);
 
