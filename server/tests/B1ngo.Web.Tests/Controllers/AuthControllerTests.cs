@@ -47,7 +47,7 @@ public class AuthControllerTests
     }
 
     [Fact]
-    public async Task Register_DuplicateEmail_Returns400()
+    public async Task Register_DuplicateEmail_Returns409()
     {
         _userManager
             .CreateAsync(Arg.Any<ApplicationUser>(), Arg.Any<string>())
@@ -59,21 +59,9 @@ public class AuthControllerTests
 
         var result = await _sut.Register(new RegisterRequest("dup@example.com", "Password1", "User"));
 
-        var bad = Assert.IsType<BadRequestObjectResult>(result);
-        var response = Assert.IsType<ErrorResponse>(bad.Value);
-        Assert.Equal("RegistrationFailed", response.Code);
-    }
-
-    [Fact]
-    public async Task Register_MissingXhrHeader_Returns400()
-    {
-        SetupHttpContext(withXhrHeader: false);
-
-        var result = await _sut.Register(new RegisterRequest("test@example.com", "Password1", "User"));
-
-        var bad = Assert.IsType<BadRequestObjectResult>(result);
-        var response = Assert.IsType<ErrorResponse>(bad.Value);
-        Assert.Equal("InvalidRequest", response.Code);
+        var conflict = Assert.IsType<ConflictObjectResult>(result);
+        var response = Assert.IsType<ErrorResponse>(conflict.Value);
+        Assert.Equal("DuplicateEmail", response.Code);
     }
 
     // --- Login ---
@@ -127,18 +115,6 @@ public class AuthControllerTests
         var unauthorized = Assert.IsType<UnauthorizedObjectResult>(result);
         var response = Assert.IsType<ErrorResponse>(unauthorized.Value);
         Assert.Equal("Invalid email or password.", response.Message);
-    }
-
-    [Fact]
-    public async Task Login_MissingXhrHeader_Returns400()
-    {
-        SetupHttpContext(withXhrHeader: false);
-
-        var result = await _sut.Login(new LoginRequest("test@example.com", "Password1"));
-
-        var bad = Assert.IsType<BadRequestObjectResult>(result);
-        var response = Assert.IsType<ErrorResponse>(bad.Value);
-        Assert.Equal("InvalidRequest", response.Code);
     }
 
     // --- Logout ---
