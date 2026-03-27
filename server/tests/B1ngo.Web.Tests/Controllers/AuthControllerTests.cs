@@ -5,6 +5,7 @@ using B1ngo.Web.Controllers.V1;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using NSubstitute;
 
 namespace B1ngo.Web.Tests.Controllers;
@@ -14,6 +15,8 @@ public class AuthControllerTests
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IPlayerTokenStore _playerTokenStore;
+    private readonly IEmailSender _emailSender;
+    private readonly IConfiguration _configuration;
     private readonly AuthController _sut;
 
     public AuthControllerTests()
@@ -21,7 +24,9 @@ public class AuthControllerTests
         _userManager = MockUserManager();
         _signInManager = MockSignInManager(_userManager);
         _playerTokenStore = Substitute.For<IPlayerTokenStore>();
-        _sut = new AuthController(_userManager, _signInManager, _playerTokenStore);
+        _emailSender = Substitute.For<IEmailSender>();
+        _configuration = Substitute.For<IConfiguration>();
+        _sut = new AuthController(_userManager, _signInManager, _playerTokenStore, _emailSender, _configuration);
         SetupHttpContext(withXhrHeader: true);
     }
 

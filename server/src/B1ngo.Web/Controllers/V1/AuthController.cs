@@ -1,3 +1,4 @@
+using System.Net;
 using System.Security.Claims;
 using Asp.Versioning;
 using B1ngo.Application.Common.Ports;
@@ -19,7 +20,9 @@ namespace B1ngo.Web.Controllers.V1;
 public class AuthController(
     UserManager<ApplicationUser> userManager,
     SignInManager<ApplicationUser> signInManager,
-    IPlayerTokenStore playerTokenStore
+    IPlayerTokenStore playerTokenStore,
+    IEmailSender emailSender,
+    IConfiguration configuration
 ) : ControllerBase
 {
     [HttpPost("register")]
@@ -208,6 +211,67 @@ public class AuthController(
         await LinkPlayerTokenIfPresent(newUser.Id);
 
         return Redirect("/?auth=success");
+    }
+
+    [HttpPost("forgot-password")]
+    [RequireXhr]
+    [EnableRateLimiting("auth")]
+    [EndpointName("ForgotPassword")]
+    [EndpointSummary("Request a password reset email")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+    {
+        var user = await userManager.FindByEmailAsync(request.Email);
+
+        if (user is null)
+        {
+            return Ok();
+        }
+
+        var token = await userManager.GeneratePasswordResetTokenAsync(user);
+        var baseUrl = configuration["Email:ResetPassword:BaseUrl"];
+        var encodedToken = WebUtility.UrlEncode(token);
+        var encodedEmail = WebUtility.UrlEncode(request.Email);
+        var resetLink = $"{baseUrl}/auth/reset-password?token={encodedToken}&email={encodedEmail}";
+
+        await emailSender.SendAsync(
+            request.Email,
+            "Reset your B1ngo password",
+            $"""
+            <p>We received a request to reset your password.</p>
+            <p><a href="{resetLink}">Reset password</a></p>
+            <p>This link expires in 60 minutes. If you didn't request this, ignore this email.</p>
+            """,
+            HttpContext.RequestAborted
+        );
+
+        return Ok();
+    }
+
+    [HttpPost("reset-password")]
+    [RequireXhr]
+    [EnableRateLimiting("auth")]
+    [EndpointName("ResetPassword")]
+    [EndpointSummary("Reset password with token from email")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+    {
+        var user = await userManager.FindByEmailAsync(request.Email);
+
+        if (user is null)
+        {
+            return BadRequest(new ErrorResponse("ResetFailed", "Unable to reset password."));
+        }
+
+        var result = await userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
+
+        if (!result.Succeeded)
+        {
+            return BadRequest(new ErrorResponse("ResetFailed", "Unable to reset password."));
+        }
+
+        return Ok();
     }
 
     private async Task LinkPlayerTokenIfPresent(Guid userId)
