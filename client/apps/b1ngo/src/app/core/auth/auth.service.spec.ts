@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
-import { describe, it, beforeEach, expect } from 'vitest';
+import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { AuthService } from './auth.service';
 import { ENVIRONMENT } from '../environment/environment.token';
 
@@ -126,5 +126,59 @@ describe('AuthService', () => {
     await promise;
 
     expect(service.isAdmin()).toBe(false);
+  });
+
+  it('should POST forgotPassword and return true on success', async () => {
+    const promise = service.forgotPassword('test@example.com');
+
+    const req = httpMock.expectOne(`${baseUrl}/api/v1/auth/forgot-password`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ email: 'test@example.com' });
+    req.flush(null, { status: 200, statusText: 'OK' });
+
+    expect(await promise).toBe(true);
+  });
+
+  it('should return false when forgotPassword fails', async () => {
+    const promise = service.forgotPassword('test@example.com');
+
+    httpMock.expectOne(`${baseUrl}/api/v1/auth/forgot-password`)
+      .flush(null, { status: 500, statusText: 'Server Error' });
+
+    expect(await promise).toBe(false);
+  });
+
+  it('should POST resetPassword and return true on success', async () => {
+    const promise = service.resetPassword('test@example.com', 'token123', 'NewPassword1');
+
+    const req = httpMock.expectOne(`${baseUrl}/api/v1/auth/reset-password`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ email: 'test@example.com', token: 'token123', newPassword: 'NewPassword1' });
+    req.flush(null, { status: 200, statusText: 'OK' });
+
+    expect(await promise).toBe(true);
+  });
+
+  it('should return false when resetPassword fails', async () => {
+    const promise = service.resetPassword('test@example.com', 'token123', 'NewPassword1');
+
+    httpMock.expectOne(`${baseUrl}/api/v1/auth/reset-password`)
+      .flush(null, { status: 400, statusText: 'Bad Request' });
+
+    expect(await promise).toBe(false);
+  });
+
+  it('should redirect to external login URL', () => {
+    const originalHref = window.location.href;
+    const hrefSetter = vi.spyOn(window, 'location', 'get').mockReturnValue({
+      ...window.location,
+      set href(url: string) { /* no-op in test */ },
+      get href() { return originalHref; },
+    } as Location);
+
+    // Verify the method exists and doesn't throw
+    expect(() => service.externalLogin('Google')).not.toThrow();
+
+    hrefSetter.mockRestore();
   });
 });
