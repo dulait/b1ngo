@@ -80,7 +80,7 @@ public class AuthTests(B1ngoApiFactory factory) : IntegrationTestBase(factory)
         );
         var secondResponse = await client2.SendAsync(second);
 
-        Assert.Equal(HttpStatusCode.BadRequest, secondResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, secondResponse.StatusCode);
     }
 
     [Fact]
@@ -218,12 +218,12 @@ public class AuthTests(B1ngoApiFactory factory) : IntegrationTestBase(factory)
     }
 
     [Fact]
-    public async Task Me_WhenNotAuthenticated_Returns401()
+    public async Task Me_WhenNotAuthenticated_Returns204()
     {
         using var client = Factory.CreateClient();
         var response = await client.GetAsync($"{AuthBase}/me");
 
-        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
 
     // --- Logout ---
@@ -246,11 +246,12 @@ public class AuthTests(B1ngoApiFactory factory) : IntegrationTestBase(factory)
         );
         (await client.SendAsync(register)).EnsureSuccessStatusCode();
 
-        var logoutResponse = await client.PostAsync($"{AuthBase}/logout", null);
+        var logout = CreateAuthRequest(HttpMethod.Post, $"{AuthBase}/logout");
+        var logoutResponse = await client.SendAsync(logout);
         Assert.Equal(HttpStatusCode.NoContent, logoutResponse.StatusCode);
 
         var meResponse = await client.GetAsync($"{AuthBase}/me");
-        Assert.Equal(HttpStatusCode.Unauthorized, meResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.NoContent, meResponse.StatusCode);
     }
 
     // --- Register then Login then Me flow ---
@@ -273,7 +274,8 @@ public class AuthTests(B1ngoApiFactory factory) : IntegrationTestBase(factory)
         );
         (await client.SendAsync(register)).EnsureSuccessStatusCode();
 
-        await client.PostAsync($"{AuthBase}/logout", null);
+        var logout = CreateAuthRequest(HttpMethod.Post, $"{AuthBase}/logout");
+        await client.SendAsync(logout);
 
         var login = CreateAuthRequest(HttpMethod.Post, $"{AuthBase}/login", new { email, password = "Password1" });
         (await client.SendAsync(login)).EnsureSuccessStatusCode();
