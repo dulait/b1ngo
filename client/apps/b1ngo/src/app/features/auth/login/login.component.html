@@ -1,5 +1,5 @@
 <bng-card header="Log In">
-  <form (ngSubmit)="onSubmit()" class="space-y-4">
+  <form (submit)="$event.preventDefault(); onSubmit()" class="space-y-4">
     <bng-input
       label="Email"
       type="email"

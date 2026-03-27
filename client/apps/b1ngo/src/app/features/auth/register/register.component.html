@@ -1,5 +1,5 @@
 <bng-card header="Create Account">
-  <form (ngSubmit)="onSubmit()" class="space-y-4">
+  <form (submit)="$event.preventDefault(); onSubmit()" class="space-y-4">
     <bng-input
       label="Display Name"
       [value]="displayName.value()"

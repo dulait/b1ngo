@@ -18,7 +18,7 @@
 
   <!-- Profile Card -->
   <bng-card header="Profile">
-    <form (ngSubmit)="onSaveProfile()" class="space-y-4">
+    <form (submit)="$event.preventDefault(); onSaveProfile()" class="space-y-4">
       <bng-input
         label="Display Name"
         [value]="displayName.value()"
@@ -40,7 +40,7 @@
 
   <!-- Change Password Card -->
   <bng-card header="Change Password">
-    <form (ngSubmit)="onChangePassword()" class="space-y-4">
+    <form (submit)="$event.preventDefault(); onChangePassword()" class="space-y-4">
       <bng-input
         label="Current Password"
         type="password"
