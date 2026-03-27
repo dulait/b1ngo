@@ -1,18 +1,29 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { describe, it, beforeEach, expect } from 'vitest';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { ForgotPasswordComponent } from './forgot-password.component';
+import { AuthService } from '@core/auth/auth.service';
+import { ENVIRONMENT } from '@core/environment/environment.token';
 
 describe('ForgotPasswordComponent', () => {
   let component: ForgotPasswordComponent;
   let fixture: ComponentFixture<ForgotPasswordComponent>;
+  let authService: AuthService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ForgotPasswordComponent],
-      providers: [provideRouter([])],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+        { provide: ENVIRONMENT, useValue: { production: false, apiBaseUrl: '' } },
+      ],
     }).compileComponents();
 
+    authService = TestBed.inject(AuthService);
     fixture = TestBed.createComponent(ForgotPasswordComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -26,21 +37,29 @@ describe('ForgotPasswordComponent', () => {
     expect(buttons.length).toBeGreaterThanOrEqual(1);
   });
 
-  it('shows "Email is required." when submitting with empty email', async () => {
+  it('shows error when submitting with empty email', async () => {
     await component.onSubmit();
     fixture.detectChanges();
 
     expect(component.email.error()).toBe('Email is required.');
   });
 
-  it('sets sent() to true after successful submit', async () => {
+  it('shows error when email is invalid', async () => {
+    component.email.set('notanemail');
+    await component.onSubmit();
+    fixture.detectChanges();
+
+    expect(component.email.error()).toBe('Enter a valid email address.');
+  });
+
+  it('sets sent to true after successful submit', async () => {
+    vi.spyOn(authService, 'forgotPassword').mockResolvedValue(true);
     component.email.set('user@example.com');
 
-    expect(component.sent()).toBe(false);
-    const submitPromise = component.onSubmit();
-    await submitPromise;
+    await component.onSubmit();
     fixture.detectChanges();
 
     expect(component.sent()).toBe(true);
+    expect(authService.forgotPassword).toHaveBeenCalledWith('user@example.com');
   });
 });

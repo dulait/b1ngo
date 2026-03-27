@@ -1,18 +1,26 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter, Router } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { ResetPasswordComponent } from './reset-password.component';
+import { AuthService } from '@core/auth/auth.service';
+import { ENVIRONMENT } from '@core/environment/environment.token';
 
 describe('ResetPasswordComponent', () => {
   let component: ResetPasswordComponent;
   let fixture: ComponentFixture<ResetPasswordComponent>;
+  let authService: AuthService;
   let router: Router;
 
   async function createComponent(queryParams: Record<string, string | null> = {}) {
     await TestBed.configureTestingModule({
       imports: [ResetPasswordComponent],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         provideRouter([]),
+        { provide: ENVIRONMENT, useValue: { production: false, apiBaseUrl: '' } },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -27,6 +35,7 @@ describe('ResetPasswordComponent', () => {
       ],
     }).compileComponents();
 
+    authService = TestBed.inject(AuthService);
     router = TestBed.inject(Router);
     vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
@@ -39,7 +48,7 @@ describe('ResetPasswordComponent', () => {
     TestBed.resetTestingModule();
   });
 
-  it('redirects to /auth/forgot-password when token and email query params are missing', async () => {
+  it('redirects to /auth/forgot-password when token and email are missing', async () => {
     await createComponent({});
 
     expect(router.navigate).toHaveBeenCalledWith(
@@ -76,16 +85,29 @@ describe('ResetPasswordComponent', () => {
     expect(component.confirmPassword.error()).toBe('Passwords do not match.');
   });
 
-  it('sets success() to true after valid submit', async () => {
+  it('sets success to true after valid submit', async () => {
     await createComponent({ token: 'abc', email: 'test@test.com' });
+    vi.spyOn(authService, 'resetPassword').mockResolvedValue(true);
 
     component.newPassword.set('Password1');
     component.confirmPassword.set('Password1');
-
-    expect(component.success()).toBe(false);
     await component.onSubmit();
     fixture.detectChanges();
 
     expect(component.success()).toBe(true);
+  });
+
+  it('redirects to forgot-password when reset fails', async () => {
+    await createComponent({ token: 'abc', email: 'test@test.com' });
+    vi.spyOn(authService, 'resetPassword').mockResolvedValue(false);
+
+    component.newPassword.set('Password1');
+    component.confirmPassword.set('Password1');
+    await component.onSubmit();
+
+    expect(router.navigate).toHaveBeenCalledWith(
+      ['/auth/forgot-password'],
+      expect.objectContaining({ replaceUrl: true }),
+    );
   });
 });
