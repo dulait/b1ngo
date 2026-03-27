@@ -6,7 +6,6 @@ import {
   signal,
   computed,
   effect,
-  input,
 } from '@angular/core';
 import {
   BngCardComponent,
@@ -37,7 +36,6 @@ export class CreateRoomFormComponent {
   private readonly roomApi = inject(RoomApiService);
   private readonly refData = inject(ReferenceDataService);
 
-  readonly defaultDisplayName = input('');
   success = output<{ roomId: string; playerId: string; playerToken: string }>();
 
   readonly hostDisplayName = signal('');
@@ -86,13 +84,6 @@ export class CreateRoomFormComponent {
 
   constructor() {
     this.refData.load();
-
-    effect(() => {
-      const defaultName = this.defaultDisplayName();
-      if (defaultName && !this.hostDisplayName()) {
-        this.hostDisplayName.set(defaultName);
-      }
-    });
 
     effect(() => {
       const seasons = this.refData.seasons();

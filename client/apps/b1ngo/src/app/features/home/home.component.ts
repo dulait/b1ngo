@@ -38,10 +38,6 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  get defaultDisplayName(): string {
-    return this.auth.currentUser()?.displayName ?? '';
-  }
-
   onRoomCreated(event: { roomId: string; playerId: string; playerToken: string }): void {
     this.enterRoom(event);
   }

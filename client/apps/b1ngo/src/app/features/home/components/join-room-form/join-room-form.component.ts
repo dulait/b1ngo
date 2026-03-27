@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, output, signal, input, effect, ElementRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, output, signal, ElementRef } from '@angular/core';
 import {
   BngCardComponent,
   BngInputComponent,
@@ -20,7 +20,6 @@ export class JoinRoomFormComponent {
   private readonly roomApi = inject(RoomApiService);
   readonly hostElement = inject(ElementRef).nativeElement as HTMLElement;
 
-  readonly defaultDisplayName = input('');
   success = output<{ roomId: string; playerId: string; playerToken: string }>();
 
   readonly joinCode = signal('');
@@ -28,15 +27,6 @@ export class JoinRoomFormComponent {
   readonly loading = signal(false);
   readonly nameError = signal<string | null>(null);
   readonly codeError = signal<string | null>(null);
-
-  constructor() {
-    effect(() => {
-      const defaultName = this.defaultDisplayName();
-      if (defaultName && !this.displayName()) {
-        this.displayName.set(defaultName);
-      }
-    });
-  }
 
   onCodeChange(value: string): void {
     this.joinCode.set(value);
