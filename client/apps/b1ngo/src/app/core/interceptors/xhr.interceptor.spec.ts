@@ -19,15 +19,15 @@ describe('xhrInterceptor', () => {
     httpMock = TestBed.inject(HttpTestingController);
   });
 
-  it('should not add X-Requested-With header to GET auth requests', () => {
+  it('should add X-Requested-With header to GET requests', () => {
     http.get('/api/v1/auth/me').subscribe();
 
     const req = httpMock.expectOne('/api/v1/auth/me');
-    expect(req.request.headers.has('X-Requested-With')).toBe(false);
+    expect(req.request.headers.get('X-Requested-With')).toBe('XMLHttpRequest');
     req.flush({});
   });
 
-  it('should add X-Requested-With header to auth sub-paths', () => {
+  it('should add X-Requested-With header to POST requests', () => {
     http.post('/api/v1/auth/login', {}).subscribe();
 
     const req = httpMock.expectOne('/api/v1/auth/login');
@@ -35,11 +35,11 @@ describe('xhrInterceptor', () => {
     req.flush({});
   });
 
-  it('should not add X-Requested-With header to non-auth requests', () => {
+  it('should add X-Requested-With header to non-auth requests', () => {
     http.get('/api/v1/rooms').subscribe();
 
     const req = httpMock.expectOne('/api/v1/rooms');
-    expect(req.request.headers.has('X-Requested-With')).toBe(false);
+    expect(req.request.headers.get('X-Requested-With')).toBe('XMLHttpRequest');
     req.flush({});
   });
 });
