@@ -144,6 +144,7 @@ public class AuthController(
     [EndpointName("ExternalLoginCallback")]
     [EndpointSummary("Handle OAuth callback")]
     [ProducesResponseType(StatusCodes.Status302Found)]
+    [EnableRateLimiting("auth")]
     public async Task<IActionResult> ExternalLoginCallback()
     {
         var info = await signInManager.GetExternalLoginInfoAsync();
@@ -259,19 +260,17 @@ public class AuthController(
     {
         var user = await userManager.FindByEmailAsync(request.Email);
 
-        if (user is null)
+        if (user is not null)
         {
-            return BadRequest(new ErrorResponse("ResetFailed", "Unable to reset password."));
+            var result = await userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
+
+            if (result.Succeeded)
+            {
+                return Ok();
+            }
         }
 
-        var result = await userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
-
-        if (!result.Succeeded)
-        {
-            return BadRequest(new ErrorResponse("ResetFailed", "Unable to reset password."));
-        }
-
-        return Ok();
+        return BadRequest(new ErrorResponse("ResetFailed", "Unable to reset password."));
     }
 
     private async Task LinkPlayerTokenIfPresent(Guid userId)
