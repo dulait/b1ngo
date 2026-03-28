@@ -73,7 +73,7 @@ public class AuthController(
             request.Email,
             request.Password,
             isPersistent: true,
-            lockoutOnFailure: false
+            lockoutOnFailure: true
         );
 
         if (!result.Succeeded)

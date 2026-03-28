@@ -17,7 +17,6 @@ using B1ngo.Web.Services;
 using B1ngo.Web.Validators;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.RateLimiting;
 
 namespace B1ngo.Web.Extensions;
 
@@ -74,6 +73,10 @@ internal static class ServiceCollectionExtensions
                     options.Password.RequireLowercase = false;
                     options.Password.RequireNonAlphanumeric = false;
                     options.User.RequireUniqueEmail = true;
+
+                    options.Lockout.MaxFailedAccessAttempts = 5;
+                    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                    options.Lockout.AllowedForNewUsers = true;
                 })
                 .AddEntityFrameworkStores<B1ngoDbContext>()
                 .AddDefaultTokenProviders();
@@ -172,14 +175,18 @@ internal static class ServiceCollectionExtensions
             {
                 options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
-                options.AddFixedWindowLimiter(
+                options.AddPolicy(
                     "auth",
-                    limiter =>
-                    {
-                        limiter.PermitLimit = 10;
-                        limiter.Window = TimeSpan.FromMinutes(1);
-                        limiter.QueueLimit = 0;
-                    }
+                    context =>
+                        RateLimitPartition.GetFixedWindowLimiter(
+                            context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                            _ => new FixedWindowRateLimiterOptions
+                            {
+                                PermitLimit = 10,
+                                Window = TimeSpan.FromMinutes(1),
+                                QueueLimit = 0,
+                            }
+                        )
                 );
 
                 options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
