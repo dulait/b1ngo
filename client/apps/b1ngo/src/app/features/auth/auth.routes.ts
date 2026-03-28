@@ -15,7 +15,8 @@ export const AUTH_ROUTES: Routes = [
       {
         path: 'register',
         canActivate: [guestGuard],
-        loadComponent: () => import('./register/register.component').then((m) => m.RegisterComponent),
+        loadComponent: () =>
+          import('./register/register.component').then((m) => m.RegisterComponent),
       },
       {
         path: 'forgot-password',
@@ -27,9 +28,7 @@ export const AUTH_ROUTES: Routes = [
       {
         path: 'reset-password',
         loadComponent: () =>
-          import('./reset-password/reset-password.component').then(
-            (m) => m.ResetPasswordComponent,
-          ),
+          import('./reset-password/reset-password.component').then((m) => m.ResetPasswordComponent),
       },
       { path: '', redirectTo: 'login', pathMatch: 'full' },
     ],

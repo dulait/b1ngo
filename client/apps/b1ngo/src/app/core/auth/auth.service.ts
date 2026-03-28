@@ -42,7 +42,11 @@ export class AuthService {
   async register(email: string, password: string, displayName: string): Promise<boolean> {
     try {
       await firstValueFrom(
-        this.http.post<AuthResponse>(`${this.baseUrl}/api/v1/auth/register`, { email, password, displayName }),
+        this.http.post<AuthResponse>(`${this.baseUrl}/api/v1/auth/register`, {
+          email,
+          password,
+          displayName,
+        }),
       );
       await this.checkAuth();
       return true;
@@ -53,9 +57,7 @@ export class AuthService {
 
   async logout(): Promise<boolean> {
     try {
-      await firstValueFrom(
-        this.http.post(`${this.baseUrl}/api/v1/auth/logout`, {}),
-      );
+      await firstValueFrom(this.http.post(`${this.baseUrl}/api/v1/auth/logout`, {}));
       this.currentUser.set(null);
       return true;
     } catch {

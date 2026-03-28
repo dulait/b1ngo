@@ -29,7 +29,12 @@ describe('AuthService', () => {
   });
 
   it('should populate currentUser on successful checkAuth', async () => {
-    const meResponse = { userId: 'u1', email: 'me@example.com', displayName: 'Me', roles: ['Admin'] };
+    const meResponse = {
+      userId: 'u1',
+      email: 'me@example.com',
+      displayName: 'Me',
+      roles: ['Admin'],
+    };
 
     const promise = service.checkAuth();
     const req = httpMock.expectOne(`${baseUrl}/api/v1/auth/me`);
@@ -83,7 +88,11 @@ describe('AuthService', () => {
 
     const registerReq = httpMock.expectOne(`${baseUrl}/api/v1/auth/register`);
     expect(registerReq.request.method).toBe('POST');
-    expect(registerReq.request.body).toEqual({ email: 'new@example.com', password: 'Password1', displayName: 'New' });
+    expect(registerReq.request.body).toEqual({
+      email: 'new@example.com',
+      password: 'Password1',
+      displayName: 'New',
+    });
     registerReq.flush({ userId: 'u1', email: 'new@example.com', displayName: 'New' });
 
     // After register resolves, checkAuth fires a /me request
@@ -101,7 +110,10 @@ describe('AuthService', () => {
     // Seed authenticated state
     const checkPromise = service.checkAuth();
     httpMock.expectOne(`${baseUrl}/api/v1/auth/me`).flush({
-      userId: 'u1', email: 'me@example.com', displayName: 'Me', roles: [],
+      userId: 'u1',
+      email: 'me@example.com',
+      displayName: 'Me',
+      roles: [],
     });
     await checkPromise;
     expect(service.isAuthenticated()).toBe(true);
@@ -121,7 +133,10 @@ describe('AuthService', () => {
   it('should report isAdmin false when user has no Admin role', async () => {
     const promise = service.checkAuth();
     httpMock.expectOne(`${baseUrl}/api/v1/auth/me`).flush({
-      userId: 'u1', email: 'me@example.com', displayName: 'Me', roles: ['Player'],
+      userId: 'u1',
+      email: 'me@example.com',
+      displayName: 'Me',
+      roles: ['Player'],
     });
     await promise;
 
@@ -142,7 +157,8 @@ describe('AuthService', () => {
   it('should return false when forgotPassword fails', async () => {
     const promise = service.forgotPassword('test@example.com');
 
-    httpMock.expectOne(`${baseUrl}/api/v1/auth/forgot-password`)
+    httpMock
+      .expectOne(`${baseUrl}/api/v1/auth/forgot-password`)
       .flush(null, { status: 500, statusText: 'Server Error' });
 
     expect(await promise).toBe(false);
@@ -153,7 +169,11 @@ describe('AuthService', () => {
 
     const req = httpMock.expectOne(`${baseUrl}/api/v1/auth/reset-password`);
     expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual({ email: 'test@example.com', token: 'token123', newPassword: 'NewPassword1' });
+    expect(req.request.body).toEqual({
+      email: 'test@example.com',
+      token: 'token123',
+      newPassword: 'NewPassword1',
+    });
     req.flush(null, { status: 200, statusText: 'OK' });
 
     expect(await promise).toBe(true);
@@ -162,7 +182,8 @@ describe('AuthService', () => {
   it('should return false when resetPassword fails', async () => {
     const promise = service.resetPassword('test@example.com', 'token123', 'NewPassword1');
 
-    httpMock.expectOne(`${baseUrl}/api/v1/auth/reset-password`)
+    httpMock
+      .expectOne(`${baseUrl}/api/v1/auth/reset-password`)
       .flush(null, { status: 400, statusText: 'Bad Request' });
 
     expect(await promise).toBe(false);
@@ -172,8 +193,12 @@ describe('AuthService', () => {
     const originalHref = window.location.href;
     const hrefSetter = vi.spyOn(window, 'location', 'get').mockReturnValue({
       ...window.location,
-      set href(url: string) { /* no-op in test */ },
-      get href() { return originalHref; },
+      set href(url: string) {
+        /* no-op in test */
+      },
+      get href() {
+        return originalHref;
+      },
     } as Location);
 
     // Verify the method exists and doesn't throw

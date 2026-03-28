@@ -1,4 +1,11 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, effect } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  signal,
+  computed,
+  effect,
+} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import {
   BngCardComponent,

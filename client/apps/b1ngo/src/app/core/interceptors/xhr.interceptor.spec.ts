@@ -10,7 +10,10 @@ describe('xhrInterceptor', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(withInterceptors([xhrInterceptor])), provideHttpClientTesting()],
+      providers: [
+        provideHttpClient(withInterceptors([xhrInterceptor])),
+        provideHttpClientTesting(),
+      ],
     });
     http = TestBed.inject(HttpClient);
     httpMock = TestBed.inject(HttpTestingController);

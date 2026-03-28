@@ -184,7 +184,7 @@ export class RoomComponent implements OnInit, OnDestroy {
               this.store.updateLeaderboard(state.leaderboard);
             }
           },
-          () => { },
+          () => {},
         );
       }
     });

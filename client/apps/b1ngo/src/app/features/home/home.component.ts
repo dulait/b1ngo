@@ -29,7 +29,11 @@ export class HomeComponent implements OnInit {
 
     const result = await safeAsync(this.roomApi.reconnect());
     if (result.ok) {
-      this.session.saveSession(result.value.roomId, result.value.playerId, this.session.getPlayerToken());
+      this.session.saveSession(
+        result.value.roomId,
+        result.value.playerId,
+        this.session.getPlayerToken(),
+      );
       this.router.navigate(['/room', result.value.roomId]);
     } else {
       this.session.clearSession();
