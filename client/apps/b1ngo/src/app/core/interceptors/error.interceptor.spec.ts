@@ -160,6 +160,28 @@ describe('errorInterceptor', () => {
     expect(errorSpy).toHaveBeenCalledWith('Bad field');
   });
 
+  it('should not toast on 400 from auth endpoint', () => {
+    const errorSpy = vi.spyOn(toastService, 'error');
+
+    http.post('/api/v1/auth/register', {}).subscribe({ error: () => {} });
+    httpMock
+      .expectOne('/api/v1/auth/register')
+      .flush({ message: 'Validation failed' }, { status: 400, statusText: 'Bad Request' });
+
+    expect(errorSpy).not.toHaveBeenCalled();
+  });
+
+  it('should not toast on 409 from auth endpoint', () => {
+    const errorSpy = vi.spyOn(toastService, 'error');
+
+    http.post('/api/v1/auth/register', {}).subscribe({ error: () => {} });
+    httpMock
+      .expectOne('/api/v1/auth/register')
+      .flush({ message: 'Duplicate email' }, { status: 409, statusText: 'Conflict' });
+
+    expect(errorSpy).not.toHaveBeenCalled();
+  });
+
   it('should show generic error on 500+', () => {
     const errorSpy = vi.spyOn(toastService, 'error');
 

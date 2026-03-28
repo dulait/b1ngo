@@ -12,6 +12,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
+  const isAuthUrl = req.url.includes('/api/v1/auth/');
+
   return next(req).pipe(
     catchError((err: HttpErrorResponse) => {
       switch (err.status) {
@@ -22,7 +24,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           if (req.url.includes('/api/v1/auth/me')) {
             break;
           }
-          if (req.url.includes('/api/v1/auth/')) {
+          if (isAuthUrl) {
             auth.currentUser.set(null);
             break;
           }
@@ -36,13 +38,19 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           toast.warning("You're not a member of this room.");
           break;
         case 404:
-          toast.error(err.error?.message ?? 'Not found.');
+          if (!isAuthUrl) {
+            toast.error(err.error?.message ?? 'Not found.');
+          }
           break;
         case 409:
-          toast.error(err.error?.message ?? 'Conflict.');
+          if (!isAuthUrl) {
+            toast.error(err.error?.message ?? 'Conflict.');
+          }
           break;
         case 400:
-          toast.error(err.error?.message ?? 'Invalid request.');
+          if (!isAuthUrl) {
+            toast.error(err.error?.message ?? 'Invalid request.');
+          }
           break;
         case 429:
           toast.warning('Too many requests. Please wait a moment.');
