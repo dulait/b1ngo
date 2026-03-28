@@ -31,7 +31,7 @@ test.describe('BNG-001: Create Room', () => {
     expect(playerToken).toBeTruthy();
     expect(playerToken!.httpOnly).toBe(true);
     expect(playerToken!.secure).toBe(true);
-    expect(playerToken!.sameSite).toBe('None');
+    expect(playerToken!.sameSite).toBe('Lax');
     expect(playerToken!.path).toBe('/');
   });
 
