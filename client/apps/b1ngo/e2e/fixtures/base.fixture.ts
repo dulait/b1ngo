@@ -13,7 +13,7 @@ export const test = base.extend<BaseFixtures>({
       localStorage.setItem('bng-tutorial-completed', 'true');
       const style = document.createElement('style');
       style.textContent = 'app-tutorial { display: none !important; }';
-      document.head.appendChild(style);
+      (document.head ?? document.documentElement).appendChild(style);
     });
     await use(page);
   },
