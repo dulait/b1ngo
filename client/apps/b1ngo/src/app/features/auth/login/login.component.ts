@@ -64,7 +64,7 @@ export class LoginComponent {
     if (!email) {
       this.email.error.set('Email is required.');
       valid = false;
-    } else if (!email.includes('@')) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       this.email.error.set('Enter a valid email address.');
       valid = false;
     }
