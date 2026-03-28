@@ -58,6 +58,8 @@ internal static class ServiceCollectionExtensions
                 options.AddSchemaTransformer<SchemaTransformer>();
             });
 
+            services.AddCorsPolicy(configuration, environment);
+
             if (environment.IsProduction() || environment.IsEnvironment("Staging"))
             {
                 services.AddRateLimiterPolicies();
@@ -109,6 +111,36 @@ internal static class ServiceCollectionExtensions
             services.AddHealthChecks();
 
             return services;
+        }
+
+        private void AddCorsPolicy(IConfiguration configuration, IHostEnvironment environment)
+        {
+            var allowedOrigins = configuration
+                .GetValue<string>("AllowedOrigins")
+                ?.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            if (allowedOrigins is not { Length: > 0 })
+            {
+                if (!environment.IsDevelopment() && !environment.IsStaging() && !environment.IsEnvironment("Testing"))
+                {
+                    throw new InvalidOperationException(
+                        "AllowedOrigins must be configured in production environments."
+                    );
+                }
+            }
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    if (allowedOrigins is { Length: > 0 })
+                    {
+                        policy.WithOrigins(allowedOrigins);
+                    }
+
+                    policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+                });
+            });
         }
 
         private void AddExternalAuthProviders(IConfiguration configuration)

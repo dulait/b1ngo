@@ -28,6 +28,8 @@ internal static class WebApplicationExtensions
                 app.UseHttpsRedirection();
             }
 
+            app.UseCors();
+
             app.UseAuthentication();
             app.UseAuthorization();
 
