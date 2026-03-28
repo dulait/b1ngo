@@ -13,7 +13,7 @@ describe('ResetPasswordComponent', () => {
   let authService: AuthService;
   let router: Router;
 
-  async function createComponent(queryParams: Record<string, string | null> = {}) {
+  async function createComponent(queryParams: Record<string, string | null> = {}): Promise<void> {
     await TestBed.configureTestingModule({
       imports: [ResetPasswordComponent],
       providers: [

@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { Router, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { authGuard } from './auth.guard';
 import { AuthService } from './auth.service';
@@ -16,7 +16,12 @@ describe('authGuard', () => {
         { provide: ENVIRONMENT, useValue: { production: false, apiBaseUrl: '' } },
         {
           provide: Router,
-          useValue: { createUrlTree: vi.fn((segments: string[]) => ({ toString: () => segments.join('/') }) as unknown as UrlTree) },
+          useValue: {
+            createUrlTree: vi.fn(
+              (segments: string[]) =>
+                ({ toString: () => segments.join('/') }) as unknown as UrlTree,
+            ),
+          },
         },
       ],
     });
@@ -25,9 +30,16 @@ describe('authGuard', () => {
   });
 
   it('should return true when user is authenticated', () => {
-    authService.currentUser.set({ userId: 'u1', email: 'test@test.com', displayName: 'Test', roles: [] });
+    authService.currentUser.set({
+      userId: 'u1',
+      email: 'test@test.com',
+      displayName: 'Test',
+      roles: [],
+    });
 
-    const result = TestBed.runInInjectionContext(() => authGuard({} as any, {} as any));
+    const result = TestBed.runInInjectionContext(() =>
+      authGuard({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot),
+    );
 
     expect(result).toBe(true);
   });
@@ -35,7 +47,9 @@ describe('authGuard', () => {
   it('should redirect to /auth/login when user is not authenticated', () => {
     authService.currentUser.set(null);
 
-    TestBed.runInInjectionContext(() => authGuard({} as any, {} as any));
+    TestBed.runInInjectionContext(() =>
+      authGuard({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot),
+    );
 
     expect(router.createUrlTree).toHaveBeenCalledWith(['/auth/login']);
   });
