@@ -9,7 +9,7 @@ test.describe('BNG-001: Create Room', () => {
   test.beforeEach(async ({ page }) => {
     home = new HomePage(page);
     await home.goto();
-    await page.evaluate(() => localStorage.clear());
+    await page.evaluate(() => localStorage.removeItem('bng-session'));
   });
 
   test('AC-1: creates room with valid inputs and returns roomId, joinCode, playerId', async ({
