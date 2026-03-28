@@ -10,6 +10,7 @@ internal static class RuleBuilderExtensions
         return ruleBuilder
             .NotEmpty()
             .MinimumLength(PasswordRequirements.MinimumLength)
+            .WithMessage(PasswordRequirements.MinLengthMessage)
             .Matches(PasswordRequirements.DigitPattern)
             .WithMessage(PasswordRequirements.DigitMessage);
     }
