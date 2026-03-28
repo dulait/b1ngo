@@ -77,7 +77,7 @@ public class AuthControllerTests
         };
 
         _signInManager
-            .PasswordSignInAsync("login@example.com", "Password1", true, false)
+            .PasswordSignInAsync("login@example.com", "Password1", true, true)
             .Returns(Microsoft.AspNetCore.Identity.SignInResult.Success);
         _userManager.FindByEmailAsync("login@example.com").Returns(user);
 
