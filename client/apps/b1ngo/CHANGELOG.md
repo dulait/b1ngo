@@ -1,3 +1,10 @@
+## [0.4.4](https://github.com/dulait/b1ngo/compare/v0.4.3...v0.4.4) (2026-03-29)
+
+
+### Bug Fixes
+
+* trigger version bump test ([d6a241a](https://github.com/dulait/b1ngo/commit/d6a241afbdc04883f43e0b51815bc1987316f743))
+
 ## [0.4.3](https://github.com/dulait/b1ngo/compare/v0.4.2...v0.4.3) (2026-03-29)
 
 
