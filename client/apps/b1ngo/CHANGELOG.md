@@ -1,3 +1,10 @@
+## [0.4.5](https://github.com/dulait/b1ngo/compare/v0.4.4...v0.4.5) (2026-03-29)
+
+
+### Bug Fixes
+
+* pick up correct version number ([b9b1b07](https://github.com/dulait/b1ngo/commit/b9b1b0756cc6a25eea9c55f582fe04fec607af2d))
+
 ## [0.4.4](https://github.com/dulait/b1ngo/compare/v0.4.3...v0.4.4) (2026-03-29)
 
 
