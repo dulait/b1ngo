@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Asp.Versioning;
 using B1ngo.Application.Common.Cqrs;
 using B1ngo.Application.Features.Dashboard;
@@ -22,7 +21,6 @@ public class DashboardController(IQueryHandler<GetDashboardQuery, GetDashboardRe
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetDashboard(CancellationToken ct)
     {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        return await Send(getDashboardHandler, new GetDashboardQuery(userId), ct);
+        return await Send(getDashboardHandler, new GetDashboardQuery(GetAuthenticatedUserId()), ct);
     }
 }

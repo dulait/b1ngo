@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Asp.Versioning;
 using B1ngo.Application.Common.Cqrs;
 using B1ngo.Application.Features.Stats;
@@ -21,7 +20,6 @@ public class StatsController(IQueryHandler<GetStatsQuery, GetStatsResponse> getS
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetStats(CancellationToken ct)
     {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        return await Send(getStatsHandler, new GetStatsQuery(userId), ct);
+        return await Send(getStatsHandler, new GetStatsQuery(GetAuthenticatedUserId()), ct);
     }
 }

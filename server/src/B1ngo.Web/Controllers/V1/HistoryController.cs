@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Asp.Versioning;
 using B1ngo.Application.Common.Cqrs;
 using B1ngo.Application.Features.History;
@@ -25,7 +24,6 @@ public class HistoryController(IQueryHandler<GetHistoryQuery, GetHistoryResponse
         CancellationToken ct = default
     )
     {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        return await Send(getHistoryHandler, new GetHistoryQuery(userId, page, pageSize), ct);
+        return await Send(getHistoryHandler, new GetHistoryQuery(GetAuthenticatedUserId(), page, pageSize), ct);
     }
 }

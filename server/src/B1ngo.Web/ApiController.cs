@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using B1ngo.Application.Common.Cqrs;
 using B1ngo.Application.Common.Ports;
 using B1ngo.Application.Common.Results;
@@ -15,6 +16,16 @@ public abstract class ApiController : ControllerBase
     protected PlayerIdentity Identity => (PlayerIdentity)HttpContext.Items[PlayerTokenAuthFilter.PlayerIdentityKey]!;
 
     protected SquareMarkedBy CallerMarkedBy => (SquareMarkedBy)HttpContext.Items[PlayerTokenAuthFilter.MarkedByKey]!;
+
+    protected Guid GetAuthenticatedUserId()
+    {
+        var claim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (claim is null || !Guid.TryParse(claim, out var userId))
+        {
+            throw new UnauthorizedAccessException("Missing or invalid user identifier claim.");
+        }
+        return userId;
+    }
 
     protected async Task<IActionResult> Send<TCommand, TResponse>(
         ICommandHandler<TCommand, TResponse> handler,
