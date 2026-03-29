@@ -1,5 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
+using B1ngo.Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace B1ngo.Integration.Tests;
 
@@ -339,9 +342,177 @@ public class AuthTests(B1ngoApiFactory factory) : IntegrationTestBase(factory)
         Assert.Equal(HttpStatusCode.OK, meResponse.StatusCode);
     }
 
+    // --- Forgot Password ---
+
+    [Fact]
+    public async Task ForgotPassword_KnownEmail_Returns200()
+    {
+        var email = $"forgot-{Guid.NewGuid()}@example.com";
+        using var client = Factory.CreateClient();
+
+        var register = CreateAuthRequest(
+            HttpMethod.Post,
+            $"{AuthBase}/register",
+            new
+            {
+                email,
+                password = "Password1",
+                displayName = "User",
+            }
+        );
+        (await client.SendAsync(register)).EnsureSuccessStatusCode();
+
+        using var client2 = Factory.CreateClient();
+        var forgot = CreateAuthRequest(HttpMethod.Post, $"{AuthBase}/forgot-password", new { email });
+        var response = await client2.SendAsync(forgot);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ForgotPassword_UnknownEmail_Returns200()
+    {
+        using var client = Factory.CreateClient();
+        var forgot = CreateAuthRequest(
+            HttpMethod.Post,
+            $"{AuthBase}/forgot-password",
+            new { email = "unknown@example.com" }
+        );
+        var response = await client.SendAsync(forgot);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ForgotPassword_WithoutXhrHeader_Returns400()
+    {
+        using var client = Factory.CreateClient();
+        var response = await client.PostAsJsonAsync($"{AuthBase}/forgot-password", new { email = "test@example.com" });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    // --- Reset Password ---
+
+    [Fact]
+    public async Task ResetPassword_ValidToken_Returns200AndNewPasswordWorks()
+    {
+        var email = $"reset-{Guid.NewGuid()}@example.com";
+        using var client = Factory.CreateClient();
+
+        var register = CreateAuthRequest(
+            HttpMethod.Post,
+            $"{AuthBase}/register",
+            new
+            {
+                email,
+                password = "Password1",
+                displayName = "User",
+            }
+        );
+        (await client.SendAsync(register)).EnsureSuccessStatusCode();
+
+        using var scope = Factory.Services.CreateScope();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var user = await userManager.FindByEmailAsync(email);
+        var token = await userManager.GeneratePasswordResetTokenAsync(user!);
+
+        using var client2 = Factory.CreateClient();
+        var reset = CreateAuthRequest(
+            HttpMethod.Post,
+            $"{AuthBase}/reset-password",
+            new
+            {
+                email,
+                token,
+                newPassword = "NewPassword1",
+            }
+        );
+        var resetResponse = await client2.SendAsync(reset);
+        Assert.Equal(HttpStatusCode.OK, resetResponse.StatusCode);
+
+        using var client3 = Factory.CreateClient();
+        var login = CreateAuthRequest(HttpMethod.Post, $"{AuthBase}/login", new { email, password = "NewPassword1" });
+        var loginResponse = await client3.SendAsync(login);
+        Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task ResetPassword_InvalidToken_Returns400()
+    {
+        var email = $"reset-bad-{Guid.NewGuid()}@example.com";
+        using var client = Factory.CreateClient();
+
+        var register = CreateAuthRequest(
+            HttpMethod.Post,
+            $"{AuthBase}/register",
+            new
+            {
+                email,
+                password = "Password1",
+                displayName = "User",
+            }
+        );
+        (await client.SendAsync(register)).EnsureSuccessStatusCode();
+
+        using var client2 = Factory.CreateClient();
+        var reset = CreateAuthRequest(
+            HttpMethod.Post,
+            $"{AuthBase}/reset-password",
+            new
+            {
+                email,
+                token = "invalid-token",
+                newPassword = "NewPassword1",
+            }
+        );
+        var response = await client2.SendAsync(reset);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ResetPassword_WeakPassword_Returns400()
+    {
+        var email = $"reset-weak-{Guid.NewGuid()}@example.com";
+        using var client = Factory.CreateClient();
+
+        var register = CreateAuthRequest(
+            HttpMethod.Post,
+            $"{AuthBase}/register",
+            new
+            {
+                email,
+                password = "Password1",
+                displayName = "User",
+            }
+        );
+        (await client.SendAsync(register)).EnsureSuccessStatusCode();
+
+        using var scope = Factory.Services.CreateScope();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var user = await userManager.FindByEmailAsync(email);
+        var token = await userManager.GeneratePasswordResetTokenAsync(user!);
+
+        using var client2 = Factory.CreateClient();
+        var reset = CreateAuthRequest(
+            HttpMethod.Post,
+            $"{AuthBase}/reset-password",
+            new
+            {
+                email,
+                token,
+                newPassword = "short",
+            }
+        );
+        var response = await client2.SendAsync(reset);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
     // --- Response DTOs ---
 
-    private record AuthApiResponse(Guid UserId, string Email, string DisplayName);
+    private record AuthApiResponse(Guid UserId, string Email, string DisplayName, string[] Roles);
 
     private record MeApiResponse(Guid UserId, string Email, string DisplayName, string[] Roles);
 
