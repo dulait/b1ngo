@@ -1,3 +1,10 @@
+## [0.4.1](https://github.com/dulait/b1ngo/compare/v0.4.0...v0.4.1) (2026-03-29)
+
+
+### Bug Fixes
+
+* trust forwarded headers from any proxy ([30c4a2c](https://github.com/dulait/b1ngo/commit/30c4a2c3bc48beae22b4a96ecd6408d1ac1b0210))
+
 # [0.4.0](https://github.com/dulait/b1ngo/compare/v0.3.1...v0.4.0) (2026-03-29)
 
 
