@@ -26,28 +26,34 @@ internal sealed class UserActivityRepository(B1ngoDbContext dbContext) : IUserAc
         CancellationToken cancellationToken = default
     )
     {
-        var query = dbContext
-            .Set<PlayerToken>()
-            .AsNoTracking()
-            .Where(pt => pt.UserId == userId)
-            .Join(
-                dbContext.Rooms.AsNoTracking().Include(r => r.Players),
-                pt => pt.RoomId,
-                r => r.Id.Value,
-                (pt, r) => new { pt, r }
-            )
-            .Where(x => x.r.Status == RoomStatus.Lobby || x.r.Status == RoomStatus.Active)
-            .OrderByDescending(x => x.pt.CreatedAt)
-            .Select(x => new UserActiveRoomRecord(
-                x.r.Id.Value,
-                x.pt.PlayerId,
-                x.r.Session.GrandPrixName,
-                x.r.Session.SessionType.ToString(),
-                x.r.Players.Count,
-                x.r.Status.ToString(),
-                x.pt.IsHost,
-                x.pt.CreatedAt
-            ));
+        var tokens = dbContext.Set<PlayerToken>().AsNoTracking().Where(pt => pt.UserId == userId);
+
+        var rooms = dbContext
+            .Rooms.AsNoTracking()
+            .Select(r => new
+            {
+                Id = r.Id.Value,
+                r.Status,
+                GpName = r.Session.GrandPrixName,
+                SessionType = r.Session.SessionType,
+                PlayerCount = r.Players.Count,
+            });
+
+        var query =
+            from pt in tokens
+            join r in rooms on pt.RoomId equals r.Id
+            where r.Status == RoomStatus.Lobby || r.Status == RoomStatus.Active
+            orderby pt.CreatedAt descending
+            select new UserActiveRoomRecord(
+                pt.RoomId,
+                pt.PlayerId,
+                r.GpName,
+                r.SessionType.ToString(),
+                r.PlayerCount,
+                r.Status.ToString(),
+                pt.IsHost,
+                pt.CreatedAt
+            );
 
         if (limit.HasValue)
         {
@@ -59,13 +65,15 @@ internal sealed class UserActivityRepository(B1ngoDbContext dbContext) : IUserAc
 
     public async Task<int> GetActiveRoomCountAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        return await dbContext
-            .Set<PlayerToken>()
-            .AsNoTracking()
-            .Where(pt => pt.UserId == userId)
-            .Join(dbContext.Rooms.AsNoTracking(), pt => pt.RoomId, r => r.Id.Value, (pt, r) => r)
-            .Where(r => r.Status == RoomStatus.Lobby || r.Status == RoomStatus.Active)
-            .CountAsync(cancellationToken);
+        var tokens = dbContext.Set<PlayerToken>().AsNoTracking().Where(pt => pt.UserId == userId);
+        var rooms = dbContext.Rooms.AsNoTracking().Select(r => new { Id = r.Id.Value, r.Status });
+
+        return await (
+            from pt in tokens
+            join r in rooms on pt.RoomId equals r.Id
+            where r.Status == RoomStatus.Lobby || r.Status == RoomStatus.Active
+            select pt
+        ).CountAsync(cancellationToken);
     }
 
     public async Task<List<UserCompletedRoomRecord>> GetCompletedRoomsPageAsync(
@@ -75,34 +83,56 @@ internal sealed class UserActivityRepository(B1ngoDbContext dbContext) : IUserAc
         CancellationToken cancellationToken = default
     )
     {
-        var userTokens = dbContext.Set<PlayerToken>().AsNoTracking().Where(pt => pt.UserId == userId);
+        var tokens = dbContext.Set<PlayerToken>().AsNoTracking().Where(pt => pt.UserId == userId);
 
-        var completedRooms = await userTokens
-            .Join(
-                dbContext.Rooms.AsNoTracking().Include(r => r.Players),
-                pt => pt.RoomId,
-                r => r.Id.Value,
-                (pt, r) => new { pt, r }
-            )
-            .Where(x => x.r.Status == RoomStatus.Completed)
-            .OrderByDescending(x => x.r.LastModifiedAt)
+        var rooms = dbContext
+            .Rooms.AsNoTracking()
+            .Select(r => new
+            {
+                Id = r.Id.Value,
+                r.Status,
+                GpName = r.Session.GrandPrixName,
+                SessionType = r.Session.SessionType,
+                PlayerCount = r.Players.Count,
+                r.LastModifiedAt,
+                r.CreatedAt,
+                r.Leaderboard,
+            });
+
+        var completedData = await (
+            from pt in tokens
+            join r in rooms on pt.RoomId equals r.Id
+            where r.Status == RoomStatus.Completed
+            orderby r.LastModifiedAt descending
+            select new
+            {
+                pt.PlayerId,
+                r.Id,
+                r.GpName,
+                r.SessionType,
+                r.PlayerCount,
+                r.LastModifiedAt,
+                r.CreatedAt,
+                r.Leaderboard,
+            }
+        )
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 
-        return completedRooms
+        return completedData
             .Select(x =>
             {
-                var leaderboardEntry = x.r.Leaderboard.FirstOrDefault(e => e.PlayerId == PlayerId.From(x.pt.PlayerId));
+                var entry = x.Leaderboard.FirstOrDefault(e => e.PlayerId == PlayerId.From(x.PlayerId));
 
                 return new UserCompletedRoomRecord(
-                    x.r.Id.Value,
-                    x.r.Session.GrandPrixName,
-                    x.r.Session.SessionType.ToString(),
-                    x.r.Players.Count,
-                    x.r.LastModifiedAt ?? x.r.CreatedAt,
-                    leaderboardEntry?.Rank,
-                    leaderboardEntry?.WinningPattern.ToString()
+                    x.Id,
+                    x.GpName,
+                    x.SessionType.ToString(),
+                    x.PlayerCount,
+                    x.LastModifiedAt ?? x.CreatedAt,
+                    entry?.Rank,
+                    entry?.WinningPattern.ToString()
                 );
             })
             .ToList();
@@ -110,72 +140,67 @@ internal sealed class UserActivityRepository(B1ngoDbContext dbContext) : IUserAc
 
     public async Task<int> GetCompletedRoomCountAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        return await dbContext
-            .Set<PlayerToken>()
-            .AsNoTracking()
-            .Where(pt => pt.UserId == userId)
-            .Join(dbContext.Rooms.AsNoTracking(), pt => pt.RoomId, r => r.Id.Value, (pt, r) => r)
-            .Where(r => r.Status == RoomStatus.Completed)
-            .CountAsync(cancellationToken);
+        var tokens = dbContext.Set<PlayerToken>().AsNoTracking().Where(pt => pt.UserId == userId);
+        var rooms = dbContext.Rooms.AsNoTracking().Select(r => new { Id = r.Id.Value, r.Status });
+
+        return await (
+            from pt in tokens
+            join r in rooms on pt.RoomId equals r.Id
+            where r.Status == RoomStatus.Completed
+            select pt
+        ).CountAsync(cancellationToken);
     }
 
     public async Task<QuickStatsRecord> GetQuickStatsAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        var userTokens = await dbContext
-            .Set<PlayerToken>()
-            .AsNoTracking()
-            .Where(pt => pt.UserId == userId)
-            .ToListAsync(cancellationToken);
+        var tokens = dbContext.Set<PlayerToken>().AsNoTracking().Where(pt => pt.UserId == userId);
 
-        var roomIds = userTokens.Select(pt => pt.RoomId).Distinct().ToList();
-
-        var completedRooms = await dbContext
+        var rooms = dbContext
             .Rooms.AsNoTracking()
-            .Where(r => roomIds.Contains(r.Id.Value) && r.Status == RoomStatus.Completed)
-            .Select(r => new { Id = r.Id.Value, r.Leaderboard })
-            .ToListAsync(cancellationToken);
+            .Select(r => new
+            {
+                Id = r.Id.Value,
+                r.Status,
+                r.Leaderboard,
+            });
 
-        var gamesPlayed = completedRooms.Count;
+        var completedData = await (
+            from pt in tokens
+            join r in rooms on pt.RoomId equals r.Id
+            where r.Status == RoomStatus.Completed
+            select new { pt.PlayerId, r.Leaderboard }
+        ).ToListAsync(cancellationToken);
 
-        var tokenLookup = userTokens.ToDictionary(pt => pt.RoomId, pt => pt.PlayerId);
-
-        var wins = completedRooms.Count(r =>
-            tokenLookup.TryGetValue(r.Id, out var playerId)
-            && r.Leaderboard.Any(e => e.PlayerId == PlayerId.From(playerId))
-        );
+        var gamesPlayed = completedData.Count;
+        var wins = completedData.Count(x => x.Leaderboard.Any(e => e.PlayerId == PlayerId.From(x.PlayerId)));
 
         return new QuickStatsRecord(gamesPlayed, wins);
     }
 
     public async Task<UserStatsRecord> GetStatsAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        var userTokens = await dbContext
-            .Set<PlayerToken>()
-            .AsNoTracking()
-            .Where(pt => pt.UserId == userId)
-            .ToListAsync(cancellationToken);
+        var tokens = dbContext.Set<PlayerToken>().AsNoTracking().Where(pt => pt.UserId == userId);
 
-        var roomIds = userTokens.Select(pt => pt.RoomId).Distinct().ToList();
-
-        var completedRooms = await dbContext
+        var rooms = dbContext
             .Rooms.AsNoTracking()
-            .Where(r => roomIds.Contains(r.Id.Value) && r.Status == RoomStatus.Completed)
-            .ToListAsync(cancellationToken);
-
-        var gamesPlayed = completedRooms.Count;
-
-        var tokenLookup = userTokens.ToDictionary(pt => pt.RoomId, pt => pt.PlayerId);
-
-        var leaderboardEntries = completedRooms
-            .SelectMany(r =>
+            .Select(r => new
             {
-                if (!tokenLookup.TryGetValue(r.Id.Value, out var playerId))
-                {
-                    return [];
-                }
+                Id = r.Id.Value,
+                r.Status,
+                r.Leaderboard,
+            });
 
-                return r.Leaderboard.Where(e => e.PlayerId == PlayerId.From(playerId));
-            })
+        var completedData = await (
+            from pt in tokens
+            join r in rooms on pt.RoomId equals r.Id
+            where r.Status == RoomStatus.Completed
+            select new { pt.PlayerId, r.Leaderboard }
+        ).ToListAsync(cancellationToken);
+
+        var gamesPlayed = completedData.Count;
+
+        var leaderboardEntries = completedData
+            .SelectMany(x => x.Leaderboard.Where(e => e.PlayerId == PlayerId.From(x.PlayerId)))
             .ToList();
 
         var wins = leaderboardEntries.Count;
