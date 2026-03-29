@@ -61,6 +61,10 @@ export class HomeComponent implements OnInit {
 
     if (authParam === 'success') {
       this.toast.success('Logged in successfully.');
+    } else if (authParam === 'email-conflict') {
+      this.toast.warning(
+        'An account with this email already exists. Please log in with your password first.',
+      );
     } else if (authParam === 'error') {
       this.toast.error('External login failed. Please try again.');
     }
