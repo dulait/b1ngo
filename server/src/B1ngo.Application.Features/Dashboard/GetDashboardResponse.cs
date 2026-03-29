@@ -18,4 +18,8 @@ public sealed record ActiveRoomDto(
     DateTimeOffset JoinedAt
 );
 
-public sealed record QuickStatsDto(int GamesPlayed, int Wins, decimal WinRate);
+public sealed record QuickStatsDto(int GamesPlayed, int Wins, decimal WinRate)
+{
+    public static QuickStatsDto FromCounts(int gamesPlayed, int wins) =>
+        new(gamesPlayed, wins, gamesPlayed > 0 ? Math.Round((decimal)wins / gamesPlayed, 4) : 0m);
+}

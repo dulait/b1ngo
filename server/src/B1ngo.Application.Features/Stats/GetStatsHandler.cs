@@ -14,9 +14,7 @@ public sealed class GetStatsHandler(IUserActivityRepository userActivityReposito
     {
         var stats = await userActivityRepository.GetStatsAsync(query.UserId, cancellationToken);
 
-        var winRate = stats.GamesPlayed > 0 ? (decimal)stats.Wins / stats.GamesPlayed : 0m;
-
-        var overview = new QuickStatsDto(stats.GamesPlayed, stats.Wins, Math.Round(winRate, 4));
+        var overview = QuickStatsDto.FromCounts(stats.GamesPlayed, stats.Wins);
 
         var winsByPattern = new WinsByPatternDto(
             stats.RowWins,

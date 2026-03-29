@@ -30,9 +30,7 @@ public sealed class GetDashboardHandler(IUserActivityRepository userActivityRepo
             ))
             .ToList();
 
-        var winRate =
-            quickStatsRecord.GamesPlayed > 0 ? (decimal)quickStatsRecord.Wins / quickStatsRecord.GamesPlayed : 0m;
-        var quickStats = new QuickStatsDto(quickStatsRecord.GamesPlayed, quickStatsRecord.Wins, Math.Round(winRate, 4));
+        var quickStats = QuickStatsDto.FromCounts(quickStatsRecord.GamesPlayed, quickStatsRecord.Wins);
 
         return Result.Ok(new GetDashboardResponse(displayName, activeRoomDtos, totalActiveRooms, quickStats));
     }
