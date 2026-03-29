@@ -30,7 +30,8 @@ public class RoomsController(
     ICommandHandler<EndGameCommand, EndGameResponse> endGameHandler,
     IQueryHandler<GetRoomStateQuery, GetRoomStateResponse> getRoomStateHandler,
     ICurrentUserContext currentUserContext,
-    IPlayerTokenStore playerTokenStore
+    IPlayerTokenStore playerTokenStore,
+    IHostEnvironment environment
 ) : ApiController
 {
     [HttpPost]
@@ -228,7 +229,7 @@ public class RoomsController(
             new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
+                Secure = !environment.IsDevelopment() && !environment.IsEnvironment("Testing"),
                 SameSite = SameSiteMode.Lax,
                 Path = "/",
                 Expires = DateTimeOffset.UtcNow.AddHours(24),
