@@ -1,3 +1,10 @@
+# [0.4.0](https://github.com/dulait/b1ngo/compare/v0.3.1...v0.4.0) (2026-03-29)
+
+
+### Features
+
+* **auth:** add auth ([#22](https://github.com/dulait/b1ngo/issues/22)) ([26f707f](https://github.com/dulait/b1ngo/commit/26f707fa57e33b77bf1f741ab8a8a974e5541bb9))
+
 ## [0.3.1](https://github.com/dulait/b1ngo/compare/v0.3.0...v0.3.1) (2026-03-23)
 
 
