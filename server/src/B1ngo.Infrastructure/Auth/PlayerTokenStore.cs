@@ -41,17 +41,26 @@ internal sealed class PlayerTokenStore(B1ngoDbContext dbContext) : IPlayerTokenS
         CancellationToken cancellationToken = default
     )
     {
-        var tokens = dbContext.Set<PlayerToken>().AsNoTracking().Where(t => t.UserId == userId);
-        var rooms = dbContext
+        var tokenRoomIds = await dbContext
+            .Set<PlayerToken>()
+            .AsNoTracking()
+            .Where(t => t.UserId == userId)
+            .Select(t => t.RoomId)
+            .ToListAsync(cancellationToken);
+
+        if (tokenRoomIds.Count == 0)
+        {
+            return [];
+        }
+
+        var roomIds = tokenRoomIds.Select(Domain.Game.RoomId.From).ToList();
+
+        return await dbContext
             .Set<Domain.Game.Room>()
             .AsNoTracking()
-            .Select(r => new { Id = r.Id.Value, Status = r.Status.ToString() });
-
-        return await (
-            from pt in tokens
-            join r in rooms on pt.RoomId equals r.Id
-            select new PlayerTokenSummary(pt.RoomId, r.Status)
-        ).ToListAsync(cancellationToken);
+            .Where(r => roomIds.Contains(r.Id))
+            .Select(r => new PlayerTokenSummary(r.Id.Value, r.Status.ToString()))
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<PlayerIdentity?> ResolveByUserAndRoomAsync(
