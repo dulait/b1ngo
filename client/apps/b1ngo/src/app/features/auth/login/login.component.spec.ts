@@ -54,7 +54,7 @@ describe('LoginComponent', () => {
   });
 
   it('calls AuthService.login() with trimmed email and password on valid submit', async () => {
-    const loginSpy = vi.spyOn(authService, 'login').mockResolvedValue(true);
+    const loginSpy = vi.spyOn(authService, 'login').mockResolvedValue();
 
     component.email.set('user@example.com');
     component.password.set('Password1');
@@ -67,7 +67,6 @@ describe('LoginComponent', () => {
     let capturedLoading = false;
     vi.spyOn(authService, 'login').mockImplementation(async () => {
       capturedLoading = component.loading();
-      return true;
     });
 
     component.email.set('user@example.com');
@@ -79,7 +78,7 @@ describe('LoginComponent', () => {
   });
 
   it('navigates to / on successful login', async () => {
-    vi.spyOn(authService, 'login').mockResolvedValue(true);
+    vi.spyOn(authService, 'login').mockResolvedValue();
 
     component.email.set('user@example.com');
     component.password.set('Password1');
@@ -89,7 +88,7 @@ describe('LoginComponent', () => {
   });
 
   it('does not navigate on failed login', async () => {
-    vi.spyOn(authService, 'login').mockResolvedValue(false);
+    vi.spyOn(authService, 'login').mockRejectedValue({ error: { code: 'LoginFailed' } });
 
     component.email.set('user@example.com');
     component.password.set('Password1');

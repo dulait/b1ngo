@@ -27,32 +27,22 @@ export class AuthService {
     }
   }
 
-  async login(email: string, password: string): Promise<boolean> {
-    try {
-      await firstValueFrom(
-        this.http.post<AuthResponse>(`${this.baseUrl}/api/v1/auth/login`, { email, password }),
-      );
-      await this.checkAuth();
-      return true;
-    } catch {
-      return false;
-    }
+  async login(email: string, password: string): Promise<void> {
+    const res = await firstValueFrom(
+      this.http.post<AuthResponse>(`${this.baseUrl}/api/v1/auth/login`, { email, password }),
+    );
+    this.currentUser.set(res);
   }
 
-  async register(email: string, password: string, displayName: string): Promise<boolean> {
-    try {
-      await firstValueFrom(
-        this.http.post<AuthResponse>(`${this.baseUrl}/api/v1/auth/register`, {
-          email,
-          password,
-          displayName,
-        }),
-      );
-      await this.checkAuth();
-      return true;
-    } catch {
-      return false;
-    }
+  async register(email: string, password: string, displayName: string): Promise<void> {
+    const res = await firstValueFrom(
+      this.http.post<AuthResponse>(`${this.baseUrl}/api/v1/auth/register`, {
+        email,
+        password,
+        displayName,
+      }),
+    );
+    this.currentUser.set(res);
   }
 
   async logout(): Promise<boolean> {

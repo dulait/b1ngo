@@ -56,7 +56,7 @@ describe('RegisterComponent', () => {
   });
 
   it('calls AuthService.register() with correct arguments on valid submit', async () => {
-    const registerSpy = vi.spyOn(authService, 'register').mockResolvedValue(true);
+    const registerSpy = vi.spyOn(authService, 'register').mockResolvedValue();
 
     component.displayName.set('User');
     component.email.set('user@example.com');
@@ -67,7 +67,7 @@ describe('RegisterComponent', () => {
   });
 
   it('navigates to / on successful registration', async () => {
-    vi.spyOn(authService, 'register').mockResolvedValue(true);
+    vi.spyOn(authService, 'register').mockResolvedValue();
 
     component.displayName.set('User');
     component.email.set('user@example.com');
@@ -75,5 +75,18 @@ describe('RegisterComponent', () => {
     await component.onSubmit();
 
     expect(router.navigate).toHaveBeenCalledWith(['/']);
+  });
+
+  it('does not navigate on failed registration', async () => {
+    vi.spyOn(authService, 'register').mockRejectedValue({
+      error: { code: 'DuplicateEmail', message: 'An account with this email already exists.' },
+    });
+
+    component.displayName.set('User');
+    component.email.set('user@example.com');
+    component.password.set('Password1');
+    await component.onSubmit();
+
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 });

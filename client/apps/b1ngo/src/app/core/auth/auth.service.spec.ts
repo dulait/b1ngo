@@ -59,9 +59,13 @@ describe('AuthService', () => {
     expect(service.isAuthenticated()).toBe(false);
   });
 
-  it('should POST login and then call checkAuth', async () => {
-    const authResponse = { userId: 'u1', email: 'test@example.com', displayName: 'Test' };
-    const meResponse = { userId: 'u1', email: 'test@example.com', displayName: 'Test', roles: [] };
+  it('should POST login and set currentUser from response', async () => {
+    const authResponse = {
+      userId: 'u1',
+      email: 'test@example.com',
+      displayName: 'Test',
+      roles: [],
+    };
 
     const promise = service.login('test@example.com', 'Password1');
 
@@ -70,19 +74,31 @@ describe('AuthService', () => {
     expect(loginReq.request.body).toEqual({ email: 'test@example.com', password: 'Password1' });
     loginReq.flush(authResponse);
 
-    // After login resolves, checkAuth fires a /me request
-    await new Promise((r) => setTimeout(r, 0));
-    const meReq = httpMock.expectOne(`${baseUrl}/api/v1/auth/me`);
-    meReq.flush(meResponse);
+    await promise;
 
-    const result = await promise;
-
-    expect(result).toBe(true);
+    expect(service.currentUser()).toEqual(authResponse);
     expect(service.isAuthenticated()).toBe(true);
   });
 
-  it('should POST register and then call checkAuth', async () => {
-    const meResponse = { userId: 'u1', email: 'new@example.com', displayName: 'New', roles: [] };
+  it('should throw on failed login', async () => {
+    const promise = service.login('test@example.com', 'wrong');
+
+    const loginReq = httpMock.expectOne(`${baseUrl}/api/v1/auth/login`);
+    loginReq.flush(
+      { code: 'LoginFailed', message: 'Invalid email or password.' },
+      { status: 401, statusText: 'Unauthorized' },
+    );
+
+    await expect(promise).rejects.toThrow();
+  });
+
+  it('should POST register and set currentUser from response', async () => {
+    const authResponse = {
+      userId: 'u1',
+      email: 'new@example.com',
+      displayName: 'New',
+      roles: [],
+    };
 
     const promise = service.register('new@example.com', 'Password1', 'New');
 
@@ -93,17 +109,24 @@ describe('AuthService', () => {
       password: 'Password1',
       displayName: 'New',
     });
-    registerReq.flush({ userId: 'u1', email: 'new@example.com', displayName: 'New' });
+    registerReq.flush(authResponse);
 
-    // After register resolves, checkAuth fires a /me request
-    await new Promise((r) => setTimeout(r, 0));
-    const meReq = httpMock.expectOne(`${baseUrl}/api/v1/auth/me`);
-    meReq.flush(meResponse);
+    await promise;
 
-    const result = await promise;
-
-    expect(result).toBe(true);
+    expect(service.currentUser()).toEqual(authResponse);
     expect(service.isAuthenticated()).toBe(true);
+  });
+
+  it('should throw on failed register', async () => {
+    const promise = service.register('dup@example.com', 'Password1', 'Dup');
+
+    const registerReq = httpMock.expectOne(`${baseUrl}/api/v1/auth/register`);
+    registerReq.flush(
+      { code: 'DuplicateEmail', message: 'An account with this email already exists.' },
+      { status: 409, statusText: 'Conflict' },
+    );
+
+    await expect(promise).rejects.toThrow();
   });
 
   it('should POST logout and clear currentUser', async () => {

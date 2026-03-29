@@ -44,18 +44,23 @@ export class RegisterComponent {
     }
 
     this.loading.set(true);
-    const success = await this.authService.register(
-      this.email.value().trim(),
-      this.password.value(),
-      this.displayName.value().trim(),
-    );
-    this.loading.set(false);
-
-    if (success) {
+    try {
+      await this.authService.register(
+        this.email.value().trim(),
+        this.password.value(),
+        this.displayName.value().trim(),
+      );
       this.toast.success('Account created successfully.');
       this.router.navigate(['/']);
-    } else {
-      this.toast.error('Registration failed. Please try again.');
+    } catch (err: unknown) {
+      const code = (err as { error?: { code?: string } })?.error?.code;
+      if (code === 'DuplicateEmail') {
+        this.toast.error('An account with this email already exists.');
+      } else {
+        this.toast.error('Registration failed. Please try again.');
+      }
+    } finally {
+      this.loading.set(false);
     }
   }
 

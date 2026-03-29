@@ -42,14 +42,19 @@ export class LoginComponent {
     }
 
     this.loading.set(true);
-    const success = await this.authService.login(this.email.value().trim(), this.password.value());
-    this.loading.set(false);
-
-    if (success) {
+    try {
+      await this.authService.login(this.email.value().trim(), this.password.value());
       this.toast.success('Logged in successfully.');
       this.router.navigate(['/']);
-    } else {
-      this.toast.error('Invalid email or password.');
+    } catch (err: unknown) {
+      const code = (err as { error?: { code?: string } })?.error?.code;
+      if (code === 'AccountLocked') {
+        this.toast.warning('Account temporarily locked. Try again later.');
+      } else {
+        this.toast.error('Invalid email or password.');
+      }
+    } finally {
+      this.loading.set(false);
     }
   }
 
