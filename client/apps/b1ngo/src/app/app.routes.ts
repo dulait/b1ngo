@@ -1,6 +1,13 @@
 import { Routes } from '@angular/router';
+import { authenticatedMatch } from '@core/auth/authenticated.match';
 
 export const routes: Routes = [
+  {
+    path: '',
+    canMatch: [authenticatedMatch],
+    loadChildren: () =>
+      import('./features/dashboard/dashboard.routes').then((m) => m.DASHBOARD_ROUTES),
+  },
   {
     path: '',
     loadChildren: () => import('./features/home/home.routes').then((m) => m.HOME_ROUTES),
@@ -14,11 +21,6 @@ export const routes: Routes = [
     path: 'profile',
     data: { hideHeader: true },
     loadChildren: () => import('./features/profile/profile.routes').then((m) => m.PROFILE_ROUTES),
-  },
-  {
-    path: 'dashboard',
-    loadChildren: () =>
-      import('./features/dashboard/dashboard.routes').then((m) => m.DASHBOARD_ROUTES),
   },
   {
     path: 'history',
