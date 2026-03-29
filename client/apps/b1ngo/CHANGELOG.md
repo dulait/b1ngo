@@ -1,3 +1,10 @@
+## [0.4.3](https://github.com/dulait/b1ngo/compare/v0.4.2...v0.4.3) (2026-03-29)
+
+
+### Bug Fixes
+
+* add public origin url ([8735128](https://github.com/dulait/b1ngo/commit/8735128dc68ffcbe9fe723caa8978d279cc74570))
+
 ## [0.4.2](https://github.com/dulait/b1ngo/compare/v0.4.1...v0.4.2) (2026-03-29)
 
 
