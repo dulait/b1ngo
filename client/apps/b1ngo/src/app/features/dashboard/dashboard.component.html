@@ -1,0 +1,114 @@
+<main class="min-h-dvh flex flex-col items-center p-4 pt-8">
+  <div class="w-full max-w-md space-y-4">
+    <!-- Welcome -->
+    <h1 class="text-xl font-semibold text-text-primary">Welcome back, {{ displayName() }}</h1>
+
+    <!-- Active Rooms -->
+    <section aria-label="Active Rooms">
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="text-sm font-semibold text-text-secondary uppercase tracking-wider">
+          Active Rooms
+        </h2>
+        @if (data()?.totalActiveRooms! > 5) {
+          <a routerLink="/history" class="text-sm text-accent hover:underline">View all</a>
+        }
+      </div>
+
+      @if (loading()) {
+        <div class="space-y-2">
+          <bng-card><bng-skeleton height="4rem" /></bng-card>
+          <bng-card><bng-skeleton height="4rem" /></bng-card>
+        </div>
+      } @else if (error()) {
+        <bng-card>
+          <div class="text-center py-4 space-y-3">
+            <p class="text-sm text-text-secondary">Failed to load rooms.</p>
+            <bng-button size="sm" (clicked)="load()">Retry</bng-button>
+          </div>
+        </bng-card>
+      } @else if (!data()?.activeRooms?.length) {
+        <bng-card>
+          <p class="text-sm text-text-secondary text-center py-4">
+            No active rooms. Create one below.
+          </p>
+        </bng-card>
+      } @else {
+        <div class="space-y-2">
+          @for (room of data()!.activeRooms; track room.roomId) {
+            <bng-card>
+              <div class="flex items-start justify-between gap-3 mb-2">
+                <p class="font-semibold text-text-primary truncate min-w-0">
+                  {{ room.gpName }} / {{ room.sessionType }}
+                </p>
+                <bng-status-badge
+                  [label]="room.status"
+                  [variant]="room.status === 'Active' ? 'success' : 'warning'"
+                />
+              </div>
+              <div class="flex items-center gap-2 text-xs text-text-secondary">
+                <span>{{ room.playerCount }} players</span>
+                <span>Joined {{ room.joinedAt | date: 'MMM d' }}</span>
+              </div>
+              <div class="flex justify-end mt-3">
+                <bng-button size="sm" (clicked)="rejoin(room.roomId)">Rejoin</bng-button>
+              </div>
+            </bng-card>
+          }
+        </div>
+      }
+    </section>
+
+    <!-- Quick Stats -->
+    <section aria-label="Quick Stats">
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="text-sm font-semibold text-text-secondary uppercase tracking-wider">
+          Quick Stats
+        </h2>
+        @if (data()?.quickStats?.gamesPlayed! > 0) {
+          <a routerLink="/stats" class="text-sm text-accent hover:underline">View stats</a>
+        }
+      </div>
+
+      @if (loading()) {
+        <bng-card>
+          <div class="grid grid-cols-3 gap-3">
+            <bng-skeleton height="3rem" />
+            <bng-skeleton height="3rem" />
+            <bng-skeleton height="3rem" />
+          </div>
+        </bng-card>
+      } @else if (error()) {
+        <!-- Stats section hidden on error per spec -->
+      } @else if (!data()?.quickStats?.gamesPlayed) {
+        <bng-card>
+          <p class="text-sm text-text-secondary text-center py-2">
+            Play your first game to start tracking stats.
+          </p>
+        </bng-card>
+      } @else {
+        <bng-card>
+          <div class="grid grid-cols-3 gap-3 text-center">
+            <div>
+              <p class="text-2xl font-bold text-text-primary">{{ data()!.quickStats.gamesPlayed }}</p>
+              <p class="text-xs text-text-secondary mt-0.5">Games</p>
+            </div>
+            <div>
+              <p class="text-2xl font-bold text-text-primary">{{ data()!.quickStats.wins }}</p>
+              <p class="text-xs text-text-secondary mt-0.5">Wins</p>
+            </div>
+            <div>
+              <p class="text-2xl font-bold text-accent">{{ formatWinRate(data()!.quickStats.winRate) }}</p>
+              <p class="text-xs text-text-secondary mt-0.5">Win Rate</p>
+            </div>
+          </div>
+        </bng-card>
+      }
+    </section>
+
+    <!-- Create / Join forms -->
+    <section class="space-y-3 pt-2" aria-label="Room Actions">
+      <create-room-form (success)="onRoomCreated($event)" />
+      <join-room-form (success)="onRoomJoined($event)" />
+    </section>
+  </div>
+</main>

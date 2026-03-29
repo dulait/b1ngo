@@ -16,6 +16,20 @@ export const routes: Routes = [
     loadChildren: () => import('./features/profile/profile.routes').then((m) => m.PROFILE_ROUTES),
   },
   {
+    path: 'dashboard',
+    loadChildren: () =>
+      import('./features/dashboard/dashboard.routes').then((m) => m.DASHBOARD_ROUTES),
+  },
+  {
+    path: 'history',
+    loadChildren: () =>
+      import('./features/history/history.routes').then((m) => m.HISTORY_ROUTES),
+  },
+  {
+    path: 'stats',
+    loadChildren: () => import('./features/stats/stats.routes').then((m) => m.STATS_ROUTES),
+  },
+  {
     path: 'room',
     loadChildren: () => import('./features/room/room.routes').then((m) => m.ROOM_ROUTES),
   },
