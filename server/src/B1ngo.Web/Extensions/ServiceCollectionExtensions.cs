@@ -59,7 +59,7 @@ internal static class ServiceCollectionExtensions
 
             services.AddCorsPolicy(configuration, environment);
 
-            if (!environment.IsEnvironment("Testing"))
+            if (environment.IsProduction() || environment.IsEnvironment("Staging"))
             {
                 services.AddRateLimiterPolicies();
             }
