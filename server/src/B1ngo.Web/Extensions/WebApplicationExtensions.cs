@@ -33,10 +33,7 @@ internal static class WebApplicationExtensions
             app.UseAuthentication();
             app.UseAuthorization();
 
-            if (app.Environment.IsProduction() || app.Environment.IsEnvironment("Staging"))
-            {
-                app.UseRateLimiter();
-            }
+            app.UseRateLimiter();
 
             if (!app.Environment.IsProduction())
             {
