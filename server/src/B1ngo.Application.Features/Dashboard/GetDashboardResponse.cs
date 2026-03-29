@@ -1,5 +1,3 @@
-using B1ngo.Application.Features.Stats;
-
 namespace B1ngo.Application.Features.Dashboard;
 
 public sealed record GetDashboardResponse(
@@ -19,3 +17,5 @@ public sealed record ActiveRoomDto(
     bool IsHost,
     DateTimeOffset JoinedAt
 );
+
+public sealed record QuickStatsDto(int GamesPlayed, int Wins, decimal WinRate);

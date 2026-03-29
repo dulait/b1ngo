@@ -1,7 +1,6 @@
 using B1ngo.Application.Common.Cqrs;
 using B1ngo.Application.Common.Ports;
 using B1ngo.Application.Common.Results;
-using B1ngo.Application.Features.Stats;
 
 namespace B1ngo.Application.Features.Dashboard;
 
