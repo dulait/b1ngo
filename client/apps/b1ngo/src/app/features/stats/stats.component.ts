@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@ang
 import { BngCardComponent, BngButtonComponent, BngSkeletonComponent } from 'bng-ui';
 import { UserActivityApiService } from '@core/api/user-activity-api.service';
 import { StatsResponse } from '@core/api/models';
+import { formatWinRate, ordinal } from '@core/utils/format.util';
 import { safeAsync } from '@core/utils/safe-async.util';
 
 @Component({
@@ -37,13 +38,6 @@ export class StatsComponent implements OnInit {
     this.loading.set(false);
   }
 
-  formatWinRate(rate: number): string {
-    return Math.round(rate * 100) + '%';
-  }
-
-  ordinal(n: number): string {
-    const suffixes = ['th', 'st', 'nd', 'rd'];
-    const v = n % 100;
-    return n + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
-  }
+  readonly formatWinRate = formatWinRate;
+  readonly ordinal = ordinal;
 }

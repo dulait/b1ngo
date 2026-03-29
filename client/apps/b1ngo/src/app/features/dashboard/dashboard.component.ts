@@ -1,16 +1,18 @@
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   BngCardComponent,
   BngButtonComponent,
   BngStatusBadgeComponent,
   BngSkeletonComponent,
+  ToastService,
 } from 'bng-ui';
 import { AuthService } from '@core/auth/auth.service';
 import { UserActivityApiService } from '@core/api/user-activity-api.service';
 import { SessionService } from '@core/auth/session.service';
 import { DashboardResponse } from '@core/api/models';
+import { formatWinRate } from '@core/utils/format.util';
 import { safeAsync } from '@core/utils/safe-async.util';
 import { CreateRoomFormComponent } from '../home/components/create-room-form/create-room-form.component';
 import { JoinRoomFormComponent } from '../home/components/join-room-form/join-room-form.component';
@@ -33,9 +35,11 @@ import { JoinRoomFormComponent } from '../home/components/join-room-form/join-ro
 })
 export class DashboardComponent implements OnInit {
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly auth = inject(AuthService);
   private readonly api = inject(UserActivityApiService);
   private readonly session = inject(SessionService);
+  private readonly toast = inject(ToastService);
 
   readonly loading = signal(true);
   readonly error = signal(false);
@@ -44,8 +48,28 @@ export class DashboardComponent implements OnInit {
   readonly displayName = signal('');
 
   async ngOnInit(): Promise<void> {
+    this.handleOAuthCallback();
     this.displayName.set(this.auth.currentUser()?.displayName ?? '');
     await this.load();
+  }
+
+  private handleOAuthCallback(): void {
+    const authParam = this.route.snapshot.queryParamMap.get('auth');
+    if (!authParam) {
+      return;
+    }
+
+    if (authParam === 'success') {
+      this.toast.success('Logged in successfully.');
+    } else if (authParam === 'email-conflict') {
+      this.toast.warning(
+        'An account with this email already exists. Please log in with your password first.',
+      );
+    } else if (authParam === 'error') {
+      this.toast.error('External login failed. Please try again.');
+    }
+
+    this.router.navigate([], { queryParams: {}, replaceUrl: true });
   }
 
   async load(): Promise<void> {
@@ -64,9 +88,7 @@ export class DashboardComponent implements OnInit {
     this.loading.set(false);
   }
 
-  formatWinRate(rate: number): string {
-    return Math.round(rate * 100) + '%';
-  }
+  readonly formatWinRate = formatWinRate;
 
   rejoin(roomId: string): void {
     this.router.navigate(['/room', roomId]);

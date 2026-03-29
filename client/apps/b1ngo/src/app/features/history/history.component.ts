@@ -9,6 +9,7 @@ import {
 } from 'bng-ui';
 import { UserActivityApiService } from '@core/api/user-activity-api.service';
 import { ActiveRoomDto, CompletedRoomDto } from '@core/api/models';
+import { ordinal } from '@core/utils/format.util';
 import { safeAsync } from '@core/utils/safe-async.util';
 
 @Component({
@@ -86,9 +87,5 @@ export class HistoryComponent implements OnInit {
     this.router.navigate(['/room', roomId]);
   }
 
-  ordinal(n: number): string {
-    const suffixes = ['th', 'st', 'nd', 'rd'];
-    const v = n % 100;
-    return n + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
-  }
+  readonly ordinal = ordinal;
 }
