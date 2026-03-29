@@ -1,4 +1,4 @@
-using B1ngo.Application.Common;
+using B1ngo.Application.Common.Pagination;
 using B1ngo.Application.Features.Dashboard;
 
 namespace B1ngo.Application.Features.History;

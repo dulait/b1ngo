@@ -1,5 +1,5 @@
-using B1ngo.Application.Common;
 using B1ngo.Application.Common.Cqrs;
+using B1ngo.Application.Common.Pagination;
 using B1ngo.Application.Common.Ports;
 using B1ngo.Application.Common.Results;
 using B1ngo.Application.Features.Dashboard;
@@ -53,12 +53,13 @@ public sealed class GetHistoryHandler(IUserActivityRepository userActivityReposi
             ))
             .ToList();
 
-        var pagedCompleted = PagedResult<CompletedRoomDto>.Create(
-            completedRoomDtos,
-            query.Page,
-            query.PageSize,
-            totalCompleted
-        );
+        var pagedCompleted = new PagedResult<CompletedRoomDto>
+        {
+            Items = completedRoomDtos,
+            Page = query.Page,
+            PageSize = query.PageSize,
+            TotalCount = totalCompleted,
+        };
 
         return Result.Ok(new GetHistoryResponse(activeRoomDtos, pagedCompleted));
     }
