@@ -106,7 +106,7 @@
     </section>
 
     <!-- Create / Join forms -->
-    <section class="space-y-3 pt-2" aria-label="Room Actions">
+    <section class="flex flex-col gap-4 pt-2" aria-label="Room Actions">
       <create-room-form (success)="onRoomCreated($event)" />
       <join-room-form (success)="onRoomJoined($event)" />
     </section>
