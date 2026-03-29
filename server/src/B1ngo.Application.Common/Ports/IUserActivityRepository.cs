@@ -52,5 +52,5 @@ public sealed record UserStatsRecord(
     int ColumnWins,
     int DiagonalWins,
     int BlackoutWins,
-    Dictionary<int, int> RankCounts
+    IReadOnlyDictionary<int, int> RankCounts
 );
