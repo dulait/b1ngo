@@ -2,6 +2,7 @@ using B1ngo.Application.Common.Cqrs;
 using B1ngo.Application.Common.Ports;
 using B1ngo.Application.Common.Results;
 using B1ngo.Domain.Game;
+using B1ngo.Web.Contracts.V1;
 using B1ngo.Web.Filters;
 using Microsoft.AspNetCore.Mvc;
 

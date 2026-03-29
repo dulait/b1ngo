@@ -1,28 +1,27 @@
-<bng-header [version]="version" copyright="B1NGO">
-  <bng-menu-item
-    [icon]="helpIcon"
-    label="How to play"
-    (clicked)="openTutorial()"
-  />
-  <bng-menu-item
-    label="Theme"
-    (clicked)="themeSheetOpen.set(true)"
-  >
-    <span
-      menuItemIcon
-      class="w-5 h-5 rounded-full"
-      [style.backgroundColor]="themeService.accentColor()"
-    ></span>
-  </bng-menu-item>
-</bng-header>
+@if (showHeader()) {
+  <bng-header [version]="version" copyright="B1NGO">
+    @if (auth.isAuthenticated()) {
+      <bng-menu-item [icon]="userIcon" label="My Profile" (clicked)="navigateTo('/profile')" />
+    }
+    <bng-menu-item [icon]="helpIcon" label="How to play" (clicked)="openTutorial()" />
+    <bng-menu-item label="Theme" (clicked)="themeSheetOpen.set(true)">
+      <span
+        menuItemIcon
+        class="w-5 h-5 rounded-full"
+        [style.backgroundColor]="themeService.accentColor()"
+      ></span>
+    </bng-menu-item>
+    @if (auth.isAuthenticated()) {
+      <bng-menu-item [icon]="signOutIcon" label="Sign out" (clicked)="onSignOut()" />
+    } @else {
+      <bng-menu-item [icon]="logInIcon" label="Log in" (clicked)="navigateTo('/auth/login')" />
+    }
+  </bng-header>
+}
 
 <router-outlet />
 
-<bng-bottom-sheet
-  title="Theme"
-  [open]="themeSheetOpen()"
-  (closed)="themeSheetOpen.set(false)"
->
+<bng-bottom-sheet title="Theme" [open]="themeSheetOpen()" (closed)="themeSheetOpen.set(false)">
   <div class="flex justify-center py-2">
     <bng-theme-picker
       [currentTheme]="themeService.currentTheme()"

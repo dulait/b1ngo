@@ -9,7 +9,7 @@ test.describe('BNG-001: Create Room', () => {
   test.beforeEach(async ({ page }) => {
     home = new HomePage(page);
     await home.goto();
-    await page.evaluate(() => localStorage.clear());
+    await page.evaluate(() => localStorage.removeItem('bng-session'));
   });
 
   test('AC-1: creates room with valid inputs and returns roomId, joinCode, playerId', async ({
@@ -30,8 +30,8 @@ test.describe('BNG-001: Create Room', () => {
     const playerToken = cookies.find((c) => c.name === 'PlayerToken');
     expect(playerToken).toBeTruthy();
     expect(playerToken!.httpOnly).toBe(true);
-    expect(playerToken!.secure).toBe(true);
-    expect(playerToken!.sameSite).toBe('None');
+    expect(playerToken!.secure).toBe(false);
+    expect(playerToken!.sameSite).toBe('Lax');
     expect(playerToken!.path).toBe('/');
   });
 

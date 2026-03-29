@@ -3,7 +3,10 @@ using B1ngo.Application.Common.Ports;
 using B1ngo.Domain.Core;
 using B1ngo.Domain.Game;
 using B1ngo.Infrastructure.Extensions;
+using B1ngo.Infrastructure.Identity;
 using B1ngo.Infrastructure.ReferenceData;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -14,19 +17,29 @@ public sealed class B1ngoDbContext(
     DbContextOptions<B1ngoDbContext> options,
     ICurrentUserProvider currentUserProvider,
     IServiceProvider serviceProvider
-) : DbContext(options)
+) : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>(options)
 {
     public DbSet<Room> Rooms => Set<Room>();
     internal DbSet<GrandPrixEntity> GrandPrix => Set<GrandPrixEntity>();
     internal DbSet<EventPoolEntryEntity> EventPoolEntries => Set<EventPoolEntryEntity>();
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
-        modelBuilder.ApplyGlobalConventions();
+        base.OnModelCreating(builder);
 
-        modelBuilder.Entity<GrandPrixEntity>().ToTable("grand_prix");
-        modelBuilder.Entity<EventPoolEntryEntity>().ToTable("event_pool_entries");
+        builder.ApplyConfigurationsFromAssembly(GetType().Assembly);
+        builder.ApplyGlobalConventions();
+
+        builder.Entity<ApplicationUser>(b => b.ToTable("users", "identity"));
+        builder.Entity<IdentityRole<Guid>>(b => b.ToTable("roles", "identity"));
+        builder.Entity<IdentityUserRole<Guid>>(b => b.ToTable("user_roles", "identity"));
+        builder.Entity<IdentityUserLogin<Guid>>(b => b.ToTable("user_logins", "identity"));
+        builder.Entity<IdentityUserToken<Guid>>(b => b.ToTable("user_tokens", "identity"));
+        builder.Entity<IdentityUserClaim<Guid>>(b => b.ToTable("user_claims", "identity"));
+        builder.Entity<IdentityRoleClaim<Guid>>(b => b.ToTable("role_claims", "identity"));
+
+        builder.Entity<GrandPrixEntity>().ToTable("grand_prix");
+        builder.Entity<EventPoolEntryEntity>().ToTable("event_pool_entries");
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

@@ -69,4 +69,65 @@ describe('BngInputComponent', () => {
     const input = fixture.nativeElement.querySelector('input');
     expect(input.classList.contains('border-error')).toBe(true);
   });
+
+  describe('password visibility toggle', () => {
+    it('should not render toggle button for type="text"', () => {
+      fixture.componentRef.setInput('type', 'text');
+      fixture.detectChanges();
+      const button = fixture.nativeElement.querySelector('button');
+      expect(button).toBeNull();
+    });
+
+    it('should render toggle button for type="password"', () => {
+      fixture.componentRef.setInput('type', 'password');
+      fixture.detectChanges();
+      const button = fixture.nativeElement.querySelector('button');
+      expect(button).toBeTruthy();
+    });
+
+    it('should change input type from password to text on toggle', () => {
+      fixture.componentRef.setInput('type', 'password');
+      fixture.detectChanges();
+      const input = fixture.nativeElement.querySelector('input');
+      expect(input.type).toBe('password');
+
+      const button = fixture.nativeElement.querySelector('button');
+      button.click();
+      fixture.detectChanges();
+      expect(input.type).toBe('text');
+    });
+
+    it('should change input type back to password on second toggle', () => {
+      fixture.componentRef.setInput('type', 'password');
+      fixture.detectChanges();
+      const button = fixture.nativeElement.querySelector('button');
+
+      button.click();
+      fixture.detectChanges();
+
+      button.click();
+      fixture.detectChanges();
+
+      const input = fixture.nativeElement.querySelector('input');
+      expect(input.type).toBe('password');
+    });
+
+    it('should update aria-label on toggle', () => {
+      fixture.componentRef.setInput('type', 'password');
+      fixture.detectChanges();
+      const button = fixture.nativeElement.querySelector('button');
+      expect(button.getAttribute('aria-label')).toBe('Show password');
+
+      button.click();
+      fixture.detectChanges();
+      expect(button.getAttribute('aria-label')).toBe('Hide password');
+    });
+
+    it('should have tabindex="-1" on toggle button', () => {
+      fixture.componentRef.setInput('type', 'password');
+      fixture.detectChanges();
+      const button = fixture.nativeElement.querySelector('button');
+      expect(button.getAttribute('tabindex')).toBe('-1');
+    });
+  });
 });

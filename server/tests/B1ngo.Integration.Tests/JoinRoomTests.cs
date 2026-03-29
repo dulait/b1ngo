@@ -74,12 +74,4 @@ public sealed class JoinRoomTests(B1ngoApiFactory factory) : IntegrationTestBase
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
-
-    [Fact(Skip = "maxPlayers is not exposed in the CreateRoom API; cannot set room capacity to test this")]
-    public async Task JoinRoom_WhenRoomIsFull_Returns409()
-    {
-        // Would need maxPlayers in CreateRoomCommand to test
-        await Task.CompletedTask;
-        Assert.True(true);
-    }
 }

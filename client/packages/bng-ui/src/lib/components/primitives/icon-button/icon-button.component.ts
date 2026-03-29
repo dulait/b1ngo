@@ -15,6 +15,7 @@ import { BngIconComponent } from '../icon/icon.component';
       [class.w-8]="size() === 'sm'"
       [class.h-8]="size() === 'sm'"
       [attr.aria-label]="ariaLabel()"
+      [attr.tabindex]="tabIndex()"
     >
       <bng-icon [icon]="icon()" size="lg" />
     </button>
@@ -26,4 +27,5 @@ export class BngIconButtonComponent {
   icon = input.required<string>();
   ariaLabel = input.required<string>();
   size = input<'sm' | 'default'>('default');
+  tabIndex = input<number | null>(null);
 }

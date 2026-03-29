@@ -11,6 +11,7 @@ public class CreateRoomHandlerTests
     private readonly FakeBingoCardGenerator _cardGenerator = new();
     private readonly FakePlayerTokenStore _playerTokenStore = new();
     private readonly FakeReferenceDataRepository _referenceDataRepository = new();
+    private readonly FakeCurrentUserContext _currentUserContext = new();
     private readonly CreateRoomHandler _sut;
 
     public CreateRoomHandlerTests()
@@ -20,7 +21,8 @@ public class CreateRoomHandlerTests
             _unitOfWork,
             _cardGenerator,
             _playerTokenStore,
-            _referenceDataRepository
+            _referenceDataRepository,
+            _currentUserContext
         );
     }
 
@@ -82,6 +84,27 @@ public class CreateRoomHandlerTests
 
         Assert.True(result.IsFailure);
         Assert.Contains("session_type_invalid_for_gp", result.Error!.Code);
+    }
+
+    [Fact]
+    public async Task HandleAsync_WhenAuthenticated_StampsUserId()
+    {
+        var userId = Guid.NewGuid();
+        _currentUserContext.AuthenticatedUserId = userId;
+
+        await _sut.HandleAsync(ValidCommand);
+
+        Assert.Equal(userId, _playerTokenStore.LastCreatedUserId);
+    }
+
+    [Fact]
+    public async Task HandleAsync_WhenAnonymous_PassesNullUserId()
+    {
+        _currentUserContext.AuthenticatedUserId = null;
+
+        await _sut.HandleAsync(ValidCommand);
+
+        Assert.Null(_playerTokenStore.LastCreatedUserId);
     }
 
     [Fact]

@@ -1,0 +1,56 @@
+<bng-card header="Create Account">
+  <form (submit)="$event.preventDefault(); onSubmit()" class="space-y-4">
+    <bng-input
+      label="Display Name"
+      [value]="displayName.value()"
+      [maxlength]="50"
+      [error]="displayName.error()"
+      (valueChange)="displayName.set($event)"
+    />
+    <bng-input
+      label="Email"
+      type="email"
+      autocomplete="email"
+      [value]="email.value()"
+      [error]="email.error()"
+      (valueChange)="email.set($event)"
+    />
+    <bng-input
+      label="Password"
+      type="password"
+      autocomplete="new-password"
+      [value]="password.value()"
+      [error]="password.error()"
+      (valueChange)="password.set($event)"
+    />
+    <bng-button type="submit" variant="primary" [loading]="loading()" [fullWidth]="true">
+      Register
+    </bng-button>
+  </form>
+
+  <div class="mt-5 flex items-center gap-3">
+    <hr class="flex-1 border-border-default" />
+    <span class="text-xs text-text-secondary uppercase tracking-wider">Or continue with</span>
+    <hr class="flex-1 border-border-default" />
+  </div>
+
+  <div class="mt-4 flex justify-center gap-3">
+    <bng-button variant="secondary" (clicked)="onExternalLogin('Google')">
+      <span class="flex items-center gap-2">
+        <bng-icon [icon]="googleIcon" [viewBox]="socialViewBox" size="sm" />
+        Google
+      </span>
+    </bng-button>
+    <bng-button variant="secondary" (clicked)="onExternalLogin('Microsoft')">
+      <span class="flex items-center gap-2">
+        <bng-icon [icon]="microsoftIcon" [viewBox]="socialViewBox" size="sm" />
+        Microsoft
+      </span>
+    </bng-button>
+  </div>
+
+  <p class="mt-4 text-sm text-center text-text-secondary">
+    Already have an account?
+    <a routerLink="/auth/login" class="text-accent hover:underline">Log in</a>
+  </p>
+</bng-card>

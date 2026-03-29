@@ -1,7 +1,7 @@
 import { type Page, expect } from '@playwright/test';
 
 export async function expectToast(page: Page, message: string | RegExp): Promise<void> {
-  const toast = page.locator('[role="alert"]').filter({ hasText: message });
+  const toast = page.locator('[role="alert"]').filter({ hasText: message }).first();
   await expect(toast).toBeVisible({ timeout: 5000 });
 }
 

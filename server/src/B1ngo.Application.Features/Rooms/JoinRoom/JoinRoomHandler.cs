@@ -9,7 +9,8 @@ public sealed class JoinRoomHandler(
     IRoomRepository roomRepository,
     IUnitOfWork unitOfWork,
     IBingoCardGenerator cardGenerator,
-    IPlayerTokenStore playerTokenStore
+    IPlayerTokenStore playerTokenStore,
+    ICurrentUserContext currentUserContext
 ) : ICommandHandler<JoinRoomCommand, JoinRoomResponse>
 {
     public async Task<Result<JoinRoomResponse>> HandleAsync(
@@ -33,7 +34,8 @@ public sealed class JoinRoomHandler(
         );
         player.AssignCard(card);
 
-        var playerToken = playerTokenStore.Create(player.Id.Value, room.Id.Value, isHost: false);
+        var userId = currentUserContext.GetAuthenticatedUserId();
+        var playerToken = playerTokenStore.Create(player.Id.Value, room.Id.Value, isHost: false, userId);
 
         var saveResult = await unitOfWork.SaveChangesAsync(cancellationToken);
         if (saveResult.IsFailure)

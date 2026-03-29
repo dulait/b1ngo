@@ -1,7 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { ENVIRONMENT } from '../environment/environment.token';
-import { AuthService } from '../auth/auth.service';
 import { ConnectionState } from './connection-state.type';
 import {
   PlayerJoinedEvent,
@@ -17,7 +16,6 @@ import {
 export class SignalRService {
   private connection: HubConnection | null = null;
   private readonly baseUrl = inject(ENVIRONMENT).apiBaseUrl;
-  private readonly auth = inject(AuthService);
 
   readonly playerJoined = signal<PlayerJoinedEvent | null>(null);
   readonly gameStarted = signal<GameStartedEvent | null>(null);
@@ -34,9 +32,7 @@ export class SignalRService {
     await this.disconnect();
 
     this.connection = new HubConnectionBuilder()
-      .withUrl(`${this.baseUrl}/hubs/game?roomId=${roomId}`, {
-        withCredentials: true,
-      })
+      .withUrl(`${this.baseUrl}/hubs/game?roomId=${roomId}`)
       .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
       .build();
 

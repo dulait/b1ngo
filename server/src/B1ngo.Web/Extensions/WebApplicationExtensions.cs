@@ -30,6 +30,9 @@ internal static class WebApplicationExtensions
 
             app.UseCors();
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             if (app.Environment.IsProduction() || app.Environment.IsEnvironment("Staging"))
             {
                 app.UseRateLimiter();

@@ -9,7 +9,7 @@ import {
 } from 'bng-ui';
 import type { GridCellData } from 'bng-ui';
 import { ROOM_STORE } from '../../services/room-store.token';
-import { AuthService } from '@core/auth/auth.service';
+import { SessionService } from '@core/auth/session.service';
 import { formatMarkedByLabel, markedByVariant } from '../../utils/format-marked-by.util';
 
 @Component({
@@ -21,7 +21,7 @@ import { formatMarkedByLabel, markedByVariant } from '../../utils/format-marked-
 export class ResultsComponent {
   readonly store = inject(ROOM_STORE);
   private readonly router = inject(Router);
-  private readonly auth = inject(AuthService);
+  private readonly session = inject(SessionService);
   private readonly toast = inject(ToastService);
 
   readonly gridCells = computed<GridCellData[]>(() => {
@@ -59,7 +59,7 @@ export class ResultsComponent {
 
   onNewRoom(): void {
     this.toast.clear();
-    this.auth.clearSession();
+    this.session.clearSession();
     this.router.navigate(['/']);
   }
 

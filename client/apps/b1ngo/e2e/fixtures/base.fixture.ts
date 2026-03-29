@@ -11,6 +11,9 @@ export const test = base.extend<BaseFixtures>({
   page: async ({ page }, use) => {
     await page.addInitScript(() => {
       localStorage.setItem('bng-tutorial-completed', 'true');
+      const style = document.createElement('style');
+      style.textContent = 'app-tutorial { display: none !important; }';
+      (document.head ?? document.documentElement).appendChild(style);
     });
     await use(page);
   },

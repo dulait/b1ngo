@@ -12,7 +12,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { RoomApiService } from '@core/api/room-api.service';
 import { SignalRService } from '@core/realtime/signalr.service';
-import { AuthService } from '@core/auth/auth.service';
+import { SessionService } from '@core/auth/session.service';
 import { safeAsync } from '@core/utils/safe-async.util';
 import {
   BngStatusBadgeComponent,
@@ -52,7 +52,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly roomApi = inject(RoomApiService);
   private readonly signalr = inject(SignalRService);
-  private readonly auth = inject(AuthService);
+  private readonly session = inject(SessionService);
   private readonly toast = inject(ToastService);
 
   private static readonly STATUS_VARIANTS: Record<string, BadgeVariant> = {
@@ -86,7 +86,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.store.initialize(result.value, this.auth.getPlayerId());
+    this.store.initialize(result.value, this.session.getPlayerId());
 
     await this.signalr.connect(roomId);
   }
@@ -184,7 +184,7 @@ export class RoomComponent implements OnInit, OnDestroy {
               this.store.updateLeaderboard(state.leaderboard);
             }
           },
-          () => { },
+          () => {},
         );
       }
     });

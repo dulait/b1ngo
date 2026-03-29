@@ -2,11 +2,11 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { roomGuard } from './room.guard';
-import { AuthService } from './auth.service';
+import { SessionService } from './session.service';
 import { ToastService } from 'bng-ui';
 
 describe('roomGuard', () => {
-  let authService: AuthService;
+  let authService: SessionService;
   let router: Router;
   let toastService: ToastService;
 
@@ -15,7 +15,7 @@ describe('roomGuard', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        AuthService,
+        SessionService,
         ToastService,
         {
           provide: Router,
@@ -24,7 +24,7 @@ describe('roomGuard', () => {
       ],
     });
 
-    authService = TestBed.inject(AuthService);
+    authService = TestBed.inject(SessionService);
     router = TestBed.inject(Router);
     toastService = TestBed.inject(ToastService);
   });
