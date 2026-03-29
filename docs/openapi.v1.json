@@ -1454,7 +1454,8 @@
         "required": [
           "userId",
           "email",
-          "displayName"
+          "displayName",
+          "roles"
         ],
         "type": "object",
         "properties": {
@@ -1467,6 +1468,12 @@
           },
           "displayName": {
             "type": "string"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
