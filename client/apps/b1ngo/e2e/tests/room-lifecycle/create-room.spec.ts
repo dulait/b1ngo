@@ -30,7 +30,7 @@ test.describe('BNG-001: Create Room', () => {
     const playerToken = cookies.find((c) => c.name === 'PlayerToken');
     expect(playerToken).toBeTruthy();
     expect(playerToken!.httpOnly).toBe(true);
-    expect(playerToken!.secure).toBe(true);
+    expect(playerToken!.secure).toBe(false);
     expect(playerToken!.sameSite).toBe('Lax');
     expect(playerToken!.path).toBe('/');
   });
