@@ -36,6 +36,7 @@ public class AuthControllerTests
     public async Task Register_Success_Returns200WithAuthResponse()
     {
         _userManager.CreateAsync(Arg.Any<ApplicationUser>(), Arg.Any<string>()).Returns(IdentityResult.Success);
+        _userManager.GetRolesAsync(Arg.Any<ApplicationUser>()).Returns(new List<string>());
 
         var result = await _sut.Register(new RegisterRequest("test@example.com", "Password1", "TestUser"));
 
@@ -43,6 +44,7 @@ public class AuthControllerTests
         var response = Assert.IsType<AuthResponse>(ok.Value);
         Assert.Equal("test@example.com", response.Email);
         Assert.Equal("TestUser", response.DisplayName);
+        Assert.Empty(response.Roles);
         await _signInManager.Received(1).SignInAsync(Arg.Any<ApplicationUser>(), isPersistent: true);
     }
 
@@ -80,6 +82,7 @@ public class AuthControllerTests
             .PasswordSignInAsync("login@example.com", "Password1", true, true)
             .Returns(Microsoft.AspNetCore.Identity.SignInResult.Success);
         _userManager.FindByEmailAsync("login@example.com").Returns(user);
+        _userManager.GetRolesAsync(user).Returns(new List<string> { "Admin" });
 
         var result = await _sut.Login(new LoginRequest("login@example.com", "Password1"));
 
@@ -87,6 +90,21 @@ public class AuthControllerTests
         var response = Assert.IsType<AuthResponse>(ok.Value);
         Assert.Equal("login@example.com", response.Email);
         Assert.Equal("LoginUser", response.DisplayName);
+        Assert.Contains("Admin", response.Roles);
+    }
+
+    [Fact]
+    public async Task Login_LockedOut_Returns401WithAccountLockedCode()
+    {
+        _signInManager
+            .PasswordSignInAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<bool>())
+            .Returns(Microsoft.AspNetCore.Identity.SignInResult.LockedOut);
+
+        var result = await _sut.Login(new LoginRequest("locked@example.com", "Password1"));
+
+        var unauthorized = Assert.IsType<UnauthorizedObjectResult>(result);
+        var response = Assert.IsType<ErrorResponse>(unauthorized.Value);
+        Assert.Equal("AccountLocked", response.Code);
     }
 
     [Fact]

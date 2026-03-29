@@ -55,9 +55,10 @@ public class AuthController(
         }
 
         await signInManager.SignInAsync(user, isPersistent: true);
-        await LinkPlayerTokenIfPresent(user.Id);
+        await LinkPlayerTokenIfPresent(user.Id, HttpContext.RequestAborted);
 
-        return Ok(new AuthResponse(user.Id, user.Email, user.DisplayName));
+        var roles = await userManager.GetRolesAsync(user);
+        return Ok(new AuthResponse(user.Id, user.Email, user.DisplayName, roles.ToArray()));
     }
 
     [HttpPost("login")]
@@ -76,15 +77,21 @@ public class AuthController(
             lockoutOnFailure: true
         );
 
+        if (result.IsLockedOut)
+        {
+            return Unauthorized(new ErrorResponse("AccountLocked", "Account temporarily locked. Try again later."));
+        }
+
         if (!result.Succeeded)
         {
             return Unauthorized(new ErrorResponse("LoginFailed", "Invalid email or password."));
         }
 
         var user = await userManager.FindByEmailAsync(request.Email);
-        await LinkPlayerTokenIfPresent(user!.Id);
+        await LinkPlayerTokenIfPresent(user!.Id, HttpContext.RequestAborted);
 
-        return Ok(new AuthResponse(user.Id, user.Email!, user.DisplayName));
+        var roles = await userManager.GetRolesAsync(user);
+        return Ok(new AuthResponse(user.Id, user.Email!, user.DisplayName, roles.ToArray()));
     }
 
     [HttpPost("logout")]
@@ -165,7 +172,7 @@ public class AuthController(
             var existingExternalUser = await userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
             if (existingExternalUser is not null)
             {
-                await LinkPlayerTokenIfPresent(existingExternalUser.Id);
+                await LinkPlayerTokenIfPresent(existingExternalUser.Id, HttpContext.RequestAborted);
             }
 
             return Redirect("/?auth=success");
@@ -186,9 +193,16 @@ public class AuthController(
 
         if (existingUser is not null)
         {
+            var providerEmailVerified = info.Principal.FindFirstValue("email_verified");
+
+            if (!existingUser.EmailConfirmed || providerEmailVerified is not "true")
+            {
+                return Redirect("/?auth=email-conflict");
+            }
+
             await userManager.AddLoginAsync(existingUser, info);
             await signInManager.SignInAsync(existingUser, isPersistent: true);
-            await LinkPlayerTokenIfPresent(existingUser.Id);
+            await LinkPlayerTokenIfPresent(existingUser.Id, HttpContext.RequestAborted);
             return Redirect("/?auth=success");
         }
 
@@ -209,7 +223,7 @@ public class AuthController(
 
         await userManager.AddLoginAsync(newUser, info);
         await signInManager.SignInAsync(newUser, isPersistent: true);
-        await LinkPlayerTokenIfPresent(newUser.Id);
+        await LinkPlayerTokenIfPresent(newUser.Id, HttpContext.RequestAborted);
 
         return Redirect("/?auth=success");
     }
@@ -273,13 +287,13 @@ public class AuthController(
         return BadRequest(new ErrorResponse("ResetFailed", "Unable to reset password."));
     }
 
-    private async Task LinkPlayerTokenIfPresent(Guid userId)
+    private async Task LinkPlayerTokenIfPresent(Guid userId, CancellationToken ct)
     {
         if (
             Request.Cookies.TryGetValue("PlayerToken", out var tokenStr) && Guid.TryParse(tokenStr, out var playerToken)
         )
         {
-            await playerTokenStore.LinkTokenToUserAsync(playerToken, userId);
+            await playerTokenStore.LinkTokenToUserAsync(playerToken, userId, ct);
         }
     }
 }
