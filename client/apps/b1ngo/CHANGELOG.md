@@ -1,3 +1,10 @@
+## [0.4.2](https://github.com/dulait/b1ngo/compare/v0.4.1...v0.4.2) (2026-03-29)
+
+
+### Bug Fixes
+
+* handle X-Forwarded-Host headers ([8d60b5b](https://github.com/dulait/b1ngo/commit/8d60b5b3f9e8168e50b2500b5569df29318f77f8))
+
 ## [0.4.1](https://github.com/dulait/b1ngo/compare/v0.4.0...v0.4.1) (2026-03-29)
 
 
