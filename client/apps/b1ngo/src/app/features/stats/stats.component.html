@@ -1,0 +1,102 @@
+<main class="min-h-dvh flex flex-col items-center p-4 pt-8">
+  <div class="w-full max-w-md space-y-4">
+    <h1 class="text-xl font-semibold text-text-primary">Your Stats</h1>
+
+    @if (loading()) {
+      <!-- Loading skeleton -->
+      <div class="grid grid-cols-3 gap-3">
+        <bng-card><bng-skeleton height="3rem" /></bng-card>
+        <bng-card><bng-skeleton height="3rem" /></bng-card>
+        <bng-card><bng-skeleton height="3rem" /></bng-card>
+      </div>
+      <bng-card header="Win Breakdown">
+        <div class="space-y-2">
+          <bng-skeleton height="1.25rem" />
+          <bng-skeleton height="1.25rem" />
+          <bng-skeleton height="1.25rem" />
+          <bng-skeleton height="1.25rem" />
+        </div>
+      </bng-card>
+      <bng-card header="Best Finishes">
+        <div class="space-y-2">
+          <bng-skeleton height="1.25rem" />
+          <bng-skeleton height="1.25rem" />
+          <bng-skeleton height="1.25rem" />
+        </div>
+      </bng-card>
+    } @else if (error()) {
+      <bng-card>
+        <div class="text-center py-6 space-y-3">
+          <p class="text-sm text-text-secondary">Something went wrong. Please try again.</p>
+          <bng-button size="sm" (clicked)="load()">Retry</bng-button>
+        </div>
+      </bng-card>
+    } @else if (!data()?.overview?.gamesPlayed) {
+      <bng-card>
+        <div class="text-center py-6">
+          <p class="text-sm text-text-secondary">
+            Play your first game to start tracking stats.
+          </p>
+        </div>
+      </bng-card>
+    } @else {
+      <!-- Overview Cards -->
+      <div class="grid grid-cols-3 gap-3">
+        <bng-card>
+          <div class="text-center">
+            <p class="text-2xl font-bold text-text-primary">{{ data()!.overview.gamesPlayed }}</p>
+            <p class="text-xs text-text-secondary mt-1">Games</p>
+          </div>
+        </bng-card>
+        <bng-card>
+          <div class="text-center">
+            <p class="text-2xl font-bold text-text-primary">{{ data()!.overview.wins }}</p>
+            <p class="text-xs text-text-secondary mt-1">Wins</p>
+          </div>
+        </bng-card>
+        <bng-card>
+          <div class="text-center">
+            <p class="text-2xl font-bold text-accent">{{ formatWinRate(data()!.overview.winRate) }}</p>
+            <p class="text-xs text-text-secondary mt-1">Win Rate</p>
+          </div>
+        </bng-card>
+      </div>
+
+      <!-- Win Breakdown -->
+      <bng-card header="Win Breakdown">
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-text-secondary">Row</span>
+            <span class="text-sm font-semibold text-text-primary">{{ data()!.winsByPattern.row }}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-text-secondary">Column</span>
+            <span class="text-sm font-semibold text-text-primary">{{ data()!.winsByPattern.column }}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-text-secondary">Diagonal</span>
+            <span class="text-sm font-semibold text-text-primary">{{ data()!.winsByPattern.diagonal }}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-text-secondary">Blackout</span>
+            <span class="text-sm font-semibold text-text-primary">{{ data()!.winsByPattern.blackout }}</span>
+          </div>
+        </div>
+      </bng-card>
+
+      <!-- Best Finishes -->
+      @if (data()!.bestFinishes.length > 0) {
+        <bng-card header="Best Finishes">
+          <div class="space-y-2">
+            @for (finish of data()!.bestFinishes; track finish.rank) {
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-text-secondary">{{ ordinal(finish.rank) }} place</span>
+                <span class="text-sm font-semibold text-text-primary">{{ finish.count }}</span>
+              </div>
+            }
+          </div>
+        </bng-card>
+      }
+    }
+  </div>
+</main>
