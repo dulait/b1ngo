@@ -119,6 +119,34 @@ internal sealed class UserActivityRepository(B1ngoDbContext dbContext) : IUserAc
             .CountAsync(cancellationToken);
     }
 
+    public async Task<QuickStatsRecord> GetQuickStatsAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        var userTokens = await dbContext
+            .Set<PlayerToken>()
+            .AsNoTracking()
+            .Where(pt => pt.UserId == userId)
+            .ToListAsync(cancellationToken);
+
+        var roomIds = userTokens.Select(pt => pt.RoomId).Distinct().ToList();
+
+        var completedRooms = await dbContext
+            .Rooms.AsNoTracking()
+            .Where(r => roomIds.Contains(r.Id.Value) && r.Status == RoomStatus.Completed)
+            .Select(r => new { Id = r.Id.Value, r.Leaderboard })
+            .ToListAsync(cancellationToken);
+
+        var gamesPlayed = completedRooms.Count;
+
+        var tokenLookup = userTokens.ToDictionary(pt => pt.RoomId, pt => pt.PlayerId);
+
+        var wins = completedRooms.Count(r =>
+            tokenLookup.TryGetValue(r.Id, out var playerId)
+            && r.Leaderboard.Any(e => e.PlayerId == PlayerId.From(playerId))
+        );
+
+        return new QuickStatsRecord(gamesPlayed, wins);
+    }
+
     public async Task<UserStatsRecord> GetStatsAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         var userTokens = await dbContext

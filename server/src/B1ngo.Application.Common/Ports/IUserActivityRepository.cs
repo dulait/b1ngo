@@ -12,6 +12,8 @@ public interface IUserActivityRepository
 
     Task<int> GetActiveRoomCountAsync(Guid userId, CancellationToken cancellationToken = default);
 
+    Task<QuickStatsRecord> GetQuickStatsAsync(Guid userId, CancellationToken cancellationToken = default);
+
     Task<UserStatsRecord> GetStatsAsync(Guid userId, CancellationToken cancellationToken = default);
 
     Task<List<UserCompletedRoomRecord>> GetCompletedRoomsPageAsync(
@@ -44,6 +46,8 @@ public sealed record UserCompletedRoomRecord(
     int? ResultRank,
     string? WinPattern
 );
+
+public sealed record QuickStatsRecord(int GamesPlayed, int Wins);
 
 public sealed record UserStatsRecord(
     int GamesPlayed,

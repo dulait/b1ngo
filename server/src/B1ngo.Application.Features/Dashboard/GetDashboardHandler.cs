@@ -15,7 +15,7 @@ public sealed class GetDashboardHandler(IUserActivityRepository userActivityRepo
         var displayName = await userActivityRepository.GetDisplayNameAsync(query.UserId, cancellationToken);
         var activeRooms = await userActivityRepository.GetActiveRoomsAsync(query.UserId, limit: 5, cancellationToken);
         var totalActiveRooms = await userActivityRepository.GetActiveRoomCountAsync(query.UserId, cancellationToken);
-        var stats = await userActivityRepository.GetStatsAsync(query.UserId, cancellationToken);
+        var quickStatsRecord = await userActivityRepository.GetQuickStatsAsync(query.UserId, cancellationToken);
 
         var activeRoomDtos = activeRooms
             .Select(r => new ActiveRoomDto(
@@ -30,8 +30,9 @@ public sealed class GetDashboardHandler(IUserActivityRepository userActivityRepo
             ))
             .ToList();
 
-        var winRate = stats.GamesPlayed > 0 ? (decimal)stats.Wins / stats.GamesPlayed : 0m;
-        var quickStats = new QuickStatsDto(stats.GamesPlayed, stats.Wins, Math.Round(winRate, 4));
+        var winRate =
+            quickStatsRecord.GamesPlayed > 0 ? (decimal)quickStatsRecord.Wins / quickStatsRecord.GamesPlayed : 0m;
+        var quickStats = new QuickStatsDto(quickStatsRecord.GamesPlayed, quickStatsRecord.Wins, Math.Round(winRate, 4));
 
         return Result.Ok(new GetDashboardResponse(displayName, activeRoomDtos, totalActiveRooms, quickStats));
     }
