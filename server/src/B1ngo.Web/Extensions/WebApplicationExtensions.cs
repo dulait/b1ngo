@@ -22,6 +22,22 @@ internal static class WebApplicationExtensions
             forwardedHeadersOptions.KnownProxies.Clear();
             app.UseForwardedHeaders(forwardedHeadersOptions);
 
+            var publicOrigin = app.Configuration["Auth:PublicOrigin"];
+            if (!string.IsNullOrEmpty(publicOrigin))
+            {
+                var uri = new Uri(publicOrigin);
+                var hostString = uri.IsDefaultPort ? new HostString(uri.Host) : new HostString(uri.Host, uri.Port);
+
+                app.Use(
+                    (context, next) =>
+                    {
+                        context.Request.Scheme = uri.Scheme;
+                        context.Request.Host = hostString;
+                        return next();
+                    }
+                );
+            }
+
             app.UseMiddleware<CorrelationIdMiddleware>();
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 
