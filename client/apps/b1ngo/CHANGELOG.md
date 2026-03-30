@@ -1,3 +1,10 @@
+## [0.5.1](https://github.com/dulait/b1ngo/compare/v0.5.0...v0.5.1) (2026-03-30)
+
+
+### Bug Fixes
+
+* resolve room identity from auth cookie for authenticated users ([#24](https://github.com/dulait/b1ngo/issues/24)) ([b7b0b4e](https://github.com/dulait/b1ngo/commit/b7b0b4e55e35e5c1d6713d7f9e8d16f8a30d6284))
+
 # [0.5.0](https://github.com/dulait/b1ngo/compare/v0.4.5...v0.5.0) (2026-03-30)
 
 
