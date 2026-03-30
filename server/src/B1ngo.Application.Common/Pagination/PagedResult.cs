@@ -6,7 +6,7 @@ public sealed record PagedResult<T>
     public required int Page { get; init; }
     public required int PageSize { get; init; }
     public required int TotalCount { get; init; }
-    public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
+    public int TotalPages => PageSize > 0 ? (int)Math.Ceiling((double)TotalCount / PageSize) : 0;
     public bool HasNextPage => Page < TotalPages;
     public bool HasPreviousPage => Page > 1;
 }
