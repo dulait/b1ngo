@@ -1,3 +1,15 @@
+# [0.5.0](https://github.com/dulait/b1ngo/compare/v0.4.5...v0.5.0) (2026-03-30)
+
+
+### Bug Fixes
+
+* checkout latest main in version job to avoid stale ref ([ed058d1](https://github.com/dulait/b1ngo/commit/ed058d106d36b3a47913338caa8422f27c33b041))
+
+
+### Features
+
+* add dashboard, history, and stats ([#23](https://github.com/dulait/b1ngo/issues/23)) ([557e4ad](https://github.com/dulait/b1ngo/commit/557e4adfeab16b7aadd6a995d891f3c1c5cdcb78))
+
 ## [0.4.5](https://github.com/dulait/b1ngo/compare/v0.4.4...v0.4.5) (2026-03-29)
 
 
