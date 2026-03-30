@@ -124,7 +124,7 @@ internal sealed class UserActivityRepository(B1ngoDbContext dbContext) : IUserAc
         }
 
         var roomIds = tokenData.Select(t => RoomId.From(t.RoomId)).ToList();
-        var tokenLookup = tokenData.ToDictionary(t => t.RoomId, t => t.PlayerId);
+        var tokenLookup = tokenData.GroupBy(t => t.RoomId).ToDictionary(g => g.Key, g => g.First().PlayerId);
 
         var roomData = await dbContext
             .Rooms.AsNoTracking()
@@ -197,7 +197,7 @@ internal sealed class UserActivityRepository(B1ngoDbContext dbContext) : IUserAc
         }
 
         var roomIds = tokenData.Select(t => RoomId.From(t.RoomId)).ToList();
-        var tokenLookup = tokenData.ToDictionary(t => t.RoomId, t => t.PlayerId);
+        var tokenLookup = tokenData.GroupBy(t => t.RoomId).ToDictionary(g => g.Key, g => g.First().PlayerId);
 
         var completedRooms = await dbContext
             .Rooms.AsNoTracking()
@@ -230,7 +230,7 @@ internal sealed class UserActivityRepository(B1ngoDbContext dbContext) : IUserAc
         }
 
         var roomIds = tokenData.Select(t => RoomId.From(t.RoomId)).ToList();
-        var tokenLookup = tokenData.ToDictionary(t => t.RoomId, t => t.PlayerId);
+        var tokenLookup = tokenData.GroupBy(t => t.RoomId).ToDictionary(g => g.Key, g => g.First().PlayerId);
 
         var completedRooms = await dbContext
             .Rooms.AsNoTracking()
