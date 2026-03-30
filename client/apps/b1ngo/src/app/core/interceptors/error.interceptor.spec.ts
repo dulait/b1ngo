@@ -99,7 +99,7 @@ describe('errorInterceptor', () => {
     expect(currentUserSpy).not.toHaveBeenCalled();
   });
 
-  it('should clear AuthService.currentUser on 401 from /api/v1/auth/login', () => {
+  it('should clear currentUser and toast on 401 from /api/v1/auth/login', () => {
     authService.saveSession('r1', 'p1', 'tok');
     identityAuth.currentUser.set({
       userId: '1',
@@ -114,15 +114,15 @@ describe('errorInterceptor', () => {
     http.post('/api/v1/auth/login', {}).subscribe({ error: () => {} });
     httpMock
       .expectOne('/api/v1/auth/login')
-      .flush(null, { status: 401, statusText: 'Unauthorized' });
+      .flush({ message: 'Invalid credentials' }, { status: 401, statusText: 'Unauthorized' });
 
     expect(currentUserSpy).toHaveBeenCalledWith(null);
     expect(clearSpy).not.toHaveBeenCalled();
     expect(router.navigate).not.toHaveBeenCalled();
-    expect(warnSpy).not.toHaveBeenCalled();
+    expect(warnSpy).toHaveBeenCalledWith('Invalid credentials');
   });
 
-  it('should clear AuthService.currentUser on 401 from /api/v1/auth/logout', () => {
+  it('should clear currentUser and toast on 401 from /api/v1/auth/logout', () => {
     authService.saveSession('r1', 'p1', 'tok');
     identityAuth.currentUser.set({
       userId: '1',
@@ -142,7 +142,7 @@ describe('errorInterceptor', () => {
     expect(currentUserSpy).toHaveBeenCalledWith(null);
     expect(clearSpy).not.toHaveBeenCalled();
     expect(router.navigate).not.toHaveBeenCalled();
-    expect(warnSpy).not.toHaveBeenCalled();
+    expect(warnSpy).toHaveBeenCalledWith('Authentication failed.');
   });
 
   it('should clear session and navigate on 401 from game endpoint', () => {
@@ -164,10 +164,12 @@ describe('errorInterceptor', () => {
     const warnSpy = vi.spyOn(toastService, 'warning');
 
     http.get('/test').subscribe({ error: () => {} });
-    httpMock.expectOne('/test').flush(null, { status: 403, statusText: 'Forbidden' });
+    httpMock
+      .expectOne('/test')
+      .flush({ message: 'Not a member' }, { status: 403, statusText: 'Forbidden' });
 
     expect(router.navigate).toHaveBeenCalledWith(['/']);
-    expect(warnSpy).toHaveBeenCalledWith("You're not a member of this room.");
+    expect(warnSpy).toHaveBeenCalledWith('Not a member');
   });
 
   it('should show server error message on 400', () => {
@@ -181,7 +183,7 @@ describe('errorInterceptor', () => {
     expect(errorSpy).toHaveBeenCalledWith('Bad field');
   });
 
-  it('should not toast on 400 from auth endpoint', () => {
+  it('should toast on 400 from auth endpoint', () => {
     const errorSpy = vi.spyOn(toastService, 'error');
 
     http.post('/api/v1/auth/register', {}).subscribe({ error: () => {} });
@@ -189,10 +191,10 @@ describe('errorInterceptor', () => {
       .expectOne('/api/v1/auth/register')
       .flush({ message: 'Validation failed' }, { status: 400, statusText: 'Bad Request' });
 
-    expect(errorSpy).not.toHaveBeenCalled();
+    expect(errorSpy).toHaveBeenCalledWith('Validation failed');
   });
 
-  it('should not toast on 409 from auth endpoint', () => {
+  it('should toast on 409 from auth endpoint', () => {
     const errorSpy = vi.spyOn(toastService, 'error');
 
     http.post('/api/v1/auth/register', {}).subscribe({ error: () => {} });
@@ -200,7 +202,7 @@ describe('errorInterceptor', () => {
       .expectOne('/api/v1/auth/register')
       .flush({ message: 'Duplicate email' }, { status: 409, statusText: 'Conflict' });
 
-    expect(errorSpy).not.toHaveBeenCalled();
+    expect(errorSpy).toHaveBeenCalledWith('Duplicate email');
   });
 
   it('should show generic error on 500+', () => {

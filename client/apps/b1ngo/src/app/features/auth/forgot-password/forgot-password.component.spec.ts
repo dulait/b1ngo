@@ -3,7 +3,6 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { describe, it, beforeEach, expect, vi } from 'vitest';
-import { ToastService } from 'bng-ui';
 import { ForgotPasswordComponent } from './forgot-password.component';
 import { AuthService } from '@core/auth/auth.service';
 import { ENVIRONMENT } from '@core/environment/environment.token';
@@ -12,7 +11,6 @@ describe('ForgotPasswordComponent', () => {
   let component: ForgotPasswordComponent;
   let fixture: ComponentFixture<ForgotPasswordComponent>;
   let authService: AuthService;
-  let toast: ToastService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -26,7 +24,6 @@ describe('ForgotPasswordComponent', () => {
     }).compileComponents();
 
     authService = TestBed.inject(AuthService);
-    toast = TestBed.inject(ToastService);
     fixture = TestBed.createComponent(ForgotPasswordComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -56,7 +53,7 @@ describe('ForgotPasswordComponent', () => {
   });
 
   it('sets sent to true after successful submit', async () => {
-    vi.spyOn(authService, 'forgotPassword').mockResolvedValue(true);
+    vi.spyOn(authService, 'forgotPassword').mockResolvedValue();
     component.email.set('user@example.com');
 
     await component.onSubmit();
@@ -66,15 +63,13 @@ describe('ForgotPasswordComponent', () => {
     expect(authService.forgotPassword).toHaveBeenCalledWith('user@example.com');
   });
 
-  it('shows error toast and does not set sent when API fails', async () => {
-    vi.spyOn(authService, 'forgotPassword').mockResolvedValue(false);
-    const errorSpy = vi.spyOn(toast, 'error');
+  it('does not set sent when API fails', async () => {
+    vi.spyOn(authService, 'forgotPassword').mockRejectedValue(new Error('fail'));
     component.email.set('user@example.com');
 
     await component.onSubmit();
     fixture.detectChanges();
 
     expect(component.sent()).toBe(false);
-    expect(errorSpy).toHaveBeenCalledWith('Something went wrong. Please try again.');
   });
 });

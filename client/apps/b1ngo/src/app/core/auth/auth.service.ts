@@ -45,36 +45,21 @@ export class AuthService {
     this.currentUser.set(res);
   }
 
-  async logout(): Promise<boolean> {
-    try {
-      await firstValueFrom(this.http.post(`${this.baseUrl}/api/v1/auth/logout`, {}));
-      this.currentUser.set(null);
-      return true;
-    } catch {
-      return false;
-    }
+  async logout(): Promise<void> {
+    await firstValueFrom(this.http.post(`${this.baseUrl}/api/v1/auth/logout`, {}));
+    this.currentUser.set(null);
   }
 
-  async forgotPassword(email: string): Promise<boolean> {
-    try {
-      await firstValueFrom(
-        this.http.post(`${this.baseUrl}/api/v1/auth/forgot-password`, { email }),
-      );
-      return true;
-    } catch {
-      return false;
-    }
+  async forgotPassword(email: string): Promise<void> {
+    await firstValueFrom(
+      this.http.post(`${this.baseUrl}/api/v1/auth/forgot-password`, { email }),
+    );
   }
 
-  async resetPassword(email: string, token: string, newPassword: string): Promise<boolean> {
-    try {
-      await firstValueFrom(
-        this.http.post(`${this.baseUrl}/api/v1/auth/reset-password`, { email, token, newPassword }),
-      );
-      return true;
-    } catch {
-      return false;
-    }
+  async resetPassword(email: string, token: string, newPassword: string): Promise<void> {
+    await firstValueFrom(
+      this.http.post(`${this.baseUrl}/api/v1/auth/reset-password`, { email, token, newPassword }),
+    );
   }
 
   externalLogin(provider: 'Google' | 'Microsoft'): void {

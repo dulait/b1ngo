@@ -87,7 +87,7 @@ describe('ResetPasswordComponent', () => {
 
   it('sets success to true after valid submit', async () => {
     await createComponent({ token: 'abc', email: 'test@test.com' });
-    vi.spyOn(authService, 'resetPassword').mockResolvedValue(true);
+    vi.spyOn(authService, 'resetPassword').mockResolvedValue();
 
     component.newPassword.set('Password1');
     component.confirmPassword.set('Password1');
@@ -97,17 +97,14 @@ describe('ResetPasswordComponent', () => {
     expect(component.success()).toBe(true);
   });
 
-  it('redirects to forgot-password when reset fails', async () => {
+  it('does not set success when reset fails', async () => {
     await createComponent({ token: 'abc', email: 'test@test.com' });
-    vi.spyOn(authService, 'resetPassword').mockResolvedValue(false);
+    vi.spyOn(authService, 'resetPassword').mockRejectedValue(new Error('fail'));
 
     component.newPassword.set('Password1');
     component.confirmPassword.set('Password1');
     await component.onSubmit();
 
-    expect(router.navigate).toHaveBeenCalledWith(
-      ['/auth/forgot-password'],
-      expect.objectContaining({ replaceUrl: true }),
-    );
+    expect(component.success()).toBe(false);
   });
 });

@@ -12,47 +12,45 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
-  const isAuthUrl = req.url.includes('/api/v1/auth/');
-
   return next(req).pipe(
     catchError((err: HttpErrorResponse) => {
+      // /auth/me is a silent status check, not a user-facing error
+      if (req.url.includes('/api/v1/auth/me')) {
+        return throwError(() => err);
+      }
+
+      const isAuthUrl = req.url.includes('/api/v1/auth/');
+
       switch (err.status) {
         case 0:
           toast.error('Network error. Check your connection.');
           break;
-        case 401: {
-          if (req.url.includes('/api/v1/auth/me')) {
-            break;
-          }
+        case 400:
+          // Future hook: suppress toast when err.error?.details?.length > 0
+          // (code: "validation_error") so the form can handle inline field errors.
+          toast.error(err.error?.message ?? 'Invalid request.');
+          break;
+        case 401:
           if (isAuthUrl) {
             auth.currentUser.set(null);
-            break;
+            toast.warning(err.error?.message ?? 'Authentication failed.');
+          } else {
+            if (!auth.isAuthenticated()) {
+              session.clearSession();
+            }
+            router.navigate(['/']);
+            toast.warning(err.error?.message ?? 'Your session has expired.');
           }
-          if (!auth.isAuthenticated()) {
-            session.clearSession();
-          }
-          router.navigate(['/']);
-          toast.warning(err.error?.message ?? 'Your session has expired.');
           break;
-        }
         case 403:
           router.navigate(['/']);
-          toast.warning("You're not a member of this room.");
+          toast.warning(err.error?.message ?? "You're not a member of this room.");
           break;
         case 404:
-          if (!isAuthUrl) {
-            toast.error(err.error?.message ?? 'Not found.');
-          }
+          toast.error(err.error?.message ?? 'Not found.');
           break;
         case 409:
-          if (!isAuthUrl) {
-            toast.error(err.error?.message ?? 'Conflict.');
-          }
-          break;
-        case 400:
-          if (!isAuthUrl) {
-            toast.error(err.error?.message ?? 'Invalid request.');
-          }
+          toast.error(err.error?.message ?? 'Conflict.');
           break;
         case 429:
           toast.warning('Too many requests. Please wait a moment.');

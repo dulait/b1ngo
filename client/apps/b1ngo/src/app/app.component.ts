@@ -17,6 +17,7 @@ import {
 import type { ThemeName } from 'bng-ui';
 import { ENVIRONMENT } from './core/environment/environment.token';
 import { AuthService } from '@core/auth/auth.service';
+import { safeAsync } from '@core/utils/safe-async.util';
 import { TutorialComponent } from '@shell/index';
 
 @Component({
@@ -72,11 +73,9 @@ export class AppComponent implements OnInit {
   }
 
   async onSignOut(): Promise<void> {
-    const success = await this.auth.logout();
-    if (success) {
-      this.toast.info('Signed out.');
-      this.router.navigate(['/']);
-    }
+    await safeAsync(this.auth.logout());
+    this.toast.info('Signed out.');
+    this.router.navigate(['/']);
   }
 
   navigateTo(path: string): void {
