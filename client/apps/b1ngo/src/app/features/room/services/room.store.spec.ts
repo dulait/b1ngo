@@ -30,6 +30,7 @@ function mockPlayer(overrides: Partial<PlayerDto> = {}): PlayerDto {
 function mockRoomState(overrides: Partial<GetRoomStateResponse> = {}): GetRoomStateResponse {
   return {
     roomId: 'r1',
+    currentPlayerId: 'p1',
     joinCode: 'ABC123',
     status: 'Lobby',
     session: {
