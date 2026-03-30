@@ -12,6 +12,7 @@ import { GetRoomStateResponse } from '@core/api/models/responses';
 function mockRoomState(): GetRoomStateResponse {
   return {
     roomId: 'r1',
+    currentPlayerId: 'p1',
     joinCode: 'ABC123',
     status: 'Lobby',
     session: {

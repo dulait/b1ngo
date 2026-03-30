@@ -6,6 +6,7 @@ import { LeaderboardEntryDto } from '../dtos/leaderboard-entry.dto';
 
 export interface GetRoomStateResponse {
   roomId: string;
+  currentPlayerId: string;
   joinCode: string;
   status: RoomStatus;
   session: SessionDto;

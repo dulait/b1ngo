@@ -2,6 +2,7 @@ namespace B1ngo.Application.Features.Rooms.GetRoomState;
 
 public sealed record GetRoomStateResponse(
     Guid RoomId,
+    Guid CurrentPlayerId,
     string JoinCode,
     string Status,
     SessionDto Session,

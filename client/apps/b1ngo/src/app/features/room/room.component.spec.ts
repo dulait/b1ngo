@@ -6,13 +6,13 @@ import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { RoomStore } from './services/room.store';
 import { RoomApiService } from '@core/api/room-api.service';
 import { SignalRService } from '@core/realtime/signalr.service';
-import { SessionService } from '@core/auth/session.service';
 import { ENVIRONMENT } from '@core/environment/environment.token';
 import { GetRoomStateResponse } from '@core/api/models/responses';
 
 function mockRoomState(): GetRoomStateResponse {
   return {
     roomId: 'r1',
+    currentPlayerId: 'p1',
     joinCode: 'ABC123',
     status: 'Lobby',
     session: {
@@ -52,7 +52,6 @@ describe('Room orchestrator logic', () => {
   let store: RoomStore;
   let _roomApi: RoomApiService;
   let signalr: SignalRService;
-  let auth: SessionService;
 
   beforeEach(async () => {
     localStorage.clear();
@@ -75,13 +74,11 @@ describe('Room orchestrator logic', () => {
     store = new RoomStore();
     _roomApi = TestBed.inject(RoomApiService);
     signalr = TestBed.inject(SignalRService);
-    auth = TestBed.inject(SessionService);
-    auth.saveSession('r1', 'p1', 'tok');
   });
 
   it('should initialize store from API response', async () => {
     const state = mockRoomState();
-    store.initialize(state, auth.getPlayerId());
+    store.initialize(state, state.currentPlayerId);
 
     expect(store.roomId()).toBe('r1');
     expect(store.joinCode()).toBe('ABC123');

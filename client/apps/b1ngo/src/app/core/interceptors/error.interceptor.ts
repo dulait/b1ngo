@@ -28,7 +28,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             auth.currentUser.set(null);
             break;
           }
-          session.clearSession();
+          if (!auth.isAuthenticated()) {
+            session.clearSession();
+          }
           router.navigate(['/']);
           toast.warning(err.error?.message ?? 'Your session has expired.');
           break;
