@@ -33,5 +33,11 @@ internal sealed class PlayerTokenConfiguration : IEntityTypeConfiguration<Player
         builder.HasIndex(x => x.PlayerId).HasDatabaseName("ix_player_tokens_player_id");
 
         builder.HasIndex(x => x.UserId).HasDatabaseName("ix_player_tokens_user_id");
+
+        builder
+            .HasIndex(x => new { x.UserId, x.RoomId })
+            .IsUnique()
+            .HasFilter("user_id IS NOT NULL")
+            .HasDatabaseName("ix_player_tokens_user_id_room_id_unique");
     }
 }

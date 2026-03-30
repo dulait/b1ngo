@@ -1,4 +1,6 @@
 using B1ngo.Application.Common.Cqrs;
+using B1ngo.Application.Features.Dashboard;
+using B1ngo.Application.Features.History;
 using B1ngo.Application.Features.ReferenceData;
 using B1ngo.Application.Features.Rooms.CreateRoom;
 using B1ngo.Application.Features.Rooms.EditSquare;
@@ -9,6 +11,7 @@ using B1ngo.Application.Features.Rooms.MarkSquare;
 using B1ngo.Application.Features.Rooms.Reconnect;
 using B1ngo.Application.Features.Rooms.StartGame;
 using B1ngo.Application.Features.Rooms.UnmarkSquare;
+using B1ngo.Application.Features.Stats;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -36,6 +39,10 @@ public static class DependencyInjection
                 IQueryHandler<GetReferenceDataQuery, GetReferenceDataResponse>,
                 GetReferenceDataHandler
             >();
+
+            services.AddScoped<IQueryHandler<GetDashboardQuery, GetDashboardResponse>, GetDashboardHandler>();
+            services.AddScoped<IQueryHandler<GetHistoryQuery, GetHistoryResponse>, GetHistoryHandler>();
+            services.AddScoped<IQueryHandler<GetStatsQuery, GetStatsResponse>, GetStatsHandler>();
 
             return services;
         }

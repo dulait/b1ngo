@@ -36,6 +36,7 @@ public static class DependencyInjection
         services.AddScoped<IEventPoolRepository, EventPoolRepository>();
         services.AddScoped<IReferenceDataRepository, ReferenceDataRepository>();
         services.AddScoped<IBingoCardGenerator, BingoCardGenerator>();
+        services.AddScoped<IUserActivityRepository, UserActivityRepository>();
 
         if (environment.IsDevelopment() || environment.IsEnvironment("Testing"))
         {

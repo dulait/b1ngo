@@ -103,6 +103,7 @@ public class AuthController(
     public async Task<IActionResult> Logout()
     {
         await signInManager.SignOutAsync();
+        Response.Cookies.Delete("PlayerToken");
         return NoContent();
     }
 
