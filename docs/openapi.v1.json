@@ -339,6 +339,108 @@
         ]
       }
     },
+    "/api/v1/dashboard": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get authenticated user\u0027s dashboard",
+        "description": "Returns the user\u0027s active rooms (max 5), total active room count, and quick stats summary.",
+        "operationId": "GetDashboard",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDashboardResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "playerToken": []
+          }
+        ]
+      }
+    },
+    "/api/v1/history": {
+      "get": {
+        "tags": [
+          "History"
+        ],
+        "summary": "Get authenticated user\u0027s game history",
+        "description": "Returns all active rooms (unpaginated) and completed rooms with page-based pagination.",
+        "operationId": "GetHistory",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetHistoryResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "playerToken": []
+          }
+        ]
+      }
+    },
     "/api/v1/reference-data": {
       "get": {
         "tags": [
@@ -1446,10 +1548,94 @@
           }
         ]
       }
+    },
+    "/api/v1/stats": {
+      "get": {
+        "tags": [
+          "Stats"
+        ],
+        "summary": "Get authenticated user\u0027s game statistics",
+        "description": "Returns aggregated stats: overview, wins by pattern, and best finishes.",
+        "operationId": "GetStats",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetStatsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "playerToken": []
+          }
+        ]
+      }
     }
   },
   "components": {
     "schemas": {
+      "ActiveRoomDto": {
+        "required": [
+          "roomId",
+          "playerId",
+          "gpName",
+          "sessionType",
+          "playerCount",
+          "status",
+          "isHost",
+          "joinedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "roomId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "playerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "gpName": {
+            "type": "string"
+          },
+          "sessionType": {
+            "type": "string"
+          },
+          "playerCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "status": {
+            "type": "string"
+          },
+          "isHost": {
+            "type": "boolean"
+          },
+          "joinedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "AuthResponse": {
         "required": [
           "userId",
@@ -1528,6 +1714,57 @@
           }
         },
         "description": "Player\u0027s bingo card (null if not yet assigned)."
+      },
+      "CompletedRoomDto": {
+        "required": [
+          "roomId",
+          "gpName",
+          "sessionType",
+          "playerCount",
+          "completedAt",
+          "resultRank",
+          "winPattern"
+        ],
+        "type": "object",
+        "properties": {
+          "roomId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "gpName": {
+            "type": "string"
+          },
+          "sessionType": {
+            "type": "string"
+          },
+          "playerCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "resultRank": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "winPattern": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
       },
       "ConfigurationDto": {
         "required": [
@@ -1761,6 +1998,55 @@
           }
         }
       },
+      "GetDashboardResponse": {
+        "required": [
+          "displayName",
+          "activeRooms",
+          "totalActiveRooms",
+          "quickStats"
+        ],
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "type": "string"
+          },
+          "activeRooms": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActiveRoomDto"
+            }
+          },
+          "totalActiveRooms": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "quickStats": {
+            "$ref": "#/components/schemas/QuickStatsDto"
+          }
+        }
+      },
+      "GetHistoryResponse": {
+        "required": [
+          "activeRooms",
+          "completedRooms"
+        ],
+        "type": "object",
+        "properties": {
+          "activeRooms": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActiveRoomDto"
+            }
+          },
+          "completedRooms": {
+            "$ref": "#/components/schemas/PagedResultOfCompletedRoomDto"
+          }
+        }
+      },
       "GetReferenceDataResponse": {
         "required": [
           "seasons",
@@ -1843,6 +2129,28 @@
               "$ref": "#/components/schemas/LeaderboardEntryDto"
             },
             "description": "Ranked list of winners."
+          }
+        }
+      },
+      "GetStatsResponse": {
+        "required": [
+          "overview",
+          "winsByPattern",
+          "bestFinishes"
+        ],
+        "type": "object",
+        "properties": {
+          "overview": {
+            "$ref": "#/components/schemas/QuickStatsDto"
+          },
+          "winsByPattern": {
+            "$ref": "#/components/schemas/WinsByPatternDto"
+          },
+          "bestFinishes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RankCountDto"
+            }
           }
         }
       },
@@ -2094,6 +2402,61 @@
           }
         }
       },
+      "PagedResultOfCompletedRoomDto": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompletedRoomDto"
+            }
+          },
+          "page": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalPages": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          }
+        }
+      },
       "PlayerDto": {
         "required": [
           "playerId",
@@ -2128,6 +2491,103 @@
                 "$ref": "#/components/schemas/CardDto"
               }
             ]
+          }
+        }
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "detail": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "instance": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "QuickStatsDto": {
+        "required": [
+          "gamesPlayed",
+          "wins",
+          "winRate"
+        ],
+        "type": "object",
+        "properties": {
+          "gamesPlayed": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "wins": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "winRate": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d\u002B)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "RankCountDto": {
+        "required": [
+          "rank",
+          "count"
+        ],
+        "type": "object",
+        "properties": {
+          "rank": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "count": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
           }
         }
       },
@@ -2458,6 +2918,49 @@
         ],
         "type": "string",
         "description": "Winning pattern type. Values: Row (all squares in any single row are marked), Column (all squares in any single column are marked), Diagonal (all squares on either diagonal are marked), Blackout (all squares on the entire card are marked)."
+      },
+      "WinsByPatternDto": {
+        "required": [
+          "row",
+          "column",
+          "diagonal",
+          "blackout"
+        ],
+        "type": "object",
+        "properties": {
+          "row": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "column": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "diagonal": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "blackout": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
       }
     },
     "securitySchemes": {
@@ -2474,10 +2977,19 @@
       "name": "Auth"
     },
     {
+      "name": "Dashboard"
+    },
+    {
+      "name": "History"
+    },
+    {
       "name": "Reference Data"
     },
     {
       "name": "Rooms"
+    },
+    {
+      "name": "Stats"
     }
   ]
 }
