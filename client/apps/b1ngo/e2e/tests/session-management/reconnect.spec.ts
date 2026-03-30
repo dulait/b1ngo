@@ -106,6 +106,7 @@ test.describe('BNG-013: Reconnect', () => {
     const home = new HomePage(page);
     await home.expectOnHomePage();
 
+    await page.waitForFunction(() => localStorage.getItem('bng-session') === null);
     const session = await page.evaluate(() => localStorage.getItem('bng-session'));
     expect(session).toBeNull();
   });
