@@ -52,6 +52,7 @@ public sealed class GetRoomStateHandler(IRoomRepository roomRepository)
 
         return new GetRoomStateResponse(
             room.Id.Value,
+            requestingPlayerId.Value,
             room.JoinCode,
             room.Status.ToString(),
             session,

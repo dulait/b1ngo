@@ -370,6 +370,7 @@ public abstract class IntegrationTestBase : IAsyncLifetime
 
     protected record RoomStateResponse(
         Guid RoomId,
+        Guid CurrentPlayerId,
         string JoinCode,
         string Status,
         SessionResponse Session,
