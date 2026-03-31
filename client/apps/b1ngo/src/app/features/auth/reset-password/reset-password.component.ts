@@ -10,6 +10,7 @@ import {
 } from 'bng-ui';
 import { AuthService } from '@core/auth/auth.service';
 import { formField } from '@core/utils/form-field';
+import { safeAsync } from '@core/utils/safe-async.util';
 import { validatePassword } from '@core/utils/validate-password';
 
 @Component({
@@ -55,17 +56,16 @@ export class ResetPasswordComponent implements OnInit {
     }
 
     this.loading.set(true);
-    try {
-      const ok = await this.auth.resetPassword(this.email, this.token, this.newPassword.value());
-      if (ok) {
-        this.success.set(true);
-      } else {
-        this.toast.error('Unable to reset password. Please request a new link.');
-        this.router.navigate(['/auth/forgot-password'], { replaceUrl: true });
-      }
-    } finally {
-      this.loading.set(false);
+
+    const result = await safeAsync(
+      this.auth.resetPassword(this.email, this.token, this.newPassword.value()),
+    );
+
+    if (result.ok) {
+      this.success.set(true);
     }
+
+    this.loading.set(false);
   }
 
   private validate(): boolean {

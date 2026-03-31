@@ -12,6 +12,7 @@ import {
 } from 'bng-ui';
 import { AuthService } from '@core/auth/auth.service';
 import { formField } from '@core/utils/form-field';
+import { safeAsync } from '@core/utils/safe-async.util';
 
 @Component({
   selector: 'app-login',
@@ -42,20 +43,17 @@ export class LoginComponent {
     }
 
     this.loading.set(true);
-    try {
-      await this.authService.login(this.email.value().trim(), this.password.value());
+
+    const result = await safeAsync(
+      this.authService.login(this.email.value().trim(), this.password.value()),
+    );
+
+    if (result.ok) {
       this.toast.success('Logged in successfully.');
       this.router.navigate(['/']);
-    } catch (err: unknown) {
-      const code = (err as { error?: { code?: string } })?.error?.code;
-      if (code === 'AccountLocked') {
-        this.toast.warning('Account temporarily locked. Try again later.');
-      } else {
-        this.toast.error('Invalid email or password.');
-      }
-    } finally {
-      this.loading.set(false);
     }
+
+    this.loading.set(false);
   }
 
   onExternalLogin(provider: 'Google' | 'Microsoft'): void {

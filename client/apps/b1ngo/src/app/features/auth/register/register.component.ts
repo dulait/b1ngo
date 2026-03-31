@@ -12,6 +12,7 @@ import {
 } from 'bng-ui';
 import { AuthService } from '@core/auth/auth.service';
 import { formField } from '@core/utils/form-field';
+import { safeAsync } from '@core/utils/safe-async.util';
 import { validatePassword } from '@core/utils/validate-password';
 
 @Component({
@@ -44,24 +45,21 @@ export class RegisterComponent {
     }
 
     this.loading.set(true);
-    try {
-      await this.authService.register(
+
+    const result = await safeAsync(
+      this.authService.register(
         this.email.value().trim(),
         this.password.value(),
         this.displayName.value().trim(),
-      );
+      ),
+    );
+
+    if (result.ok) {
       this.toast.success('Account created successfully.');
       this.router.navigate(['/']);
-    } catch (err: unknown) {
-      const code = (err as { error?: { code?: string } })?.error?.code;
-      if (code === 'DuplicateEmail') {
-        this.toast.error('An account with this email already exists.');
-      } else {
-        this.toast.error('Registration failed. Please try again.');
-      }
-    } finally {
-      this.loading.set(false);
     }
+
+    this.loading.set(false);
   }
 
   onExternalLogin(provider: 'Google' | 'Microsoft'): void {

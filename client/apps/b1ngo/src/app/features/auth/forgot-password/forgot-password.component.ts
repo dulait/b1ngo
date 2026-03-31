@@ -5,11 +5,11 @@ import {
   BngInputComponent,
   BngButtonComponent,
   BngIconComponent,
-  ToastService,
   bngIconCheckCircle,
 } from 'bng-ui';
 import { AuthService } from '@core/auth/auth.service';
 import { formField } from '@core/utils/form-field';
+import { safeAsync } from '@core/utils/safe-async.util';
 
 @Component({
   selector: 'app-forgot-password',
@@ -19,7 +19,6 @@ import { formField } from '@core/utils/form-field';
 })
 export class ForgotPasswordComponent {
   private readonly auth = inject(AuthService);
-  private readonly toast = inject(ToastService);
 
   readonly checkIcon = bngIconCheckCircle;
 
@@ -37,16 +36,14 @@ export class ForgotPasswordComponent {
     }
 
     this.loading.set(true);
-    try {
-      const ok = await this.auth.forgotPassword(this.email.value().trim());
-      if (ok) {
-        this.sent.set(true);
-      } else {
-        this.toast.error('Something went wrong. Please try again.');
-      }
-    } finally {
-      this.loading.set(false);
+
+    const result = await safeAsync(this.auth.forgotPassword(this.email.value().trim()));
+
+    if (result.ok) {
+      this.sent.set(true);
     }
+
+    this.loading.set(false);
   }
 
   private validate(): boolean {

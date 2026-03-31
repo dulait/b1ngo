@@ -146,9 +146,8 @@ describe('AuthService', () => {
     expect(logoutReq.request.method).toBe('POST');
     logoutReq.flush(null, { status: 204, statusText: 'No Content' });
 
-    const result = await logoutPromise;
+    await logoutPromise;
 
-    expect(result).toBe(true);
     expect(service.currentUser()).toBeNull();
     expect(service.isAuthenticated()).toBe(false);
   });
@@ -166,7 +165,7 @@ describe('AuthService', () => {
     expect(service.isAdmin()).toBe(false);
   });
 
-  it('should POST forgotPassword and return true on success', async () => {
+  it('should POST forgotPassword and resolve on success', async () => {
     const promise = service.forgotPassword('test@example.com');
 
     const req = httpMock.expectOne(`${baseUrl}/api/v1/auth/forgot-password`);
@@ -174,20 +173,20 @@ describe('AuthService', () => {
     expect(req.request.body).toEqual({ email: 'test@example.com' });
     req.flush(null, { status: 200, statusText: 'OK' });
 
-    expect(await promise).toBe(true);
+    await expect(promise).resolves.toBeUndefined();
   });
 
-  it('should return false when forgotPassword fails', async () => {
+  it('should throw when forgotPassword fails', async () => {
     const promise = service.forgotPassword('test@example.com');
 
     httpMock
       .expectOne(`${baseUrl}/api/v1/auth/forgot-password`)
       .flush(null, { status: 500, statusText: 'Server Error' });
 
-    expect(await promise).toBe(false);
+    await expect(promise).rejects.toThrow();
   });
 
-  it('should POST resetPassword and return true on success', async () => {
+  it('should POST resetPassword and resolve on success', async () => {
     const promise = service.resetPassword('test@example.com', 'token123', 'NewPassword1');
 
     const req = httpMock.expectOne(`${baseUrl}/api/v1/auth/reset-password`);
@@ -199,17 +198,17 @@ describe('AuthService', () => {
     });
     req.flush(null, { status: 200, statusText: 'OK' });
 
-    expect(await promise).toBe(true);
+    await expect(promise).resolves.toBeUndefined();
   });
 
-  it('should return false when resetPassword fails', async () => {
+  it('should throw when resetPassword fails', async () => {
     const promise = service.resetPassword('test@example.com', 'token123', 'NewPassword1');
 
     httpMock
       .expectOne(`${baseUrl}/api/v1/auth/reset-password`)
       .flush(null, { status: 400, statusText: 'Bad Request' });
 
-    expect(await promise).toBe(false);
+    await expect(promise).rejects.toThrow();
   });
 
   it('should redirect to external login URL', () => {
