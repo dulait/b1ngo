@@ -8,6 +8,7 @@ import {
   BngSkeletonComponent,
 } from 'bng-ui';
 import { UserActivityApiService } from '@core/api/user-activity-api.service';
+import { SessionService } from '@core/auth/session.service';
 import { ActiveRoomDto, CompletedRoomDto } from '@core/api/models';
 import { ordinal } from '@core/utils/format.util';
 import { safeAsync } from '@core/utils/safe-async.util';
@@ -28,6 +29,7 @@ import { safeAsync } from '@core/utils/safe-async.util';
 export class HistoryComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly api = inject(UserActivityApiService);
+  private readonly session = inject(SessionService);
 
   readonly loading = signal(true);
   readonly error = signal(false);
@@ -83,8 +85,15 @@ export class HistoryComponent implements OnInit {
     this.loadingMore.set(false);
   }
 
-  rejoin(roomId: string): void {
-    this.router.navigate(['/room', roomId]);
+  rejoin(room: ActiveRoomDto): void {
+    this.session.saveSession(
+      room.roomId,
+      room.playerId,
+      room.playerToken,
+      room.gpName,
+      room.sessionType,
+    );
+    this.router.navigate(['/room', room.roomId]);
   }
 
   readonly ordinal = ordinal;
