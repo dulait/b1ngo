@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, OnInit, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, OnInit, signal, computed } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import {
@@ -48,6 +48,13 @@ export class AppComponent implements OnInit {
   readonly tutorialOpen = signal(false);
   readonly themeSheetOpen = signal(false);
   readonly showHeader = signal(true);
+  readonly isRoomRoute = signal(false);
+  readonly homeAriaLabel = computed(() => {
+    if (!this.isRoomRoute()) {
+      return null;
+    }
+    return this.auth.isAuthenticated() ? 'Back to dashboard' : 'Back to home';
+  });
 
   ngOnInit(): void {
     this.themeService.initialize();
@@ -58,8 +65,9 @@ export class AppComponent implements OnInit {
 
     this.router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
-      .subscribe(() => {
+      .subscribe((e) => {
         this.showHeader.set(!this.hasRouteData(this.route, 'hideHeader'));
+        this.isRoomRoute.set(e.urlAfterRedirects.startsWith('/room'));
       });
   }
 
@@ -77,6 +85,10 @@ export class AppComponent implements OnInit {
     this.toast.info('Signed out.');
     // canMatch won't re-run on same-URL navigation, so route through wildcard to force re-matching
     await this.router.navigateByUrl('/_', { skipLocationChange: true });
+  }
+
+  onHomeClicked(): void {
+    this.router.navigate(['/']);
   }
 
   navigateTo(path: string): void {
