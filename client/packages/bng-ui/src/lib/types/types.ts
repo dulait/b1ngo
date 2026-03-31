@@ -26,6 +26,8 @@ export interface LeaderboardItem {
 
 export type BadgeVariant = 'warning' | 'success' | 'neutral';
 
+export type BannerVariant = 'accent' | 'error';
+
 export type ToastVariant = 'info' | 'success' | 'warning' | 'error';
 
 export interface ToastData {
