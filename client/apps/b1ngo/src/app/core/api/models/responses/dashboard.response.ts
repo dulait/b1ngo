@@ -8,6 +8,7 @@ export interface DashboardResponse {
 export interface ActiveRoomDto {
   roomId: string;
   playerId: string;
+  playerToken: string;
   gpName: string;
   sessionType: string;
   playerCount: number;
