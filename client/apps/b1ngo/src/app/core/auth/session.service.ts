@@ -23,8 +23,28 @@ export class SessionService {
     return this.session()?.playerToken ?? '';
   }
 
-  saveSession(roomId: string, playerId: string, playerToken: string): void {
+  getGpName(): string {
+    return this.session()?.gpName ?? '';
+  }
+
+  getSessionType(): string {
+    return this.session()?.sessionType ?? '';
+  }
+
+  saveSession(
+    roomId: string,
+    playerId: string,
+    playerToken: string,
+    gpName?: string,
+    sessionType?: string,
+  ): void {
     const info: SessionInfo = { roomId, playerId, playerToken };
+    if (gpName) {
+      info.gpName = gpName;
+    }
+    if (sessionType) {
+      info.sessionType = sessionType;
+    }
     localStorage.setItem(SessionService.SESSION_KEY, JSON.stringify(info));
     this.session.set(info);
   }
