@@ -3,11 +3,12 @@ import {
   ChangeDetectionStrategy,
   ViewEncapsulation,
   input,
+  output,
   signal,
 } from '@angular/core';
 import { BngIconButtonComponent } from '../../primitives/icon-button/icon-button.component';
 import { BngMenuComponent } from '../menu/menu.component';
-import { bngIconKebab } from '../../../icons/icons';
+import { bngIconChevronLeft, bngIconKebab } from '../../../icons/icons';
 
 @Component({
   selector: 'bng-header',
@@ -19,7 +20,17 @@ import { bngIconKebab } from '../../../icons/icons';
       data-testid="app-header"
       class="h-14 flex items-center justify-between px-4 bg-bg-surface border-b border-border-default pt-[env(safe-area-inset-top)]"
     >
-      <span class="font-mono font-bold text-lg text-accent" data-testid="app-logo">B1NGO</span>
+      <div class="flex items-center gap-2">
+        @if (homeAriaLabel()) {
+          <bng-icon-button
+            [icon]="chevronLeftIcon"
+            [ariaLabel]="homeAriaLabel()!"
+            size="sm"
+            (click)="homeClicked.emit()"
+          />
+        }
+        <span class="font-mono font-bold text-lg text-accent" data-testid="app-logo">B1NGO</span>
+      </div>
 
       <div class="relative">
         <bng-icon-button
@@ -48,7 +59,10 @@ import { bngIconKebab } from '../../../icons/icons';
 export class BngHeaderComponent {
   version = input<string | null>(null);
   copyright = input<string | null>(null);
+  homeAriaLabel = input<string | null>(null);
+  homeClicked = output<void>();
 
+  protected readonly chevronLeftIcon = bngIconChevronLeft;
   protected readonly kebabIcon = bngIconKebab;
   protected menuOpen = signal(false);
 }
