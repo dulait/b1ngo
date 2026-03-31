@@ -1,3 +1,10 @@
+## [0.5.2](https://github.com/dulait/b1ngo/compare/v0.5.1...v0.5.2) (2026-03-31)
+
+
+### Bug Fixes
+
+* global error handling ([#25](https://github.com/dulait/b1ngo/issues/25)) ([04cb6af](https://github.com/dulait/b1ngo/commit/04cb6afcc9f318f4edfdb88dceb000a4ca75f743))
+
 ## [0.5.1](https://github.com/dulait/b1ngo/compare/v0.5.0...v0.5.1) (2026-03-30)
 
 
