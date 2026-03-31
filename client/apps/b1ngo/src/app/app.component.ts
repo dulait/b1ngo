@@ -75,7 +75,8 @@ export class AppComponent implements OnInit {
   async onSignOut(): Promise<void> {
     await safeAsync(this.auth.logout());
     this.toast.info('Signed out.');
-    this.router.navigate(['/']);
+    // canMatch won't re-run on same-URL navigation, so route through wildcard to force re-matching
+    await this.router.navigateByUrl('/_', { skipLocationChange: true });
   }
 
   navigateTo(path: string): void {
