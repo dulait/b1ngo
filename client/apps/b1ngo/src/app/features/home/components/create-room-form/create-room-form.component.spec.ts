@@ -92,7 +92,59 @@ describe('CreateRoomFormComponent', () => {
     component.onNameChange('Max');
     await component.onSubmit();
 
-    expect(successSpy).toHaveBeenCalledWith({ roomId: 'r1', playerId: 'p1', playerToken: 'tok' });
+    expect(successSpy).toHaveBeenCalledWith({
+      roomId: 'r1',
+      playerId: 'p1',
+      playerToken: 'tok',
+      gpName: '',
+      sessionType: '',
+    });
+  });
+
+  it('should include gpName and sessionType in success event', async () => {
+    vi.spyOn(roomApi, 'createRoom').mockResolvedValue({
+      roomId: 'r1',
+      joinCode: 'ABC123',
+      playerId: 'p1',
+      playerToken: 'tok',
+    });
+
+    const successSpy = vi.fn();
+    component.success.subscribe(successSpy);
+
+    component.onNameChange('Max');
+    component.onGrandPrixChange('Monaco GP');
+    component.sessionType.set('Race');
+    await component.onSubmit();
+
+    expect(successSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ gpName: 'Monaco GP', sessionType: 'Race' }),
+    );
+  });
+
+  it('should not call API when beforeSubmit guard returns false', async () => {
+    const createSpy = vi.spyOn(roomApi, 'createRoom');
+    fixture.componentRef.setInput('beforeSubmit', () => Promise.resolve(false));
+
+    component.onNameChange('Max');
+    await component.onSubmit();
+
+    expect(createSpy).not.toHaveBeenCalled();
+  });
+
+  it('should call API when beforeSubmit guard returns true', async () => {
+    vi.spyOn(roomApi, 'createRoom').mockResolvedValue({
+      roomId: 'r1',
+      joinCode: 'ABC123',
+      playerId: 'p1',
+      playerToken: 'tok',
+    });
+    fixture.componentRef.setInput('beforeSubmit', () => Promise.resolve(true));
+
+    component.onNameChange('Max');
+    await component.onSubmit();
+
+    expect(roomApi.createRoom).toHaveBeenCalled();
   });
 
   it('should set loading state during submit', async () => {

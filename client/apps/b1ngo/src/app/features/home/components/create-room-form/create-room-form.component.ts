@@ -2,6 +2,7 @@ import {
   Component,
   ChangeDetectionStrategy,
   inject,
+  input,
   output,
   signal,
   computed,
@@ -36,7 +37,15 @@ export class CreateRoomFormComponent {
   private readonly roomApi = inject(RoomApiService);
   private readonly refData = inject(ReferenceDataService);
 
-  success = output<{ roomId: string; playerId: string; playerToken: string }>();
+  readonly beforeSubmit = input<(() => Promise<boolean>) | undefined>();
+
+  success = output<{
+    roomId: string;
+    playerId: string;
+    playerToken: string;
+    gpName?: string;
+    sessionType?: string;
+  }>();
 
   readonly hostDisplayName = signal('');
   readonly season = signal('');
@@ -132,17 +141,25 @@ export class CreateRoomFormComponent {
       return;
     }
 
+    const guard = this.beforeSubmit();
+    if (guard && !(await guard())) {
+      return;
+    }
+
     this.loading.set(true);
     const selectedPatterns = this.winningPatterns()
       .filter((p) => p.selected)
       .map((p) => p.value as WinPatternType);
 
+    const gpName = this.grandPrixName();
+    const sessionType = this.sessionType();
+
     const result = await safeAsync(
       this.roomApi.createRoom({
         hostDisplayName: this.hostDisplayName().trim(),
         season: parseInt(this.season(), 10),
-        grandPrixName: this.grandPrixName(),
-        sessionType: this.sessionType() as SessionType,
+        grandPrixName: gpName,
+        sessionType: sessionType as SessionType,
         matrixSize: this.matrixSize(),
         winningPatterns: selectedPatterns,
       }),
@@ -152,6 +169,8 @@ export class CreateRoomFormComponent {
         roomId: result.value.roomId,
         playerId: result.value.playerId,
         playerToken: result.value.playerToken,
+        gpName,
+        sessionType,
       });
     }
     this.loading.set(false);
