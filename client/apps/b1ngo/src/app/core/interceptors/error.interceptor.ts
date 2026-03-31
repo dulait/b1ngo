@@ -6,6 +6,64 @@ import { ToastService } from 'bng-ui';
 import { SessionService } from '../auth/session.service';
 import { AuthService } from '../auth/auth.service';
 
+interface ErrorContext {
+  err: HttpErrorResponse;
+  toast: ToastService;
+  session: SessionService;
+  auth: AuthService;
+  router: Router;
+  isAuthUrl: boolean;
+}
+
+type ErrorHandler = (ctx: ErrorContext) => void;
+
+const handleNetworkError: ErrorHandler = ({ toast }) =>
+  toast.error('Network error. Check your connection.');
+
+const handle400: ErrorHandler = ({ err, toast }) =>
+  toast.error(err.error?.message ?? 'Invalid request.');
+
+const handle401: ErrorHandler = ({ err, toast, session, auth, router, isAuthUrl }) => {
+  if (isAuthUrl) {
+    auth.currentUser.set(null);
+    toast.warning(err.error?.message ?? 'Authentication failed.');
+    return;
+  }
+
+  if (!auth.isAuthenticated()) {
+    session.clearSession();
+  }
+  router.navigate(['/']);
+  toast.warning(err.error?.message ?? 'Your session has expired.');
+};
+
+const handle403: ErrorHandler = ({ err, toast, router }) => {
+  router.navigate(['/']);
+  toast.warning(err.error?.message ?? 'Access denied.');
+};
+
+const handle404: ErrorHandler = ({ err, toast }) =>
+  toast.error(err.error?.message ?? 'Not found.');
+
+const handle409: ErrorHandler = ({ err, toast }) =>
+  toast.error(err.error?.message ?? 'Conflict.');
+
+const handle429: ErrorHandler = ({ toast }) =>
+  toast.warning('Too many requests. Please wait a moment.');
+
+const handleServerError: ErrorHandler = ({ err, toast }) =>
+  toast.error(err.error?.message ?? 'Something went wrong. Please try again.');
+
+const handlers: Record<number, ErrorHandler> = {
+  0: handleNetworkError,
+  400: handle400,
+  401: handle401,
+  403: handle403,
+  404: handle404,
+  409: handle409,
+  429: handle429,
+};
+
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const toast = inject(ToastService);
   const session = inject(SessionService);
@@ -14,51 +72,24 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((err: HttpErrorResponse) => {
-      // /auth/me is a silent status check, not a user-facing error
-      if (req.url.includes('/api/v1/auth/me')) {
+      if (err.status === 401 && req.url.includes('/api/v1/auth/me')) {
         return throwError(() => err);
       }
 
-      const isAuthUrl = req.url.includes('/api/v1/auth/');
+      const ctx: ErrorContext = {
+        err,
+        toast,
+        session,
+        auth,
+        router,
+        isAuthUrl: req.url.includes('/api/v1/auth/'),
+      };
 
-      switch (err.status) {
-        case 0:
-          toast.error('Network error. Check your connection.');
-          break;
-        case 400:
-          // Future hook: suppress toast when err.error?.details?.length > 0
-          // (code: "validation_error") so the form can handle inline field errors.
-          toast.error(err.error?.message ?? 'Invalid request.');
-          break;
-        case 401:
-          if (isAuthUrl) {
-            auth.currentUser.set(null);
-            toast.warning(err.error?.message ?? 'Authentication failed.');
-          } else {
-            if (!auth.isAuthenticated()) {
-              session.clearSession();
-            }
-            router.navigate(['/']);
-            toast.warning(err.error?.message ?? 'Your session has expired.');
-          }
-          break;
-        case 403:
-          router.navigate(['/']);
-          toast.warning(err.error?.message ?? "You're not a member of this room.");
-          break;
-        case 404:
-          toast.error(err.error?.message ?? 'Not found.');
-          break;
-        case 409:
-          toast.error(err.error?.message ?? 'Conflict.');
-          break;
-        case 429:
-          toast.warning('Too many requests. Please wait a moment.');
-          break;
-        default:
-          if (err.status >= 500) {
-            toast.error(err.error?.message ?? 'Something went wrong. Please try again.');
-          }
+      const handler = handlers[err.status];
+      if (handler) {
+        handler(ctx);
+      } else if (err.status >= 500) {
+        handleServerError(ctx);
       }
 
       return throwError(() => err);
