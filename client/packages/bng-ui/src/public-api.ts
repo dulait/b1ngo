@@ -31,6 +31,7 @@ export { BngMatrixComponent } from './lib/components/composites/matrix/matrix.co
 export { BngSquarePopoverComponent } from './lib/components/composites/square-popover/square-popover.component';
 export { BngPlayerListComponent } from './lib/components/composites/player-list/player-list.component';
 export { BngLeaderboardComponent } from './lib/components/composites/leaderboard/leaderboard.component';
+export { BngBannerComponent } from './lib/components/composites/banner/banner.component';
 
 // Icons (SVG path data)
 export * from './lib/icons/icons';
@@ -45,6 +46,7 @@ export type {
   PlayerChipItem,
   LeaderboardItem,
   BadgeVariant,
+  BannerVariant,
   ToastVariant,
   ToastData,
   ThemeName,

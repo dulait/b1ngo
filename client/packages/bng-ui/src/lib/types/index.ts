@@ -3,6 +3,7 @@ export type {
   PlayerChipItem,
   LeaderboardItem,
   BadgeVariant,
+  BannerVariant,
   ToastVariant,
   ToastData,
   ThemeName,
