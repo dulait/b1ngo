@@ -3,12 +3,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RoomApiService } from '@core/api/room-api.service';
 import { AuthService } from '@core/auth/auth.service';
 import { SessionService } from '@core/auth/session.service';
+import { StorageService } from '@core/storage/storage.service';
 import { safeAsync } from '@core/utils/safe-async.util';
 import { BngBannerComponent, BngButtonComponent, BngModalComponent, ToastService } from 'bng-ui';
 import { CreateRoomFormComponent } from './components/create-room-form/create-room-form.component';
 import { JoinRoomFormComponent } from './components/join-room-form/join-room-form.component';
-
-const DISMISS_KEY = 'bng-rejoin-dismissed';
 
 @Component({
   selector: 'app-home',
@@ -28,9 +27,10 @@ export class HomeComponent implements OnInit {
   private readonly roomApi = inject(RoomApiService);
   private readonly auth = inject(AuthService);
   private readonly session = inject(SessionService);
+  private readonly storage = inject(StorageService);
   private readonly toast = inject(ToastService);
 
-  readonly dismissed = signal(sessionStorage.getItem(DISMISS_KEY) === 'true');
+  readonly dismissed = signal(this.storage.getString('bng-rejoin-dismissed', 'session') === 'true');
   readonly reconnecting = signal(false);
 
   readonly showBanner = computed(
@@ -80,7 +80,7 @@ export class HomeComponent implements OnInit {
 
   onDismiss(): void {
     this.dismissed.set(true);
-    sessionStorage.setItem(DISMISS_KEY, 'true');
+    this.storage.set('bng-rejoin-dismissed', 'true', 'session');
   }
 
   onRejoin(): void {

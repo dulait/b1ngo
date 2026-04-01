@@ -17,6 +17,7 @@ import {
 import type { ThemeName } from 'bng-ui';
 import { ENVIRONMENT } from './core/environment/environment.token';
 import { AuthService } from '@core/auth/auth.service';
+import { StorageService } from '@core/storage/storage.service';
 import { safeAsync } from '@core/utils/safe-async.util';
 import { TutorialComponent } from '@shell/index';
 
@@ -39,6 +40,7 @@ export class AppComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly toast = inject(ToastService);
   readonly auth = inject(AuthService);
+  private readonly storage = inject(StorageService);
   readonly themeService = inject(ThemeService);
   protected readonly helpIcon = bngIconHelpCircle;
   protected readonly userIcon = bngIconUser;
@@ -59,7 +61,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.themeService.initialize();
 
-    if (!localStorage.getItem('bng-tutorial-completed')) {
+    if (!this.storage.getString('bng-tutorial-completed')) {
       this.tutorialOpen.set(true);
     }
 
@@ -77,7 +79,7 @@ export class AppComponent implements OnInit {
 
   closeTutorial(): void {
     this.tutorialOpen.set(false);
-    localStorage.setItem('bng-tutorial-completed', 'true');
+    this.storage.set('bng-tutorial-completed', 'true');
   }
 
   async onSignOut(): Promise<void> {
