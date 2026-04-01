@@ -101,15 +101,9 @@ export class HomeComponent implements OnInit {
     this.session.enterRoom(event.roomId, event.playerId, event.playerToken);
   }
 
-  onConfirmCancel(): void {
+  resolveConfirm(proceed: boolean): void {
     this.confirmOpen.set(false);
-    this.confirmResolve?.(false);
-    this.confirmResolve = null;
-  }
-
-  onConfirmContinue(): void {
-    this.confirmOpen.set(false);
-    this.confirmResolve?.(true);
+    this.confirmResolve?.(proceed);
     this.confirmResolve = null;
   }
 
