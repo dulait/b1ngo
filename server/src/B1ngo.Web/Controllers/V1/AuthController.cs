@@ -275,14 +275,16 @@ public class AuthController(
     {
         var user = await userManager.FindByEmailAsync(request.Email);
 
-        if (user is not null)
+        if (user is null)
         {
-            var result = await userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
+            return BadRequest(new ErrorResponse("ResetFailed", "Unable to reset password."));
+        }
 
-            if (result.Succeeded)
-            {
-                return Ok();
-            }
+        var result = await userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
+
+        if (result.Succeeded)
+        {
+            return Ok();
         }
 
         return BadRequest(new ErrorResponse("ResetFailed", "Unable to reset password."));
