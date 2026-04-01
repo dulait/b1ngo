@@ -70,12 +70,11 @@ export class HomeComponent implements OnInit {
     this.reconnecting.set(false);
 
     if (result.ok) {
-      this.session.saveSession(
+      this.session.enterRoom(
         result.value.roomId,
         result.value.playerId,
         this.session.getPlayerToken(),
       );
-      this.router.navigate(['/room', result.value.roomId]);
     }
   }
 
@@ -95,19 +94,11 @@ export class HomeComponent implements OnInit {
     gpName?: string;
     sessionType?: string;
   }): void {
-    this.session.saveSession(
-      event.roomId,
-      event.playerId,
-      event.playerToken,
-      event.gpName,
-      event.sessionType,
-    );
-    this.router.navigate(['/room', event.roomId]);
+    this.session.enterRoom(event.roomId, event.playerId, event.playerToken, event.gpName, event.sessionType);
   }
 
   onRoomJoined(event: { roomId: string; playerId: string; playerToken: string }): void {
-    this.session.saveSession(event.roomId, event.playerId, event.playerToken);
-    this.router.navigate(['/room', event.roomId]);
+    this.session.enterRoom(event.roomId, event.playerId, event.playerToken);
   }
 
   onConfirmCancel(): void {

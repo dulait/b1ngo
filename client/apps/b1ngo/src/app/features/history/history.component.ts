@@ -1,6 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { Router } from '@angular/router';
 import {
   BngCardComponent,
   BngButtonComponent,
@@ -27,7 +26,6 @@ import { safeAsync } from '@core/utils/safe-async.util';
   templateUrl: './history.component.html',
 })
 export class HistoryComponent implements OnInit {
-  private readonly router = inject(Router);
   private readonly api = inject(UserActivityApiService);
   private readonly session = inject(SessionService);
 
@@ -86,14 +84,7 @@ export class HistoryComponent implements OnInit {
   }
 
   rejoin(room: ActiveRoomDto): void {
-    this.session.saveSession(
-      room.roomId,
-      room.playerId,
-      room.playerToken,
-      room.gpName,
-      room.sessionType,
-    );
-    this.router.navigate(['/room', room.roomId]);
+    this.session.enterRoom(room.roomId, room.playerId, room.playerToken, room.gpName, room.sessionType);
   }
 
   readonly ordinal = ordinal;

@@ -1,9 +1,11 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { SessionInfo } from './session-info.interface';
 
 @Injectable({ providedIn: 'root' })
 export class SessionService {
   private static readonly SESSION_KEY = 'bng-session';
+  private readonly router = inject(Router);
 
   readonly session = signal<SessionInfo | null>(this.loadSession());
 
@@ -47,6 +49,17 @@ export class SessionService {
     }
     localStorage.setItem(SessionService.SESSION_KEY, JSON.stringify(info));
     this.session.set(info);
+  }
+
+  enterRoom(
+    roomId: string,
+    playerId: string,
+    playerToken: string,
+    gpName?: string,
+    sessionType?: string,
+  ): void {
+    this.saveSession(roomId, playerId, playerToken, gpName, sessionType);
+    this.router.navigate(['/room', roomId]);
   }
 
   clearSession(): void {

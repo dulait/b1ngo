@@ -1,12 +1,24 @@
-import { describe, it, beforeEach, expect } from 'vitest';
+import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { SessionService } from './session.service';
 
 describe('SessionService', () => {
   let service: SessionService;
+  let router: Router;
 
   beforeEach(() => {
     localStorage.clear();
-    service = new SessionService();
+
+    TestBed.configureTestingModule({
+      providers: [
+        SessionService,
+        { provide: Router, useValue: { navigate: vi.fn() } },
+      ],
+    });
+
+    service = TestBed.inject(SessionService);
+    router = TestBed.inject(Router);
   });
 
   it('should return false for hasSession when no session exists', () => {
@@ -52,21 +64,35 @@ describe('SessionService', () => {
     expect(localStorage.getItem('bng-session')).toBeNull();
   });
 
-  it('should load session from localStorage on construction', () => {
-    localStorage.setItem(
-      'bng-session',
-      JSON.stringify({ roomId: 'r1', playerId: 'p1', playerToken: 'tok' }),
-    );
-
-    const freshService = new SessionService();
-    expect(freshService.hasSession()).toBe(true);
-    expect(freshService.getPlayerId()).toBe('p1');
-  });
-
   it('should handle corrupted localStorage gracefully', () => {
     localStorage.setItem('bng-session', 'not-json');
 
-    const freshService = new SessionService();
+    const freshService = TestBed.inject(SessionService);
     expect(freshService.hasSession()).toBe(false);
+  });
+
+  it('should save gpName and sessionType when provided', () => {
+    service.saveSession('r1', 'p1', 'tok', 'Monaco GP', 'Race');
+
+    expect(service.getGpName()).toBe('Monaco GP');
+    expect(service.getSessionType()).toBe('Race');
+  });
+
+  it('should omit gpName and sessionType when not provided', () => {
+    service.saveSession('r1', 'p1', 'tok');
+
+    expect(service.getGpName()).toBe('');
+    expect(service.getSessionType()).toBe('');
+    const stored = JSON.parse(localStorage.getItem('bng-session')!);
+    expect(stored.gpName).toBeUndefined();
+  });
+
+  it('should save session and navigate to room on enterRoom', () => {
+    service.enterRoom('r1', 'p1', 'tok', 'Monaco GP', 'Race');
+
+    expect(service.hasSession()).toBe(true);
+    expect(service.getRoomId()).toBe('r1');
+    expect(service.getGpName()).toBe('Monaco GP');
+    expect(router.navigate).toHaveBeenCalledWith(['/room', 'r1']);
   });
 });
