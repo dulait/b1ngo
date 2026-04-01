@@ -18,7 +18,7 @@
 </main>
 
 <!-- Session Replacement Confirmation Modal -->
-<bng-modal [open]="confirmOpen()" (closed)="resolveConfirm(false)">
+<bng-modal [open]="confirmOpen()" (closed)="cancelReplace()">
   <div class="p-6 space-y-4">
     <h2 class="text-lg font-semibold text-text-primary">Replace active session?</h2>
     @if (sessionContext()) {
@@ -34,10 +34,10 @@
       </p>
     }
     <div class="flex gap-3 pt-2">
-      <bng-button variant="secondary" [fullWidth]="true" (clicked)="resolveConfirm(false)">
+      <bng-button variant="secondary" [fullWidth]="true" (clicked)="cancelReplace()">
         Cancel
       </bng-button>
-      <bng-button variant="primary" [fullWidth]="true" (clicked)="resolveConfirm(true)">
+      <bng-button variant="primary" [fullWidth]="true" (clicked)="confirmReplace()">
         Continue
       </bng-button>
     </div>

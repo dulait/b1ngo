@@ -209,7 +209,7 @@ describe('HomeComponent', () => {
       sessionService.saveSession('r1', 'p1', 'tok');
 
       const promise = component.beforeCreateGuard();
-      component.resolveConfirm(true);
+      component.confirmReplace();
 
       expect(await promise).toBe(true);
       expect(component.confirmOpen()).toBe(false);
@@ -219,7 +219,7 @@ describe('HomeComponent', () => {
       sessionService.saveSession('r1', 'p1', 'tok');
 
       const promise = component.beforeCreateGuard();
-      component.resolveConfirm(false);
+      component.cancelReplace();
 
       expect(await promise).toBe(false);
       expect(component.confirmOpen()).toBe(false);
