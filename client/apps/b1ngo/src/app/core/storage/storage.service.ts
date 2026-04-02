@@ -4,7 +4,6 @@ import { SessionInfo } from '../auth/session-info.interface';
 interface StorageKeyMap {
   'bng-session': SessionInfo;
   'bng-tutorial-completed': string;
-  'bng-rejoin-dismissed': string;
 }
 
 type StorageBackend = 'local' | 'session';

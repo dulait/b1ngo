@@ -52,10 +52,10 @@ describe('StorageService', () => {
 
   describe('session backend', () => {
     it('should use sessionStorage when backend is session', () => {
-      service.set('bng-rejoin-dismissed', 'true', 'session');
+      service.set('bng-tutorial-completed', 'true', 'session');
 
-      expect(localStorage.getItem('bng-rejoin-dismissed')).toBeNull();
-      expect(service.getString('bng-rejoin-dismissed', 'session')).toBe('true');
+      expect(localStorage.getItem('bng-tutorial-completed')).toBeNull();
+      expect(service.getString('bng-tutorial-completed', 'session')).toBe('true');
     });
   });
 });
