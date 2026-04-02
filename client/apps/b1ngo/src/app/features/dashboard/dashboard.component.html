@@ -1,9 +1,7 @@
 <main class="min-h-dvh flex flex-col items-center p-4 pt-8">
   <div class="w-full max-w-md space-y-4">
-    <!-- Welcome -->
     <h1 class="text-xl font-semibold text-text-primary">Welcome back, {{ displayName() }}</h1>
 
-    <!-- Active Rooms -->
     <section aria-label="Active Rooms">
       <div class="flex items-center justify-between mb-2">
         <h2 class="text-sm font-semibold text-text-secondary uppercase tracking-wider">
@@ -58,7 +56,6 @@
       }
     </section>
 
-    <!-- Quick Stats -->
     <section aria-label="Quick Stats">
       <div class="flex items-center justify-between mb-2">
         <h2 class="text-sm font-semibold text-text-secondary uppercase tracking-wider">
@@ -78,7 +75,6 @@
           </div>
         </bng-card>
       } @else if (error()) {
-        <!-- Stats section hidden on error per spec -->
       } @else if (!data()?.quickStats?.gamesPlayed) {
         <bng-card>
           <p class="text-sm text-text-secondary text-center py-2">
@@ -89,7 +85,9 @@
         <bng-card>
           <div class="grid grid-cols-3 gap-3 text-center">
             <div>
-              <p class="text-2xl font-bold text-text-primary">{{ data()!.quickStats.gamesPlayed }}</p>
+              <p class="text-2xl font-bold text-text-primary">
+                {{ data()!.quickStats.gamesPlayed }}
+              </p>
               <p class="text-xs text-text-secondary mt-0.5">Games</p>
             </div>
             <div>
@@ -97,7 +95,9 @@
               <p class="text-xs text-text-secondary mt-0.5">Wins</p>
             </div>
             <div>
-              <p class="text-2xl font-bold text-accent">{{ formatWinRate(data()!.quickStats.winRate) }}</p>
+              <p class="text-2xl font-bold text-accent">
+                {{ formatWinRate(data()!.quickStats.winRate) }}
+              </p>
               <p class="text-xs text-text-secondary mt-0.5">Win Rate</p>
             </div>
           </div>
@@ -105,7 +105,6 @@
       }
     </section>
 
-    <!-- Create / Join forms -->
     <section class="flex flex-col gap-4 pt-2" aria-label="Room Actions">
       <create-room-form (success)="onRoomCreated($event)" />
       <join-room-form (success)="onRoomJoined($event)" />
