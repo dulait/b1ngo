@@ -5,7 +5,6 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { describe, it, beforeEach, afterEach, expect, vi } from 'vitest';
 import { HomeComponent } from './home.component';
 import { RoomApiService } from '@core/api/room-api.service';
-import { AuthService } from '@core/auth/auth.service';
 import { SessionService } from '@core/auth/session.service';
 import { ENVIRONMENT } from '@core/environment/environment.token';
 
@@ -14,7 +13,6 @@ describe('HomeComponent', () => {
   let fixture: ComponentFixture<HomeComponent>;
   let roomApi: RoomApiService;
   let sessionService: SessionService;
-  let authService: AuthService;
   let router: Router;
 
   beforeEach(async () => {
@@ -45,7 +43,6 @@ describe('HomeComponent', () => {
     component = fixture.componentInstance;
     roomApi = TestBed.inject(RoomApiService);
     sessionService = TestBed.inject(SessionService);
-    authService = TestBed.inject(AuthService);
     router = TestBed.inject(Router);
   });
 
@@ -95,6 +92,12 @@ describe('HomeComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/room', 'r2']);
   });
 
+  it('should not show banner on create success', () => {
+    component.onRoomCreated({ roomId: 'r2', playerId: 'p2', playerToken: 'tok' });
+
+    expect(component.showBanner()).toBe(false);
+  });
+
   it('should save gpName and sessionType on create success', () => {
     component.onRoomCreated({
       roomId: 'r2',
@@ -117,7 +120,7 @@ describe('HomeComponent', () => {
   });
 
   describe('rejoin banner', () => {
-    it('should show banner when anon user has session after failed reconnect', async () => {
+    it('should show banner after failed reconnect', async () => {
       sessionService.saveSession('r1', 'p1', 'tok');
       vi.spyOn(roomApi, 'reconnect').mockRejectedValue(new Error('expired'));
 
@@ -126,19 +129,30 @@ describe('HomeComponent', () => {
       expect(component.showBanner()).toBe(true);
     });
 
-    it('should not show banner when no session exists', () => {
+    it('should show banner when arriving from room', async () => {
+      sessionService.saveSession('r1', 'p1', 'tok');
+      Object.defineProperty(history, 'state', { value: { fromRoom: true }, writable: true });
+
+      await component.ngOnInit();
+
+      expect(component.showBanner()).toBe(true);
+      Object.defineProperty(history, 'state', { value: null, writable: true });
+    });
+
+    it('should not show banner when no session exists', async () => {
+      await component.ngOnInit();
       expect(component.showBanner()).toBe(false);
     });
 
-    it('should not show banner when user is authenticated', () => {
+    it('should not show banner before reconnect completes', () => {
       sessionService.saveSession('r1', 'p1', 'tok');
-      authService.currentUser.set({ userId: 'u1', displayName: 'Test', email: 'a@b.com', roles: [] });
-
       expect(component.showBanner()).toBe(false);
     });
 
-    it('should hide banner on dismiss without clearing session', () => {
+    it('should hide banner on dismiss without clearing session', async () => {
       sessionService.saveSession('r1', 'p1', 'tok');
+      vi.spyOn(roomApi, 'reconnect').mockRejectedValue(new Error('expired'));
+      await component.ngOnInit();
 
       component.onDismiss();
 
@@ -154,6 +168,5 @@ describe('HomeComponent', () => {
 
       expect(router.navigate).toHaveBeenCalledWith(['/room', 'r1']);
     });
-
   });
 });

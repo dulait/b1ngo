@@ -1,7 +1,6 @@
-import { Component, ChangeDetectionStrategy, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RoomApiService } from '@core/api/room-api.service';
-import { AuthService } from '@core/auth/auth.service';
 import { SessionService } from '@core/auth/session.service';
 import { safeAsync } from '@core/utils/safe-async.util';
 import { BngBannerComponent, BngButtonComponent, ToastService } from 'bng-ui';
@@ -23,31 +22,25 @@ export class HomeComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly roomApi = inject(RoomApiService);
-  private readonly auth = inject(AuthService);
   private readonly session = inject(SessionService);
   private readonly toast = inject(ToastService);
 
+  readonly showBanner = signal(false);
   readonly dismissed = signal(false);
-  readonly reconnecting = signal(false);
-
-  readonly showBanner = computed(
-    () =>
-      !this.auth.isAuthenticated() &&
-      this.session.hasSession() &&
-      !this.dismissed() &&
-      !this.reconnecting(),
-  );
 
   async ngOnInit(): Promise<void> {
     await this.handleOAuthCallback();
 
-    if (!this.session.hasSession() || history.state?.fromRoom) {
+    if (!this.session.hasSession()) {
       return;
     }
 
-    this.reconnecting.set(true);
+    if (history.state?.fromRoom) {
+      this.showBanner.set(true);
+      return;
+    }
+
     const result = await safeAsync(this.roomApi.reconnect());
-    this.reconnecting.set(false);
 
     if (result.ok) {
       this.session.enterRoom(
@@ -55,10 +48,13 @@ export class HomeComponent implements OnInit {
         result.value.playerId,
         this.session.getPlayerToken(),
       );
+    } else {
+      this.showBanner.set(true);
     }
   }
 
   onDismiss(): void {
+    this.showBanner.set(false);
     this.dismissed.set(true);
   }
 
