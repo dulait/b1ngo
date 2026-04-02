@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, input, output, signal, ElementRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, output, signal, ElementRef } from '@angular/core';
 import {
   BngCardComponent,
   BngInputComponent,
@@ -19,8 +19,6 @@ const JOIN_CODE_LENGTH = 6;
 export class JoinRoomFormComponent {
   private readonly roomApi = inject(RoomApiService);
   readonly hostElement = inject(ElementRef).nativeElement as HTMLElement;
-
-  readonly beforeSubmit = input<(() => Promise<boolean>) | undefined>();
 
   success = output<{ roomId: string; playerId: string; playerToken: string }>();
 
@@ -53,11 +51,6 @@ export class JoinRoomFormComponent {
     const codeValid = this.validateCode();
     const nameValid = this.validateName();
     if (!codeValid || !nameValid || this.loading()) {
-      return;
-    }
-
-    const guard = this.beforeSubmit();
-    if (guard && !(await guard())) {
       return;
     }
 

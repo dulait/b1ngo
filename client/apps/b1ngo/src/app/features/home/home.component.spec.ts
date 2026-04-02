@@ -147,11 +147,6 @@ describe('HomeComponent', () => {
       expect(sessionService.hasSession()).toBe(true);
     });
 
-    it('should persist dismiss in sessionStorage', () => {
-      component.onDismiss();
-      expect(sessionStorage.getItem('bng-rejoin-dismissed')).toBe('true');
-    });
-
     it('should navigate to room on rejoin', () => {
       sessionService.saveSession('r1', 'p1', 'tok');
 
@@ -160,69 +155,5 @@ describe('HomeComponent', () => {
       expect(router.navigate).toHaveBeenCalledWith(['/room', 'r1']);
     });
 
-    it('should show session context when gpName and sessionType are set', () => {
-      sessionService.saveSession('r1', 'p1', 'tok', 'Monaco GP', 'Race');
-
-      expect(component.sessionContext()).toBe('Monaco GP / Race');
-    });
-
-    it('should return empty context when gpName/sessionType are missing', () => {
-      sessionService.saveSession('r1', 'p1', 'tok');
-
-      expect(component.sessionContext()).toBe('');
-    });
-  });
-
-  describe('session replacement confirmation', () => {
-    it('should resolve guard immediately when no session exists', async () => {
-      const result = await component.beforeCreateGuard();
-      expect(result).toBe(true);
-      expect(component.confirmOpen()).toBe(false);
-    });
-
-    it('should resolve guard immediately when user is authenticated', async () => {
-      sessionService.saveSession('r1', 'p1', 'tok');
-      authService.currentUser.set({ userId: 'u1', displayName: 'Test', email: 'a@b.com', roles: [] });
-
-      const result = await component.beforeCreateGuard();
-      expect(result).toBe(true);
-    });
-
-    it('should open modal when anon user has session', () => {
-      sessionService.saveSession('r1', 'p1', 'tok');
-
-      component.beforeCreateGuard();
-
-      expect(component.confirmOpen()).toBe(true);
-      expect(component.confirmAction()).toBe('Creating a new room');
-    });
-
-    it('should set correct action for join guard', () => {
-      sessionService.saveSession('r1', 'p1', 'tok');
-
-      component.beforeJoinGuard();
-
-      expect(component.confirmAction()).toBe('Joining a different room');
-    });
-
-    it('should resolve true when user confirms', async () => {
-      sessionService.saveSession('r1', 'p1', 'tok');
-
-      const promise = component.beforeCreateGuard();
-      component.confirmReplace();
-
-      expect(await promise).toBe(true);
-      expect(component.confirmOpen()).toBe(false);
-    });
-
-    it('should resolve false when user cancels', async () => {
-      sessionService.saveSession('r1', 'p1', 'tok');
-
-      const promise = component.beforeCreateGuard();
-      component.cancelReplace();
-
-      expect(await promise).toBe(false);
-      expect(component.confirmOpen()).toBe(false);
-    });
   });
 });

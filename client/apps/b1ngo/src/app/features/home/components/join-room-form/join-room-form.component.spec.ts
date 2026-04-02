@@ -125,30 +125,4 @@ describe('JoinRoomFormComponent', () => {
     expect(component.loading()).toBe(false);
   });
 
-  it('should not call API when beforeSubmit guard returns false', async () => {
-    const joinSpy = vi.spyOn(roomApi, 'joinRoom');
-    fixture.componentRef.setInput('beforeSubmit', () => Promise.resolve(false));
-
-    component.onCodeComplete('H7KM3V');
-    component.onNameChange('Max');
-    await component.onSubmit();
-
-    expect(joinSpy).not.toHaveBeenCalled();
-  });
-
-  it('should call API when beforeSubmit guard returns true', async () => {
-    vi.spyOn(roomApi, 'joinRoom').mockResolvedValue({
-      roomId: 'r1',
-      playerId: 'p2',
-      playerToken: 'tok',
-      displayName: 'Max',
-    });
-    fixture.componentRef.setInput('beforeSubmit', () => Promise.resolve(true));
-
-    component.onCodeComplete('H7KM3V');
-    component.onNameChange('Max');
-    await component.onSubmit();
-
-    expect(roomApi.joinRoom).toHaveBeenCalled();
-  });
 });

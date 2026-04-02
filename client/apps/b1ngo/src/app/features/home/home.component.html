@@ -1,11 +1,9 @@
 <main class="flex flex-col p-4 space-y-4 max-w-md mx-auto">
-  <!-- Title -->
   <div class="text-center pt-4">
     <h1 class="font-mono font-bold text-3xl text-accent">B1NGO</h1>
     <p class="text-sm text-text-secondary mt-1">F1 Bingo / Play Live</p>
   </div>
 
-  <!-- Rejoin Banner -->
   @if (showBanner()) {
     <bng-banner (dismissed)="onDismiss()">
       <p class="text-sm font-medium text-text-primary">You have an active game.</p>
@@ -13,33 +11,6 @@
     </bng-banner>
   }
 
-  <create-room-form [beforeSubmit]="beforeCreateGuard" (success)="onRoomCreated($event)" />
-  <join-room-form [beforeSubmit]="beforeJoinGuard" (success)="onRoomJoined($event)" />
+  <create-room-form (success)="onRoomCreated($event)" />
+  <join-room-form (success)="onRoomJoined($event)" />
 </main>
-
-<!-- Session Replacement Confirmation Modal -->
-<bng-modal [open]="confirmOpen()" (closed)="cancelReplace()">
-  <div class="p-6 space-y-4">
-    <h2 class="text-lg font-semibold text-text-primary">Replace active session?</h2>
-    @if (sessionContext()) {
-      <p class="text-sm text-text-secondary">
-        {{ confirmAction() }} will replace your current session in
-        <span class="text-text-primary font-medium">{{ sessionContext() }}</span>.
-        You won't be able to rejoin it.
-      </p>
-    } @else {
-      <p class="text-sm text-text-secondary">
-        {{ confirmAction() }} will replace your current session.
-        You won't be able to rejoin it.
-      </p>
-    }
-    <div class="flex gap-3 pt-2">
-      <bng-button variant="secondary" [fullWidth]="true" (clicked)="cancelReplace()">
-        Cancel
-      </bng-button>
-      <bng-button variant="primary" [fullWidth]="true" (clicked)="confirmReplace()">
-        Continue
-      </bng-button>
-    </div>
-  </div>
-</bng-modal>

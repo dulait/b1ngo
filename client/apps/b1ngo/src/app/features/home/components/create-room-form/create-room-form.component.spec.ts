@@ -122,31 +122,6 @@ describe('CreateRoomFormComponent', () => {
     );
   });
 
-  it('should not call API when beforeSubmit guard returns false', async () => {
-    const createSpy = vi.spyOn(roomApi, 'createRoom');
-    fixture.componentRef.setInput('beforeSubmit', () => Promise.resolve(false));
-
-    component.onNameChange('Max');
-    await component.onSubmit();
-
-    expect(createSpy).not.toHaveBeenCalled();
-  });
-
-  it('should call API when beforeSubmit guard returns true', async () => {
-    vi.spyOn(roomApi, 'createRoom').mockResolvedValue({
-      roomId: 'r1',
-      joinCode: 'ABC123',
-      playerId: 'p1',
-      playerToken: 'tok',
-    });
-    fixture.componentRef.setInput('beforeSubmit', () => Promise.resolve(true));
-
-    component.onNameChange('Max');
-    await component.onSubmit();
-
-    expect(roomApi.createRoom).toHaveBeenCalled();
-  });
-
   it('should set loading state during submit', async () => {
     let resolvePromise: (value: CreateRoomResponse) => void;
     vi.spyOn(roomApi, 'createRoom').mockReturnValue(

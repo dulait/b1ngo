@@ -2,7 +2,6 @@ import {
   Component,
   ChangeDetectionStrategy,
   inject,
-  input,
   output,
   signal,
   computed,
@@ -36,8 +35,6 @@ import { SessionType, WinPatternType } from '@core/api/models';
 export class CreateRoomFormComponent {
   private readonly roomApi = inject(RoomApiService);
   private readonly refData = inject(ReferenceDataService);
-
-  readonly beforeSubmit = input<(() => Promise<boolean>) | undefined>();
 
   success = output<{
     roomId: string;
@@ -138,11 +135,6 @@ export class CreateRoomFormComponent {
 
   async onSubmit(): Promise<void> {
     if (!this.validateName() || this.loading()) {
-      return;
-    }
-
-    const guard = this.beforeSubmit();
-    if (guard && !(await guard())) {
       return;
     }
 
