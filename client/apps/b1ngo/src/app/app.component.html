@@ -1,5 +1,5 @@
 @if (showHeader()) {
-  <bng-header [version]="version" copyright="B1NGO">
+  <bng-header [version]="version" copyright="B1NGO" [homeAriaLabel]="homeAriaLabel()" (homeClicked)="onHomeClicked()">
     @if (auth.isAuthenticated()) {
       <bng-menu-item [icon]="userIcon" label="My Profile" (clicked)="navigateTo('/profile')" />
     }

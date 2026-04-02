@@ -60,7 +60,7 @@
                   <span>Joined {{ room.joinedAt | date: 'MMM d' }}</span>
                 </div>
                 <div class="flex justify-end mt-3">
-                  <bng-button size="sm" (clicked)="rejoin(room.roomId)">Rejoin</bng-button>
+                  <bng-button size="sm" (clicked)="rejoin(room)">Rejoin</bng-button>
                 </div>
               </bng-card>
             }

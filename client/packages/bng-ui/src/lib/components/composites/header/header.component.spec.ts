@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { BngHeaderComponent } from './header.component';
 import { BngMenuItemComponent } from '../menu-item/menu-item.component';
 import { bngIconHelpCircle } from '../../../icons/icons';
@@ -9,7 +9,12 @@ import { bngIconHelpCircle } from '../../../icons/icons';
   standalone: true,
   imports: [BngHeaderComponent, BngMenuItemComponent],
   template: `
-    <bng-header [version]="version()" [copyright]="copyright()">
+    <bng-header
+      [version]="version()"
+      [copyright]="copyright()"
+      [homeAriaLabel]="homeAriaLabel()"
+      (homeClicked)="onHomeClicked()"
+    >
       <bng-menu-item [icon]="helpIcon" label="How to play" />
       <bng-menu-item label="Theme">
         <span menuItemIcon class="theme-dot"></span>
@@ -23,8 +28,10 @@ import { bngIconHelpCircle } from '../../../icons/icons';
 class TestHost {
   version = signal<string | null>(null);
   copyright = signal<string | null>(null);
+  homeAriaLabel = signal<string | null>(null);
   showSubbar = signal(false);
   helpIcon = bngIconHelpCircle;
+  onHomeClicked = vi.fn();
 }
 
 describe('BngHeaderComponent', () => {
@@ -95,5 +102,25 @@ describe('BngHeaderComponent', () => {
   it('should not show subbar when not projected', () => {
     const subbar = fixture.nativeElement.querySelector('.test-subbar');
     expect(subbar).toBeFalsy();
+  });
+
+  it('should not show home button when homeAriaLabel is null', () => {
+    const btn = fixture.nativeElement.querySelector('[aria-label="Back to dashboard"]');
+    expect(btn).toBeFalsy();
+  });
+
+  it('should show home button when homeAriaLabel is set', () => {
+    host.homeAriaLabel.set('Back to dashboard');
+    fixture.detectChanges();
+    const btn = fixture.nativeElement.querySelector('[aria-label="Back to dashboard"]');
+    expect(btn).toBeTruthy();
+  });
+
+  it('should emit homeClicked when home button is clicked', () => {
+    host.homeAriaLabel.set('Back to home');
+    fixture.detectChanges();
+    const btn: HTMLElement = fixture.nativeElement.querySelector('[aria-label="Back to home"]');
+    btn.click();
+    expect(host.onHomeClicked).toHaveBeenCalledOnce();
   });
 });

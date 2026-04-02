@@ -36,7 +36,13 @@ export class CreateRoomFormComponent {
   private readonly roomApi = inject(RoomApiService);
   private readonly refData = inject(ReferenceDataService);
 
-  success = output<{ roomId: string; playerId: string; playerToken: string }>();
+  success = output<{
+    roomId: string;
+    playerId: string;
+    playerToken: string;
+    gpName?: string;
+    sessionType?: string;
+  }>();
 
   readonly hostDisplayName = signal('');
   readonly season = signal('');
@@ -137,12 +143,15 @@ export class CreateRoomFormComponent {
       .filter((p) => p.selected)
       .map((p) => p.value as WinPatternType);
 
+    const gpName = this.grandPrixName();
+    const sessionType = this.sessionType();
+
     const result = await safeAsync(
       this.roomApi.createRoom({
         hostDisplayName: this.hostDisplayName().trim(),
         season: parseInt(this.season(), 10),
-        grandPrixName: this.grandPrixName(),
-        sessionType: this.sessionType() as SessionType,
+        grandPrixName: gpName,
+        sessionType: sessionType as SessionType,
         matrixSize: this.matrixSize(),
         winningPatterns: selectedPatterns,
       }),
@@ -152,6 +161,8 @@ export class CreateRoomFormComponent {
         roomId: result.value.roomId,
         playerId: result.value.playerId,
         playerToken: result.value.playerToken,
+        gpName,
+        sessionType,
       });
     }
     this.loading.set(false);

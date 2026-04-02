@@ -124,4 +124,5 @@ describe('JoinRoomFormComponent', () => {
 
     expect(component.loading()).toBe(false);
   });
+
 });

@@ -1,15 +1,21 @@
-import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, OnInit, signal, computed } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RoomApiService } from '@core/api/room-api.service';
+import { AuthService } from '@core/auth/auth.service';
 import { SessionService } from '@core/auth/session.service';
 import { safeAsync } from '@core/utils/safe-async.util';
-import { ToastService } from 'bng-ui';
+import { BngBannerComponent, BngButtonComponent, ToastService } from 'bng-ui';
 import { CreateRoomFormComponent } from './components/create-room-form/create-room-form.component';
 import { JoinRoomFormComponent } from './components/join-room-form/join-room-form.component';
 
 @Component({
   selector: 'app-home',
-  imports: [CreateRoomFormComponent, JoinRoomFormComponent],
+  imports: [
+    CreateRoomFormComponent,
+    JoinRoomFormComponent,
+    BngBannerComponent,
+    BngButtonComponent,
+  ],
   templateUrl: './home.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -17,40 +23,61 @@ export class HomeComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly roomApi = inject(RoomApiService);
+  private readonly auth = inject(AuthService);
   private readonly session = inject(SessionService);
   private readonly toast = inject(ToastService);
+
+  readonly dismissed = signal(false);
+  readonly reconnecting = signal(false);
+
+  readonly showBanner = computed(
+    () =>
+      !this.auth.isAuthenticated() &&
+      this.session.hasSession() &&
+      !this.dismissed() &&
+      !this.reconnecting(),
+  );
 
   async ngOnInit(): Promise<void> {
     await this.handleOAuthCallback();
 
-    if (!this.session.hasSession()) {
+    if (!this.session.hasSession() || history.state?.fromRoom) {
       return;
     }
 
+    this.reconnecting.set(true);
     const result = await safeAsync(this.roomApi.reconnect());
+    this.reconnecting.set(false);
+
     if (result.ok) {
-      this.session.saveSession(
+      this.session.enterRoom(
         result.value.roomId,
         result.value.playerId,
         this.session.getPlayerToken(),
       );
-      this.router.navigate(['/room', result.value.roomId]);
-    } else {
-      this.session.clearSession();
     }
   }
 
-  onRoomCreated(event: { roomId: string; playerId: string; playerToken: string }): void {
-    this.enterRoom(event);
+  onDismiss(): void {
+    this.dismissed.set(true);
+  }
+
+  onRejoin(): void {
+    this.router.navigate(['/room', this.session.getRoomId()]);
+  }
+
+  onRoomCreated(event: {
+    roomId: string;
+    playerId: string;
+    playerToken: string;
+    gpName?: string;
+    sessionType?: string;
+  }): void {
+    this.session.enterRoom(event.roomId, event.playerId, event.playerToken, event.gpName, event.sessionType);
   }
 
   onRoomJoined(event: { roomId: string; playerId: string; playerToken: string }): void {
-    this.enterRoom(event);
-  }
-
-  private enterRoom(event: { roomId: string; playerId: string; playerToken: string }): void {
-    this.session.saveSession(event.roomId, event.playerId, event.playerToken);
-    this.router.navigate(['/room', event.roomId]);
+    this.session.enterRoom(event.roomId, event.playerId, event.playerToken);
   }
 
   private async handleOAuthCallback(): Promise<void> {

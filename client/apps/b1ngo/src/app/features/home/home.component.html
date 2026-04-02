@@ -1,4 +1,16 @@
 <main class="flex flex-col p-4 space-y-4 max-w-md mx-auto">
+  <div class="text-center pt-4">
+    <h1 class="font-mono font-bold text-3xl text-accent">B1NGO</h1>
+    <p class="text-sm text-text-secondary mt-1">F1 Bingo / Play Live</p>
+  </div>
+
+  @if (showBanner()) {
+    <bng-banner (dismissed)="onDismiss()">
+      <p class="text-sm font-medium text-text-primary">You have an active game.</p>
+      <bng-button bannerAction size="sm" (clicked)="onRejoin()">Rejoin</bng-button>
+    </bng-banner>
+  }
+
   <create-room-form (success)="onRoomCreated($event)" />
   <join-room-form (success)="onRoomJoined($event)" />
 </main>
