@@ -17,6 +17,7 @@ import {
 import type { ThemeName } from 'bng-ui';
 import { ENVIRONMENT } from './core/environment/environment.token';
 import { AuthService } from '@core/auth/auth.service';
+import { SessionService } from '@core/auth/session.service';
 import { StorageService } from '@core/storage/storage.service';
 import { safeAsync } from '@core/utils/safe-async.util';
 import { TutorialComponent } from '@shell/index';
@@ -40,6 +41,7 @@ export class AppComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly toast = inject(ToastService);
   readonly auth = inject(AuthService);
+  private readonly session = inject(SessionService);
   private readonly storage = inject(StorageService);
   readonly themeService = inject(ThemeService);
   protected readonly helpIcon = bngIconHelpCircle;
@@ -84,13 +86,14 @@ export class AppComponent implements OnInit {
 
   async onSignOut(): Promise<void> {
     await safeAsync(this.auth.logout());
+    this.session.clearSession();
     this.toast.info('Signed out.');
     // canMatch won't re-run on same-URL navigation, so route through wildcard to force re-matching
     await this.router.navigateByUrl('/_', { skipLocationChange: true });
   }
 
   onHomeClicked(): void {
-    this.router.navigate(['/']);
+    this.router.navigate(['/'], { state: { fromRoom: true } });
   }
 
   navigateTo(path: string): void {
