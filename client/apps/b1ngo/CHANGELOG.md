@@ -1,3 +1,10 @@
+## [0.6.1](https://github.com/dulait/b1ngo/compare/v0.6.0...v0.6.1) (2026-04-02)
+
+
+### Bug Fixes
+
+* rejoin banner flashing on room create/join ([92f1063](https://github.com/dulait/b1ngo/commit/92f10638f99a79c827b0b449fd7059ec7b4c2308))
+
 # [0.6.0](https://github.com/dulait/b1ngo/compare/v0.5.2...v0.6.0) (2026-04-02)
 
 
