@@ -1,3 +1,10 @@
+# [0.6.0](https://github.com/dulait/b1ngo/compare/v0.5.2...v0.6.0) (2026-04-02)
+
+
+### Features
+
+* add rejoin banner & ability to return to home from game lobby ([#28](https://github.com/dulait/b1ngo/issues/28)) ([9179468](https://github.com/dulait/b1ngo/commit/917946850d4dde6600fafd784fee0cc470481d02))
+
 ## [0.5.2](https://github.com/dulait/b1ngo/compare/v0.5.1...v0.5.2) (2026-03-31)
 
 
