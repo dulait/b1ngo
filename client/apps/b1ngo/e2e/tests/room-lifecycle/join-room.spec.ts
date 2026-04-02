@@ -111,8 +111,6 @@ multiPlayerTest.describe('BNG-002: Join Room / Real-Time', () => {
       const playerPage = await playerContext.newPage();
       await dismissTutorial(playerPage);
       await playerPage.goto('/');
-      await playerPage.evaluate(() => localStorage.clear());
-      await playerPage.evaluate(() => localStorage.setItem('bng-tutorial-completed', 'true'));
       const playerHome = new HomePage(playerPage);
       await playerHome.joinRoom(room.joinCode, 'RealtimeJoiner');
 
