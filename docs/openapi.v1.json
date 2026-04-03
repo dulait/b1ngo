@@ -1799,7 +1799,8 @@
           "userId",
           "email",
           "displayName",
-          "roles"
+          "roles",
+          "hasPassword"
         ],
         "type": "object",
         "properties": {
@@ -1818,6 +1819,9 @@
             "items": {
               "type": "string"
             }
+          },
+          "hasPassword": {
+            "type": "boolean"
           }
         }
       },
@@ -2555,7 +2559,8 @@
           "userId",
           "email",
           "displayName",
-          "roles"
+          "roles",
+          "hasPassword"
         ],
         "type": "object",
         "properties": {
@@ -2574,6 +2579,9 @@
             "items": {
               "type": "string"
             }
+          },
+          "hasPassword": {
+            "type": "boolean"
           }
         }
       },
