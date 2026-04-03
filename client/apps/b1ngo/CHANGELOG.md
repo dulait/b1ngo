@@ -1,3 +1,10 @@
+# [0.7.0](https://github.com/dulait/b1ngo/compare/v0.6.2...v0.7.0) (2026-04-03)
+
+
+### Features
+
+* implement profile management ([#33](https://github.com/dulait/b1ngo/issues/33)) ([48d3b8e](https://github.com/dulait/b1ngo/commit/48d3b8e3b86b5d093ebc1ae1e3ca91a6a2311f09))
+
 ## [0.6.2](https://github.com/dulait/b1ngo/compare/v0.6.1...v0.6.2) (2026-04-03)
 
 
