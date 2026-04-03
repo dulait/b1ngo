@@ -32,14 +32,12 @@ test.describe('Centralized Error Handling', () => {
     await expectToast(page, /network error/i);
   });
 
-  test('client-side required field validation shows no toast on empty submit', async ({ page }) => {
+  test('client-side required field validation disables submit when name is empty', async ({ page }) => {
     const home = new HomePage(page);
     await home.goto();
 
     await home.selectFirstAvailableOptions();
-    await home.submitCreateRoom({ force: true });
-
-    await expect(page).toHaveURL('/');
+    await expect(home.createRoomSubmit).toHaveAttribute('aria-disabled', 'true');
     await expectNoToast(page);
   });
 

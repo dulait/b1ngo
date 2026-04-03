@@ -73,8 +73,8 @@ export class HomePage {
     await this.sessionTypeSelect.locator('div[role="option"]').first().click();
   }
 
-  async submitCreateRoom(options?: { force?: boolean }): Promise<void> {
-    await this.createRoomSubmit.click({ force: options?.force });
+  async submitCreateRoom(): Promise<void> {
+    await this.createRoomSubmit.click();
   }
 
   async createRoom(hostName: string): Promise<void> {

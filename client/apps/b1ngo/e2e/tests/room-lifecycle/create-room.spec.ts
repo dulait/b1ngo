@@ -129,10 +129,9 @@ test.describe('BNG-001: Create Room', () => {
     await expectToast(page, /something went wrong/i);
   });
 
-  test('ERR-1: rejects empty host display name', async ({ page }) => {
+  test('ERR-1: rejects empty host display name', async () => {
     await home.selectFirstAvailableOptions();
-    await home.submitCreateRoom({ force: true });
-    await expect(page).toHaveURL('/');
+    await expect(home.createRoomSubmit).toHaveAttribute('aria-disabled', 'true');
   });
 
   test('ERR-2: rejects display name exceeding 50 characters', async () => {
