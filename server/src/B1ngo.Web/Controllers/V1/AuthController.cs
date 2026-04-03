@@ -58,7 +58,7 @@ public class AuthController(
         await LinkPlayerTokenIfPresent(user.Id, HttpContext.RequestAborted);
 
         var roles = await userManager.GetRolesAsync(user);
-        return Ok(new AuthResponse(user.Id, user.Email, user.DisplayName, roles.ToArray()));
+        return Ok(new AuthResponse(user.Id, user.Email, user.DisplayName, roles.ToArray(), HasPassword: true));
     }
 
     [HttpPost("login")]
@@ -91,7 +91,7 @@ public class AuthController(
         await LinkPlayerTokenIfPresent(user!.Id, HttpContext.RequestAborted);
 
         var roles = await userManager.GetRolesAsync(user);
-        return Ok(new AuthResponse(user.Id, user.Email!, user.DisplayName, roles.ToArray()));
+        return Ok(new AuthResponse(user.Id, user.Email!, user.DisplayName, roles.ToArray(), HasPassword: true));
     }
 
     [HttpPost("logout")]
@@ -316,7 +316,8 @@ public class AuthController(
         }
 
         var roles = await userManager.GetRolesAsync(user);
-        return Ok(new AuthResponse(user.Id, user.Email!, user.DisplayName, roles.ToArray()));
+        var hasPassword = await userManager.HasPasswordAsync(user);
+        return Ok(new AuthResponse(user.Id, user.Email!, user.DisplayName, roles.ToArray(), hasPassword));
     }
 
     [HttpPost("change-password")]

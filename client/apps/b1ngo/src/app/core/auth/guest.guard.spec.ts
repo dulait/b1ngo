@@ -45,6 +45,7 @@ describe('guestGuard', () => {
       email: 'test@test.com',
       displayName: 'Test',
       roles: [],
+      hasPassword: true,
     });
 
     TestBed.runInInjectionContext(() =>

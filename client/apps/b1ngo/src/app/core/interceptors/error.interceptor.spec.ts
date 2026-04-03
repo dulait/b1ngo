@@ -85,6 +85,7 @@ describe('errorInterceptor', () => {
       email: 'test@test.com',
       displayName: 'Test',
       roles: [],
+      hasPassword: true,
     });
     const warnSpy = vi.spyOn(toastService, 'warning');
     const clearSpy = vi.spyOn(authService, 'clearSession');
@@ -106,6 +107,7 @@ describe('errorInterceptor', () => {
       email: 'test@test.com',
       displayName: 'Test',
       roles: [],
+      hasPassword: true,
     });
     const warnSpy = vi.spyOn(toastService, 'warning');
     const clearSpy = vi.spyOn(authService, 'clearSession');
@@ -129,6 +131,7 @@ describe('errorInterceptor', () => {
       email: 'test@test.com',
       displayName: 'Test',
       roles: [],
+      hasPassword: true,
     });
     const warnSpy = vi.spyOn(toastService, 'warning');
     const clearSpy = vi.spyOn(authService, 'clearSession');

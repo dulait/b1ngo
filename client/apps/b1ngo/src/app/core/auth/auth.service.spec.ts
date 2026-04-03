@@ -34,6 +34,7 @@ describe('AuthService', () => {
       email: 'me@example.com',
       displayName: 'Me',
       roles: ['Admin'],
+      hasPassword: true,
     };
 
     const promise = service.checkAuth();
@@ -137,6 +138,7 @@ describe('AuthService', () => {
       email: 'me@example.com',
       displayName: 'Me',
       roles: [],
+      hasPassword: true,
     });
     await checkPromise;
     expect(service.isAuthenticated()).toBe(true);
@@ -159,6 +161,7 @@ describe('AuthService', () => {
       email: 'me@example.com',
       displayName: 'Me',
       roles: ['Player'],
+      hasPassword: true,
     });
     await promise;
 

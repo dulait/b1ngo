@@ -52,7 +52,7 @@ describe('roomGuard', () => {
   });
 
   it('should allow access when user is authenticated', () => {
-    auth.currentUser.set({ userId: 'u1', email: 'test@example.com', displayName: 'Test', roles: [] });
+    auth.currentUser.set({ userId: 'u1', email: 'test@example.com', displayName: 'Test', roles: [], hasPassword: true });
 
     const result = TestBed.runInInjectionContext(() =>
       roomGuard({} as unknown as ActivatedRouteSnapshot, {} as unknown as RouterStateSnapshot),

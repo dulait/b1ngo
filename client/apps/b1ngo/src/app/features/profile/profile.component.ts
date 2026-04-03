@@ -66,6 +66,7 @@ export class ProfileComponent {
   readonly deletingAccount = signal(false);
 
   readonly email = computed(() => this.auth.currentUser()?.email ?? '');
+  readonly hasPassword = computed(() => this.auth.currentUser()?.hasPassword ?? false);
   readonly avatarColor = computed(() => getAvatarColor(this.displayName.value()));
   readonly avatarInitials = computed(() => getAvatarInitials(this.displayName.value()));
   readonly canDelete = computed(() => this.deleteConfirmEmail() === this.email());
