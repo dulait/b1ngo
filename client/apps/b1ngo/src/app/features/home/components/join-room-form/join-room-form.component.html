@@ -1,9 +1,8 @@
-<bng-card header="Join Room" data-testid="join-room-card">
+<bng-card header="Join Room">
   <div class="space-y-4">
     <div>
       <label for="join-code" class="block text-sm text-text-secondary mb-1.5">Join Code</label>
       <bng-code-input
-        data-testid="join-room-code"
         [length]="6"
         mode="input"
         [error]="codeError()"
@@ -14,7 +13,6 @@
     </div>
 
     <bng-input
-      data-testid="join-room-name"
       label="Your Name"
       placeholder="Enter your display name"
       [value]="displayName()"
@@ -24,7 +22,6 @@
     />
 
     <bng-button
-      data-testid="join-room-submit"
       variant="primary"
       size="lg"
       [fullWidth]="true"

@@ -1,14 +1,12 @@
 <main class="p-4 space-y-4">
   <div class="text-center py-6">
     <p
-      data-testid="results-game-over"
       class="text-[1.5rem] font-bold leading-[1.25] tracking-[-0.01em] text-text-primary mb-2"
     >
       Game Over
     </p>
     @if (currentRank(); as rank) {
       <p
-        data-testid="results-rank"
         class="text-[1.875rem] font-bold leading-[1.2] tracking-[-0.02em] text-success"
       >
         You finished #{{ rank }}!
@@ -16,7 +14,7 @@
     }
   </div>
 
-  <bng-card header="Final Standings" data-testid="results-leaderboard">
+  <bng-card header="Final Standings">
     <bng-leaderboard
       [entries]="store.leaderboardItems()"
       variant="full"
@@ -25,7 +23,7 @@
   </bng-card>
 
   @if (store.currentCard(); as card) {
-    <bng-card header="Your Card" data-testid="results-card">
+    <bng-card header="Your Card">
       <bng-matrix
         [cells]="gridCells()"
         [matrixSize]="store.matrixSize()"
@@ -37,7 +35,6 @@
 
   <div class="space-y-3">
     <bng-button
-      data-testid="results-new-room"
       variant="primary"
       size="lg"
       [fullWidth]="true"
@@ -46,7 +43,6 @@
       New Room
     </bng-button>
     <bng-button
-      data-testid="results-share"
       variant="secondary"
       [fullWidth]="true"
       (clicked)="onShareResult()"

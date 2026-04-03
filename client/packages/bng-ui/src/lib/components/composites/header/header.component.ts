@@ -17,21 +17,19 @@ import { bngIconKebab } from '../../../icons/icons';
   template: `
     <header
       role="banner"
-      data-testid="app-header"
       class="h-14 flex items-center justify-between px-4 bg-bg-surface border-b border-border-default pt-[env(safe-area-inset-top)]"
     >
       <div class="flex items-center">
         @if (homeAriaLabel()) {
           <a
             class="font-mono font-bold text-lg text-accent cursor-pointer"
-            data-testid="app-logo"
             tabindex="0"
             [attr.aria-label]="homeAriaLabel()"
             (click)="onHomeClick($event)"
             (keydown.enter)="onHomeClick($event)"
           >B1NGO</a>
         } @else {
-          <span class="font-mono font-bold text-lg text-accent" data-testid="app-logo">B1NGO</span>
+          <span class="font-mono font-bold text-lg text-accent">B1NGO</span>
         }
       </div>
 

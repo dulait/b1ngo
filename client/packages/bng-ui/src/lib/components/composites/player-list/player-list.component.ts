@@ -15,7 +15,7 @@ import { PlayerChipItem } from '../../../types';
   template: `
     <div role="list" aria-label="Players in this room" class="space-y-2">
       @for (player of sortedPlayers(); track player.id) {
-        <div role="listitem" [attr.data-testid]="'player-chip-' + player.displayName">
+        <div role="listitem">
           <bng-player-chip
             [displayName]="player.displayName"
             [isHost]="player.isHost"

@@ -31,7 +31,7 @@ const VARIANT_STYLES: Record<BadgeVariant, VariantStyle> = {
   selector: 'bng-status-badge',
   standalone: true,
   template: `
-    <div role="status" data-testid="status-badge" [attr.aria-label]="label()" [class]="containerClasses()">
+    <div role="status" [attr.aria-label]="label()" [class]="containerClasses()">
       <span [class]="dotClasses()"></span>
       <span class="text-xs font-semibold" [class]="textColorClass()">
         {{ label() }}

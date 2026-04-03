@@ -1,7 +1,6 @@
-<bng-card header="Create Room" data-testid="create-room-card">
+<bng-card header="Create Room">
   <div class="space-y-4">
     <bng-input
-      data-testid="create-room-name"
       label="Your Name"
       placeholder="Enter your display name"
       [value]="hostDisplayName()"
@@ -11,7 +10,6 @@
     />
 
     <bng-select
-      data-testid="create-room-season"
       label="Season"
       [options]="seasonOptions()"
       [value]="season()"
@@ -19,7 +17,6 @@
     />
 
     <bng-select
-      data-testid="create-room-gp"
       label="Grand Prix"
       [options]="grandPrixOptions()"
       [value]="grandPrixName()"
@@ -29,7 +26,6 @@
     />
 
     <bng-select
-      data-testid="create-room-session"
       label="Session Type"
       [options]="sessionTypeOptions()"
       [value]="sessionType()"
@@ -42,7 +38,6 @@
       <bng-button
         variant="ghost"
         (clicked)="toggleAdvanced()"
-        data-testid="create-room-more-options"
       >
         {{ showAdvanced() ? 'Less options' : 'More options' }}
       </bng-button>
@@ -57,7 +52,6 @@
               class="flex gap-2"
               role="radiogroup"
               aria-labelledby="card-size-label"
-              data-testid="create-room-matrix-sizes"
             >
               @for (size of matrixSizes; track size) {
                 <button
@@ -70,7 +64,6 @@
                   [class.border-border-default]="matrixSize() !== size"
                   [class.bg-bg-surface]="matrixSize() !== size"
                   [class.text-text-secondary]="matrixSize() !== size"
-                  [attr.data-testid]="'matrix-size-' + size"
                   (click)="setMatrixSize(size)"
                 >
                   {{ size }}
@@ -84,7 +77,6 @@
               >Win Patterns</span
             >
             <bng-pill-toggle
-              data-testid="create-room-win-patterns"
               [options]="winningPatterns()"
               ariaLabel="Win patterns"
               (toggled)="onPatternToggled($event)"
@@ -95,7 +87,6 @@
     </div>
 
     <bng-button
-      data-testid="create-room-submit"
       variant="primary"
       size="lg"
       [fullWidth]="true"
