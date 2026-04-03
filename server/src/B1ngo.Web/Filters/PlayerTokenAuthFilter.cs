@@ -32,6 +32,14 @@ internal sealed class PlayerTokenAuthFilter(IPlayerTokenStore playerTokenStore) 
             hadRoomMismatch = true;
         }
 
+        identity ??= await ResolveFromCookie(context);
+
+        if (identity is not null && HasRoomIdMismatch(context, identity))
+        {
+            identity = null;
+            hadRoomMismatch = true;
+        }
+
         identity ??= await ResolveFromAuthenticatedUser(context);
 
         if (identity is null)
@@ -89,6 +97,17 @@ internal sealed class PlayerTokenAuthFilter(IPlayerTokenStore playerTokenStore) 
             !context.HttpContext.Request.Headers.TryGetValue(TokenHeader, out var tokenValue)
             || !Guid.TryParse(tokenValue.FirstOrDefault(), out var token)
         )
+        {
+            return null;
+        }
+
+        return await playerTokenStore.ResolveAsync(token, context.HttpContext.RequestAborted);
+    }
+
+    private async Task<PlayerIdentity?> ResolveFromCookie(ActionExecutingContext context)
+    {
+        var tokenString = context.HttpContext.Request.Cookies[Constants.CookieNames.PlayerToken];
+        if (!Guid.TryParse(tokenString, out var token))
         {
             return null;
         }

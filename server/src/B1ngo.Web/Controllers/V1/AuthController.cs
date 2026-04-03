@@ -103,7 +103,7 @@ public class AuthController(
     public async Task<IActionResult> Logout()
     {
         await signInManager.SignOutAsync();
-        Response.Cookies.Delete("PlayerToken");
+        Response.Cookies.Delete(Constants.CookieNames.PlayerToken);
         return NoContent();
     }
 
@@ -293,7 +293,8 @@ public class AuthController(
     private async Task LinkPlayerTokenIfPresent(Guid userId, CancellationToken ct)
     {
         if (
-            Request.Cookies.TryGetValue("PlayerToken", out var tokenStr) && Guid.TryParse(tokenStr, out var playerToken)
+            Request.Cookies.TryGetValue(Constants.CookieNames.PlayerToken, out var tokenStr)
+            && Guid.TryParse(tokenStr, out var playerToken)
         )
         {
             await playerTokenStore.LinkTokenToUserAsync(playerToken, userId, ct);

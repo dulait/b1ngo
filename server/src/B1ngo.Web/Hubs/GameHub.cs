@@ -25,7 +25,7 @@ public sealed class GameHub(IPlayerTokenStore playerTokenStore) : Hub
 
     private async Task<PlayerIdentity?> ResolveFromCookie(HttpContext? httpContext)
     {
-        var tokenString = httpContext?.Request.Cookies["PlayerToken"];
+        var tokenString = httpContext?.Request.Cookies[Constants.CookieNames.PlayerToken];
         if (!Guid.TryParse(tokenString, out var token))
         {
             return null;

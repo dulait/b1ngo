@@ -38,7 +38,7 @@ public class RoomsController(
     [EndpointName("CreateRoom")]
     [EndpointSummary("Create a new room")]
     [EndpointDescription(
-        "Creates a new bingo room with the caller as host. Returns a join code and sets a PlayerToken cookie."
+        "Creates a new bingo room with the caller as host. Returns a join code and sets an auth cookie."
     )]
     [ProducesResponseType<CreateRoomResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
@@ -48,7 +48,7 @@ public class RoomsController(
     [HttpPost("join")]
     [EndpointName("JoinRoom")]
     [EndpointSummary("Join an existing room")]
-    [EndpointDescription("Joins a room using a join code. Returns player identity and sets a PlayerToken cookie.")]
+    [EndpointDescription("Joins a room using a join code. Returns player identity and sets an auth cookie.")]
     [ProducesResponseType<JoinRoomResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
@@ -60,7 +60,7 @@ public class RoomsController(
     [EndpointName("Reconnect")]
     [EndpointSummary("Reconnect to a room")]
     [EndpointDescription(
-        "Re-establishes a player's session. Anonymous users use the PlayerToken cookie. "
+        "Re-establishes a player's session. Anonymous users authenticate via cookie. "
             + "Registered users can pass a roomId to reconnect to a specific room, or omit it to get all active rooms."
     )]
     [ProducesResponseType<ReconnectResponse>(StatusCodes.Status200OK)]
@@ -75,15 +75,29 @@ public class RoomsController(
             return await ReconnectRegisteredUser(userId.Value, request?.RoomId, ct);
         }
 
+        Guid? token = null;
+
         if (
-            !Request.Headers.TryGetValue("X-Player-Token", out var tokenValue)
-            || !Guid.TryParse(tokenValue.FirstOrDefault(), out var token)
+            Request.Headers.TryGetValue("X-Player-Token", out var tokenValue)
+            && Guid.TryParse(tokenValue.FirstOrDefault(), out var headerToken)
         )
+        {
+            token = headerToken;
+        }
+        else if (
+            Request.Cookies.TryGetValue(Constants.CookieNames.PlayerToken, out var cookieValue)
+            && Guid.TryParse(cookieValue, out var cookieToken)
+        )
+        {
+            token = cookieToken;
+        }
+
+        if (token is null)
         {
             return Unauthorized(new ErrorResponse("Unauthorized", "No active session found."));
         }
 
-        var anonymousIdentity = await playerTokenStore.ResolveAsync(token, ct);
+        var anonymousIdentity = await playerTokenStore.ResolveAsync(token.Value, ct);
         if (anonymousIdentity is null)
         {
             return Unauthorized(new ErrorResponse("Unauthorized", "No active session found."));
@@ -224,7 +238,7 @@ public class RoomsController(
     private void SetPlayerTokenCookie(Guid playerToken)
     {
         Response.Cookies.Append(
-            "PlayerToken",
+            Constants.CookieNames.PlayerToken,
             playerToken.ToString(),
             new CookieOptions
             {
