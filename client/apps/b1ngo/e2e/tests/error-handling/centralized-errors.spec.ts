@@ -37,7 +37,7 @@ test.describe('Centralized Error Handling', () => {
     await home.goto();
 
     await home.selectFirstAvailableOptions();
-    await home.submitCreateRoom();
+    await home.submitCreateRoom({ force: true });
 
     await expect(page).toHaveURL('/');
     await expectNoToast(page);

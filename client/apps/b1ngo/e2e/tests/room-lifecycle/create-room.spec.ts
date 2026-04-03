@@ -131,7 +131,7 @@ test.describe('BNG-001: Create Room', () => {
 
   test('ERR-1: rejects empty host display name', async ({ page }) => {
     await home.selectFirstAvailableOptions();
-    await home.submitCreateRoom();
+    await home.submitCreateRoom({ force: true });
     await expect(page).toHaveURL('/');
   });
 
