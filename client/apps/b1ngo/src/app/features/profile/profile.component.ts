@@ -6,6 +6,7 @@ import {
   computed,
   effect,
 } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import {
   BngCardComponent,
@@ -89,9 +90,10 @@ export class ProfileComponent {
 
     this.savingProfile.set(true);
     try {
-      // Backend endpoint does not exist yet; simulate success
-      await new Promise((r) => setTimeout(r, 500));
+      await this.auth.updateProfile(name);
       this.toast.success('Profile updated.');
+    } catch {
+      // Error interceptor handles toast
     } finally {
       this.savingProfile.set(false);
     }
@@ -109,12 +111,16 @@ export class ProfileComponent {
 
     this.savingPassword.set(true);
     try {
-      // Backend endpoint does not exist yet; simulate success
-      await new Promise((r) => setTimeout(r, 500));
+      await this.auth.changePassword(this.currentPassword.value(), this.newPassword.value());
       this.currentPassword.reset();
       this.newPassword.reset();
       this.confirmPassword.reset();
       this.toast.success('Password updated.');
+    } catch (err) {
+      if (err instanceof HttpErrorResponse && err.error?.code === 'PasswordMismatch') {
+        this.currentPassword.error.set('Current password is incorrect.');
+      }
+      // Other errors handled by error interceptor
     } finally {
       this.savingPassword.set(false);
     }
@@ -141,11 +147,12 @@ export class ProfileComponent {
 
     this.deletingAccount.set(true);
     try {
-      // Backend endpoint does not exist yet; simulate success
-      await new Promise((r) => setTimeout(r, 500));
+      await this.auth.deleteAccount(this.deleteConfirmEmail());
       this.deleteConfirmOpen.set(false);
       this.toast.success('Account deleted.');
       this.router.navigate(['/']);
+    } catch {
+      // Error interceptor handles toast; modal stays open
     } finally {
       this.deletingAccount.set(false);
     }
