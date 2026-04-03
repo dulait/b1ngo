@@ -104,23 +104,33 @@ describe('BngHeaderComponent', () => {
     expect(subbar).toBeFalsy();
   });
 
-  it('should not show home button when homeAriaLabel is null', () => {
-    const btn = fixture.nativeElement.querySelector('[aria-label="Back to dashboard"]');
-    expect(btn).toBeFalsy();
+  it('should render wordmark as span when homeAriaLabel is null', () => {
+    const logo = fixture.nativeElement.querySelector('[data-testid="app-logo"]');
+    expect(logo.tagName).toBe('SPAN');
   });
 
-  it('should show home button when homeAriaLabel is set', () => {
+  it('should render wordmark as anchor when homeAriaLabel is set', () => {
     host.homeAriaLabel.set('Back to dashboard');
     fixture.detectChanges();
-    const btn = fixture.nativeElement.querySelector('[aria-label="Back to dashboard"]');
-    expect(btn).toBeTruthy();
+    const logo = fixture.nativeElement.querySelector('[data-testid="app-logo"]');
+    expect(logo.tagName).toBe('A');
+    expect(logo.getAttribute('aria-label')).toBe('Back to dashboard');
   });
 
-  it('should emit homeClicked when home button is clicked', () => {
+  it('should emit homeClicked when wordmark link is clicked', () => {
     host.homeAriaLabel.set('Back to home');
     fixture.detectChanges();
-    const btn: HTMLElement = fixture.nativeElement.querySelector('[aria-label="Back to home"]');
-    btn.click();
+    const link: HTMLElement = fixture.nativeElement.querySelector('[data-testid="app-logo"]');
+    link.click();
     expect(host.onHomeClicked).toHaveBeenCalledOnce();
+  });
+
+  it('should prevent default on wordmark link click', () => {
+    host.homeAriaLabel.set('Back to home');
+    fixture.detectChanges();
+    const link: HTMLElement = fixture.nativeElement.querySelector('[data-testid="app-logo"]');
+    const event = new MouseEvent('click', { bubbles: true, cancelable: true });
+    link.dispatchEvent(event);
+    expect(event.defaultPrevented).toBe(true);
   });
 });

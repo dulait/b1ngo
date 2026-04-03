@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { BngIconButtonComponent } from '../../primitives/icon-button/icon-button.component';
 import { BngMenuComponent } from '../menu/menu.component';
-import { bngIconChevronLeft, bngIconKebab } from '../../../icons/icons';
+import { bngIconKebab } from '../../../icons/icons';
 
 @Component({
   selector: 'bng-header',
@@ -20,16 +20,19 @@ import { bngIconChevronLeft, bngIconKebab } from '../../../icons/icons';
       data-testid="app-header"
       class="h-14 flex items-center justify-between px-4 bg-bg-surface border-b border-border-default pt-[env(safe-area-inset-top)]"
     >
-      <div class="flex items-center gap-2">
+      <div class="flex items-center">
         @if (homeAriaLabel()) {
-          <bng-icon-button
-            [icon]="chevronLeftIcon"
-            [ariaLabel]="homeAriaLabel()!"
-            size="sm"
-            (click)="homeClicked.emit()"
-          />
+          <a
+            class="font-mono font-bold text-lg text-accent cursor-pointer"
+            data-testid="app-logo"
+            tabindex="0"
+            [attr.aria-label]="homeAriaLabel()"
+            (click)="onHomeClick($event)"
+            (keydown.enter)="onHomeClick($event)"
+          >B1NGO</a>
+        } @else {
+          <span class="font-mono font-bold text-lg text-accent" data-testid="app-logo">B1NGO</span>
         }
-        <span class="font-mono font-bold text-lg text-accent" data-testid="app-logo">B1NGO</span>
       </div>
 
       <div class="relative">
@@ -62,7 +65,11 @@ export class BngHeaderComponent {
   homeAriaLabel = input<string | null>(null);
   homeClicked = output<void>();
 
-  protected readonly chevronLeftIcon = bngIconChevronLeft;
   protected readonly kebabIcon = bngIconKebab;
   protected menuOpen = signal(false);
+
+  protected onHomeClick(event: Event): void {
+    event.preventDefault();
+    this.homeClicked.emit();
+  }
 }
