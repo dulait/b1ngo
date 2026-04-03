@@ -1,3 +1,10 @@
+## [0.6.2](https://github.com/dulait/b1ngo/compare/v0.6.1...v0.6.2) (2026-04-03)
+
+
+### Bug Fixes
+
+* do not remove session cookie after log out ([0304eee](https://github.com/dulait/b1ngo/commit/0304eee507823c6183cf111f7d4a56918663e08f))
+
 ## [0.6.1](https://github.com/dulait/b1ngo/compare/v0.6.0...v0.6.1) (2026-04-02)
 
 
