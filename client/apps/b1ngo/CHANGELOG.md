@@ -1,3 +1,10 @@
+## [0.7.1](https://github.com/dulait/b1ngo/compare/v0.7.0...v0.7.1) (2026-04-03)
+
+
+### Bug Fixes
+
+* remove guaranteed and subjective events from bingo pools ([#34](https://github.com/dulait/b1ngo/issues/34)) ([4ea822d](https://github.com/dulait/b1ngo/commit/4ea822d4446549e695c74c779f0ec17abf128c9c))
+
 # [0.7.0](https://github.com/dulait/b1ngo/compare/v0.6.2...v0.7.0) (2026-04-03)
 
 
