@@ -57,10 +57,9 @@ internal sealed class OperationTransformer : IOpenApiOperationTransformer
     {
         op.Description =
             "Creates a new bingo room with the caller as host. The room is tied to a specific F1 session "
-            + "(season, Grand Prix, session type). The host receives a join code to share with other players "
-            + "and a player token for session identity. A bingo card is automatically generated and assigned to "
-            + "the host from the predefined event pool for the selected session type. The server also sets a "
-            + "PlayerToken HttpOnly cookie for SignalR connectivity.";
+            + "(season, Grand Prix, session type). The host receives a join code to share with other players. "
+            + "A bingo card is automatically generated and assigned to the host from the predefined event pool "
+            + "for the selected session type. The server sets an HttpOnly auth cookie for subsequent requests.";
 
         op.Security = [];
 
@@ -86,7 +85,6 @@ internal sealed class OperationTransformer : IOpenApiOperationTransformer
                 ["roomId"] = "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
                 ["joinCode"] = "BHR26R",
                 ["playerId"] = "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-                ["playerToken"] = "550e8400-e29b-41d4-a716-446655440000",
             }
         );
 
@@ -110,10 +108,9 @@ internal sealed class OperationTransformer : IOpenApiOperationTransformer
     {
         op.Description =
             "Joins a room using a join code. The room must be in Lobby status. The player's display name "
-            + "must be unique within the room. Returns player identity and a player token for session "
-            + "authentication. A bingo card is automatically generated and assigned from the predefined event "
-            + "pool for the room's session type. The server also sets a PlayerToken HttpOnly cookie for "
-            + "SignalR connectivity.";
+            + "must be unique within the room. Returns player identity. A bingo card is automatically generated "
+            + "and assigned from the predefined event pool for the room's session type. The server sets an "
+            + "HttpOnly auth cookie for subsequent requests.";
 
         op.Security = [];
 
@@ -127,7 +124,6 @@ internal sealed class OperationTransformer : IOpenApiOperationTransformer
             {
                 ["roomId"] = "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
                 ["playerId"] = "c9d0e1f2-a3b4-5678-cdef-901234567890",
-                ["playerToken"] = "661f9511-f3ac-52e5-b827-557766551111",
                 ["displayName"] = "Lewis",
             }
         );
