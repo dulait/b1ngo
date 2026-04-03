@@ -289,6 +289,104 @@ public class AuthController(
         return BadRequest(new ErrorResponse("ResetFailed", "Unable to reset password."));
     }
 
+    [HttpPut("profile")]
+    [RequireXhr]
+    [Authorize]
+    [EndpointName("UpdateProfile")]
+    [EndpointSummary("Update display name")]
+    [ProducesResponseType<AuthResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request)
+    {
+        var user = await userManager.GetUserAsync(User);
+
+        if (user is null)
+        {
+            return Unauthorized();
+        }
+
+        user.DisplayName = request.DisplayName;
+        var result = await userManager.UpdateAsync(user);
+
+        if (!result.Succeeded)
+        {
+            var details = result.Errors.Select(e => e.Description).ToList();
+            return BadRequest(new ErrorResponse("UpdateFailed", string.Join(" ", details), details));
+        }
+
+        var roles = await userManager.GetRolesAsync(user);
+        return Ok(new AuthResponse(user.Id, user.Email!, user.DisplayName, roles.ToArray()));
+    }
+
+    [HttpPost("change-password")]
+    [RequireXhr]
+    [Authorize]
+    [EndpointName("ChangePassword")]
+    [EndpointSummary("Change password for authenticated user")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
+    [EnableRateLimiting("auth")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+    {
+        var user = await userManager.GetUserAsync(User);
+
+        if (user is null)
+        {
+            return Unauthorized();
+        }
+
+        var result = await userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
+
+        if (!result.Succeeded)
+        {
+            if (result.Errors.Any(e => e.Code == "PasswordMismatch"))
+            {
+                return BadRequest(new ErrorResponse("PasswordMismatch", "Current password is incorrect."));
+            }
+
+            var details = result.Errors.Select(e => e.Description).ToList();
+            return BadRequest(new ErrorResponse("PasswordChangeFailed", string.Join(" ", details), details));
+        }
+
+        await signInManager.RefreshSignInAsync(user);
+        return Ok();
+    }
+
+    [HttpDelete("account")]
+    [RequireXhr]
+    [Authorize]
+    [EndpointName("DeleteAccount")]
+    [EndpointSummary("Permanently delete authenticated user account")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
+    [EnableRateLimiting("auth")]
+    public async Task<IActionResult> DeleteAccount([FromBody] DeleteAccountRequest request)
+    {
+        var user = await userManager.GetUserAsync(User);
+
+        if (user is null)
+        {
+            return Unauthorized();
+        }
+
+        if (!string.Equals(request.Email, user.Email, StringComparison.OrdinalIgnoreCase))
+        {
+            return BadRequest(new ErrorResponse("EmailMismatch", "Email does not match."));
+        }
+
+        await signInManager.SignOutAsync();
+
+        var result = await userManager.DeleteAsync(user);
+
+        if (!result.Succeeded)
+        {
+            var details = result.Errors.Select(e => e.Description).ToList();
+            return BadRequest(new ErrorResponse("DeleteFailed", string.Join(" ", details), details));
+        }
+
+        return NoContent();
+    }
+
     private async Task LinkPlayerTokenIfPresent(Guid userId, CancellationToken ct)
     {
         if (
