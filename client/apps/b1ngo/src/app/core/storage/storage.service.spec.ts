@@ -16,7 +16,7 @@ describe('StorageService', () => {
     });
 
     it('should store and retrieve a JSON object', () => {
-      const session = { roomId: 'r1', playerId: 'p1', playerToken: 'tok' };
+      const session = { roomId: 'r1', playerId: 'p1' };
       service.set('bng-session', session);
 
       expect(service.get('bng-session')).toEqual(session);
@@ -43,7 +43,7 @@ describe('StorageService', () => {
 
   describe('remove', () => {
     it('should remove a key from localStorage', () => {
-      service.set('bng-session', { roomId: 'r1', playerId: 'p1', playerToken: 'tok' });
+      service.set('bng-session', { roomId: 'r1', playerId: 'p1' });
       service.remove('bng-session');
 
       expect(service.get('bng-session')).toBeNull();
