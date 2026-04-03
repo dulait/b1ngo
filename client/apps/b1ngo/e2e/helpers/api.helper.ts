@@ -185,7 +185,7 @@ export class ApiHelper {
 
   async reconnect(playerToken: string): Promise<APIResponse> {
     return this.request.post(`${this.baseUrl}/api/v1/rooms/reconnect`, {
-      headers: { 'X-Player-Token': playerToken },
+      headers: { Cookie: `__bng_s=${playerToken}` },
     });
   }
 

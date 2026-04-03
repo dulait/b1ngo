@@ -171,8 +171,10 @@ public abstract class IntegrationTestBase : IAsyncLifetime
 
     protected async Task<HttpResponseMessage> Reconnect(Guid playerToken)
     {
-        using var client = Factory.CreateAuthenticatedClient(playerToken);
-        return await client.PostAsync("/api/v1/rooms/reconnect", null);
+        using var client = Factory.CreateClient();
+        var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/rooms/reconnect");
+        request.Headers.Add("Cookie", $"__bng_s={playerToken}");
+        return await client.SendAsync(request);
     }
 
     // --- Composite helpers ---

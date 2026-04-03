@@ -75,29 +75,15 @@ public class RoomsController(
             return await ReconnectRegisteredUser(userId.Value, request?.RoomId, ct);
         }
 
-        Guid? token = null;
-
         if (
-            Request.Headers.TryGetValue("X-Player-Token", out var tokenValue)
-            && Guid.TryParse(tokenValue.FirstOrDefault(), out var headerToken)
+            !Request.Cookies.TryGetValue(Constants.CookieNames.PlayerToken, out var cookieValue)
+            || !Guid.TryParse(cookieValue, out var token)
         )
-        {
-            token = headerToken;
-        }
-        else if (
-            Request.Cookies.TryGetValue(Constants.CookieNames.PlayerToken, out var cookieValue)
-            && Guid.TryParse(cookieValue, out var cookieToken)
-        )
-        {
-            token = cookieToken;
-        }
-
-        if (token is null)
         {
             return Unauthorized(new ErrorResponse("Unauthorized", "No active session found."));
         }
 
-        var anonymousIdentity = await playerTokenStore.ResolveAsync(token.Value, ct);
+        var anonymousIdentity = await playerTokenStore.ResolveAsync(token, ct);
         if (anonymousIdentity is null)
         {
             return Unauthorized(new ErrorResponse("Unauthorized", "No active session found."));
