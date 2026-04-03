@@ -14,7 +14,6 @@ public sealed class JoinRoomTests(B1ngoApiFactory factory) : IntegrationTestBase
 
         Assert.Equal(room.RoomId, player.RoomId);
         Assert.NotEqual(Guid.Empty, player.PlayerId);
-        Assert.NotEqual(Guid.Empty, player.PlayerToken);
         Assert.Equal("NewPlayer", player.DisplayName);
     }
 

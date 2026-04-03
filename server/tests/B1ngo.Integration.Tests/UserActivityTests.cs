@@ -43,7 +43,7 @@ public class UserActivityTests(B1ngoApiFactory factory) : IntegrationTestBase(fa
         return client;
     }
 
-    private async Task<CreateRoomApiResponse> CreateRoomWithClient(HttpClient client)
+    private async Task<CreateRoomResult> CreateRoomWithClient(HttpClient client)
     {
         var response = await client.PostAsJsonAsync(
             "/api/v1/rooms",
@@ -57,7 +57,9 @@ public class UserActivityTests(B1ngoApiFactory factory) : IntegrationTestBase(fa
             }
         );
         response.EnsureSuccessStatusCode();
-        return (await response.Content.ReadFromJsonAsync<CreateRoomApiResponse>(JsonOptions))!;
+        var body = (await response.Content.ReadFromJsonAsync<CreateRoomApiResponse>(JsonOptions))!;
+        var playerToken = ExtractPlayerTokenFromCookie(response);
+        return new CreateRoomResult(body.RoomId, body.JoinCode, body.PlayerId, playerToken);
     }
 
     private async Task CompleteGameWithWin(Guid roomId, Guid playerId, Guid playerToken)
@@ -302,5 +304,5 @@ public class UserActivityTests(B1ngoApiFactory factory) : IntegrationTestBase(fa
 
     private record RankCountApiDto(int Rank, int Count);
 
-    private record CreateRoomApiResponse(Guid RoomId, string JoinCode, Guid PlayerId, Guid PlayerToken);
+    private record CreateRoomApiResponse(Guid RoomId, string JoinCode, Guid PlayerId);
 }
