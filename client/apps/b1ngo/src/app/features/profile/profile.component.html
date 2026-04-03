@@ -7,7 +7,6 @@
     Back to Home
   </a>
 
-  <!-- Avatar + Identity Header -->
   <div class="flex flex-col items-center space-y-2">
     <div
       class="w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold text-white"
@@ -19,7 +18,6 @@
     <p class="text-sm text-text-secondary">{{ email() }}</p>
   </div>
 
-  <!-- Profile Card -->
   <bng-card header="Profile">
     <form (submit)="$event.preventDefault(); onSaveProfile()" class="space-y-4">
       <bng-input
@@ -29,47 +27,53 @@
         [error]="displayName.error()"
         (valueChange)="displayName.set($event)"
       />
-      <bng-input label="Email" type="email" [value]="email()" hint="Email cannot be changed." />
+      <bng-input
+        label="Email"
+        type="email"
+        [value]="email()"
+        [disabled]="true"
+        hint="Email cannot be changed."
+      />
       <bng-button type="submit" variant="primary" [loading]="savingProfile()" [fullWidth]="true">
         Save Changes
       </bng-button>
     </form>
   </bng-card>
 
-  <!-- Change Password Card -->
-  <bng-card header="Change Password">
-    <form (submit)="$event.preventDefault(); onChangePassword()" class="space-y-4">
-      <bng-input
-        label="Current Password"
-        type="password"
-        autocomplete="current-password"
-        [value]="currentPassword.value()"
-        [error]="currentPassword.error()"
-        (valueChange)="currentPassword.set($event)"
-      />
-      <bng-input
-        label="New Password"
-        type="password"
-        autocomplete="new-password"
-        [value]="newPassword.value()"
-        [error]="newPassword.error()"
-        (valueChange)="newPassword.set($event)"
-      />
-      <bng-input
-        label="Confirm New Password"
-        type="password"
-        autocomplete="new-password"
-        [value]="confirmPassword.value()"
-        [error]="confirmPassword.error()"
-        (valueChange)="confirmPassword.set($event)"
-      />
-      <bng-button type="submit" variant="primary" [loading]="savingPassword()" [fullWidth]="true">
-        Update Password
-      </bng-button>
-    </form>
-  </bng-card>
+  @if (hasPassword()) {
+    <bng-card header="Change Password">
+      <form (submit)="$event.preventDefault(); onChangePassword()" class="space-y-4">
+        <bng-input
+          label="Current Password"
+          type="password"
+          autocomplete="current-password"
+          [value]="currentPassword.value()"
+          [error]="currentPassword.error()"
+          (valueChange)="currentPassword.set($event)"
+        />
+        <bng-input
+          label="New Password"
+          type="password"
+          autocomplete="new-password"
+          [value]="newPassword.value()"
+          [error]="newPassword.error()"
+          (valueChange)="newPassword.set($event)"
+        />
+        <bng-input
+          label="Confirm New Password"
+          type="password"
+          autocomplete="new-password"
+          [value]="confirmPassword.value()"
+          [error]="confirmPassword.error()"
+          (valueChange)="confirmPassword.set($event)"
+        />
+        <bng-button type="submit" variant="primary" [loading]="savingPassword()" [fullWidth]="true">
+          Update Password
+        </bng-button>
+      </form>
+    </bng-card>
+  }
 
-  <!-- Danger Zone Card -->
   <bng-card header="Danger Zone">
     <p class="text-sm text-text-secondary mb-4">
       Permanently delete your account and all associated data. This action cannot be undone.
@@ -80,7 +84,6 @@
   </bng-card>
 </div>
 
-<!-- Delete Confirmation Modal -->
 <bng-modal [open]="deleteConfirmOpen()" maxWidth="sm" (closed)="closeDeleteConfirm()">
   <div modal-header class="p-4 border-b border-border-default">
     <h2 class="text-lg font-semibold text-text-primary">Are you sure?</h2>

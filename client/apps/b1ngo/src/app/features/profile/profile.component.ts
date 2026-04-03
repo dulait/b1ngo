@@ -6,6 +6,7 @@ import {
   computed,
   effect,
 } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import {
   BngCardComponent,
@@ -20,6 +21,7 @@ import {
 } from 'bng-ui';
 import { AuthService } from '@core/auth/auth.service';
 import { formField } from '@core/utils/form-field';
+import { safeAsync } from '@core/utils/safe-async.util';
 import { validatePassword } from '@core/utils/validate-password';
 
 @Component({
@@ -42,7 +44,6 @@ export class ProfileComponent {
 
   protected readonly chevronLeftIcon = bngIconChevronLeft;
 
-  // Profile form
   readonly displayName = formField(this.auth.currentUser()?.displayName ?? '');
 
   constructor() {
@@ -55,23 +56,21 @@ export class ProfileComponent {
   }
   readonly savingProfile = signal(false);
 
-  // Change password form
   readonly currentPassword = formField();
   readonly newPassword = formField();
   readonly confirmPassword = formField();
   readonly savingPassword = signal(false);
 
-  // Danger zone
   readonly deleteConfirmOpen = signal(false);
   readonly deleteConfirmEmail = signal('');
   readonly deletingAccount = signal(false);
 
   readonly email = computed(() => this.auth.currentUser()?.email ?? '');
+  readonly hasPassword = computed(() => this.auth.currentUser()?.hasPassword ?? false);
   readonly avatarColor = computed(() => getAvatarColor(this.displayName.value()));
   readonly avatarInitials = computed(() => getAvatarInitials(this.displayName.value()));
   readonly canDelete = computed(() => this.deleteConfirmEmail() === this.email());
 
-  // Profile
   async onSaveProfile(): Promise<void> {
     if (this.savingProfile()) {
       return;
@@ -88,16 +87,14 @@ export class ProfileComponent {
     }
 
     this.savingProfile.set(true);
-    try {
-      // Backend endpoint does not exist yet; simulate success
-      await new Promise((r) => setTimeout(r, 500));
+    const result = await safeAsync(this.auth.updateProfile(name));
+    this.savingProfile.set(false);
+
+    if (result.ok) {
       this.toast.success('Profile updated.');
-    } finally {
-      this.savingProfile.set(false);
     }
   }
 
-  // Change password
   async onChangePassword(): Promise<void> {
     if (this.savingPassword()) {
       return;
@@ -108,19 +105,24 @@ export class ProfileComponent {
     }
 
     this.savingPassword.set(true);
-    try {
-      // Backend endpoint does not exist yet; simulate success
-      await new Promise((r) => setTimeout(r, 500));
+    const result = await safeAsync(
+      this.auth.changePassword(this.currentPassword.value(), this.newPassword.value()),
+    );
+    this.savingPassword.set(false);
+
+    if (result.ok) {
       this.currentPassword.reset();
       this.newPassword.reset();
       this.confirmPassword.reset();
       this.toast.success('Password updated.');
-    } finally {
-      this.savingPassword.set(false);
+    } else if (
+      result.error instanceof HttpErrorResponse &&
+      result.error.error?.code === 'PasswordMismatch'
+    ) {
+      this.currentPassword.error.set('Current password is incorrect.');
     }
   }
 
-  // Danger zone
   onDeleteConfirmEmailChange(value: string): void {
     this.deleteConfirmEmail.set(value);
   }
@@ -140,14 +142,13 @@ export class ProfileComponent {
     }
 
     this.deletingAccount.set(true);
-    try {
-      // Backend endpoint does not exist yet; simulate success
-      await new Promise((r) => setTimeout(r, 500));
+    const result = await safeAsync(this.auth.deleteAccount(this.deleteConfirmEmail()));
+    this.deletingAccount.set(false);
+
+    if (result.ok) {
       this.deleteConfirmOpen.set(false);
       this.toast.success('Account deleted.');
       this.router.navigate(['/']);
-    } finally {
-      this.deletingAccount.set(false);
     }
   }
 

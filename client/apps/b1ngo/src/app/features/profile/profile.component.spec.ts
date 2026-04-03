@@ -30,6 +30,7 @@ describe('ProfileComponent', () => {
       email: 'test@test.com',
       displayName: 'TestUser',
       roles: [],
+      hasPassword: true,
     });
 
     router = TestBed.inject(Router);
@@ -89,6 +90,27 @@ describe('ProfileComponent', () => {
     fixture.detectChanges();
 
     expect(component.canDelete()).toBe(true);
+  });
+
+  it('hides change password card when user has no password', () => {
+    authService.currentUser.set({
+      userId: 'u1',
+      email: 'test@test.com',
+      displayName: 'TestUser',
+      roles: [],
+      hasPassword: false,
+    });
+    fixture.detectChanges();
+
+    const cards = fixture.nativeElement.querySelectorAll('bng-card');
+    const headers = Array.from<Element>(cards).map((c) => c.getAttribute('header'));
+    expect(headers).not.toContain('Change Password');
+  });
+
+  it('shows change password card when user has a password', () => {
+    const cards = fixture.nativeElement.querySelectorAll('bng-card');
+    const headers = Array.from<Element>(cards).map((c) => c.getAttribute('header'));
+    expect(headers).toContain('Change Password');
   });
 
   it('onDeleteAccount() does nothing when canDelete() is false', async () => {

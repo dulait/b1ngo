@@ -3,6 +3,7 @@ export interface UserInfo {
   email: string;
   displayName: string;
   roles: string[];
+  hasPassword: boolean;
 }
 
 export interface AuthResponse {
@@ -10,4 +11,5 @@ export interface AuthResponse {
   email: string;
   displayName: string;
   roles: string[];
+  hasPassword: boolean;
 }

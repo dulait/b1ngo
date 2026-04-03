@@ -53,12 +53,9 @@ export class AppComponent implements OnInit {
   readonly themeSheetOpen = signal(false);
   readonly showHeader = signal(true);
   readonly isRoomRoute = signal(false);
-  readonly homeAriaLabel = computed(() => {
-    if (!this.isRoomRoute()) {
-      return null;
-    }
-    return this.auth.isAuthenticated() ? 'Back to dashboard' : 'Back to home';
-  });
+  readonly homeAriaLabel = computed(() =>
+    this.auth.isAuthenticated() ? 'Back to dashboard' : 'Back to home',
+  );
 
   ngOnInit(): void {
     this.themeService.initialize();
@@ -93,7 +90,8 @@ export class AppComponent implements OnInit {
   }
 
   onHomeClicked(): void {
-    this.router.navigate(['/'], { state: { fromRoom: true } });
+    const state = this.isRoomRoute() ? { fromRoom: true } : undefined;
+    this.router.navigate(['/'], { state });
   }
 
   navigateTo(path: string): void {

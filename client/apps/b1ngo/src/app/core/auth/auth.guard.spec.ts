@@ -35,6 +35,7 @@ describe('authGuard', () => {
       email: 'test@test.com',
       displayName: 'Test',
       roles: [],
+      hasPassword: true,
     });
 
     const result = TestBed.runInInjectionContext(() =>
