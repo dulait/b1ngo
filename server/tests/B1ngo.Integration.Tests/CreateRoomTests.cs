@@ -14,7 +14,6 @@ public sealed class CreateRoomTests(B1ngoApiFactory factory) : IntegrationTestBa
         Assert.NotEqual(Guid.Empty, room.RoomId);
         Assert.NotEmpty(room.JoinCode);
         Assert.NotEqual(Guid.Empty, room.PlayerId);
-        Assert.NotEqual(Guid.Empty, room.PlayerToken);
     }
 
     [Fact]

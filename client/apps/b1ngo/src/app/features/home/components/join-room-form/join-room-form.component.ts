@@ -20,7 +20,7 @@ export class JoinRoomFormComponent {
   private readonly roomApi = inject(RoomApiService);
   readonly hostElement = inject(ElementRef).nativeElement as HTMLElement;
 
-  success = output<{ roomId: string; playerId: string; playerToken: string }>();
+  success = output<{ roomId: string; playerId: string }>();
 
   readonly joinCode = signal('');
   readonly displayName = signal('');
@@ -65,7 +65,6 @@ export class JoinRoomFormComponent {
       this.success.emit({
         roomId: result.value.roomId,
         playerId: result.value.playerId,
-        playerToken: result.value.playerToken,
       });
     }
     this.loading.set(false);

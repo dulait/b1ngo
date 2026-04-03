@@ -58,7 +58,7 @@ export class ApiHelper {
       throw new Error(`createRoom failed: ${response.status()} ${body}`);
     }
 
-    const playerToken = this.extractPlayerToken(response.headers()['set-cookie']);
+    const playerToken = this.extractPlayerToken(response);
     const body = (await response.json()) as CreateRoomResponse;
     return { ...body, playerToken };
   }
@@ -72,7 +72,7 @@ export class ApiHelper {
       throw new Error(`joinRoom failed: ${response.status()} ${body}`);
     }
 
-    const playerToken = this.extractPlayerToken(response.headers()['set-cookie']);
+    const playerToken = this.extractPlayerToken(response);
     const body = (await response.json()) as JoinRoomResponse;
     return { ...body, playerToken };
   }
@@ -185,7 +185,7 @@ export class ApiHelper {
 
   async reconnect(playerToken: string): Promise<APIResponse> {
     return this.request.post(`${this.baseUrl}/api/v1/rooms/reconnect`, {
-      headers: { 'X-Player-Token': playerToken },
+      headers: { Cookie: `__bng_s=${playerToken}` },
     });
   }
 
@@ -198,14 +198,12 @@ export class ApiHelper {
     }
   }
 
-  private extractPlayerToken(setCookieHeader: string | undefined): string {
-    if (!setCookieHeader) {
-      throw new Error('No Set-Cookie header in response');
+  private extractPlayerToken(response: APIResponse): string {
+    const cookie = response.headersArray()
+      .find(h => h.name.toLowerCase() === 'set-cookie' && h.value.startsWith('__bng_s='));
+    if (!cookie) {
+      throw new Error('No __bng_s cookie in response');
     }
-    const match = setCookieHeader.match(/PlayerToken=([^;]+)/);
-    if (!match) {
-      throw new Error(`Could not extract PlayerToken from: ${setCookieHeader}`);
-    }
-    return match[1];
+    return cookie.value.split('=', 2)[1].split(';')[0];
   }
 }

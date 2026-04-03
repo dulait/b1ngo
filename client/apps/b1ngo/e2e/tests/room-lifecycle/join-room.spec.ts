@@ -23,7 +23,7 @@ test.describe('BNG-002: Join Room', () => {
     await lobby.expectVisible();
   });
 
-  test('AC-2: sets PlayerToken cookie on join', async ({ page, context, api }) => {
+  test('AC-2: sets auth cookie on join', async ({ page, context, api }) => {
     const room = await setupLobbyRoom(api);
     const home = new HomePage(page);
     await home.goto();
@@ -31,9 +31,9 @@ test.describe('BNG-002: Join Room', () => {
     await home.expectNavigatedToRoom();
 
     const cookies = await context.cookies();
-    const playerToken = cookies.find((c) => c.name === 'PlayerToken');
-    expect(playerToken).toBeTruthy();
-    expect(playerToken!.httpOnly).toBe(true);
+    const authCookie = cookies.find((c) => c.name === '__bng_s');
+    expect(authCookie).toBeTruthy();
+    expect(authCookie!.httpOnly).toBe(true);
   });
 
   test('AC-3: stores bng-session in localStorage on join', async ({ page, api }) => {

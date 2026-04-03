@@ -22,10 +22,6 @@ export class SessionService {
     return this.session()?.roomId ?? '';
   }
 
-  getPlayerToken(): string {
-    return this.session()?.playerToken ?? '';
-  }
-
   getGpName(): string {
     return this.session()?.gpName ?? '';
   }
@@ -37,11 +33,10 @@ export class SessionService {
   saveSession(
     roomId: string,
     playerId: string,
-    playerToken: string,
     gpName?: string,
     sessionType?: string,
   ): void {
-    const info: SessionInfo = { roomId, playerId, playerToken };
+    const info: SessionInfo = { roomId, playerId };
     if (gpName) {
       info.gpName = gpName;
     }
@@ -55,11 +50,10 @@ export class SessionService {
   enterRoom(
     roomId: string,
     playerId: string,
-    playerToken: string,
     gpName?: string,
     sessionType?: string,
   ): void {
-    this.saveSession(roomId, playerId, playerToken, gpName, sessionType);
+    this.saveSession(roomId, playerId, gpName, sessionType);
     this.router.navigate(['/room', roomId]);
   }
 

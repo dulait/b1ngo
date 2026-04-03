@@ -84,7 +84,7 @@ export class HistoryComponent implements OnInit {
   }
 
   rejoin(room: ActiveRoomDto): void {
-    this.session.enterRoom(room.roomId, room.playerId, room.playerToken, room.gpName, room.sessionType);
+    this.session.enterRoom(room.roomId, room.playerId, room.gpName, room.sessionType);
   }
 
   readonly ordinal = ordinal;

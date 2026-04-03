@@ -43,10 +43,6 @@ internal sealed class SchemaTransformer : IOpenApiSchemaTransformer
                 "Unique identifier for the host player.",
                 JsonValue.Create("f47ac10b-58cc-4372-a567-0e02b2c3d479")
             ),
-            ["playerToken"] = (
-                "Opaque token for authenticating subsequent requests.",
-                JsonValue.Create("550e8400-e29b-41d4-a716-446655440000")
-            ),
         },
         ["JoinRoomCommand"] = new()
         {
@@ -65,10 +61,6 @@ internal sealed class SchemaTransformer : IOpenApiSchemaTransformer
             ["playerId"] = (
                 "Unique identifier for the new player.",
                 JsonValue.Create("c9d0e1f2-a3b4-5678-cdef-901234567890")
-            ),
-            ["playerToken"] = (
-                "Opaque token for authenticating subsequent requests.",
-                JsonValue.Create("661f9511-f3ac-52e5-b827-557766551111")
             ),
             ["displayName"] = ("The player's confirmed display name.", JsonValue.Create("Lewis")),
         },

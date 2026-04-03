@@ -30,33 +30,30 @@ describe('SessionService', () => {
   });
 
   it('should save and load session', () => {
-    service.saveSession('room-1', 'player-1', 'tok-1');
+    service.saveSession('room-1', 'player-1');
 
     expect(service.hasSession()).toBe(true);
     expect(service.getPlayerId()).toBe('player-1');
     expect(service.getRoomId()).toBe('room-1');
-    expect(service.getPlayerToken()).toBe('tok-1');
     expect(service.session()).toEqual({
       roomId: 'room-1',
       playerId: 'player-1',
-      playerToken: 'tok-1',
     });
   });
 
   it('should persist session to localStorage', () => {
-    service.saveSession('room-1', 'player-1', 'tok-1');
+    service.saveSession('room-1', 'player-1');
 
     const stored = localStorage.getItem('bng-session');
     expect(stored).toBeTruthy();
     expect(JSON.parse(stored!)).toEqual({
       roomId: 'room-1',
       playerId: 'player-1',
-      playerToken: 'tok-1',
     });
   });
 
   it('should clear session', () => {
-    service.saveSession('room-1', 'player-1', 'tok-1');
+    service.saveSession('room-1', 'player-1');
     service.clearSession();
 
     expect(service.hasSession()).toBe(false);
@@ -72,14 +69,14 @@ describe('SessionService', () => {
   });
 
   it('should save gpName and sessionType when provided', () => {
-    service.saveSession('r1', 'p1', 'tok', 'Monaco GP', 'Race');
+    service.saveSession('r1', 'p1', 'Monaco GP', 'Race');
 
     expect(service.getGpName()).toBe('Monaco GP');
     expect(service.getSessionType()).toBe('Race');
   });
 
   it('should omit gpName and sessionType when not provided', () => {
-    service.saveSession('r1', 'p1', 'tok');
+    service.saveSession('r1', 'p1');
 
     expect(service.getGpName()).toBe('');
     expect(service.getSessionType()).toBe('');
@@ -88,7 +85,7 @@ describe('SessionService', () => {
   });
 
   it('should save session and navigate to room on enterRoom', () => {
-    service.enterRoom('r1', 'p1', 'tok', 'Monaco GP', 'Race');
+    service.enterRoom('r1', 'p1', 'Monaco GP', 'Race');
 
     expect(service.hasSession()).toBe(true);
     expect(service.getRoomId()).toBe('r1');

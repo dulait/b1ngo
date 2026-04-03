@@ -29,7 +29,7 @@ describe('RoomApiService', () => {
       grandPrixName: 'Bahrain Grand Prix',
       sessionType: 'Race' as const,
     };
-    const mockResponse = { roomId: 'r1', joinCode: 'ABC123', playerId: 'p1', playerToken: 'tok' };
+    const mockResponse = { roomId: 'r1', joinCode: 'ABC123', playerId: 'p1' };
 
     const promise = service.createRoom(cmd);
     const req = httpMock.expectOne(`${baseUrl}/api/v1/rooms`);
@@ -47,7 +47,6 @@ describe('RoomApiService', () => {
     const mockResponse = {
       roomId: 'r1',
       playerId: 'p2',
-      playerToken: 'tok',
       displayName: 'Charles',
     };
 

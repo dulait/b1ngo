@@ -51,7 +51,8 @@ public abstract class IntegrationTestBase : IAsyncLifetime
         response.EnsureSuccessStatusCode();
 
         var body = await response.Content.ReadFromJsonAsync<CreateRoomApiResponse>(JsonOptions);
-        return new CreateRoomResult(body!.RoomId, body.JoinCode, body.PlayerId, body.PlayerToken);
+        var playerToken = ExtractPlayerTokenFromCookie(response);
+        return new CreateRoomResult(body!.RoomId, body.JoinCode, body.PlayerId, playerToken);
     }
 
     protected async Task<CreateRoomResult> CreateRoomWithPatterns(
@@ -77,7 +78,8 @@ public abstract class IntegrationTestBase : IAsyncLifetime
         response.EnsureSuccessStatusCode();
 
         var body = await response.Content.ReadFromJsonAsync<CreateRoomApiResponse>(JsonOptions);
-        return new CreateRoomResult(body!.RoomId, body.JoinCode, body.PlayerId, body.PlayerToken);
+        var playerToken = ExtractPlayerTokenFromCookie(response);
+        return new CreateRoomResult(body!.RoomId, body.JoinCode, body.PlayerId, playerToken);
     }
 
     protected async Task<HttpResponseMessage> CreateRoomRaw(object payload)
@@ -94,7 +96,8 @@ public abstract class IntegrationTestBase : IAsyncLifetime
         response.EnsureSuccessStatusCode();
 
         var body = await response.Content.ReadFromJsonAsync<JoinRoomApiResponse>(JsonOptions);
-        return new JoinRoomResult(body!.RoomId, body.PlayerId, body.PlayerToken, body.DisplayName);
+        var playerToken = ExtractPlayerTokenFromCookie(response);
+        return new JoinRoomResult(body!.RoomId, body.PlayerId, playerToken, body.DisplayName);
     }
 
     protected async Task<HttpResponseMessage> JoinRoomRaw(object payload)
@@ -168,8 +171,10 @@ public abstract class IntegrationTestBase : IAsyncLifetime
 
     protected async Task<HttpResponseMessage> Reconnect(Guid playerToken)
     {
-        using var client = Factory.CreateAuthenticatedClient(playerToken);
-        return await client.PostAsync("/api/v1/rooms/reconnect", null);
+        using var client = Factory.CreateClient();
+        var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/rooms/reconnect");
+        request.Headers.Add("Cookie", $"__bng_s={playerToken}");
+        return await client.SendAsync(request);
     }
 
     // --- Composite helpers ---
@@ -433,7 +438,21 @@ public abstract class IntegrationTestBase : IAsyncLifetime
 
     // --- Private API response records ---
 
-    private record CreateRoomApiResponse(Guid RoomId, string JoinCode, Guid PlayerId, Guid PlayerToken);
+    private record CreateRoomApiResponse(Guid RoomId, string JoinCode, Guid PlayerId);
 
-    private record JoinRoomApiResponse(Guid RoomId, Guid PlayerId, Guid PlayerToken, string DisplayName);
+    private record JoinRoomApiResponse(Guid RoomId, Guid PlayerId, string DisplayName);
+
+    protected static Guid ExtractPlayerTokenFromCookie(HttpResponseMessage response)
+    {
+        if (
+            response.Headers.TryGetValues("Set-Cookie", out var cookies)
+            && cookies.FirstOrDefault(c => c.StartsWith("__bng_s=", StringComparison.Ordinal)) is { } cookie
+            && Guid.TryParse(cookie.Split('=', 2)[1].Split(';')[0], out var token)
+        )
+        {
+            return token;
+        }
+
+        throw new InvalidOperationException("No __bng_s cookie found in response.");
+    }
 }
