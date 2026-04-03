@@ -44,7 +44,6 @@ export class ProfileComponent {
 
   protected readonly chevronLeftIcon = bngIconChevronLeft;
 
-  // Profile form
   readonly displayName = formField(this.auth.currentUser()?.displayName ?? '');
 
   constructor() {
@@ -57,13 +56,11 @@ export class ProfileComponent {
   }
   readonly savingProfile = signal(false);
 
-  // Change password form
   readonly currentPassword = formField();
   readonly newPassword = formField();
   readonly confirmPassword = formField();
   readonly savingPassword = signal(false);
 
-  // Danger zone
   readonly deleteConfirmOpen = signal(false);
   readonly deleteConfirmEmail = signal('');
   readonly deletingAccount = signal(false);
@@ -73,7 +70,6 @@ export class ProfileComponent {
   readonly avatarInitials = computed(() => getAvatarInitials(this.displayName.value()));
   readonly canDelete = computed(() => this.deleteConfirmEmail() === this.email());
 
-  // Profile
   async onSaveProfile(): Promise<void> {
     if (this.savingProfile()) {
       return;
@@ -98,7 +94,6 @@ export class ProfileComponent {
     }
   }
 
-  // Change password
   async onChangePassword(): Promise<void> {
     if (this.savingPassword()) {
       return;
@@ -127,7 +122,6 @@ export class ProfileComponent {
     }
   }
 
-  // Danger zone
   onDeleteConfirmEmailChange(value: string): void {
     this.deleteConfirmEmail.set(value);
   }
