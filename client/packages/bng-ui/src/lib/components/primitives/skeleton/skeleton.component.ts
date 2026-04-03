@@ -38,7 +38,7 @@ const PLAYER_LIST_ROW_COUNT = 3;
       @case ('matrix') {
         <div
           aria-hidden="true"
-          class="aspect-square grid gap-1"
+          class="aspect-square grid gap-1 w-full max-w-[420px] mx-auto"
           [style.gridTemplateColumns]="'repeat(' + matrixSize() + ', 1fr)'"
         >
           @for (i of matrixCells(); track i) {

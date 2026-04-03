@@ -58,7 +58,7 @@ const COPY_FEEDBACK_DURATION_MS = 2000;
         <div class="flex gap-2 justify-center mb-3">
           @for (char of displayChars(); track $index) {
             <span
-              class="bg-bg-surface-elevated px-2.5 py-2 rounded-md font-mono font-bold text-2xl tracking-[0.15em] text-text-primary"
+              class="w-12 h-14 bg-bg-surface-elevated rounded-md font-mono font-bold text-2xl text-text-primary inline-flex items-center justify-center"
             >
               {{ char }}
             </span>
