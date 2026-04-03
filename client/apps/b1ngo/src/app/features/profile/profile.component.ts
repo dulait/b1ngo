@@ -21,6 +21,7 @@ import {
 } from 'bng-ui';
 import { AuthService } from '@core/auth/auth.service';
 import { formField } from '@core/utils/form-field';
+import { safeAsync } from '@core/utils/safe-async.util';
 import { validatePassword } from '@core/utils/validate-password';
 
 @Component({
@@ -89,13 +90,11 @@ export class ProfileComponent {
     }
 
     this.savingProfile.set(true);
-    try {
-      await this.auth.updateProfile(name);
+    const result = await safeAsync(this.auth.updateProfile(name));
+    this.savingProfile.set(false);
+
+    if (result.ok) {
       this.toast.success('Profile updated.');
-    } catch {
-      // Error interceptor handles toast
-    } finally {
-      this.savingProfile.set(false);
     }
   }
 
@@ -110,19 +109,21 @@ export class ProfileComponent {
     }
 
     this.savingPassword.set(true);
-    try {
-      await this.auth.changePassword(this.currentPassword.value(), this.newPassword.value());
+    const result = await safeAsync(
+      this.auth.changePassword(this.currentPassword.value(), this.newPassword.value()),
+    );
+    this.savingPassword.set(false);
+
+    if (result.ok) {
       this.currentPassword.reset();
       this.newPassword.reset();
       this.confirmPassword.reset();
       this.toast.success('Password updated.');
-    } catch (err) {
-      if (err instanceof HttpErrorResponse && err.error?.code === 'PasswordMismatch') {
-        this.currentPassword.error.set('Current password is incorrect.');
-      }
-      // Other errors handled by error interceptor
-    } finally {
-      this.savingPassword.set(false);
+    } else if (
+      result.error instanceof HttpErrorResponse &&
+      result.error.error?.code === 'PasswordMismatch'
+    ) {
+      this.currentPassword.error.set('Current password is incorrect.');
     }
   }
 
@@ -146,15 +147,13 @@ export class ProfileComponent {
     }
 
     this.deletingAccount.set(true);
-    try {
-      await this.auth.deleteAccount(this.deleteConfirmEmail());
+    const result = await safeAsync(this.auth.deleteAccount(this.deleteConfirmEmail()));
+    this.deletingAccount.set(false);
+
+    if (result.ok) {
       this.deleteConfirmOpen.set(false);
       this.toast.success('Account deleted.');
       this.router.navigate(['/']);
-    } catch {
-      // Error interceptor handles toast; modal stays open
-    } finally {
-      this.deletingAccount.set(false);
     }
   }
 
