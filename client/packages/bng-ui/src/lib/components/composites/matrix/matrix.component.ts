@@ -35,7 +35,6 @@ import { GridCellData, FREE_SPACE_LABEL } from '../../../types';
         <div role="row" class="contents">
           @for (square of row; track colIdx; let colIdx = $index) {
             <bng-square
-              [attr.data-testid]="'square-' + square.row + '-' + square.column"
               [displayText]="square.isFreeSpace ? freeSpaceLabel : square.displayText"
               [isFreeSpace]="square.isFreeSpace"
               [isMarked]="square.isMarked"
