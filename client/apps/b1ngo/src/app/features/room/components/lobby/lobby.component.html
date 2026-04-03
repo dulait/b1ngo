@@ -14,9 +14,7 @@
   </bng-card>
 
   <bng-card [header]="'Players (' + store.players().length + ')'">
-    <bng-player-list
-      [players]="store.playerChipItems()"
-    />
+    <bng-player-list [players]="store.playerChipItems()" />
   </bng-card>
 </main>
 
@@ -40,12 +38,13 @@
   <div class="space-y-4">
     <p class="text-sm text-text-secondary">{{ editingSquareCurrentText() }}</p>
 
-    @if (editingSquareHasEventKey()) {
+    <!-- todo (04.04.2026): uncomment this when we have api marking enabled -->
+    <!-- @if (editingSquareHasEventKey()) {
       <p class="text-xs text-warning">
         This square is linked to an auto-event. Editing will make it a custom square that won't be
         auto-marked.
       </p>
-    }
+    } -->
 
     <bng-input
       label="New text"
@@ -56,11 +55,7 @@
     />
 
     <div class="flex gap-3">
-      <bng-button
-        variant="secondary"
-        [fullWidth]="true"
-        (clicked)="onEditSheetClosed()"
-      >
+      <bng-button variant="secondary" [fullWidth]="true" (clicked)="onEditSheetClosed()">
         Cancel
       </bng-button>
       <bng-button
