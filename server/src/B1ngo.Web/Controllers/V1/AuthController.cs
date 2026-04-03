@@ -303,7 +303,7 @@ public class AuthController(
 
         if (user is null)
         {
-            return Unauthorized();
+            return Unauthorized(new ErrorResponse("SessionExpired", "Your session has expired. Please sign in again."));
         }
 
         user.DisplayName = request.DisplayName;
@@ -334,7 +334,7 @@ public class AuthController(
 
         if (user is null)
         {
-            return Unauthorized();
+            return Unauthorized(new ErrorResponse("SessionExpired", "Your session has expired. Please sign in again."));
         }
 
         var result = await userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
@@ -368,7 +368,7 @@ public class AuthController(
 
         if (user is null)
         {
-            return Unauthorized();
+            return Unauthorized(new ErrorResponse("SessionExpired", "Your session has expired. Please sign in again."));
         }
 
         if (!string.Equals(request.Email, user.Email, StringComparison.OrdinalIgnoreCase))
