@@ -46,7 +46,6 @@ export class HomeComponent implements OnInit {
       this.session.enterRoom(
         result.value.roomId,
         result.value.playerId,
-        this.session.getPlayerToken(),
       );
     } else {
       this.showBanner.set(true);
@@ -65,15 +64,14 @@ export class HomeComponent implements OnInit {
   onRoomCreated(event: {
     roomId: string;
     playerId: string;
-    playerToken: string;
     gpName?: string;
     sessionType?: string;
   }): void {
-    this.session.enterRoom(event.roomId, event.playerId, event.playerToken, event.gpName, event.sessionType);
+    this.session.enterRoom(event.roomId, event.playerId, event.gpName, event.sessionType);
   }
 
-  onRoomJoined(event: { roomId: string; playerId: string; playerToken: string }): void {
-    this.session.enterRoom(event.roomId, event.playerId, event.playerToken);
+  onRoomJoined(event: { roomId: string; playerId: string }): void {
+    this.session.enterRoom(event.roomId, event.playerId);
   }
 
   private async handleOAuthCallback(): Promise<void> {

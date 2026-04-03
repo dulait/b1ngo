@@ -91,14 +91,14 @@ export class DashboardComponent implements OnInit {
   readonly formatWinRate = formatWinRate;
 
   rejoin(room: DashboardResponse['activeRooms'][number]): void {
-    this.session.enterRoom(room.roomId, room.playerId, room.playerToken, room.gpName, room.sessionType);
+    this.session.enterRoom(room.roomId, room.playerId, room.gpName, room.sessionType);
   }
 
-  onRoomCreated(event: { roomId: string; playerId: string; playerToken: string }): void {
-    this.session.enterRoom(event.roomId, event.playerId, event.playerToken);
+  onRoomCreated(event: { roomId: string; playerId: string }): void {
+    this.session.enterRoom(event.roomId, event.playerId);
   }
 
-  onRoomJoined(event: { roomId: string; playerId: string; playerToken: string }): void {
-    this.session.enterRoom(event.roomId, event.playerId, event.playerToken);
+  onRoomJoined(event: { roomId: string; playerId: string }): void {
+    this.session.enterRoom(event.roomId, event.playerId);
   }
 }

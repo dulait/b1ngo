@@ -60,7 +60,6 @@ describe('JoinRoomFormComponent', () => {
     const joinSpy = vi.spyOn(roomApi, 'joinRoom').mockResolvedValue({
       roomId: 'r1',
       playerId: 'p2',
-      playerToken: 'tok',
       displayName: 'Max',
     });
 
@@ -78,7 +77,6 @@ describe('JoinRoomFormComponent', () => {
     vi.spyOn(roomApi, 'joinRoom').mockResolvedValue({
       roomId: 'r1',
       playerId: 'p2',
-      playerToken: 'tok',
       displayName: 'Max',
     });
 
@@ -89,7 +87,7 @@ describe('JoinRoomFormComponent', () => {
     component.onNameChange('Max');
     await component.onSubmit();
 
-    expect(successSpy).toHaveBeenCalledWith({ roomId: 'r1', playerId: 'p2', playerToken: 'tok' });
+    expect(successSpy).toHaveBeenCalledWith({ roomId: 'r1', playerId: 'p2' });
   });
 
   it('should set and reset loading state', async () => {
@@ -108,7 +106,6 @@ describe('JoinRoomFormComponent', () => {
     resolvePromise!({
       roomId: 'r1',
       playerId: 'p2',
-      playerToken: 'tok',
       displayName: 'Max',
     });
     await submitPromise;

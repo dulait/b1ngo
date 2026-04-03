@@ -39,7 +39,6 @@ export class CreateRoomFormComponent {
   success = output<{
     roomId: string;
     playerId: string;
-    playerToken: string;
     gpName?: string;
     sessionType?: string;
   }>();
@@ -160,7 +159,6 @@ export class CreateRoomFormComponent {
       this.success.emit({
         roomId: result.value.roomId,
         playerId: result.value.playerId,
-        playerToken: result.value.playerToken,
         gpName,
         sessionType,
       });

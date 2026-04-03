@@ -63,7 +63,7 @@ describe('HomeComponent', () => {
   });
 
   it('should attempt reconnect when session exists', async () => {
-    sessionService.saveSession('r1', 'p1', 'tok');
+    sessionService.saveSession('r1', 'p1');
     vi.spyOn(roomApi, 'reconnect').mockResolvedValue({
       roomId: 'r1',
       playerId: 'p1',
@@ -76,7 +76,7 @@ describe('HomeComponent', () => {
   });
 
   it('should keep session on failed reconnect', async () => {
-    sessionService.saveSession('r1', 'p1', 'tok');
+    sessionService.saveSession('r1', 'p1');
     vi.spyOn(roomApi, 'reconnect').mockRejectedValue(new Error('expired'));
 
     await component.ngOnInit();
@@ -85,7 +85,7 @@ describe('HomeComponent', () => {
   });
 
   it('should navigate to room on create success', () => {
-    component.onRoomCreated({ roomId: 'r2', playerId: 'p2', playerToken: 'tok' });
+    component.onRoomCreated({ roomId: 'r2', playerId: 'p2' });
 
     expect(sessionService.hasSession()).toBe(true);
     expect(sessionService.getRoomId()).toBe('r2');
@@ -93,7 +93,7 @@ describe('HomeComponent', () => {
   });
 
   it('should not show banner on create success', () => {
-    component.onRoomCreated({ roomId: 'r2', playerId: 'p2', playerToken: 'tok' });
+    component.onRoomCreated({ roomId: 'r2', playerId: 'p2' });
 
     expect(component.showBanner()).toBe(false);
   });
@@ -102,7 +102,6 @@ describe('HomeComponent', () => {
     component.onRoomCreated({
       roomId: 'r2',
       playerId: 'p2',
-      playerToken: 'tok',
       gpName: 'Monaco GP',
       sessionType: 'Race',
     });
@@ -112,7 +111,7 @@ describe('HomeComponent', () => {
   });
 
   it('should navigate to room on join success', () => {
-    component.onRoomJoined({ roomId: 'r3', playerId: 'p3', playerToken: 'tok' });
+    component.onRoomJoined({ roomId: 'r3', playerId: 'p3' });
 
     expect(sessionService.hasSession()).toBe(true);
     expect(sessionService.getPlayerId()).toBe('p3');
@@ -121,7 +120,7 @@ describe('HomeComponent', () => {
 
   describe('rejoin banner', () => {
     it('should show banner after failed reconnect', async () => {
-      sessionService.saveSession('r1', 'p1', 'tok');
+      sessionService.saveSession('r1', 'p1');
       vi.spyOn(roomApi, 'reconnect').mockRejectedValue(new Error('expired'));
 
       await component.ngOnInit();
@@ -130,7 +129,7 @@ describe('HomeComponent', () => {
     });
 
     it('should show banner when arriving from room', async () => {
-      sessionService.saveSession('r1', 'p1', 'tok');
+      sessionService.saveSession('r1', 'p1');
       Object.defineProperty(history, 'state', { value: { fromRoom: true }, writable: true });
 
       await component.ngOnInit();
@@ -145,12 +144,12 @@ describe('HomeComponent', () => {
     });
 
     it('should not show banner before reconnect completes', () => {
-      sessionService.saveSession('r1', 'p1', 'tok');
+      sessionService.saveSession('r1', 'p1');
       expect(component.showBanner()).toBe(false);
     });
 
     it('should hide banner on dismiss without clearing session', async () => {
-      sessionService.saveSession('r1', 'p1', 'tok');
+      sessionService.saveSession('r1', 'p1');
       vi.spyOn(roomApi, 'reconnect').mockRejectedValue(new Error('expired'));
       await component.ngOnInit();
 
@@ -162,7 +161,7 @@ describe('HomeComponent', () => {
     });
 
     it('should navigate to room on rejoin', () => {
-      sessionService.saveSession('r1', 'p1', 'tok');
+      sessionService.saveSession('r1', 'p1');
 
       component.onRejoin();
 

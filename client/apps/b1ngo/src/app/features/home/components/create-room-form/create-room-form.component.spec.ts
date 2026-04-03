@@ -59,7 +59,6 @@ describe('CreateRoomFormComponent', () => {
       roomId: 'r1',
       joinCode: 'ABC123',
       playerId: 'p1',
-      playerToken: 'tok',
     });
 
     component.onNameChange('Max');
@@ -83,7 +82,6 @@ describe('CreateRoomFormComponent', () => {
       roomId: 'r1',
       joinCode: 'ABC123',
       playerId: 'p1',
-      playerToken: 'tok',
     });
 
     const successSpy = vi.fn();
@@ -95,7 +93,6 @@ describe('CreateRoomFormComponent', () => {
     expect(successSpy).toHaveBeenCalledWith({
       roomId: 'r1',
       playerId: 'p1',
-      playerToken: 'tok',
       gpName: '',
       sessionType: '',
     });
@@ -106,7 +103,6 @@ describe('CreateRoomFormComponent', () => {
       roomId: 'r1',
       joinCode: 'ABC123',
       playerId: 'p1',
-      playerToken: 'tok',
     });
 
     const successSpy = vi.fn();
@@ -138,7 +134,6 @@ describe('CreateRoomFormComponent', () => {
       roomId: 'r1',
       joinCode: 'ABC123',
       playerId: 'p1',
-      playerToken: 'tok',
     });
     await submitPromise;
     expect(component.loading()).toBe(false);
