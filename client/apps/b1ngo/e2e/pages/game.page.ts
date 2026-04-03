@@ -14,21 +14,21 @@ export class GamePage {
   constructor(page: Page) {
     this.page = page;
     this.matrix = page.locator('bng-matrix');
-    this.leaderboard = page.getByTestId('game-leaderboard');
+    this.leaderboard = page.locator('bng-card').filter({ hasText: 'Winners' });
     this.leaderboardEmpty = page.locator('bng-leaderboard p');
-    this.playersCollapsible = page.getByTestId('game-players');
-    this.endGameButton = page.getByTestId('game-end-game');
+    this.playersCollapsible = page.locator('bng-collapsible').filter({ hasText: 'Players' });
+    this.endGameButton = page.getByRole('button', { name: 'End Game' }).first();
     this.endGameSheet = page.getByRole('dialog', { name: /end game/i });
-    this.endGameConfirm = page.getByTestId('end-game-confirm');
-    this.endGameCancel = page.getByTestId('end-game-cancel');
+    this.endGameConfirm = this.endGameSheet.getByRole('button', { name: 'End Game' });
+    this.endGameCancel = this.endGameSheet.getByRole('button', { name: 'Cancel' });
   }
 
   getSquare(row: number, col: number): Locator {
-    return this.page.getByTestId(`square-${row}-${col}`);
+    return this.matrix.locator('[role="row"]').nth(row).locator('bng-square').nth(col);
   }
 
   getLeaderboardEntry(rank: number): Locator {
-    return this.page.getByTestId(`leaderboard-entry-${rank}`);
+    return this.leaderboard.getByRole('listitem').nth(rank - 1);
   }
 
   async clickSquare(row: number, col: number): Promise<void> {

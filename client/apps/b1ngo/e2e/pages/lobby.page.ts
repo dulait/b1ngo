@@ -14,23 +14,26 @@ export class LobbyPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.joinCodeDisplay = page.getByTestId('lobby-join-code');
-    this.cardSection = page.getByTestId('lobby-card');
+    this.joinCodeDisplay = page.locator('bng-code-input');
+    this.cardSection = page.locator('bng-card').filter({ hasText: 'Your Card' });
     this.matrix = page.locator('bng-matrix');
-    this.playerList = page.getByTestId('lobby-player-list');
-    this.startGameButton = page.getByTestId('lobby-start-game');
+    this.playerList = page.locator('bng-card').filter({ hasText: /Players/ });
+    this.startGameButton = page.getByRole('button', { name: 'Start Game' });
     this.editSheetTitle = page.getByRole('dialog', { name: 'Edit Square' });
-    this.editSquareInput = page.getByTestId('edit-square-input');
-    this.editSaveButton = page.getByTestId('edit-square-save');
-    this.editCancelButton = page.getByTestId('edit-square-cancel');
+    this.editSquareInput = this.editSheetTitle.locator('bng-input', { has: page.getByLabel('New text') });
+    this.editSaveButton = this.editSheetTitle.getByRole('button', { name: 'Save' });
+    this.editCancelButton = this.editSheetTitle.getByRole('button', { name: 'Cancel' });
   }
 
   getSquare(row: number, col: number): Locator {
-    return this.page.getByTestId(`square-${row}-${col}`);
+    return this.matrix.locator('[role="row"]').nth(row).locator('bng-square').nth(col);
   }
 
   getPlayerChip(displayName: string): Locator {
-    return this.page.getByTestId(`player-chip-${displayName}`);
+    return this.playerList
+      .getByRole('list', { name: /players/i })
+      .getByRole('listitem')
+      .filter({ hasText: displayName });
   }
 
   async clickSquare(row: number, col: number): Promise<void> {

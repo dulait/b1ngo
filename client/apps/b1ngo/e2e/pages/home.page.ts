@@ -18,19 +18,19 @@ export class HomePage {
 
   constructor(page: Page) {
     this.page = page;
-    this.createRoomCard = page.getByTestId('create-room-card');
-    this.hostNameInput = page.getByTestId('create-room-name');
-    this.seasonSelect = page.getByTestId('create-room-season');
-    this.grandPrixSelect = page.getByTestId('create-room-gp');
-    this.sessionTypeSelect = page.getByTestId('create-room-session');
-    this.moreOptionsButton = page.getByTestId('create-room-more-options');
-    this.createRoomSubmit = page.getByTestId('create-room-submit');
-    this.matrixSizeButtons = page.getByTestId('create-room-matrix-sizes');
-    this.winPatternToggles = page.getByTestId('create-room-win-patterns');
-    this.joinRoomCard = page.getByTestId('join-room-card');
-    this.joinCodeInput = page.getByTestId('join-room-code');
-    this.joinNameInput = page.getByTestId('join-room-name');
-    this.joinRoomSubmit = page.getByTestId('join-room-submit');
+    this.createRoomCard = page.locator('bng-card').filter({ hasText: 'Create Room' });
+    this.hostNameInput = this.createRoomCard.locator('bng-input', { has: page.getByLabel('Your Name') });
+    this.seasonSelect = this.createRoomCard.locator('bng-select', { has: page.getByText('Season') });
+    this.grandPrixSelect = this.createRoomCard.locator('bng-select', { has: page.getByText('Grand Prix') });
+    this.sessionTypeSelect = this.createRoomCard.locator('bng-select', { has: page.getByText('Session Type') });
+    this.moreOptionsButton = this.createRoomCard.getByRole('button', { name: /more options|less options/i });
+    this.createRoomSubmit = this.createRoomCard.getByRole('button', { name: 'Create Room' });
+    this.matrixSizeButtons = page.getByRole('radiogroup', { name: /card size/i });
+    this.winPatternToggles = this.createRoomCard.locator('bng-pill-toggle');
+    this.joinRoomCard = page.locator('bng-card').filter({ hasText: 'Join Room' });
+    this.joinCodeInput = this.joinRoomCard.locator('bng-code-input');
+    this.joinNameInput = this.joinRoomCard.locator('bng-input', { has: page.getByLabel('Your Name') });
+    this.joinRoomSubmit = this.joinRoomCard.getByRole('button', { name: 'Join Room' });
   }
 
   async goto(): Promise<void> {

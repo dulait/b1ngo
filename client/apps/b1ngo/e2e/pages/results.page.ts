@@ -13,22 +13,22 @@ export class ResultsPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.gameOverHeading = page.getByTestId('results-game-over');
-    this.rankDisplay = page.getByTestId('results-rank');
-    this.leaderboard = page.getByTestId('results-leaderboard');
+    this.gameOverHeading = page.getByText('Game Over');
+    this.rankDisplay = page.getByText(/You finished/);
+    this.leaderboard = page.locator('bng-card').filter({ hasText: 'Final Standings' });
     this.leaderboardEmpty = page.locator('bng-leaderboard p').filter({ hasText: 'No winners.' });
-    this.cardSection = page.getByTestId('results-card');
+    this.cardSection = page.locator('bng-card').filter({ hasText: 'Your Card' });
     this.matrix = page.locator('bng-matrix');
-    this.newRoomButton = page.getByTestId('results-new-room');
-    this.shareResultButton = page.getByTestId('results-share');
+    this.newRoomButton = page.getByRole('button', { name: 'New Room' });
+    this.shareResultButton = page.getByRole('button', { name: 'Share Result' });
   }
 
   getLeaderboardEntry(rank: number): Locator {
-    return this.page.getByTestId(`leaderboard-entry-${rank}`);
+    return this.leaderboard.getByRole('listitem').nth(rank - 1);
   }
 
   getSquare(row: number, col: number): Locator {
-    return this.page.getByTestId(`square-${row}-${col}`);
+    return this.matrix.locator('[role="row"]').nth(row).locator('bng-square').nth(col);
   }
 
   async clickNewRoom(): Promise<void> {
