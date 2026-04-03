@@ -62,6 +62,29 @@ export class AuthService {
     );
   }
 
+  async updateProfile(displayName: string): Promise<void> {
+    const res = await firstValueFrom(
+      this.http.put<AuthResponse>(`${this.baseUrl}/api/v1/auth/profile`, { displayName }),
+    );
+    this.currentUser.set(res);
+  }
+
+  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    await firstValueFrom(
+      this.http.post(`${this.baseUrl}/api/v1/auth/change-password`, {
+        currentPassword,
+        newPassword,
+      }),
+    );
+  }
+
+  async deleteAccount(email: string): Promise<void> {
+    await firstValueFrom(
+      this.http.delete(`${this.baseUrl}/api/v1/auth/account`, { body: { email } }),
+    );
+    this.currentUser.set(null);
+  }
+
   externalLogin(provider: 'Google' | 'Microsoft'): void {
     window.location.href = `${this.baseUrl}/api/v1/auth/external-login/${provider}`;
   }
