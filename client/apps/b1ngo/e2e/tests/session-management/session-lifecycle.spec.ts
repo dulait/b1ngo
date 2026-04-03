@@ -12,7 +12,7 @@ test.describe('BNG-014: Session Lifecycle', () => {
     await home.expectOnHomePage();
   });
 
-  test('AC-2: creating a room sets bng-session and PlayerToken cookie', async ({
+  test('AC-2: creating a room sets bng-session and auth cookie', async ({
     page,
     context,
   }) => {
@@ -29,11 +29,11 @@ test.describe('BNG-014: Session Lifecycle', () => {
     expect(parsed.playerId).toBeDefined();
 
     const cookies = await context.cookies();
-    const playerTokenCookie = cookies.find((c) => c.name === 'PlayerToken');
-    expect(playerTokenCookie).toBeDefined();
+    const authCookie = cookies.find((c) => c.name === '__bng_s');
+    expect(authCookie).toBeDefined();
   });
 
-  test('AC-3: joining a room sets bng-session and PlayerToken cookie', async ({
+  test('AC-3: joining a room sets bng-session and auth cookie', async ({
     page,
     context,
     api,
@@ -51,8 +51,8 @@ test.describe('BNG-014: Session Lifecycle', () => {
     expect(parsed.roomId).toBe(room.roomId);
 
     const cookies = await context.cookies();
-    const playerTokenCookie = cookies.find((c) => c.name === 'PlayerToken');
-    expect(playerTokenCookie).toBeDefined();
+    const authCookie = cookies.find((c) => c.name === '__bng_s');
+    expect(authCookie).toBeDefined();
   });
 
   test('AC-4: session is shared across tabs via localStorage', async ({

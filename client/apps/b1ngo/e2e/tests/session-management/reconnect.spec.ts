@@ -85,7 +85,7 @@ test.describe('BNG-013: Reconnect', () => {
     await page.goto('/');
     await context.addCookies([
       {
-        name: 'PlayerToken',
+        name: '__bng_s',
         value: 'invalid-token',
         domain: 'localhost',
         path: '/',
@@ -97,7 +97,7 @@ test.describe('BNG-013: Reconnect', () => {
     await page.evaluate(() => {
       localStorage.setItem(
         'bng-session',
-        JSON.stringify({ roomId: 'fake-room', playerId: 'fake-player', playerToken: 'invalid-token' }),
+        JSON.stringify({ roomId: 'fake-room', playerId: 'fake-player' }),
       );
     });
 

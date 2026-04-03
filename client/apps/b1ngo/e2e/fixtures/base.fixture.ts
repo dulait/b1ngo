@@ -43,7 +43,7 @@ export async function navigateToRoom(
   await dismissTutorial(page);
   await context.addCookies([
     {
-      name: 'PlayerToken',
+      name: '__bng_s',
       value: playerToken,
       domain: 'localhost',
       path: '/',
@@ -55,10 +55,10 @@ export async function navigateToRoom(
 
   await page.goto('/');
   await page.evaluate(
-    ({ roomId, playerId, playerToken }) => {
-      localStorage.setItem('bng-session', JSON.stringify({ roomId, playerId, playerToken }));
+    ({ roomId, playerId }) => {
+      localStorage.setItem('bng-session', JSON.stringify({ roomId, playerId }));
     },
-    { roomId, playerId, playerToken },
+    { roomId, playerId },
   );
 
   await page.goto(`/room/${roomId}`);

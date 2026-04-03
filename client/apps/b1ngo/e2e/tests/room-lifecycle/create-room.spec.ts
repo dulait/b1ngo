@@ -22,17 +22,17 @@ test.describe('BNG-001: Create Room', () => {
     await lobby.expectVisible();
   });
 
-  test('AC-2: sets PlayerToken cookie with correct options', async ({ context }) => {
+  test('AC-2: sets auth cookie with correct options', async ({ context }) => {
     await home.createRoom('CookieHost');
     await home.expectNavigatedToRoom();
 
     const cookies = await context.cookies();
-    const playerToken = cookies.find((c) => c.name === 'PlayerToken');
-    expect(playerToken).toBeTruthy();
-    expect(playerToken!.httpOnly).toBe(true);
-    expect(playerToken!.secure).toBe(false);
-    expect(playerToken!.sameSite).toBe('Lax');
-    expect(playerToken!.path).toBe('/');
+    const authCookie = cookies.find((c) => c.name === '__bng_s');
+    expect(authCookie).toBeTruthy();
+    expect(authCookie!.httpOnly).toBe(true);
+    expect(authCookie!.secure).toBe(false);
+    expect(authCookie!.sameSite).toBe('Lax');
+    expect(authCookie!.path).toBe('/');
   });
 
   test('AC-3: stores bng-session in localStorage', async ({ page }) => {
@@ -53,7 +53,7 @@ test.describe('BNG-001: Create Room', () => {
     const session = await page.evaluate(() => localStorage.getItem('bng-session'));
     const parsed = JSON.parse(session!);
     const cookies = await page.context().cookies();
-    const token = cookies.find((c) => c.name === 'PlayerToken')!.value;
+    const token = cookies.find((c) => c.name === '__bng_s')!.value;
 
     const state = await api.getRoomState(parsed.roomId, token);
     expect(state.configuration.matrixSize).toBe(5);
@@ -77,7 +77,7 @@ test.describe('BNG-001: Create Room', () => {
     const session = await page.evaluate(() => localStorage.getItem('bng-session'));
     const parsed = JSON.parse(session!);
     const cookies = await page.context().cookies();
-    const token = cookies.find((c) => c.name === 'PlayerToken')!.value;
+    const token = cookies.find((c) => c.name === '__bng_s')!.value;
 
     const state = await api.getRoomState(parsed.roomId, token);
     expect(state.configuration.matrixSize).toBe(3);
@@ -96,7 +96,7 @@ test.describe('BNG-001: Create Room', () => {
     const session = await page.evaluate(() => localStorage.getItem('bng-session'));
     const parsed = JSON.parse(session!);
     const cookies = await page.context().cookies();
-    const token = cookies.find((c) => c.name === 'PlayerToken')!.value;
+    const token = cookies.find((c) => c.name === '__bng_s')!.value;
 
     const state = await api.getRoomState(parsed.roomId, token);
     expect(state.configuration.matrixSize).toBe(3);
