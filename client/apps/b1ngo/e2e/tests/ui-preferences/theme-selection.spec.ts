@@ -24,7 +24,7 @@ test.describe('BNG-016: Theme Selection', () => {
 
     const themeSheet = await openThemePicker(page);
 
-    const themeOptions = themeSheet.locator('[data-testid^="theme-option-"]');
+    const themeOptions = themeSheet.getByRole('radio');
     await expect(themeOptions.first()).toBeVisible();
     const optionCount = await themeOptions.count();
     expect(optionCount).toBeGreaterThan(1);
@@ -41,7 +41,7 @@ test.describe('BNG-016: Theme Selection', () => {
 
     const themeSheet = await openThemePicker(page);
 
-    const themeOptions = themeSheet.locator('[data-testid^="theme-option-"]');
+    const themeOptions = themeSheet.getByRole('radio');
     await expect(themeOptions.first()).toBeVisible();
     await themeOptions.nth(1).click();
 
@@ -64,7 +64,7 @@ test.describe('BNG-016: Theme Selection', () => {
     await game.expectSquareMarked(0, 0);
 
     const themeSheet = await openThemePicker(page);
-    const themeOptions = themeSheet.locator('[data-testid^="theme-option-"]');
+    const themeOptions = themeSheet.getByRole('radio');
     await expect(themeOptions.first()).toBeVisible();
     await themeOptions.nth(1).click();
 

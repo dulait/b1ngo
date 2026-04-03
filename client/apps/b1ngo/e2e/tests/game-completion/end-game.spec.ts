@@ -111,7 +111,7 @@ multiPlayerTest.describe('BNG-011: End Game / Real-Time', () => {
 
       await api.endGame(room.roomId, room.host.playerToken);
 
-      await playerPage.getByTestId('results-game-over').waitFor({ state: 'visible' });
+      await playerPage.getByText('Game Over').waitFor({ state: 'visible' });
 
       await playerCtx.close();
     },
