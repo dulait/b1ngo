@@ -29,7 +29,7 @@
         [error]="displayName.error()"
         (valueChange)="displayName.set($event)"
       />
-      <bng-input label="Email" type="email" [value]="email()" hint="Email cannot be changed." />
+      <bng-input label="Email" type="email" [value]="email()" [disabled]="true" hint="Email cannot be changed." />
       <bng-button type="submit" variant="primary" [loading]="savingProfile()" [fullWidth]="true">
         Save Changes
       </bng-button>

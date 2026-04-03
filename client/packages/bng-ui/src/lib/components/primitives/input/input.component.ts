@@ -34,7 +34,8 @@ let nextInputId = 0;
           [attr.autocomplete]="autocomplete()"
           [attr.aria-describedby]="hasMessage() ? messageId : null"
           [attr.aria-invalid]="error() ? true : null"
-          class="w-full h-12 bg-bg-surface border rounded-lg px-4 text-text-primary text-base placeholder:text-text-disabled focus:outline-none"
+          [disabled]="disabled()"
+          class="w-full h-12 bg-bg-surface border rounded-lg px-4 text-text-primary text-base placeholder:text-text-disabled focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
           [class.border-border-default]="!error()"
           [class.focus:border-accent]="!error()"
           [class.border-error]="!!error()"
@@ -77,6 +78,7 @@ export class BngInputComponent {
   maxlength = input<number | null>(null);
   value = input('');
   autocomplete = input('off');
+  disabled = input(false);
 
   valueChange = output<string>();
 
