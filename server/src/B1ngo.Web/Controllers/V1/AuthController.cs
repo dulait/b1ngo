@@ -131,8 +131,9 @@ public class AuthController(
         }
 
         var roles = await userManager.GetRolesAsync(user);
+        var hasPassword = await userManager.HasPasswordAsync(user);
 
-        return Ok(new MeResponse(user.Id, user.Email!, user.DisplayName, roles.ToArray()));
+        return Ok(new MeResponse(user.Id, user.Email!, user.DisplayName, roles.ToArray(), hasPassword));
     }
 
     [HttpGet("external-login/{provider}")]
