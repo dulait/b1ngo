@@ -57,10 +57,10 @@
 
   @switch (store.status()) {
     @case ('Lobby') {
-      <app-lobby />
+      <app-lobby [offline]="isDisconnected()" />
     }
     @case ('Active') {
-      <app-game />
+      <app-game [offline]="isDisconnected()" />
     }
     @case ('Completed') {
       <app-results />

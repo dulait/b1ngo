@@ -27,7 +27,7 @@
       size="lg"
       [fullWidth]="true"
       [loading]="isStarting()"
-      [disabled]="actionsDisabled()"
+      [disabled]="offline()"
       (clicked)="onStartGame()"
     >
       Start Game

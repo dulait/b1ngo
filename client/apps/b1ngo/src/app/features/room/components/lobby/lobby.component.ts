@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, computed, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, inject, input, signal } from '@angular/core';
 import {
   BngCardComponent,
   BngCodeInputComponent,
@@ -11,7 +11,6 @@ import {
 import type { GridCellData } from 'bng-ui';
 import { ROOM_STORE } from '../../services/room-store.token';
 import { RoomApiService } from '@core/api/room-api.service';
-import { SignalRService } from '@core/realtime/signalr.service';
 import { safeAsync } from '@core/utils/safe-async.util';
 import { formatMarkedByLabel, markedByVariant } from '../../utils/format-marked-by.util';
 
@@ -32,8 +31,8 @@ import { formatMarkedByLabel, markedByVariant } from '../../utils/format-marked-
 export class LobbyComponent {
   readonly store = inject(ROOM_STORE);
   private readonly roomApi = inject(RoomApiService);
-  private readonly signalr = inject(SignalRService);
-  readonly actionsDisabled = computed(() => this.signalr.connectionState() !== 'connected');
+
+  readonly offline = input(false);
 
   readonly gridCells = computed<GridCellData[]>(() => {
     const card = this.store.currentCard();
