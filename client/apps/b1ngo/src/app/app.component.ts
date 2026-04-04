@@ -13,6 +13,8 @@ import {
   bngIconUser,
   bngIconLogIn,
   bngIconSignOut,
+  bngIconClock,
+  bngIconBarChart,
 } from 'bng-ui';
 import type { ThemeName } from 'bng-ui';
 import { ENVIRONMENT } from './core/environment/environment.token';
@@ -48,6 +50,8 @@ export class AppComponent implements OnInit {
   protected readonly userIcon = bngIconUser;
   protected readonly logInIcon = bngIconLogIn;
   protected readonly signOutIcon = bngIconSignOut;
+  protected readonly clockIcon = bngIconClock;
+  protected readonly barChartIcon = bngIconBarChart;
   readonly version = `v${inject(ENVIRONMENT).version}`;
   readonly tutorialOpen = signal(false);
   readonly themeSheetOpen = signal(false);

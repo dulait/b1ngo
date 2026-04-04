@@ -7,7 +7,7 @@
         <h2 class="text-sm font-semibold text-text-secondary uppercase tracking-wider">
           Active Rooms
         </h2>
-        @if (data()?.totalActiveRooms! > 5) {
+        @if (data()) {
           <a routerLink="/history" class="text-sm text-accent hover:underline">View all</a>
         }
       </div>
@@ -61,7 +61,7 @@
         <h2 class="text-sm font-semibold text-text-secondary uppercase tracking-wider">
           Quick Stats
         </h2>
-        @if (data()?.quickStats?.gamesPlayed! > 0) {
+        @if (data()) {
           <a routerLink="/stats" class="text-sm text-accent hover:underline">View stats</a>
         }
       </div>

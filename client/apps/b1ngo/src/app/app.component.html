@@ -2,6 +2,8 @@
   <bng-header [version]="version" copyright="B1NGO" [homeAriaLabel]="homeAriaLabel()" (homeClicked)="onHomeClicked()">
     @if (auth.isAuthenticated()) {
       <bng-menu-item [icon]="userIcon" label="My Profile" (clicked)="navigateTo('/profile')" />
+      <bng-menu-item [icon]="clockIcon" label="Game History" (clicked)="navigateTo('/history')" />
+      <bng-menu-item [icon]="barChartIcon" label="Stats" (clicked)="navigateTo('/stats')" />
     }
     <bng-menu-item [icon]="helpIcon" label="How to play" (clicked)="openTutorial()" />
     <bng-menu-item label="Theme" (clicked)="themeSheetOpen.set(true)">
