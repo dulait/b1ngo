@@ -1,3 +1,10 @@
+## [0.7.3](https://github.com/dulait/b1ngo/compare/v0.7.2...v0.7.3) (2026-04-04)
+
+
+### Bug Fixes
+
+* make dashboard and stats available from header ([#36](https://github.com/dulait/b1ngo/issues/36)) ([c1401be](https://github.com/dulait/b1ngo/commit/c1401bee738ff0de898fa71163b8e0c95b0a1d8b))
+
 ## [0.7.2](https://github.com/dulait/b1ngo/compare/v0.7.1...v0.7.2) (2026-04-04)
 
 
