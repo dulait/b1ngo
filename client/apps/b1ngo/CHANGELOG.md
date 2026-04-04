@@ -1,3 +1,10 @@
+## [0.7.2](https://github.com/dulait/b1ngo/compare/v0.7.1...v0.7.2) (2026-04-04)
+
+
+### Bug Fixes
+
+* define one source of truth for disconnected status ([70a8dc1](https://github.com/dulait/b1ngo/commit/70a8dc14bdd0d0776cd9301f705f6297ea0f73fe))
+
 ## [0.7.1](https://github.com/dulait/b1ngo/compare/v0.7.0...v0.7.1) (2026-04-03)
 
 
