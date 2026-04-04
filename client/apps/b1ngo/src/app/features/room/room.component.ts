@@ -18,6 +18,7 @@ import {
   BngSkeletonComponent,
   BngCardComponent,
   BngButtonComponent,
+  BngBannerComponent,
   ToastService,
 } from 'bng-ui';
 import type { BadgeVariant } from 'bng-ui';
@@ -36,6 +37,7 @@ import { ResultsComponent } from './components/results/results.component';
     BngSkeletonComponent,
     BngCardComponent,
     BngButtonComponent,
+    BngBannerComponent,
     LobbyComponent,
     GameComponent,
     ResultsComponent,
@@ -62,6 +64,9 @@ export class RoomComponent implements OnInit, OnDestroy {
   readonly store = inject(ROOM_STORE);
   readonly loading = signal(true);
   readonly error = signal(false);
+  readonly isDisconnected = signal(false);
+  readonly isReconnecting = signal(false);
+  readonly reconnectFailed = signal(false);
 
   readonly statusVariant = computed<BadgeVariant>(
     () => RoomComponent.STATUS_VARIANTS[this.store.status()] ?? 'neutral',
@@ -188,6 +193,26 @@ export class RoomComponent implements OnInit, OnDestroy {
     });
   }
 
+  async reconnect(): Promise<void> {
+    this.isReconnecting.set(true);
+    this.reconnectFailed.set(false);
+
+    try {
+      await this.signalr.connect(this.store.roomId());
+      await this.syncRoomState();
+      this.isDisconnected.set(false);
+      this.isReconnecting.set(false);
+      this.toast.success('Reconnected');
+    } catch {
+      this.isReconnecting.set(false);
+      this.reconnectFailed.set(true);
+    }
+  }
+
+  reload(): void {
+    window.location.reload();
+  }
+
   private wireConnectionState(): void {
     effect(() => {
       const state = this.signalr.connectionState();
@@ -201,6 +226,22 @@ export class RoomComponent implements OnInit, OnDestroy {
       if (reconnectedAt) {
         this.syncRoomState();
       }
+    });
+
+    effect(() => {
+      const state = this.signalr.connectionState();
+      untracked(() => {
+        if (state === 'disconnected' && !this.loading() && !this.error() && !this.destroyed) {
+          this.isDisconnected.set(true);
+          this.isReconnecting.set(false);
+          this.reconnectFailed.set(false);
+        }
+        if (state === 'connected') {
+          this.isDisconnected.set(false);
+          this.isReconnecting.set(false);
+          this.reconnectFailed.set(false);
+        }
+      });
     });
   }
 
