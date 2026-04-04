@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 
 namespace B1ngo.Web.Tests.Controllers;
@@ -26,7 +27,14 @@ public class AuthControllerTests
         _playerTokenStore = Substitute.For<IPlayerTokenStore>();
         _emailSender = Substitute.For<IEmailSender>();
         _configuration = Substitute.For<IConfiguration>();
-        _sut = new AuthController(_userManager, _signInManager, _playerTokenStore, _emailSender, _configuration);
+        _sut = new AuthController(
+            _userManager,
+            _signInManager,
+            _playerTokenStore,
+            _emailSender,
+            _configuration,
+            NullLogger<AuthController>.Instance
+        );
         SetupHttpContext(withXhrHeader: true);
     }
 
