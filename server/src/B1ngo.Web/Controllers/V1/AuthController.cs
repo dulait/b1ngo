@@ -22,7 +22,8 @@ public class AuthController(
     SignInManager<ApplicationUser> signInManager,
     IPlayerTokenStore playerTokenStore,
     IEmailSender emailSender,
-    IConfiguration configuration
+    IConfiguration configuration,
+    ILogger<AuthController> logger
 ) : ControllerBase
 {
     [HttpPost("register")]
@@ -250,16 +251,23 @@ public class AuthController(
         var encodedEmail = WebUtility.UrlEncode(request.Email);
         var resetLink = $"{baseUrl}/auth/reset-password?token={encodedToken}&email={encodedEmail}";
 
-        await emailSender.SendAsync(
-            request.Email,
-            "Reset your B1ngo password",
-            $"""
-            <p>We received a request to reset your password.</p>
-            <p><a href="{resetLink}">Reset password</a></p>
-            <p>This link expires in 60 minutes. If you didn't request this, ignore this email.</p>
-            """,
-            HttpContext.RequestAborted
-        );
+        try
+        {
+            await emailSender.SendAsync(
+                request.Email,
+                "Reset your B1ngo password",
+                $"""
+                <p>We received a request to reset your password.</p>
+                <p><a href="{resetLink}">Reset password</a></p>
+                <p>This link expires in 60 minutes. If you didn't request this, ignore this email.</p>
+                """,
+                HttpContext.RequestAborted
+            );
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to send password reset email");
+        }
 
         return Ok();
     }

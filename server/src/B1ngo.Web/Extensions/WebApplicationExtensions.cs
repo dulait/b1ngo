@@ -1,8 +1,11 @@
+using System.Text.Json;
 using B1ngo.Infrastructure.Persistence;
 using B1ngo.Web.Hubs;
 using B1ngo.Web.Middleware;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Scalar.AspNetCore;
 
 namespace B1ngo.Web.Extensions;
@@ -80,7 +83,7 @@ internal static class WebApplicationExtensions
 
             app.MapControllers();
             app.MapHub<GameHub>("/hubs/game");
-            app.MapHealthChecks("/health");
+            app.MapHealthChecks("/health", new HealthCheckOptions { ResponseWriter = WriteHealthCheckResponse });
 
             return app;
         }
@@ -104,5 +107,41 @@ internal static class WebApplicationExtensions
             var db = scope.ServiceProvider.GetRequiredService<B1ngoDbContext>();
             await TestDataSeeder.SeedTestReferenceDataAsync(db);
         }
+    }
+
+    private static async Task WriteHealthCheckResponse(HttpContext context, HealthReport report)
+    {
+        context.Response.ContentType = "application/json";
+
+        var checks = report.Entries.ToDictionary(
+            entry => entry.Key,
+            entry =>
+            {
+                var result = new Dictionary<string, object>
+                {
+                    ["status"] = entry.Value.Status.ToString(),
+                    ["duration"] = entry.Value.Duration.ToString(),
+                };
+
+                if (entry.Value.Description is not null)
+                {
+                    result["description"] = entry.Value.Description;
+                }
+
+                if (entry.Value.Status != HealthStatus.Healthy && entry.Value.Exception is not null)
+                {
+                    result["description"] = entry.Value.Exception.Message;
+                }
+
+                return result;
+            }
+        );
+
+        var response = new { status = report.Status.ToString(), checks };
+
+        await context.Response.WriteAsJsonAsync(
+            response,
+            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
+        );
     }
 }

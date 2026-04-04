@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="B1ngo.DataSync" />
+    <InternalsVisibleTo Include="B1ngo.Infrastructure.Tests" />
   </ItemGroup>
 
   <ItemGroup>

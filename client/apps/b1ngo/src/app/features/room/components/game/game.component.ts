@@ -11,6 +11,7 @@ import {
 import type { GridCellData } from 'bng-ui';
 import { ROOM_STORE } from '../../services/room-store.token';
 import { RoomApiService } from '@core/api/room-api.service';
+import { SignalRService } from '@core/realtime/signalr.service';
 import { safeAsync } from '@core/utils/safe-async.util';
 import { formatMarkedByLabel, markedByVariant } from '../../utils/format-marked-by.util';
 
@@ -31,10 +32,12 @@ import { formatMarkedByLabel, markedByVariant } from '../../utils/format-marked-
 export class GameComponent {
   readonly store = inject(ROOM_STORE);
   private readonly roomApi = inject(RoomApiService);
+  private readonly signalr = inject(SignalRService);
 
   readonly isEnding = signal(false);
   readonly endGameSheetOpen = signal(false);
   readonly playersExpanded = signal(false);
+  readonly actionsDisabled = computed(() => this.signalr.connectionState() !== 'connected');
 
   readonly gridCells = computed<GridCellData[]>(() => {
     const card = this.store.currentCard();
@@ -64,6 +67,9 @@ export class GameComponent {
   });
 
   async onSquareMark(event: { row: number; column: number }): Promise<void> {
+    if (this.actionsDisabled()) {
+      return;
+    }
     const playerId = this.store.currentPlayerId();
     const correlationId = crypto.randomUUID();
 
@@ -87,6 +93,9 @@ export class GameComponent {
   }
 
   async onSquareUnmark(event: { row: number; column: number }): Promise<void> {
+    if (this.actionsDisabled()) {
+      return;
+    }
     const playerId = this.store.currentPlayerId();
     const correlationId = crypto.randomUUID();
 

@@ -6,6 +6,7 @@ import { GameComponent } from './game.component';
 import { ROOM_STORE } from '../../services/room-store.token';
 import { RoomStore } from '../../services/room.store';
 import { RoomApiService } from '@core/api/room-api.service';
+import { SignalRService } from '@core/realtime/signalr.service';
 import { ENVIRONMENT } from '@core/environment/environment.token';
 import { GetRoomStateResponse } from '@core/api/models/responses';
 
@@ -80,6 +81,9 @@ describe('GameComponent', () => {
         { provide: ROOM_STORE, useValue: store },
       ],
     }).compileComponents();
+
+    const signalr = TestBed.inject(SignalRService);
+    signalr.connectionState.set('connected');
 
     fixture = TestBed.createComponent(GameComponent);
     component = fixture.componentInstance;
