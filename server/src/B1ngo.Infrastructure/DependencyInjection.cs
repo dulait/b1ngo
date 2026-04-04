@@ -6,6 +6,7 @@ using B1ngo.Infrastructure.CardGeneration;
 using B1ngo.Infrastructure.Email;
 using B1ngo.Infrastructure.Persistence;
 using B1ngo.Infrastructure.ReferenceData;
+using B1ngo.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,6 +50,8 @@ public static class DependencyInjection
             );
             services.AddScoped<IEmailSender, ResendEmailSender>();
         }
+
+        services.AddHostedService<DataCleanupService>();
 
         return services;
     }
