@@ -19,7 +19,9 @@ import {
   BngCardComponent,
   BngButtonComponent,
   BngBannerComponent,
+  BngStatusPageComponent,
   ToastService,
+  bngIconAlertTriangle,
 } from 'bng-ui';
 import type { BadgeVariant } from 'bng-ui';
 import { RoomStore } from './services/room.store';
@@ -38,6 +40,7 @@ import { ResultsComponent } from './components/results/results.component';
     BngCardComponent,
     BngButtonComponent,
     BngBannerComponent,
+    BngStatusPageComponent,
     LobbyComponent,
     GameComponent,
     ResultsComponent,
@@ -60,6 +63,8 @@ export class RoomComponent implements OnInit, OnDestroy {
     Active: 'success',
     Completed: 'neutral',
   };
+
+  protected readonly alertTriangleIcon = bngIconAlertTriangle;
 
   readonly store = inject(ROOM_STORE);
   readonly loading = signal(true);

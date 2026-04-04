@@ -32,6 +32,7 @@ export { BngSquarePopoverComponent } from './lib/components/composites/square-po
 export { BngPlayerListComponent } from './lib/components/composites/player-list/player-list.component';
 export { BngLeaderboardComponent } from './lib/components/composites/leaderboard/leaderboard.component';
 export { BngBannerComponent } from './lib/components/composites/banner/banner.component';
+export { BngStatusPageComponent } from './lib/components/composites/status-page/status-page.component';
 
 // Icons (SVG path data)
 export * from './lib/icons/icons';
