@@ -22,23 +22,33 @@
         @if (isReconnecting()) {
           <span class="text-sm font-medium">Reconnecting...</span>
         } @else if (reconnectFailed()) {
-          <span class="text-sm font-medium">Unable to reconnect. Try again or reload the page.</span>
+          <span class="text-sm font-medium"
+            >Unable to reconnect. Try again or reload the page.</span
+          >
         } @else {
           <span class="text-sm font-medium">Connection lost.</span>
         }
         @if (isReconnecting()) {
-          <bng-button bannerAction variant="primary" size="sm" [disabled]="true">Reconnecting...</bng-button>
+          <bng-button bannerAction variant="primary" size="sm" [disabled]="true"
+            >Reconnecting...</bng-button
+          >
         } @else if (reconnectFailed()) {
-          <bng-button bannerAction variant="primary" size="sm" (clicked)="reconnect()">Try Again</bng-button>
-          <bng-button bannerAction variant="ghost" size="sm" (clicked)="reload()">Reload</bng-button>
+          <ng-container bannerAction>
+            <bng-button variant="primary" size="sm" (clicked)="reconnect()">Try Again</bng-button>
+            <bng-button variant="ghost" size="sm" (clicked)="reload()">Reload</bng-button>
+          </ng-container>
         } @else {
-          <bng-button bannerAction variant="primary" size="sm" (clicked)="reconnect()">Reconnect</bng-button>
+          <bng-button bannerAction variant="primary" size="sm" (clicked)="reconnect()"
+            >Reconnect</bng-button
+          >
         }
       </bng-banner>
     </div>
   }
 
-  <div class="flex items-center justify-between px-4 py-2 bg-bg-base border-b border-border-default">
+  <div
+    class="flex items-center justify-between px-4 py-2 bg-bg-base border-b border-border-default"
+  >
     <span class="text-sm text-text-secondary">
       {{ store.sessionInfo()?.grandPrixShort }} / {{ store.sessionInfo()?.sessionType }}
     </span>
