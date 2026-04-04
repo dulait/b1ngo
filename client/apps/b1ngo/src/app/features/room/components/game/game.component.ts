@@ -67,7 +67,9 @@ export class GameComponent {
   });
 
   async onSquareMark(event: { row: number; column: number }): Promise<void> {
-    if (this.actionsDisabled()) return;
+    if (this.actionsDisabled()) {
+      return;
+    }
     const playerId = this.store.currentPlayerId();
     const correlationId = crypto.randomUUID();
 
@@ -91,7 +93,9 @@ export class GameComponent {
   }
 
   async onSquareUnmark(event: { row: number; column: number }): Promise<void> {
-    if (this.actionsDisabled()) return;
+    if (this.actionsDisabled()) {
+      return;
+    }
     const playerId = this.store.currentPlayerId();
     const correlationId = crypto.randomUUID();
 
