@@ -1,3 +1,10 @@
+# [0.8.0](https://github.com/dulait/b1ngo/compare/v0.7.3...v0.8.0) (2026-04-04)
+
+
+### Features
+
+* add status page ([#37](https://github.com/dulait/b1ngo/issues/37)) ([f66fee1](https://github.com/dulait/b1ngo/commit/f66fee1a11a7f0160dc5d068bb3b8f53e57b7521))
+
 ## [0.7.3](https://github.com/dulait/b1ngo/compare/v0.7.2...v0.7.3) (2026-04-04)
 
 
