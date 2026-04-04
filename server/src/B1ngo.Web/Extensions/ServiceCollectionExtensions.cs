@@ -111,7 +111,7 @@ internal static class ServiceCollectionExtensions
                 };
             });
 
-            services.AddHealthChecks();
+            services.AddHealthChecks().AddDbContextCheck<B1ngoDbContext>();
 
             return services;
         }
