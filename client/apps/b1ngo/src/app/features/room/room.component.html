@@ -9,11 +9,15 @@
     </bng-card>
   </main>
 } @else if (error()) {
-  <main class="p-4">
-    <div class="text-center pt-8">
-      <p class="text-text-primary text-lg font-semibold mb-2">Can't connect to the server.</p>
+  <main class="min-h-[calc(100dvh-3.5rem)] flex">
+    <bng-status-page
+      [icon]="alertTriangleIcon"
+      iconColor="text-error"
+      title="Can't connect to the server"
+      description="Check your connection and try again."
+    >
       <bng-button variant="primary" (clicked)="retry()">Retry</bng-button>
-    </div>
+    </bng-status-page>
   </main>
 } @else {
   @if (isDisconnected()) {

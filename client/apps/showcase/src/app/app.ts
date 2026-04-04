@@ -23,6 +23,11 @@ import { CollapsibleSection } from './sections/collapsible.section';
 import { ModalSection } from './sections/modal.section';
 import { StepperSection } from './sections/stepper.section';
 import { ModalStepperSection } from './sections/modal-stepper.section';
+import { StatusPageSection } from './sections/status-page.section';
+import { BannerSection } from './sections/banner.section';
+import { IconButtonSection } from './sections/icon-button.section';
+import { MenuSection } from './sections/menu.section';
+import { SquarePopoverSection } from './sections/square-popover.section';
 
 @Component({
   selector: 'ds-root',
@@ -51,6 +56,11 @@ import { ModalStepperSection } from './sections/modal-stepper.section';
     ModalSection,
     StepperSection,
     ModalStepperSection,
+    StatusPageSection,
+    BannerSection,
+    IconButtonSection,
+    MenuSection,
+    SquarePopoverSection,
   ],
   template: `
     <div class="min-h-screen bg-bg-base text-text-primary">
@@ -142,6 +152,11 @@ import { ModalStepperSection } from './sections/modal-stepper.section';
         <ds-modal-section id="modal" />
         <ds-stepper-section id="stepper" />
         <ds-modal-stepper-section id="modal-stepper" />
+        <ds-status-page id="status-page" />
+        <ds-banner id="banner" />
+        <ds-icon-button id="icon-button" />
+        <ds-menu id="menu" />
+        <ds-square-popover id="square-popover" />
         <ds-icons id="icons" />
         <div class="h-32"></div>
       </main>
@@ -177,6 +192,11 @@ export class AppComponent implements OnInit {
     { id: 'modal', label: 'Modal' },
     { id: 'stepper', label: 'Stepper' },
     { id: 'modal-stepper', label: 'Modal + Stepper' },
+    { id: 'status-page', label: 'Status Page' },
+    { id: 'banner', label: 'Banner' },
+    { id: 'icon-button', label: 'Icon Button' },
+    { id: 'menu', label: 'Menu' },
+    { id: 'square-popover', label: 'Square Popover' },
     { id: 'icons', label: 'Icons' },
   ];
 
