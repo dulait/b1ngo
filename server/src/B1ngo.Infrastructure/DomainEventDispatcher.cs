@@ -6,6 +6,8 @@ namespace B1ngo.Infrastructure;
 public sealed class DomainEventDispatcher(IServiceProvider serviceProvider, ILogger<DomainEventDispatcher> logger)
     : IDomainEventDispatcher
 {
+    private static readonly int[] RetryDelaysMs = [200, 1000, 3000];
+
     public async Task DispatchAsync(
         IEnumerable<IDomainEvent> domainEvents,
         CancellationToken cancellationToken = default
@@ -25,18 +27,53 @@ public sealed class DomainEventDispatcher(IServiceProvider serviceProvider, ILog
 
             foreach (var handler in (IEnumerable<object>)handlers)
             {
-                try
+                await DispatchToHandlerWithRetryAsync(domainEvent, handler, handlerType, cancellationToken);
+            }
+        }
+    }
+
+    private async Task DispatchToHandlerWithRetryAsync(
+        IDomainEvent domainEvent,
+        object handler,
+        Type handlerType,
+        CancellationToken cancellationToken
+    )
+    {
+        var method = handlerType.GetMethod("HandleAsync");
+        var eventTypeName = domainEvent.GetType().Name;
+        var handlerTypeName = handler.GetType().Name;
+
+        for (var attempt = 0; attempt <= RetryDelaysMs.Length; attempt++)
+        {
+            try
+            {
+                await (Task)method!.Invoke(handler, [domainEvent, cancellationToken])!;
+                return;
+            }
+            catch (Exception ex)
+            {
+                if (attempt < RetryDelaysMs.Length)
                 {
-                    var method = handlerType.GetMethod("HandleAsync");
-                    await (Task)method!.Invoke(handler, [domainEvent, cancellationToken])!;
+                    logger.LogWarning(
+                        ex,
+                        "Handler {HandlerType} failed for {EventType}, attempt {Attempt} of {MaxAttempts}. Retrying in {DelayMs}ms",
+                        handlerTypeName,
+                        eventTypeName,
+                        attempt + 1,
+                        RetryDelaysMs.Length + 1,
+                        RetryDelaysMs[attempt]
+                    );
+
+                    await Task.Delay(RetryDelaysMs[attempt], cancellationToken);
                 }
-                catch (Exception ex)
+                else
                 {
                     logger.LogError(
                         ex,
-                        "Failed to handle {EventType} in {HandlerType}",
-                        domainEvent.GetType().Name,
-                        handler.GetType().Name
+                        "Handler {HandlerType} failed for {EventType} after {MaxAttempts} attempts. Giving up.",
+                        handlerTypeName,
+                        eventTypeName,
+                        RetryDelaysMs.Length + 1
                     );
                 }
             }
