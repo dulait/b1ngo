@@ -64,9 +64,13 @@ export class RoomComponent implements OnInit, OnDestroy {
   readonly store = inject(ROOM_STORE);
   readonly loading = signal(true);
   readonly error = signal(false);
-  readonly isDisconnected = signal(false);
   readonly isReconnecting = signal(false);
   readonly reconnectFailed = signal(false);
+
+  private readonly hasConnected = signal(false);
+  readonly isDisconnected = computed(
+    () => this.hasConnected() && this.signalr.connectionState() !== 'connected',
+  );
 
   readonly statusVariant = computed<BadgeVariant>(
     () => RoomComponent.STATUS_VARIANTS[this.store.status()] ?? 'neutral',
@@ -200,7 +204,6 @@ export class RoomComponent implements OnInit, OnDestroy {
     try {
       await this.signalr.connect(this.store.roomId());
       await this.syncRoomState();
-      this.isDisconnected.set(false);
       this.isReconnecting.set(false);
       this.toast.success('Reconnected');
     } catch {
@@ -229,19 +232,13 @@ export class RoomComponent implements OnInit, OnDestroy {
     });
 
     effect(() => {
-      const state = this.signalr.connectionState();
-      untracked(() => {
-        if (state === 'disconnected' && !this.loading() && !this.error() && !this.destroyed) {
-          this.isDisconnected.set(true);
+      if (this.signalr.connectionState() === 'connected') {
+        untracked(() => {
+          this.hasConnected.set(true);
           this.isReconnecting.set(false);
           this.reconnectFailed.set(false);
-        }
-        if (state === 'connected') {
-          this.isDisconnected.set(false);
-          this.isReconnecting.set(false);
-          this.reconnectFailed.set(false);
-        }
-      });
+        });
+      }
     });
   }
 
