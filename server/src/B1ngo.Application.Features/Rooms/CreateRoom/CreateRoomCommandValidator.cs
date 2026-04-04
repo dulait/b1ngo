@@ -22,11 +22,7 @@ public sealed class CreateRoomCommandValidator : AbstractValidator<CreateRoomCom
             x => x.MatrixSize is not null,
             () =>
             {
-                RuleFor(x => x.MatrixSize!.Value)
-                    .InclusiveBetween(3, 9)
-                    .WithMessage("Matrix size must be between 3 and 9.")
-                    .Must(size => size % 2 != 0)
-                    .WithMessage("Matrix size must be odd to have a center free space.");
+                RuleFor(x => x.MatrixSize!.Value).Must(size => size is 3 or 5).WithMessage("Card size must be 3 or 5.");
             }
         );
 

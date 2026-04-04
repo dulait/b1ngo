@@ -85,7 +85,7 @@ export class CreateRoomFormComponent {
     return gp.sessionTypes.map((st) => ({ value: st, label: st }));
   });
 
-  protected readonly matrixSizes = [3, 5, 7, 9];
+  protected readonly matrixSizes = [3, 5];
 
   constructor() {
     this.refData.load();

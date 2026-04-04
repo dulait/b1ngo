@@ -24,14 +24,12 @@ public sealed record RoomConfiguration
         int maxPlayers = DefaultMaxPlayers
     )
     {
-        ArgumentOutOfRangeException.ThrowIfLessThan(matrixSize, 3);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(matrixSize, 9);
-        ArgumentOutOfRangeException.ThrowIfLessThan(maxPlayers, 2);
-
-        if (matrixSize % 2 == 0)
+        if (matrixSize is not (3 or 5))
         {
-            throw new ArgumentException("Matrix size must be odd to have a center free space.", nameof(matrixSize));
+            throw new ArgumentOutOfRangeException(nameof(matrixSize), matrixSize, "Matrix size must be 3 or 5.");
         }
+
+        ArgumentOutOfRangeException.ThrowIfLessThan(maxPlayers, 2);
 
         if (winningPatterns.Count == 0)
         {

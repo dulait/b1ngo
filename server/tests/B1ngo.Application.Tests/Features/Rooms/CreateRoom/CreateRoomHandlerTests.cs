@@ -68,7 +68,7 @@ public class CreateRoomHandlerTests
     [Fact]
     public async Task HandleAsync_WithCustomConfiguration_CreatesRoomWithCustomConfig()
     {
-        var command = ValidCommand with { MatrixSize = 7, WinningPatterns = [WinPatternType.Blackout] };
+        var command = ValidCommand with { MatrixSize = 3, WinningPatterns = [WinPatternType.Blackout] };
 
         var result = await _sut.HandleAsync(command);
 
