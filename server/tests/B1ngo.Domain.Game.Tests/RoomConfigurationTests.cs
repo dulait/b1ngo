@@ -17,29 +17,22 @@ public class RoomConfigurationTests
     [Fact]
     public void Constructor_WithValidInputs_SetsProperties()
     {
-        var sut = new RoomConfiguration(7, [WinPatternType.Blackout]);
+        var sut = new RoomConfiguration(3, [WinPatternType.Blackout]);
 
-        Assert.Equal(7, sut.MatrixSize);
+        Assert.Equal(3, sut.MatrixSize);
         Assert.Single(sut.WinningPatterns);
         Assert.Equal(WinPatternType.Blackout, sut.WinningPatterns[0]);
     }
 
-    [Fact]
-    public void Constructor_WithMatrixSizeLessThan3_ThrowsArgumentOutOfRangeException()
+    [Theory]
+    [InlineData(2)]
+    [InlineData(4)]
+    [InlineData(7)]
+    [InlineData(9)]
+    [InlineData(10)]
+    public void Constructor_WithDisallowedMatrixSize_ThrowsArgumentOutOfRangeException(int size)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new RoomConfiguration(2, [WinPatternType.Row]));
-    }
-
-    [Fact]
-    public void Constructor_WithMatrixSizeGreaterThan9_ThrowsArgumentOutOfRangeException()
-    {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new RoomConfiguration(10, [WinPatternType.Row]));
-    }
-
-    [Fact]
-    public void Constructor_WithEvenMatrixSize_ThrowsArgumentException()
-    {
-        Assert.Throws<ArgumentException>(() => new RoomConfiguration(4, [WinPatternType.Row]));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new RoomConfiguration(size, [WinPatternType.Row]));
     }
 
     [Fact]

@@ -16,7 +16,10 @@ public sealed class BingoCard
 
     public BingoCard(int matrixSize, List<BingoSquare> squares)
     {
-        ArgumentOutOfRangeException.ThrowIfLessThan(matrixSize, 3);
+        if (matrixSize is not (3 or 5))
+        {
+            throw new ArgumentOutOfRangeException(nameof(matrixSize), matrixSize, "Matrix size must be 3 or 5.");
+        }
 
         var expectedCount = matrixSize * matrixSize;
         if (squares.Count != expectedCount)

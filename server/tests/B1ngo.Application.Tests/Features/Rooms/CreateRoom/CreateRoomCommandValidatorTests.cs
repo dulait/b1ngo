@@ -46,41 +46,31 @@ public class CreateRoomCommandValidatorTests
     }
 
     [Theory]
-    [InlineData(2)]
-    [InlineData(10)]
-    public async Task Validate_WithMatrixSizeOutOfRange_HasError(int size)
-    {
-        var command = ValidCommand with { MatrixSize = size };
-
-        var result = await _sut.TestValidateAsync(command);
-
-        result.ShouldHaveValidationErrorFor(x => x.MatrixSize!.Value);
-    }
-
-    [Theory]
-    [InlineData(4)]
-    [InlineData(6)]
-    public async Task Validate_WithEvenMatrixSize_HasError(int size)
-    {
-        var command = ValidCommand with { MatrixSize = size };
-
-        var result = await _sut.TestValidateAsync(command);
-
-        result.ShouldHaveValidationErrorFor(x => x.MatrixSize!.Value);
-    }
-
-    [Theory]
     [InlineData(3)]
     [InlineData(5)]
-    [InlineData(7)]
-    [InlineData(9)]
-    public async Task Validate_WithValidMatrixSize_HasNoError(int size)
+    public async Task Validate_WithAllowedMatrixSize_HasNoError(int size)
     {
         var command = ValidCommand with { MatrixSize = size };
 
         var result = await _sut.TestValidateAsync(command);
 
         result.ShouldNotHaveValidationErrorFor(x => x.MatrixSize!.Value);
+    }
+
+    [Theory]
+    [InlineData(2)]
+    [InlineData(4)]
+    [InlineData(6)]
+    [InlineData(7)]
+    [InlineData(9)]
+    [InlineData(10)]
+    public async Task Validate_WithDisallowedMatrixSize_HasError(int size)
+    {
+        var command = ValidCommand with { MatrixSize = size };
+
+        var result = await _sut.TestValidateAsync(command);
+
+        result.ShouldHaveValidationErrorFor(x => x.MatrixSize!.Value);
     }
 
     [Fact]

@@ -61,10 +61,10 @@ public class RoomTests
     [Fact]
     public void Create_WithCustomConfiguration_UsesProvidedValues()
     {
-        var config = new RoomConfiguration(7, [WinPatternType.Blackout]);
+        var config = new RoomConfiguration(3, [WinPatternType.Blackout]);
         var sut = _builder.WithConfiguration(config).Build();
 
-        Assert.Equal(7, sut.Configuration.MatrixSize);
+        Assert.Equal(3, sut.Configuration.MatrixSize);
         Assert.Single(sut.Configuration.WinningPatterns);
         Assert.Equal(WinPatternType.Blackout, sut.Configuration.WinningPatterns[0]);
     }
