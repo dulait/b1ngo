@@ -46,7 +46,7 @@
   --bng-theme-accent-muted: var(--bng-color-orange-100);
 }
 
-[data-theme="fuchsia"] {
+[data-theme="rose"] {
   --bng-theme-accent:       var(--bng-color-pink-500);
   --bng-theme-accent-hover: var(--bng-color-pink-400);
   --bng-theme-accent-muted: var(--bng-color-pink-100);

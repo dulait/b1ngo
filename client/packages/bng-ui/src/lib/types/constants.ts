@@ -9,7 +9,7 @@ export const THEMES: ThemeDefinition[] = [
   { name: 'silver', label: 'Silver', accent: '#94A3B8' },
   { name: 'teal', label: 'Teal', accent: '#06B6D4' },
   { name: 'coral', label: 'Coral', accent: '#F97316' },
-  { name: 'fuchsia', label: 'Fuchsia', accent: '#EC4899' },
+  { name: 'rose', label: 'Rose', accent: '#EC4899' },
   { name: 'lime', label: 'Lime', accent: '#84CC16' },
 ];
 
