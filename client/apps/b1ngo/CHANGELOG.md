@@ -1,3 +1,10 @@
+## [0.8.1](https://github.com/dulait/b1ngo/compare/v0.8.0...v0.8.1) (2026-04-04)
+
+
+### Bug Fixes
+
+* restrict matrix size to 3x3 and 5x5 ([#38](https://github.com/dulait/b1ngo/issues/38)) ([db98ebe](https://github.com/dulait/b1ngo/commit/db98ebeba16318e69c51c15af387de13481dd0a3))
+
 # [0.8.0](https://github.com/dulait/b1ngo/compare/v0.7.3...v0.8.0) (2026-04-04)
 
 
