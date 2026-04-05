@@ -9,9 +9,10 @@ public sealed class GameHub(IPlayerTokenStore playerTokenStore) : Hub
     public override async Task OnConnectedAsync()
     {
         var httpContext = Context.GetHttpContext();
+        var roomId = ParseRoomId(httpContext);
 
-        var identity = await ResolveFromCookie(httpContext);
-        identity ??= await ResolveFromAuthenticatedUser(httpContext);
+        var identity = await ResolveFromCookie(httpContext, roomId);
+        identity ??= await ResolveFromAuthenticatedUser(httpContext, roomId);
 
         if (identity is null)
         {
@@ -23,7 +24,13 @@ public sealed class GameHub(IPlayerTokenStore playerTokenStore) : Hub
         await base.OnConnectedAsync();
     }
 
-    private async Task<PlayerIdentity?> ResolveFromCookie(HttpContext? httpContext)
+    private static Guid? ParseRoomId(HttpContext? httpContext)
+    {
+        var roomIdString = httpContext?.Request.Query["roomId"].FirstOrDefault();
+        return Guid.TryParse(roomIdString, out var roomId) ? roomId : null;
+    }
+
+    private async Task<PlayerIdentity?> ResolveFromCookie(HttpContext? httpContext, Guid? expectedRoomId)
     {
         var tokenString = httpContext?.Request.Cookies[Constants.CookieNames.PlayerToken];
         if (!Guid.TryParse(tokenString, out var token))
@@ -31,12 +38,19 @@ public sealed class GameHub(IPlayerTokenStore playerTokenStore) : Hub
             return null;
         }
 
-        return await playerTokenStore.ResolveAsync(token);
+        var identity = await playerTokenStore.ResolveAsync(token);
+
+        if (identity is not null && expectedRoomId.HasValue && identity.RoomId != expectedRoomId.Value)
+        {
+            return null;
+        }
+
+        return identity;
     }
 
-    private async Task<PlayerIdentity?> ResolveFromAuthenticatedUser(HttpContext? httpContext)
+    private async Task<PlayerIdentity?> ResolveFromAuthenticatedUser(HttpContext? httpContext, Guid? roomId)
     {
-        if (httpContext?.User.Identity?.IsAuthenticated != true)
+        if (httpContext?.User.Identity?.IsAuthenticated != true || !roomId.HasValue)
         {
             return null;
         }
@@ -47,12 +61,6 @@ public sealed class GameHub(IPlayerTokenStore playerTokenStore) : Hub
             return null;
         }
 
-        var roomIdString = httpContext.Request.Query["roomId"].FirstOrDefault();
-        if (!Guid.TryParse(roomIdString, out var roomId))
-        {
-            return null;
-        }
-
-        return await playerTokenStore.ResolveByUserAndRoomAsync(userId, roomId);
+        return await playerTokenStore.ResolveByUserAndRoomAsync(userId, roomId.Value);
     }
 }
