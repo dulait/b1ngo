@@ -1,3 +1,15 @@
+# [1.0.0](https://github.com/dulait/b1ngo/compare/v0.8.2...v1.0.0) (2026-04-05)
+
+
+### chore
+
+* v1.0.0 production release ([94efed7](https://github.com/dulait/b1ngo/commit/94efed79e8e71a4cbb3fbeb8830b66f1afb00405))
+
+
+### BREAKING CHANGES
+
+* first stable release
+
 ## [0.8.2](https://github.com/dulait/b1ngo/compare/v0.8.1...v0.8.2) (2026-04-05)
 
 
