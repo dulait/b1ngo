@@ -1,3 +1,10 @@
+## [0.8.2](https://github.com/dulait/b1ngo/compare/v0.8.1...v0.8.2) (2026-04-05)
+
+
+### Bug Fixes
+
+* validate against token's roomId as well ([a6b1c12](https://github.com/dulait/b1ngo/commit/a6b1c125ed1646cda1163926893fea9ff77b6091))
+
 ## [0.8.1](https://github.com/dulait/b1ngo/compare/v0.8.0...v0.8.1) (2026-04-04)
 
 
