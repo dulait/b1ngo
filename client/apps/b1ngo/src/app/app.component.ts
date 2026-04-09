@@ -129,22 +129,15 @@ export class AppComponent implements OnInit {
   }
 
   private setupKeyboardDetection(): void {
-    const visualViewport = window.visualViewport;
-    if (visualViewport) {
-      visualViewport.addEventListener('resize', () => {
-        this.keyboardOpen.set(window.innerHeight - visualViewport.height > 150);
-      });
-    } else {
-      document.addEventListener('focusin', (e) => {
-        const tag = (e.target as HTMLElement)?.tagName;
-        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
-          this.keyboardOpen.set(true);
-        }
-      });
-      document.addEventListener('focusout', () => {
-        this.keyboardOpen.set(false);
-      });
-    }
+    document.addEventListener('focusin', (e) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
+        this.keyboardOpen.set(true);
+      }
+    });
+    document.addEventListener('focusout', () => {
+      this.keyboardOpen.set(false);
+    });
   }
 
   private hasRouteData(route: ActivatedRoute, key: string): boolean {
