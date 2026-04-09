@@ -7,7 +7,7 @@ import { Component, ChangeDetectionStrategy, ViewEncapsulation } from '@angular/
     <nav
       role="navigation"
       aria-label="Main navigation"
-      class="fixed bottom-0 inset-x-0 h-14 flex items-center justify-around bg-bg-surface border-t border-border-default pb-[env(safe-area-inset-bottom)] z-40"
+      class="fixed bottom-0 inset-x-0 h-14 flex items-center justify-around bg-bg-surface border-t border-border-default pb-[env(safe-area-inset-bottom)] z-40 [transform:translateZ(0)]"
     >
       <ng-content />
     </nav>
