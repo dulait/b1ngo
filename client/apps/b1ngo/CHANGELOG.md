@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/dulait/b1ngo/compare/v1.0.0...v1.1.0) (2026-04-09)
+
+
+### Features
+
+* add tab bar ([#39](https://github.com/dulait/b1ngo/issues/39)) ([e48fc86](https://github.com/dulait/b1ngo/commit/e48fc86ca01fe6b08f52dba7a060da35fbe0ab6f))
+
 # [1.0.0](https://github.com/dulait/b1ngo/compare/v0.8.2...v1.0.0) (2026-04-05)
 
 
