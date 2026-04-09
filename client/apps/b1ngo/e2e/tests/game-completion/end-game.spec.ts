@@ -104,10 +104,16 @@ multiPlayerTest.describe('BNG-011: End Game / Real-Time', () => {
 
       const playerCtx = await browser.newContext({ ignoreHTTPSErrors: true });
       const playerPage = await playerCtx.newPage();
+
+      const wsReady = playerPage
+        .waitForEvent('websocket')
+        .then((ws) => ws.waitForEvent('framereceived'));
+
       await navigateToRoom(playerPage, playerCtx, room.roomId, player.playerId, player.playerToken);
 
       const playerGame = new GamePage(playerPage);
       await playerGame.expectVisible();
+      await wsReady;
 
       await api.endGame(room.roomId, room.host.playerToken);
 
