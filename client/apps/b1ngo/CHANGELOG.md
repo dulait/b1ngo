@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/dulait/b1ngo/compare/v1.1.0...v1.1.1) (2026-04-09)
+
+
+### Bug Fixes
+
+* prevent tab bar flicker on iOS scroll ([016d309](https://github.com/dulait/b1ngo/commit/016d3098dadd604b1dad6508fe64d674e5aaf97a))
+
 # [1.1.0](https://github.com/dulait/b1ngo/compare/v1.0.0...v1.1.0) (2026-04-09)
 
 
