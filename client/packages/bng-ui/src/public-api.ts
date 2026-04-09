@@ -33,6 +33,8 @@ export { BngPlayerListComponent } from './lib/components/composites/player-list/
 export { BngLeaderboardComponent } from './lib/components/composites/leaderboard/leaderboard.component';
 export { BngBannerComponent } from './lib/components/composites/banner/banner.component';
 export { BngStatusPageComponent } from './lib/components/composites/status-page/status-page.component';
+export { BngTabBarComponent } from './lib/components/composites/tab-bar/tab-bar.component';
+export { BngTabBarItemComponent } from './lib/components/composites/tab-bar-item/tab-bar-item.component';
 
 // Icons (SVG path data)
 export * from './lib/icons/icons';
