@@ -7,6 +7,8 @@ import {
   BngBottomSheetComponent,
   BngThemePickerComponent,
   BngToastContainerComponent,
+  BngTabBarComponent,
+  BngTabBarItemComponent,
   ThemeService,
   ToastService,
   bngIconHelpCircle,
@@ -15,6 +17,7 @@ import {
   bngIconSignOut,
   bngIconClock,
   bngIconBarChart,
+  bngIconHome,
 } from 'bng-ui';
 import type { ThemeName } from 'bng-ui';
 import { ENVIRONMENT } from './core/environment/environment.token';
@@ -33,6 +36,8 @@ import { TutorialComponent } from '@shell/index';
     BngBottomSheetComponent,
     BngThemePickerComponent,
     BngToastContainerComponent,
+    BngTabBarComponent,
+    BngTabBarItemComponent,
     TutorialComponent,
   ],
   templateUrl: './app.component.html',
@@ -52,17 +57,27 @@ export class AppComponent implements OnInit {
   protected readonly signOutIcon = bngIconSignOut;
   protected readonly clockIcon = bngIconClock;
   protected readonly barChartIcon = bngIconBarChart;
+  protected readonly homeIcon = bngIconHome;
   readonly version = `v${inject(ENVIRONMENT).version}`;
   readonly tutorialOpen = signal(false);
   readonly themeSheetOpen = signal(false);
   readonly showHeader = signal(true);
+  readonly showTabBar = signal(true);
+  private readonly keyboardOpen = signal(false);
+  readonly currentRoute = signal('/');
   readonly isRoomRoute = signal(false);
+  readonly tabBarVisible = computed(() => this.showTabBar() && !this.keyboardOpen());
   readonly homeAriaLabel = computed(() =>
     this.auth.isAuthenticated() ? 'Back to dashboard' : 'Back to home',
   );
+  readonly isHomeActive = computed(() => this.currentRoute() === '/');
+  readonly isHistoryActive = computed(() => this.currentRoute().startsWith('/history'));
+  readonly isStatsActive = computed(() => this.currentRoute().startsWith('/stats'));
+  readonly isProfileActive = computed(() => this.currentRoute().startsWith('/profile'));
 
   ngOnInit(): void {
     this.themeService.initialize();
+    this.setupKeyboardDetection();
 
     if (!this.storage.getString('bng-tutorial-completed')) {
       this.tutorialOpen.set(true);
@@ -72,6 +87,8 @@ export class AppComponent implements OnInit {
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
       .subscribe((e) => {
         this.showHeader.set(!this.hasRouteData(this.route, 'hideHeader'));
+        this.showTabBar.set(!this.hasRouteData(this.route, 'hideTabBar'));
+        this.currentRoute.set(e.urlAfterRedirects.split('?')[0]);
         this.isRoomRoute.set(e.urlAfterRedirects.startsWith('/room'));
       });
   }
@@ -102,9 +119,32 @@ export class AppComponent implements OnInit {
     this.router.navigate([path]);
   }
 
+  protected onTabNavigate(route: string): void {
+    this.router.navigate([route]);
+  }
+
   onThemeChange(theme: ThemeName): void {
     this.themeService.setTheme(theme);
     setTimeout(() => this.themeSheetOpen.set(false), 150);
+  }
+
+  private setupKeyboardDetection(): void {
+    const visualViewport = window.visualViewport;
+    if (visualViewport) {
+      visualViewport.addEventListener('resize', () => {
+        this.keyboardOpen.set(window.innerHeight - visualViewport.height > 150);
+      });
+    } else {
+      document.addEventListener('focusin', (e) => {
+        const tag = (e.target as HTMLElement)?.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
+          this.keyboardOpen.set(true);
+        }
+      });
+      document.addEventListener('focusout', () => {
+        this.keyboardOpen.set(false);
+      });
+    }
   }
 
   private hasRouteData(route: ActivatedRoute, key: string): boolean {

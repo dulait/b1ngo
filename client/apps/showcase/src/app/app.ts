@@ -28,6 +28,7 @@ import { BannerSection } from './sections/banner.section';
 import { IconButtonSection } from './sections/icon-button.section';
 import { MenuSection } from './sections/menu.section';
 import { SquarePopoverSection } from './sections/square-popover.section';
+import { TabBarSection } from './sections/tab-bar.section';
 
 @Component({
   selector: 'ds-root',
@@ -60,6 +61,7 @@ import { SquarePopoverSection } from './sections/square-popover.section';
     BannerSection,
     IconButtonSection,
     MenuSection,
+    TabBarSection,
     SquarePopoverSection,
   ],
   template: `
@@ -156,6 +158,7 @@ import { SquarePopoverSection } from './sections/square-popover.section';
         <ds-banner id="banner" />
         <ds-icon-button id="icon-button" />
         <ds-menu id="menu" />
+        <ds-tab-bar id="tab-bar" />
         <ds-square-popover id="square-popover" />
         <ds-icons id="icons" />
         <div class="h-32"></div>
@@ -196,6 +199,7 @@ export class AppComponent implements OnInit {
     { id: 'banner', label: 'Banner' },
     { id: 'icon-button', label: 'Icon Button' },
     { id: 'menu', label: 'Menu' },
+    { id: 'tab-bar', label: 'Tab Bar' },
     { id: 'square-popover', label: 'Square Popover' },
     { id: 'icons', label: 'Icons' },
   ];

@@ -1,10 +1,10 @@
 @if (showHeader()) {
-  <bng-header [version]="version" copyright="B1NGO" [homeAriaLabel]="homeAriaLabel()" (homeClicked)="onHomeClicked()">
-    @if (auth.isAuthenticated()) {
-      <bng-menu-item [icon]="userIcon" label="My Profile" (clicked)="navigateTo('/profile')" />
-      <bng-menu-item [icon]="clockIcon" label="Game History" (clicked)="navigateTo('/history')" />
-      <bng-menu-item [icon]="barChartIcon" label="Stats" (clicked)="navigateTo('/stats')" />
-    }
+  <bng-header
+    [version]="version"
+    copyright="B1NGO"
+    [homeAriaLabel]="homeAriaLabel()"
+    (homeClicked)="onHomeClicked()"
+  >
     <bng-menu-item [icon]="helpIcon" label="How to play" (clicked)="openTutorial()" />
     <bng-menu-item label="Theme" (clicked)="themeSheetOpen.set(true)">
       <span
@@ -22,6 +22,35 @@
 }
 
 <router-outlet />
+
+@if (auth.isAuthenticated() && tabBarVisible()) {
+  <bng-tab-bar>
+    <bng-tab-bar-item
+      [icon]="homeIcon"
+      label="Home"
+      [active]="isHomeActive()"
+      (clicked)="onTabNavigate('/')"
+    />
+    <bng-tab-bar-item
+      [icon]="clockIcon"
+      label="History"
+      [active]="isHistoryActive()"
+      (clicked)="onTabNavigate('/history')"
+    />
+    <bng-tab-bar-item
+      [icon]="barChartIcon"
+      label="Stats"
+      [active]="isStatsActive()"
+      (clicked)="onTabNavigate('/stats')"
+    />
+    <bng-tab-bar-item
+      [icon]="userIcon"
+      label="Profile"
+      [active]="isProfileActive()"
+      (clicked)="onTabNavigate('/profile')"
+    />
+  </bng-tab-bar>
+}
 
 <bng-bottom-sheet title="Theme" [open]="themeSheetOpen()" (closed)="themeSheetOpen.set(false)">
   <div class="flex justify-center py-2">

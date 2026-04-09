@@ -14,12 +14,11 @@ export const routes: Routes = [
   },
   {
     path: 'auth',
-    data: { hideHeader: true },
+    data: { hideHeader: true, hideTabBar: true },
     loadChildren: () => import('./features/auth/auth.routes').then((m) => m.AUTH_ROUTES),
   },
   {
     path: 'profile',
-    data: { hideHeader: true },
     loadChildren: () => import('./features/profile/profile.routes').then((m) => m.PROFILE_ROUTES),
   },
   {
@@ -33,6 +32,7 @@ export const routes: Routes = [
   },
   {
     path: 'room',
+    data: { hideTabBar: true },
     loadChildren: () => import('./features/room/room.routes').then((m) => m.ROOM_ROUTES),
   },
   {
