@@ -61,7 +61,12 @@ export async function navigateToRoom(
     { roomId, playerId },
   );
 
+  const signalrReady = page
+    .waitForEvent('websocket')
+    .then((ws) => ws.waitForEvent('framereceived'));
+
   await page.goto(`/room/${roomId}`);
+  await signalrReady;
 }
 
 export { expect };
