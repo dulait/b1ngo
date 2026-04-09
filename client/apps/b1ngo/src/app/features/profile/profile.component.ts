@@ -7,17 +7,15 @@ import {
   effect,
 } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import {
   BngCardComponent,
   BngInputComponent,
   BngButtonComponent,
-  BngIconComponent,
   BngModalComponent,
   ToastService,
   getAvatarColor,
   getAvatarInitials,
-  bngIconChevronLeft,
 } from 'bng-ui';
 import { AuthService } from '@core/auth/auth.service';
 import { formField } from '@core/utils/form-field';
@@ -30,9 +28,7 @@ import { validatePassword } from '@core/utils/validate-password';
     BngCardComponent,
     BngInputComponent,
     BngButtonComponent,
-    BngIconComponent,
     BngModalComponent,
-    RouterLink,
   ],
   templateUrl: './profile.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,8 +37,6 @@ export class ProfileComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
-
-  protected readonly chevronLeftIcon = bngIconChevronLeft;
 
   readonly displayName = formField(this.auth.currentUser()?.displayName ?? '');
 
