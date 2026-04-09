@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/dulait/b1ngo/compare/v1.1.1...v1.1.2) (2026-04-09)
+
+
+### Bug Fixes
+
+* **bng-ui:** stabilize tab bar on Chrome iOS toolbar transitions ([44ae8b4](https://github.com/dulait/b1ngo/commit/44ae8b4376e060ef4ff266303aeaebb57aae4749))
+
 ## [1.1.1](https://github.com/dulait/b1ngo/compare/v1.1.0...v1.1.1) (2026-04-09)
 
 
