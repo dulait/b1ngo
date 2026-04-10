@@ -1,4 +1,4 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 
 const isCI = !!process.env['CI'];
 
@@ -19,6 +19,14 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { browserName: 'chromium' },
+    },
+    {
+      name: 'webkit',
+      use: { browserName: 'webkit' },
+    },
+    {
+      name: 'mobile-safari',
+      use: { ...devices['iPhone 14'] },
     },
   ],
   expect: {

@@ -281,3 +281,6 @@ baseline.json
 
 # pnpm store
 .pnpm-store
+
+# Local HTTPS certificates (mkcert)
+certs/
