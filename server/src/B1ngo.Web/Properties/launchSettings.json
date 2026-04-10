@@ -38,6 +38,14 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Testing"
       }
+    },
+    "lan": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://0.0.0.0:5141",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     }
   }
 }
