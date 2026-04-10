@@ -21,6 +21,7 @@ public sealed class GameHub(IPlayerTokenStore playerTokenStore) : Hub
         }
 
         await Groups.AddToGroupAsync(Context.ConnectionId, $"room:{identity.RoomId}");
+        await Clients.Caller.SendAsync("Connected");
         await base.OnConnectedAsync();
     }
 
