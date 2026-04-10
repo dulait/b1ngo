@@ -1,3 +1,10 @@
+## [1.1.4](https://github.com/dulait/b1ngo/compare/v1.1.3...v1.1.4) (2026-04-10)
+
+
+### Bug Fixes
+
+* tab bar jitter on chrome for mobile ([e27d7b4](https://github.com/dulait/b1ngo/commit/e27d7b4e6458c1ffb873d8e9054efb6cb14b0c93))
+
 ## [1.1.3](https://github.com/dulait/b1ngo/compare/v1.1.2...v1.1.3) (2026-04-10)
 
 
