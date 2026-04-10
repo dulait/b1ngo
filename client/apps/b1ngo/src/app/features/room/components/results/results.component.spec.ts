@@ -53,6 +53,8 @@ function mockRoomState(): GetRoomStateResponse {
         winningPattern: 'Row',
         winningSquares: [{ row: 0, column: 0 }],
         completedAt: '2026-03-19T00:01:00Z',
+        elapsedTime: 'PT32M5S',
+        intervalToPrevious: null,
       },
     ],
   };

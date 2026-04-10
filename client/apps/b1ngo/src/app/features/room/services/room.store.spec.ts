@@ -138,6 +138,8 @@ describe('RoomStore', () => {
         winningPattern: 'Row',
         winningSquares: [],
         completedAt: '2026-03-19T00:00:00Z',
+        elapsedTime: 'PT32M5S',
+        intervalToPrevious: null,
       };
       store.initialize(mockRoomState({ leaderboard: [entry] }), 'p1');
 
@@ -148,6 +150,7 @@ describe('RoomStore', () => {
         displayName: 'Player 1',
         badge: 'Row',
         timestamp: '2026-03-19T00:00:00Z',
+        timing: '32:05',
         isCurrentUser: true,
       });
     });
@@ -222,6 +225,8 @@ describe('RoomStore', () => {
           winningPattern: 'Row',
           winningSquares: [],
           completedAt: '2026-03-19T00:00:00Z',
+          elapsedTime: 'PT10M',
+          intervalToPrevious: null,
         },
       ];
       store.updateLeaderboard(entries);

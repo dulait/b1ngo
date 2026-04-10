@@ -9,6 +9,7 @@ import {
 } from '@core/api/models/dtos';
 import { GetRoomStateResponse } from '@core/api/models/responses';
 import type { PlayerChipItem, LeaderboardItem } from 'bng-ui';
+import { formatDuration } from 'bng-ui';
 
 export class RoomStore {
   readonly roomId = signal('');
@@ -41,11 +42,16 @@ export class RoomStore {
   readonly leaderboardItems = computed<LeaderboardItem[]>(() =>
     this.leaderboard().map((e) => {
       const player = this.players().find((p) => p.playerId === e.playerId);
+      const timing =
+        e.intervalToPrevious !== null
+          ? formatDuration(e.intervalToPrevious, '+')
+          : formatDuration(e.elapsedTime);
       return {
         rank: e.rank,
         displayName: player?.displayName ?? 'Unknown',
         badge: e.winningPattern,
         timestamp: e.completedAt,
+        timing,
         isCurrentUser: e.playerId === this.currentPlayerId(),
       };
     }),

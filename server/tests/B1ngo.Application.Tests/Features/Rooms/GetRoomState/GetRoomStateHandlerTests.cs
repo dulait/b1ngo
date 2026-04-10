@@ -1,3 +1,4 @@
+using System.Xml;
 using B1ngo.Application.Features.Rooms.GetRoomState;
 using B1ngo.Application.Tests.Fakes;
 using B1ngo.Domain.Game;
@@ -204,6 +205,45 @@ public class GetRoomStateHandlerTests
 
         var hostDto = players.First(p => p.PlayerId == room.HostPlayerId.Value);
         Assert.Null(hostDto.Card);
+    }
+
+    [Fact]
+    public async Task HandleAsync_WithLeaderboardEntries_MapsElapsedTimeAndInterval()
+    {
+        var room = SeedActiveRoomWithWin();
+        var hostId = room.HostPlayerId.Value;
+        var query = new GetRoomStateQuery(room.Id.Value, hostId);
+
+        var result = await _sut.HandleAsync(query);
+
+        Assert.True(result.IsSuccess);
+        var entry = Assert.Single(result.Value.Leaderboard);
+        Assert.NotNull(entry.ElapsedTime);
+        Assert.Null(entry.IntervalToPrevious);
+
+        var elapsed = XmlConvert.ToTimeSpan(entry.ElapsedTime);
+        Assert.True(elapsed >= TimeSpan.Zero);
+    }
+
+    private Room SeedActiveRoomWithWin()
+    {
+        var room = Room.Create("Host", DefaultSession);
+        room.Players[0].AssignCard(_cardGenerator.Generate(SessionType.Race, 5));
+        room.StartGame();
+
+        var hostId = room.Players[0].Id;
+        for (var col = 0; col < 5; col++)
+        {
+            var square = room.Players[0].Card!.GetSquare(0, col);
+            if (!square.IsFreeSpace && !square.IsMarked)
+            {
+                room.MarkSquare(hostId, 0, col, SquareMarkedBy.Player, DateTimeOffset.UtcNow);
+                room.EvaluateWin(hostId, DateTimeOffset.UtcNow);
+            }
+        }
+
+        _roomRepository.Seed(room);
+        return room;
     }
 
     private Room SeedRoomWithTwoPlayers()

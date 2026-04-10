@@ -6,4 +6,6 @@ export interface BingoAchievedEvent {
   winningSquares: SquarePositionDto[];
   rank: number;
   completedAt: string;
+  elapsedTime: string;
+  intervalToPrevious: string | null;
 }

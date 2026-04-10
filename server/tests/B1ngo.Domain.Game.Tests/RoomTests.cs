@@ -226,6 +226,19 @@ public class RoomTests
     }
 
     [Fact]
+    public void StartGame_FromLobby_SetsStartedAt()
+    {
+        var sut = CreateLobbyRoomWithCards();
+        var before = DateTimeOffset.UtcNow;
+
+        sut.StartGame();
+
+        Assert.NotNull(sut.StartedAt);
+        Assert.True(sut.StartedAt >= before);
+        Assert.True(sut.StartedAt <= DateTimeOffset.UtcNow);
+    }
+
+    [Fact]
     public void StartGame_WhenPlayersLackCards_ThrowsDomainConflictException()
     {
         var sut = _builder.Build();
@@ -401,6 +414,42 @@ public class RoomTests
         Assert.Equal(playerId, bingoEvent.PlayerId);
         Assert.Equal(WinPatternType.Row, bingoEvent.Pattern);
         Assert.Equal(1, bingoEvent.Rank);
+    }
+
+    [Fact]
+    public void EvaluateWin_FirstPlace_IncludesElapsedTimeAndNoInterval()
+    {
+        var sut = CreateActiveRoom();
+        var playerId = sut.Players[0].Id;
+        var markTime = sut.StartedAt!.Value.AddMinutes(5);
+        sut.ClearDomainEvents();
+
+        MarkEntireRowAt(sut, playerId, 0, markTime);
+
+        var bingoEvent = sut.DomainEvents.OfType<BingoAchievedDomainEvent>().Single();
+        Assert.Equal(TimeSpan.FromMinutes(5), bingoEvent.ElapsedTime);
+        Assert.Null(bingoEvent.IntervalToPrevious);
+    }
+
+    [Fact]
+    public void EvaluateWin_SecondPlace_IncludesIntervalToPrevious()
+    {
+        var sut = CreateActiveRoomWithTwoPlayers();
+        var player1Id = sut.Players[0].Id;
+        var player2Id = sut.Players[1].Id;
+
+        var firstWinTime = sut.StartedAt!.Value.AddMinutes(5);
+        MarkEntireRowAt(sut, player1Id, 0, firstWinTime);
+        sut.ClearDomainEvents();
+
+        var secondWinTime = firstWinTime.AddMinutes(3);
+        MarkEntireRowAt(sut, player2Id, 0, secondWinTime);
+
+        var bingoEvent = sut.DomainEvents.OfType<BingoAchievedDomainEvent>().Single();
+        Assert.Equal(2, bingoEvent.Rank);
+        Assert.Equal(TimeSpan.FromMinutes(8), bingoEvent.ElapsedTime);
+        Assert.NotNull(bingoEvent.IntervalToPrevious);
+        Assert.Equal(TimeSpan.FromMinutes(3), bingoEvent.IntervalToPrevious);
     }
 
     [Fact]
@@ -644,13 +693,18 @@ public class RoomTests
 
     private static void MarkEntireRow(Room room, PlayerId playerId, int row)
     {
+        MarkEntireRowAt(room, playerId, row, Now);
+    }
+
+    private static void MarkEntireRowAt(Room room, PlayerId playerId, int row, DateTimeOffset utcNow)
+    {
         for (var col = 0; col < 5; col++)
         {
             var square = room.Players.First(p => p.Id == playerId).Card!.GetSquare(row, col);
             if (!square.IsFreeSpace && !square.IsMarked)
             {
-                room.MarkSquare(playerId, row, col, SquareMarkedBy.Player, Now);
-                room.EvaluateWin(playerId, Now);
+                room.MarkSquare(playerId, row, col, SquareMarkedBy.Player, utcNow);
+                room.EvaluateWin(playerId, utcNow);
             }
         }
     }

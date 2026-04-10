@@ -64,7 +64,7 @@ const AVATAR_FULL = `w-8 h-8 text-xs ${AVATAR_BASE}`;
             class="text-xs text-text-secondary tabular-nums shrink-0"
             [class.ml-auto]="variant() === 'compact'"
           >
-            {{ formatTime(entry.timestamp) }}
+            {{ displayTime(entry) }}
           </span>
         </div>
       }
@@ -100,17 +100,13 @@ export class BngLeaderboardComponent {
   }
 
   protected entryAriaLabel(entry: LeaderboardItem): string {
-    return `${entry.rank}. ${entry.displayName}, ${entry.badge}, ${this.formatTime(entry.timestamp)}`;
+    return `${entry.rank}. ${entry.displayName}, ${entry.badge}, ${this.displayTime(entry)}`;
   }
 
-  protected formatTime(iso: string): string {
-    if (this.variant() === 'compact') {
-      return formatRelativeTime(iso);
+  protected displayTime(entry: LeaderboardItem): string {
+    if (this.variant() === 'full' && entry.timing) {
+      return entry.timing;
     }
-    return new Date(iso).toLocaleTimeString('en-GB', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    });
+    return formatRelativeTime(entry.timestamp);
   }
 }
