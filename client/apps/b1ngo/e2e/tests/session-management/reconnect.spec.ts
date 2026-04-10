@@ -90,8 +90,8 @@ test.describe('BNG-013: Reconnect', () => {
         domain: 'localhost',
         path: '/',
         httpOnly: true,
-        secure: true,
-        sameSite: 'None',
+        secure: false,
+        sameSite: 'Lax',
       },
     ]);
     await page.evaluate(() => {

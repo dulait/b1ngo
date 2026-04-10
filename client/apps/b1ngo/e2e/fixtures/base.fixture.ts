@@ -48,8 +48,8 @@ export async function navigateToRoom(
       domain: 'localhost',
       path: '/',
       httpOnly: true,
-      secure: true,
-      sameSite: 'None',
+      secure: false,
+      sameSite: 'Lax',
     },
   ]);
 
