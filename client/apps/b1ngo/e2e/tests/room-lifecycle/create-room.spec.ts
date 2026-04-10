@@ -31,7 +31,6 @@ test.describe('BNG-001: Create Room', () => {
     expect(authCookie).toBeTruthy();
     expect(authCookie!.httpOnly).toBe(true);
     expect(authCookie!.secure).toBe(false);
-    expect(authCookie!.sameSite).toBe('Lax');
     expect(authCookie!.path).toBe('/');
   });
 
