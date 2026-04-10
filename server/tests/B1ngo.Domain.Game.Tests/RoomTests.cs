@@ -421,12 +421,13 @@ public class RoomTests
     {
         var sut = CreateActiveRoom();
         var playerId = sut.Players[0].Id;
+        var markTime = sut.StartedAt!.Value.AddMinutes(5);
         sut.ClearDomainEvents();
 
-        MarkEntireRow(sut, playerId, 0);
+        MarkEntireRowAt(sut, playerId, 0, markTime);
 
         var bingoEvent = sut.DomainEvents.OfType<BingoAchievedDomainEvent>().Single();
-        Assert.True(bingoEvent.ElapsedTime > TimeSpan.Zero);
+        Assert.Equal(TimeSpan.FromMinutes(5), bingoEvent.ElapsedTime);
         Assert.Null(bingoEvent.IntervalToPrevious);
     }
 
@@ -437,16 +438,18 @@ public class RoomTests
         var player1Id = sut.Players[0].Id;
         var player2Id = sut.Players[1].Id;
 
-        MarkEntireRow(sut, player1Id, 0);
+        var firstWinTime = sut.StartedAt!.Value.AddMinutes(5);
+        MarkEntireRowAt(sut, player1Id, 0, firstWinTime);
         sut.ClearDomainEvents();
 
-        MarkEntireRow(sut, player2Id, 0);
+        var secondWinTime = firstWinTime.AddMinutes(3);
+        MarkEntireRowAt(sut, player2Id, 0, secondWinTime);
 
         var bingoEvent = sut.DomainEvents.OfType<BingoAchievedDomainEvent>().Single();
         Assert.Equal(2, bingoEvent.Rank);
-        Assert.True(bingoEvent.ElapsedTime > TimeSpan.Zero);
+        Assert.Equal(TimeSpan.FromMinutes(8), bingoEvent.ElapsedTime);
         Assert.NotNull(bingoEvent.IntervalToPrevious);
-        Assert.True(bingoEvent.IntervalToPrevious >= TimeSpan.Zero);
+        Assert.Equal(TimeSpan.FromMinutes(3), bingoEvent.IntervalToPrevious);
     }
 
     [Fact]
@@ -690,13 +693,18 @@ public class RoomTests
 
     private static void MarkEntireRow(Room room, PlayerId playerId, int row)
     {
+        MarkEntireRowAt(room, playerId, row, Now);
+    }
+
+    private static void MarkEntireRowAt(Room room, PlayerId playerId, int row, DateTimeOffset utcNow)
+    {
         for (var col = 0; col < 5; col++)
         {
             var square = room.Players.First(p => p.Id == playerId).Card!.GetSquare(row, col);
             if (!square.IsFreeSpace && !square.IsMarked)
             {
-                room.MarkSquare(playerId, row, col, SquareMarkedBy.Player, Now);
-                room.EvaluateWin(playerId, Now);
+                room.MarkSquare(playerId, row, col, SquareMarkedBy.Player, utcNow);
+                room.EvaluateWin(playerId, utcNow);
             }
         }
     }
