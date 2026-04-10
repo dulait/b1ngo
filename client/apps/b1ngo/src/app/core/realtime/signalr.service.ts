@@ -39,8 +39,17 @@ export class SignalRService {
     this.registerHandlers();
     this.registerLifecycleEvents();
 
+    const groupJoined = new Promise<void>((resolve, reject) => {
+      const timeout = setTimeout(() => reject(new Error('SignalR group join timed out')), 5000);
+      this.connection!.on('Connected', () => {
+        clearTimeout(timeout);
+        resolve();
+      });
+    });
+
     this.connectionState.set('connecting');
     await this.connection.start();
+    await groupJoined;
     this.connectionState.set('connected');
   }
 
@@ -50,13 +59,7 @@ export class SignalRService {
     this.resetSignals();
     this.connectionState.set('disconnected');
 
-    if (conn) {
-      try {
-        await conn.stop();
-      } catch {
-        // Connection may already be stopped; safe to ignore
-      }
-    }
+    await conn?.stop().catch(() => {});
   }
 
   private resetSignals(): void {

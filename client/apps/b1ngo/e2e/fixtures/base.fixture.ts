@@ -62,8 +62,18 @@ export async function navigateToRoom(
   );
 
   const signalrReady = page
-    .waitForEvent('websocket')
-    .then((ws) => ws.waitForEvent('framereceived'));
+    .waitForEvent('websocket', { predicate: (ws) => ws.url().includes('/hubs/game') })
+    .then(
+      (ws) =>
+        new Promise<void>((resolve) => {
+          let frames = 0;
+          ws.on('framereceived', () => {
+            if (++frames >= 2) {
+              resolve();
+            }
+          });
+        }),
+    );
 
   await page.goto(`/room/${roomId}`);
   await signalrReady;
