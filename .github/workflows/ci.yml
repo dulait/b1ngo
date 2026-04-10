@@ -242,7 +242,7 @@ jobs:
           ConnectionStrings__Database: "Host=localhost;Port=5434;Database=b1ngo_test;Username=b1ngo;Password=b1ngo"
 
       - name: Run Playwright tests
-        run: npx playwright test --config=e2e/playwright.config.ts
+        run: npx playwright test --config=e2e/playwright.config.ts --project=chromium
         working-directory: client/apps/b1ngo
         env:
           CI: "true"
