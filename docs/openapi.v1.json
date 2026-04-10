@@ -2441,7 +2441,9 @@
           "rank",
           "winningPattern",
           "winningSquares",
-          "completedAt"
+          "completedAt",
+          "elapsedTime",
+          "intervalToPrevious"
         ],
         "type": "object",
         "properties": {
@@ -2477,6 +2479,15 @@
             "description": "ISO 8601 UTC timestamp of win.",
             "format": "date-time",
             "example": "2026-03-17T14:35:00\u002B00:00"
+          },
+          "elapsedTime": {
+            "type": "string"
+          },
+          "intervalToPrevious": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
