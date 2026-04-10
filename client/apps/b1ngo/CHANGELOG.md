@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/dulait/b1ngo/compare/v1.1.4...v1.2.0) (2026-04-10)
+
+
+### Features
+
+* add interval deltas to leaderboard entries ([#42](https://github.com/dulait/b1ngo/issues/42)) ([be746af](https://github.com/dulait/b1ngo/commit/be746af17d1a61d406f17f1d695a06eabda6f4c1))
+
 ## [1.1.4](https://github.com/dulait/b1ngo/compare/v1.1.3...v1.1.4) (2026-04-10)
 
 
