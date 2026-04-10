@@ -163,6 +163,8 @@ export class RoomComponent implements OnInit, OnDestroy {
             winningPattern: event.pattern,
             winningSquares: event.winningSquares,
             completedAt: event.completedAt,
+            elapsedTime: event.elapsedTime,
+            intervalToPrevious: event.intervalToPrevious,
           });
           this.store.setPlayerWon(event.playerId);
           if (event.playerId === this.store.currentPlayerId()) {

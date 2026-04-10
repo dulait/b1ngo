@@ -66,6 +66,19 @@ describe('BngLeaderboardComponent', () => {
     expect(highlighted).toBeTruthy();
   });
 
+  it('should render timing instead of wall-clock time in full variant', () => {
+    const timedEntries: LeaderboardItem[] = [
+      { rank: 1, displayName: 'Lewis Hamilton', badge: 'Row', timestamp: new Date().toISOString(), timing: '32:05', isCurrentUser: false },
+      { rank: 2, displayName: 'Max Verstappen', badge: 'Column', timestamp: new Date().toISOString(), timing: '+4:12', isCurrentUser: false },
+    ];
+    fixture.componentRef.setInput('entries', timedEntries);
+    fixture.componentRef.setInput('variant', 'full');
+    fixture.detectChanges();
+    const text = fixture.nativeElement.textContent;
+    expect(text).toContain('32:05');
+    expect(text).toContain('+4:12');
+  });
+
   it('should show (You) for current user', () => {
     expect(fixture.nativeElement.textContent).toContain('(You)');
   });

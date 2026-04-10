@@ -21,6 +21,7 @@ export interface LeaderboardItem {
   displayName: string;
   badge: string;
   timestamp: string;
+  timing?: string;
   isCurrentUser: boolean;
 }
 

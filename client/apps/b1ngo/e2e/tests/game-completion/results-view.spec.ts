@@ -107,6 +107,8 @@ test.describe('BNG-012: Results View', () => {
     expect(entry.winningSquares).toBeDefined();
     expect(entry.winningSquares.length).toBeGreaterThan(0);
     expect(entry.completedAt).toBeDefined();
+    expect(entry.elapsedTime).toBeDefined();
+    expect(entry.intervalToPrevious).toBeNull();
   });
 
   test('results view shows card section', async ({ page, context, api }) => {

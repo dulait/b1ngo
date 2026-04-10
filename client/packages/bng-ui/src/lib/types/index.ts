@@ -11,6 +11,7 @@ export type {
 } from './types';
 export { THEMES, AVATAR_COLORS, FREE_SPACE_LABEL } from './constants';
 export {
+  formatDuration,
   formatRelativeTime,
   getAvatarColor,
   getAvatarInitials,

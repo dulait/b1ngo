@@ -132,6 +132,8 @@ describe('Room orchestrator logic', () => {
         winningPattern: 'Row',
         winningSquares: [],
         completedAt: '2026-03-19T00:01:00Z',
+        elapsedTime: 'PT32M5S',
+        intervalToPrevious: null,
       },
     ]);
     expect(store.leaderboard()).toHaveLength(1);

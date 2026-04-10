@@ -6,4 +6,6 @@ export interface LeaderboardEntryDto {
   winningPattern: string;
   winningSquares: SquarePositionDto[];
   completedAt: string;
+  elapsedTime: string;
+  intervalToPrevious: string | null;
 }

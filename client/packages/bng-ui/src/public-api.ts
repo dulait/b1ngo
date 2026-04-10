@@ -36,6 +36,9 @@ export { BngStatusPageComponent } from './lib/components/composites/status-page/
 export { BngTabBarComponent } from './lib/components/composites/tab-bar/tab-bar.component';
 export { BngTabBarItemComponent } from './lib/components/composites/tab-bar-item/tab-bar-item.component';
 
+// Pipes
+export { BngFormatDurationPipe } from './lib/pipes/format-duration.pipe';
+
 // Icons (SVG path data)
 export * from './lib/icons/icons';
 
@@ -60,6 +63,7 @@ export {
   THEMES,
   AVATAR_COLORS,
   FREE_SPACE_LABEL,
+  formatDuration,
   getAvatarColor,
   getAvatarInitials,
   formatRelativeTime,
