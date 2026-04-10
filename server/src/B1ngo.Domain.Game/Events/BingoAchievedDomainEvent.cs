@@ -8,5 +8,7 @@ public sealed record BingoAchievedDomainEvent(
     WinPatternType Pattern,
     IReadOnlyList<SquarePosition> WinningSquares,
     int Rank,
-    DateTimeOffset CompletedAt
+    DateTimeOffset CompletedAt,
+    TimeSpan ElapsedTime,
+    TimeSpan? IntervalToPrevious
 ) : DomainEvent;

@@ -8,5 +8,7 @@ public sealed record BingoAchievedHubEvent(
     string Pattern,
     IReadOnlyList<SquarePositionDto> WinningSquares,
     int Rank,
-    DateTimeOffset CompletedAt
+    DateTimeOffset CompletedAt,
+    string ElapsedTime,
+    string? IntervalToPrevious
 ) : HubEvent;

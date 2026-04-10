@@ -36,7 +36,9 @@ public sealed record LeaderboardEntryDto(
     int Rank,
     string WinningPattern,
     IReadOnlyList<SquarePositionDto> WinningSquares,
-    DateTimeOffset CompletedAt
+    DateTimeOffset CompletedAt,
+    string ElapsedTime,
+    string? IntervalToPrevious
 );
 
 public sealed record SquarePositionDto(int Row, int Column);

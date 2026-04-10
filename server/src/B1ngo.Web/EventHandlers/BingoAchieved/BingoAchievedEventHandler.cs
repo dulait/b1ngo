@@ -1,3 +1,4 @@
+using System.Xml;
 using B1ngo.Application.Features.Rooms.GetRoomState;
 using B1ngo.Domain.Core;
 using B1ngo.Domain.Game.Events;
@@ -20,7 +21,11 @@ internal sealed class BingoAchievedEventHandler(IHubContext<GameHub> hubContext)
                     domainEvent.Pattern.ToString(),
                     domainEvent.WinningSquares.Select(s => new SquarePositionDto(s.Row, s.Column)).ToList(),
                     domainEvent.Rank,
-                    domainEvent.CompletedAt
+                    domainEvent.CompletedAt,
+                    XmlConvert.ToString(domainEvent.ElapsedTime),
+                    domainEvent.IntervalToPrevious is not null
+                        ? XmlConvert.ToString(domainEvent.IntervalToPrevious.Value)
+                        : null
                 ),
                 cancellationToken
             );

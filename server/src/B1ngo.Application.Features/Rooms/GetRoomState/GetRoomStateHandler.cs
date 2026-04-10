@@ -1,3 +1,4 @@
+using System.Xml;
 using B1ngo.Application.Common.Cqrs;
 using B1ngo.Application.Common.Results;
 using B1ngo.Domain.Game;
@@ -40,15 +41,7 @@ public sealed class GetRoomStateHandler(IRoomRepository roomRepository)
 
         var players = room.Players.Select(p => MapPlayer(p, requestingPlayerId, isHost)).ToList();
 
-        var leaderboard = room
-            .Leaderboard.Select(e => new LeaderboardEntryDto(
-                e.PlayerId.Value,
-                e.Rank,
-                e.WinningPattern.ToString(),
-                e.WinningSquares.Select(s => new SquarePositionDto(s.Row, s.Column)).ToList(),
-                e.CompletedAt
-            ))
-            .ToList();
+        var leaderboard = MapLeaderboard(room);
 
         return new GetRoomStateResponse(
             room.Id.Value,
@@ -87,5 +80,32 @@ public sealed class GetRoomStateHandler(IRoomRepository roomRepository)
         }
 
         return new PlayerDto(player.Id.Value, player.DisplayName, player.HasWon, card);
+    }
+
+    private static List<LeaderboardEntryDto> MapLeaderboard(Room room)
+    {
+        var entries = room.Leaderboard;
+        var result = new List<LeaderboardEntryDto>(entries.Count);
+
+        for (var i = 0; i < entries.Count; i++)
+        {
+            var e = entries[i];
+            var elapsed = e.CompletedAt - room.StartedAt!.Value;
+            TimeSpan? interval = i > 0 ? e.CompletedAt - entries[i - 1].CompletedAt : null;
+
+            result.Add(
+                new LeaderboardEntryDto(
+                    e.PlayerId.Value,
+                    e.Rank,
+                    e.WinningPattern.ToString(),
+                    e.WinningSquares.Select(s => new SquarePositionDto(s.Row, s.Column)).ToList(),
+                    e.CompletedAt,
+                    XmlConvert.ToString(elapsed),
+                    interval is not null ? XmlConvert.ToString(interval.Value) : null
+                )
+            );
+        }
+
+        return result;
     }
 }
