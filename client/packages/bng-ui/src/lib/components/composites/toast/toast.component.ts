@@ -106,9 +106,9 @@ export class BngToastContainerComponent {
 
   private readonly flagStyles: Record<ToastVariant, string> = {
     info: 'background: repeating-conic-gradient(var(--bng-color-info) 0% 25%, transparent 0% 50%) 0 0 / 6px 6px',
-    success: 'background-color: var(--bng-color-success)',
-    warning: 'background-color: var(--bng-color-warning)',
-    error: 'background-color: var(--bng-color-error)',
+    success: 'background: repeating-conic-gradient(var(--bng-color-success) 0% 25%, transparent 0% 50%) 0 0 / 6px 6px',
+    warning: 'background: repeating-conic-gradient(var(--bng-color-warning) 0% 25%, transparent 0% 50%) 0 0 / 6px 6px',
+    error: 'background: repeating-conic-gradient(var(--bng-color-error) 0% 25%, transparent 0% 50%) 0 0 / 6px 6px',
   };
 
   protected getFlagStyle(variant: ToastVariant): string {
