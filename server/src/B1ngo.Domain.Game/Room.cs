@@ -16,6 +16,7 @@ public class Room : Entity<RoomId>
     public PlayerId HostPlayerId { get; private set; } = null!;
     public RaceSession Session { get; private set; } = null!;
     public RoomConfiguration Configuration { get; private set; } = null!;
+    public DateTimeOffset? StartedAt { get; private set; }
     public IReadOnlyList<Player> Players => _players.AsReadOnly();
     public IReadOnlyList<LeaderboardEntry> Leaderboard => _leaderboard.AsReadOnly();
 
@@ -91,6 +92,7 @@ public class Room : Entity<RoomId>
         }
 
         Status = RoomStatus.Active;
+        StartedAt = DateTimeOffset.UtcNow;
         RaiseDomainEvent(new GameStartedDomainEvent(Id));
     }
 
@@ -135,8 +137,25 @@ public class Room : Entity<RoomId>
         var rank = _leaderboard.Count + 1;
         _leaderboard.Add(new LeaderboardEntry(playerId, rank, detection.Pattern, detection.Squares, utcNow));
         player.SetWon();
+
+        var elapsedTime = utcNow - StartedAt!.Value;
+        TimeSpan? intervalToPrevious = null;
+        if (rank > 1)
+        {
+            intervalToPrevious = utcNow - _leaderboard[rank - 2].CompletedAt;
+        }
+
         RaiseDomainEvent(
-            new BingoAchievedDomainEvent(Id, playerId, detection.Pattern, detection.Squares, rank, utcNow)
+            new BingoAchievedDomainEvent(
+                Id,
+                playerId,
+                detection.Pattern,
+                detection.Squares,
+                rank,
+                utcNow,
+                elapsedTime,
+                intervalToPrevious
+            )
         );
 
         return new WinResult(detection.Pattern, rank);
@@ -179,6 +198,14 @@ public class Room : Entity<RoomId>
         if (entry is not null && entry.WinningPattern != currentWin.Pattern)
         {
             entry.UpdateWinningPattern(currentWin.Pattern, currentWin.Squares);
+
+            var reElapsed = entry.CompletedAt - StartedAt!.Value;
+            TimeSpan? reInterval = null;
+            if (entry.Rank > 1)
+            {
+                reInterval = entry.CompletedAt - _leaderboard[entry.Rank - 2].CompletedAt;
+            }
+
             RaiseDomainEvent(
                 new BingoAchievedDomainEvent(
                     Id,
@@ -186,7 +213,9 @@ public class Room : Entity<RoomId>
                     currentWin.Pattern,
                     currentWin.Squares,
                     entry.Rank,
-                    entry.CompletedAt
+                    entry.CompletedAt,
+                    reElapsed,
+                    reInterval
                 )
             );
         }

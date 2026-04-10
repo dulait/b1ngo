@@ -226,6 +226,19 @@ public class RoomTests
     }
 
     [Fact]
+    public void StartGame_FromLobby_SetsStartedAt()
+    {
+        var sut = CreateLobbyRoomWithCards();
+        var before = DateTimeOffset.UtcNow;
+
+        sut.StartGame();
+
+        Assert.NotNull(sut.StartedAt);
+        Assert.True(sut.StartedAt >= before);
+        Assert.True(sut.StartedAt <= DateTimeOffset.UtcNow);
+    }
+
+    [Fact]
     public void StartGame_WhenPlayersLackCards_ThrowsDomainConflictException()
     {
         var sut = _builder.Build();
@@ -401,6 +414,39 @@ public class RoomTests
         Assert.Equal(playerId, bingoEvent.PlayerId);
         Assert.Equal(WinPatternType.Row, bingoEvent.Pattern);
         Assert.Equal(1, bingoEvent.Rank);
+    }
+
+    [Fact]
+    public void EvaluateWin_FirstPlace_IncludesElapsedTimeAndNoInterval()
+    {
+        var sut = CreateActiveRoom();
+        var playerId = sut.Players[0].Id;
+        sut.ClearDomainEvents();
+
+        MarkEntireRow(sut, playerId, 0);
+
+        var bingoEvent = sut.DomainEvents.OfType<BingoAchievedDomainEvent>().Single();
+        Assert.True(bingoEvent.ElapsedTime > TimeSpan.Zero);
+        Assert.Null(bingoEvent.IntervalToPrevious);
+    }
+
+    [Fact]
+    public void EvaluateWin_SecondPlace_IncludesIntervalToPrevious()
+    {
+        var sut = CreateActiveRoomWithTwoPlayers();
+        var player1Id = sut.Players[0].Id;
+        var player2Id = sut.Players[1].Id;
+
+        MarkEntireRow(sut, player1Id, 0);
+        sut.ClearDomainEvents();
+
+        MarkEntireRow(sut, player2Id, 0);
+
+        var bingoEvent = sut.DomainEvents.OfType<BingoAchievedDomainEvent>().Single();
+        Assert.Equal(2, bingoEvent.Rank);
+        Assert.True(bingoEvent.ElapsedTime > TimeSpan.Zero);
+        Assert.NotNull(bingoEvent.IntervalToPrevious);
+        Assert.True(bingoEvent.IntervalToPrevious >= TimeSpan.Zero);
     }
 
     [Fact]
