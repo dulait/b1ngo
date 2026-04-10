@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/dulait/b1ngo/compare/v1.1.2...v1.1.3) (2026-04-10)
+
+
+### Bug Fixes
+
+* wait for SignalR group-join confirmation before marking connection ready ([#40](https://github.com/dulait/b1ngo/issues/40)) ([a28aff9](https://github.com/dulait/b1ngo/commit/a28aff99f8c5a6110465a2ae7ccee2c30d044669))
+
 ## [1.1.2](https://github.com/dulait/b1ngo/compare/v1.1.1...v1.1.2) (2026-04-09)
 
 
