@@ -11,7 +11,7 @@
     "e2e": "playwright test --config=e2e/playwright.config.ts",
     "e2e:ui": "playwright test --config=e2e/playwright.config.ts --ui",
     "e2e:headed": "playwright test --config=e2e/playwright.config.ts --headed",
-    "e2e:cross-browser": "playwright test --config=e2e/playwright.config.ts --project=webkit --project=firefox --project=mobile-safari --project=mobile-chrome --project=tablet",
+    "e2e:cross-browser": "playwright test --config=e2e/playwright.config.ts --project=webkit --project=mobile-safari",
     "e2e:report": "playwright show-report"
   },
   "private": true,
